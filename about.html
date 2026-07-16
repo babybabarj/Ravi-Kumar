@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Me | Ravi Kumar</title>
+<meta name="description" content="Ravi Kumar builds AI-enabled business systems: admin, finance, marketing and management dashboards, AI agents, assistants and automation for growing businesses, agencies and startups.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0b152e;
+  --muted:#52637d;
+  --orange:#ef7c22;
+  --orange2:#f7a45f;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  min-height:100vh;
+  font-family:"Plus Jakarta Sans",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:#fff3e8;
+  letter-spacing:-.012em;
+  text-rendering:geometricPrecision;
+  -webkit-font-smoothing:antialiased;
+}
+a { color:inherit; text-decoration:none; }
+
+/* ---------- nav (matches projects.html) ---------- */
+.nav {
+  position:fixed;
+  z-index:80;
+  left:50%;
+  top:16px;
+  width:min(1284px,calc(100vw - 64px));
+  height:64px;
+  min-height:64px;
+  padding:8px 12px 8px 14px;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.72);
+  background:rgba(255,246,236,.86);
+  backdrop-filter:blur(18px);
+  box-shadow:0 18px 55px rgba(12,23,48,.12);
+}
+.brand { display:flex; align-items:center; gap:12px; }
+.logo { width:46px; height:46px; border-radius:50%; display:grid; place-items:center; background:#0c1730; color:#fff; font:900 22px/1 'Cormorant Garamond',serif; }
+.brandText strong { display:block; font-size:14.5px; font-weight:900; letter-spacing:-.02em; }
+.brandText span { display:block; margin-top:3px; font-size:9.5px; font-weight:900; letter-spacing:.26em; color:#52637b; text-transform:uppercase; }
+.navLinks { display:flex; align-items:center; gap:21px; font-size:13.6px; font-weight:900; }
+.navLinks a { position:relative; padding:9px 2px; transition:color .22s ease, opacity .22s ease; }
+.navLinks a.active { color:var(--orange); }
+.navLinks a:hover { color:var(--orange); }
+.navLinks a.active:after {
+  content:""; position:absolute; left:0; right:0; bottom:2px; height:2px;
+  border-radius:99px; background:var(--orange);
+}
+.navActions { display:flex; align-items:center; gap:10px; }
+.navCta {
+  height:44px; padding:0 22px; border-radius:999px;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  background:#0c1730; color:#fff; font-size:13.6px; font-weight:900;
+  box-shadow:0 14px 32px rgba(12,23,48,.18);
+}
+.navCtaMail { background:linear-gradient(120deg,var(--orange),var(--orange2)); }
+.mailIcon {
+  width:15px; height:11px; border:1.6px solid currentColor; border-radius:2px;
+  position:relative; display:inline-block;
+}
+.mailIcon:after {
+  content:""; position:absolute; inset:0;
+  border-top:1.6px solid currentColor;
+  transform:rotate(0deg) skewY(16deg); transform-origin:top left;
+}
+.mobileMenuBtn {
+  display:none; height:42px; padding:0 16px; border-radius:999px;
+  border:1px solid rgba(12,23,48,.16); background:rgba(255,255,255,.7);
+  font:900 13px/1 inherit; color:var(--ink); cursor:pointer;
+}
+
+/* ---------- hero ---------- */
+.pageHero {
+  min-height:42vh;
+  padding:150px min(6vw,84px) 48px;
+  display:grid;
+  align-items:end;
+  background:
+    linear-gradient(180deg,rgba(255,248,238,.70),rgba(255,248,238,.82)),
+    url("assets/images/bg-home.jpg") center/cover no-repeat;
+}
+.pageHeroInner { width:min(980px,100%); }
+.kicker {
+  display:flex; align-items:center; gap:12px;
+  color:#5e6e86; font-size:12px; font-weight:800;
+  letter-spacing:.24em; text-transform:uppercase;
+}
+.kicker span { width:34px; height:2px; border-radius:99px; background:var(--orange); }
+.pageHero h1 {
+  margin:14px 0 12px;
+  font-family:'Cormorant Garamond',serif;
+  font-weight:700;
+  font-size:clamp(44px,6vw,82px);
+  line-height:.98;
+  letter-spacing:-.02em;
+}
+.pageHero p {
+  margin:0; max-width:70ch;
+  color:var(--muted); font-size:clamp(15px,1.15vw,18px);
+  font-weight:600; line-height:1.6;
+}
+
+/* ---------- shared section shell ---------- */
+.wrap { padding:0 min(6vw,84px); }
+.section { padding:64px 0; }
+.sectionHead { margin-bottom:34px; }
+.sectionHead h2 {
+  margin:12px 0 10px;
+  font-family:'Cormorant Garamond',serif;
+  font-weight:700;
+  font-size:clamp(30px,3.4vw,46px);
+  line-height:1.04;
+  letter-spacing:-.02em;
+}
+.sectionHead p {
+  margin:0; max-width:68ch; color:var(--muted);
+  font-size:15.5px; font-weight:600; line-height:1.62;
+}
+
+/* ---------- intro: portrait + prose ---------- */
+.introGrid {
+  display:grid;
+  grid-template-columns:minmax(260px,380px) 1fr;
+  gap:clamp(28px,4vw,64px);
+  align-items:start;
+}
+.portraitCard {
+  position:sticky; top:104px;
+  border-radius:26px; overflow:hidden;
+  border:1px solid rgba(255,255,255,.8);
+  background:rgba(255,255,255,.6);
+  box-shadow:0 26px 70px rgba(12,23,48,.14);
+}
+.portraitCard img { display:block; width:100%; height:auto; }
+/* Placeholder until the real portrait lands: same footprint, no layout shift. */
+.portraitPlaceholder {
+  aspect-ratio:4 / 5;
+  display:grid; place-items:center; gap:10px;
+  background:
+    linear-gradient(145deg,rgba(239,124,34,.14),rgba(247,164,95,.07)),
+    repeating-linear-gradient(45deg,rgba(12,23,48,.035) 0 12px,transparent 12px 24px);
+  color:#7b8aa1; text-align:center; padding:24px;
+}
+.portraitPlaceholder strong { font-size:14px; font-weight:900; color:#5e6e86; }
+.portraitPlaceholder span { font-size:12.5px; font-weight:600; max-width:24ch; line-height:1.5; }
+.portraitMeta {
+  padding:18px 20px 20px;
+  border-top:1px solid rgba(12,23,48,.08);
+  background:rgba(255,255,255,.72);
+}
+.portraitMeta strong { display:block; font-size:16px; font-weight:900; }
+.portraitMeta span { display:block; margin-top:4px; font-size:12.5px; font-weight:700; color:var(--muted); }
+.prose p {
+  margin:0 0 18px;
+  color:#2c3a55; font-size:16.5px; font-weight:600; line-height:1.72;
+  max-width:66ch;
+}
+.prose p.leadLine {
+  font-size:19px; font-weight:700; color:var(--ink); line-height:1.6;
+}
+.prose p:last-child { margin-bottom:0; }
+
+/* ---------- dashboards ---------- */
+.cardGrid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(268px,1fr));
+  gap:18px;
+}
+.card {
+  padding:26px 24px 28px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.82);
+  background:rgba(255,255,255,.66);
+  box-shadow:0 18px 46px rgba(12,23,48,.09);
+  transition:transform .38s cubic-bezier(.22,.61,.36,1), box-shadow .38s ease;
+}
+.card:hover { transform:translateY(-4px); box-shadow:0 26px 60px rgba(12,23,48,.14); }
+.cardNum {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:34px; height:34px; margin-bottom:14px;
+  border-radius:10px;
+  background:linear-gradient(120deg,var(--orange),var(--orange2));
+  color:#fff; font-size:13px; font-weight:900;
+}
+.card h3 { margin:0 0 8px; font-size:17px; font-weight:900; letter-spacing:-.01em; }
+.card p { margin:0; color:var(--muted); font-size:14.5px; font-weight:600; line-height:1.6; }
+
+/* ---------- capability chips ---------- */
+.chipWrap { display:flex; flex-wrap:wrap; gap:10px; }
+.chip {
+  padding:11px 18px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.86);
+  background:rgba(255,255,255,.62);
+  font-size:14px; font-weight:800; color:#33425e;
+  box-shadow:0 8px 22px rgba(12,23,48,.06);
+}
+
+/* ---------- approach steps ---------- */
+.steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+.step {
+  position:relative; padding:26px 22px 28px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,.8);
+  background:rgba(255,255,255,.58);
+}
+.stepNo {
+  font-family:'Cormorant Garamond',serif;
+  font-size:34px; font-weight:700; color:var(--orange); line-height:1;
+}
+.step h3 { margin:10px 0 8px; font-size:16.5px; font-weight:900; }
+.step p { margin:0; color:var(--muted); font-size:14.2px; font-weight:600; line-height:1.6; }
+
+/* ---------- fit + closing ---------- */
+.bandDark {
+  margin:64px 0 0;
+  padding:clamp(38px,4.6vw,64px) min(6vw,84px);
+  background:#0c1730; color:#fff;
+}
+.bandInner { width:min(1160px,100%); margin:0 auto; }
+.bandDark h2 {
+  margin:12px 0 14px;
+  font-family:'Cormorant Garamond',serif; font-weight:700;
+  font-size:clamp(28px,3.2vw,42px); line-height:1.05;
+}
+.bandDark .kicker { color:#9fb0c8; }
+.bandDark p { margin:0 0 26px; max-width:66ch; color:#c3cfe1; font-size:16px; font-weight:600; line-height:1.66; }
+.fitList { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:30px; }
+.fitList span {
+  padding:10px 16px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);
+  font-size:13.6px; font-weight:800; color:#e6edf7;
+}
+.bandActions { display:flex; flex-wrap:wrap; gap:12px; }
+.btn {
+  height:50px; padding:0 26px; border-radius:999px;
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  font-size:14.5px; font-weight:900;
+}
+.btnPrimary { background:linear-gradient(120deg,var(--orange),var(--orange2)); color:#fff; }
+.btnGhost { border:1px solid rgba(255,255,255,.28); color:#fff; }
+
+.footer { padding:38px min(5.5vw,78px) 54px; text-align:center; color:#52637d; font-size:14px; font-weight:700; background:rgba(255,248,238,.92); }
+
+@media (max-width:1000px) {
+  .navLinks { display:none; }
+  .navActions .navCta { display:none; }
+  .mobileMenuBtn { display:inline-flex; align-items:center; }
+  .brandText span { display:none; }
+  .introGrid { grid-template-columns:1fr; }
+  .portraitCard { position:static; max-width:420px; }
+}
+@media (max-width:640px) {
+  .pageHero { padding:132px 22px 38px; }
+  .wrap { padding:0 22px; }
+  .section { padding:46px 0; }
+}
+@media (prefers-reduced-motion:reduce) {
+  * { animation:none !important; transition:none !important; }
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="brand"><span class="logo">RK</span><span class="brandText"><strong>Ravi Kumar</strong><span>Digital Partner</span></span></a>
+  <div class="navLinks">
+    <a href="projects.html">Projects</a>
+    <a class="active" href="about.html">About Me</a>
+    <a href="index.html#services">Services</a>
+    <a href="index.html#partner">Partner Support</a>
+    <a href="index.html#process">Process</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+  <div class="navActions">
+    <button id="mobileMenuBtn" class="mobileMenuBtn" type="button" aria-label="Open mobile menu" aria-expanded="false">Menu</button>
+    <a class="navCta navCtaMail mailLink" href="mailto:work.ravijethani@gmail.com?subject=AI%20Systems%20and%20Dashboards&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
+    <a class="navCta" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business." target="_blank" rel="noopener">Partner With Me</a>
+  </div>
+</nav>
+
+<header class="pageHero">
+  <div class="pageHeroInner">
+    <div class="kicker"><span></span>About Me</div>
+    <h1>Connected systems,<br>not scattered tools.</h1>
+    <p>I help businesses turn fragmented, repetitive and manually managed operations into connected, AI-enabled systems that owners can actually see and control.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="section">
+    <div class="introGrid">
+      <figure class="portraitCard" style="margin:0">
+        <!-- Swap this placeholder for the portrait: <img src="assets/images/ravi-portrait.jpg" alt="Ravi Kumar"> -->
+        <div class="portraitPlaceholder">
+          <strong>Portrait goes here</strong>
+          <span>Drop the image at assets/images/ravi-portrait.jpg and replace this block.</span>
+        </div>
+        <figcaption class="portraitMeta">
+          <strong>Ravi Kumar</strong>
+          <span>AI systems &amp; business dashboards</span>
+        </figcaption>
+      </figure>
+
+      <div class="prose">
+        <p class="leadLine">My work goes beyond building an individual website or chatbot.</p>
+        <p>I design practical digital solutions that bring administration, finance, marketing, customer management, content, reporting and daily operations into one structured environment. That gives business owners better visibility, reduces repetitive work and helps teams operate more efficiently.</p>
+        <p>My approach begins with understanding how the organisation currently works. I identify repetitive tasks, disconnected systems, reporting gaps and operational bottlenecks — then help structure and implement the right combination of dashboards, workflows, AI assistants and automation.</p>
+        <p>I work across leading AI platforms, using prompt-led, AI-assisted and no-code or low-code development to turn business requirements into functional digital products. That covers AI agents, multi-step workflows, human approval systems and multimodal AI across text, images, audio and video.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead">
+      <div class="kicker"><span></span>Dashboards</div>
+      <h2>One view of how the business is actually running.</h2>
+      <p>I specialise in AI-powered business dashboards that consolidate the moving parts into a single operating picture.</p>
+    </div>
+    <div class="cardGrid">
+      <article class="card">
+        <div class="cardNum">01</div>
+        <h3>Admin</h3>
+        <p>Users, roles, approvals, activities and day-to-day operational control.</p>
+      </article>
+      <article class="card">
+        <div class="cardNum">02</div>
+        <h3>Finance</h3>
+        <p>Revenue, expenses, payouts, subscriptions, vendors and reporting.</p>
+      </article>
+      <article class="card">
+        <div class="cardNum">03</div>
+        <h3>Marketing</h3>
+        <p>Campaigns, leads, funnels, conversions and channel performance.</p>
+      </article>
+      <article class="card">
+        <div class="cardNum">04</div>
+        <h3>Management</h3>
+        <p>A consolidated view of operations for decisions and oversight.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead">
+      <div class="kicker"><span></span>Also build</div>
+      <h2>The systems around the dashboard.</h2>
+      <p>Dashboards give visibility. These are the pieces that do the work in between.</p>
+    </div>
+    <div class="chipWrap">
+      <div class="chip">AI chatbots</div>
+      <div class="chip">Voice assistants</div>
+      <div class="chip">Lead-qualification systems</div>
+      <div class="chip">Customer-support tools</div>
+      <div class="chip">Personalised outreach workflows</div>
+      <div class="chip">Content automation</div>
+      <div class="chip">AI-enabled SaaS</div>
+      <div class="chip">AI agents</div>
+      <div class="chip">Multi-step workflows</div>
+      <div class="chip">Human approval systems</div>
+      <div class="chip">Multimodal AI</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sectionHead">
+      <div class="kicker"><span></span>Approach</div>
+      <h2>Understand first. Automate second.</h2>
+      <p>Every engagement starts with how the organisation works today, not with the tooling.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="stepNo">01</div>
+        <h3>Understand</h3>
+        <p>Map how the organisation currently operates, end to end.</p>
+      </div>
+      <div class="step">
+        <div class="stepNo">02</div>
+        <h3>Identify</h3>
+        <p>Find repetitive tasks, disconnected systems, reporting gaps and bottlenecks.</p>
+      </div>
+      <div class="step">
+        <div class="stepNo">03</div>
+        <h3>Structure</h3>
+        <p>Choose the right mix of dashboards, workflows, assistants and automation.</p>
+      </div>
+      <div class="step">
+        <div class="stepNo">04</div>
+        <h3>Implement</h3>
+        <p>Build it as a working system, with control and approvals where they matter.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<section class="bandDark">
+  <div class="bandInner">
+    <div class="kicker"><span></span>The objective</div>
+    <h2>Not AI because it is popular.<br>AI because the problem is real.</h2>
+    <p>The point is to build systems that solve real operational problems, improve management visibility, support better decisions and help the organisation scale with greater control.</p>
+    <div class="fitList">
+      <span>Growing businesses</span>
+      <span>Agencies</span>
+      <span>Startups</span>
+      <span>Service organisations</span>
+    </div>
+    <div class="bandActions">
+      <a class="btn btnPrimary" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business." target="_blank" rel="noopener">Start a conversation</a>
+      <a class="btn btnGhost" href="projects.html">See the work</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">© <span id="yr"></span> Ravi Kumar — AI-enabled systems, dashboards and automation.</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  // Mobile menu button routes back to the journey nav on the home page.
+  var mb = document.getElementById('mobileMenuBtn');
+  if (mb) mb.addEventListener('click', function(){ window.location.href = 'index.html'; });
+</script>
+</body>
+</html>

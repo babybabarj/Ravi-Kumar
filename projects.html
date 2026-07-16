@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects | Ravi Kumar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0b152e;
+  --muted:#52637d;
+  --orange:#ef7c22;
+  --orange2:#f7a45f;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  min-height:100vh;
+  font-family:"Plus Jakarta Sans",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:#fff3e8;
+  letter-spacing:-.012em;
+  text-rendering:geometricPrecision;
+  -webkit-font-smoothing:antialiased;
+}
+a { color:inherit; text-decoration:none; }
+.nav {
+  position:fixed;
+  z-index:80;
+  left:50%;
+  top:16px;
+  width:min(1284px,calc(100vw - 64px));
+  height:64px;
+  min-height:64px;
+  padding:8px 12px 8px 14px;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  border:1px solid rgba(255,255,255,.82);
+  border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,252,248,.90),rgba(255,245,238,.72));
+  box-shadow:0 18px 56px rgba(12,23,48,.13), inset 0 1px 0 rgba(255,255,255,.78), inset 0 -1px 0 rgba(255,255,255,.35);
+  backdrop-filter:blur(24px) saturate(1.12);
+}
+.brand { display:flex; align-items:center; gap:12px; min-width:0; }
+.logo {
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:#0b152e;
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:23px;
+  font-weight:700;
+  letter-spacing:-.03em;
+  box-shadow:0 14px 28px rgba(12,23,48,.18), inset 0 0 0 1px rgba(255,255,255,.18);
+}
+.brandText strong { display:block; font-size:14px; font-weight:900; letter-spacing:-.02em; }
+.brandText span { display:block; margin-top:3px; color:#52637b; font-size:9.4px; font-weight:900; letter-spacing:.25em; text-transform:uppercase; }
+.navLinks { display:flex; align-items:center; gap:21px; font-size:13.6px; font-weight:900; }
+.navLinks a { position:relative; padding:9px 2px; transition:color .22s ease, opacity .22s ease; }
+.navLinks a.active { color:var(--orange); }
+.navLinks a:hover { color:var(--orange); }
+.navLinks a.active:after {
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:1px;
+  width:18px;
+  height:2px;
+  border-radius:99px;
+  background:linear-gradient(90deg,var(--orange),var(--orange2));
+  transform:translateX(-50%);
+}
+.navActions { display:flex; align-items:center; gap:10px; }
+.navCta {
+  height:44px;
+  min-height:44px;
+  padding:0 23px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  color:#fff;
+  background:#0b152e;
+  box-shadow:0 14px 30px rgba(11,21,46,.16);
+  font-size:13.6px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.navCtaMail {
+  color:#0a142b;
+  background:rgba(255,255,255,.66);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:0 12px 26px rgba(12,23,48,.08);
+}
+.mailIcon,.waIcon {
+  width:17px;
+  height:17px;
+  display:inline-block;
+  background:currentColor;
+  -webkit-mask:center/contain no-repeat;
+  mask:center/contain no-repeat;
+}
+.mailIcon {
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.5 5h17A1.5 1.5 0 0 1 22 6.5v11A1.5 1.5 0 0 1 20.5 19h-17A1.5 1.5 0 0 1 2 17.5v-11A1.5 1.5 0 0 1 3.5 5Zm.5 3.15v8.85h16V8.15l-7.16 5.24a1.4 1.4 0 0 1-1.68 0L4 8.15Zm.86-1.15L12 12.22 19.14 7H4.86Z'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3.5 5h17A1.5 1.5 0 0 1 22 6.5v11A1.5 1.5 0 0 1 20.5 19h-17A1.5 1.5 0 0 1 2 17.5v-11A1.5 1.5 0 0 1 3.5 5Zm.5 3.15v8.85h16V8.15l-7.16 5.24a1.4 1.4 0 0 1-1.68 0L4 8.15Zm.86-1.15L12 12.22 19.14 7H4.86Z'/%3E%3C/svg%3E");
+}
+.waIcon {
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16.04 3C9.02 3 3.31 8.55 3.31 15.38c0 2.25.64 4.45 1.85 6.36L3 29l7.45-2.1a13.1 13.1 0 0 0 5.59 1.25c7.02 0 12.73-5.55 12.73-12.38S23.06 3 16.04 3Zm0 22.94c-1.78 0-3.52-.45-5.06-1.31l-.36-.2-4.42 1.25 1.27-4.17-.24-.38a10.2 10.2 0 0 1-1.67-5.75c0-5.62 4.7-10.2 10.48-10.2s10.48 4.58 10.48 10.2-4.7 10.56-10.48 10.56Zm5.75-7.69c-.31-.15-1.84-.88-2.13-.98-.29-.1-.5-.15-.71.15-.21.31-.81.98-1 .18-.18.21-.37.23-.68.08-.31-.15-1.31-.47-2.49-1.47-.92-.8-1.54-1.78-1.72-2.08-.18-.31-.02-.47.14-.62.14-.14.31-.36.47-.54.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.54-.08-.15-.71-1.67-.97-2.28-.26-.6-.52-.52-.71-.53h-.61c-.21 0-.55.08-.84.39-.29.31-1.1 1.05-1.1 2.57 0 1.52 1.13 2.99 1.29 3.19.16.21 2.23 3.32 5.4 4.65.76.32 1.35.51 1.81.65.76.23 1.45.2 1.99.12.61-.09 1.84-.73 2.1-1.43.26-.7.26-1.3.18-1.43-.08-.13-.29-.21-.6-.36Z'/%3E%3C/svg%3E");
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16.04 3C9.02 3 3.31 8.55 3.31 15.38c0 2.25.64 4.45 1.85 6.36L3 29l7.45-2.1a13.1 13.1 0 0 0 5.59 1.25c7.02 0 12.73-5.55 12.73-12.38S23.06 3 16.04 3Zm0 22.94c-1.78 0-3.52-.45-5.06-1.31l-.36-.2-4.42 1.25 1.27-4.17-.24-.38a10.2 10.2 0 0 1-1.67-5.75c0-5.62 4.7-10.2 10.48-10.2s10.48 4.58 10.48 10.2-4.7 10.56-10.48 10.56Zm5.75-7.69c-.31-.15-1.84-.88-2.13-.98-.29-.1-.5-.15-.71.15-.21.31-.81.98-1 .18-.18.21-.37.23-.68.08-.31-.15-1.31-.47-2.49-1.47-.92-.8-1.54-1.78-1.72-2.08-.18-.31-.02-.47.14-.62.14-.14.31-.36.47-.54.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.54-.08-.15-.71-1.67-.97-2.28-.26-.6-.52-.52-.71-.53h-.61c-.21 0-.55.08-.84.39-.29.31-1.1 1.05-1.1 2.57 0 1.52 1.13 2.99 1.29 3.19.16.21 2.23 3.32 5.4 4.65.76.32 1.35.51 1.81.65.76.23 1.45.2 1.99.12.61-.09 1.84-.73 2.1-1.43.26-.7.26-1.3.18-1.43-.08-.13-.29-.21-.6-.36Z'/%3E%3C/svg%3E");
+}
+.mobileMenuBtn,.mobileMenuPanel,.mobileCtaBar { display:none; }
+.pageHero {
+  min-height:42vh;
+  padding:150px min(6vw,84px) 48px;
+  display:grid;
+  align-items:end;
+  background:
+    linear-gradient(180deg,rgba(255,248,238,.70),rgba(255,248,238,.82)),
+    url("assets/images/bg-projects.jpg") center/cover no-repeat;
+}
+.pageHeroInner { width:min(980px,100%); }
+.kicker {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#5e6e86;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+}
+.kicker:before {
+  content:"";
+  width:46px;
+  height:2px;
+  border-radius:99px;
+  background:var(--orange);
+}
+h1 {
+  margin:12px 0 10px;
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:clamp(36px,3.2vw,48px);
+  line-height:.96;
+  font-weight:700;
+  letter-spacing:-.045em;
+}
+.pageHero p {
+  margin:0;
+  max-width:670px;
+  color:#32425c;
+  font-size:clamp(15px,1.15vw,18px);
+  line-height:1.42;
+  font-weight:700;
+}
+.project {
+  position:relative;
+  isolation:isolate;
+  min-height:590px;
+  padding:58px min(5.5vw,78px);
+  display:grid;
+  grid-template-columns:minmax(300px,.48fr) minmax(560px,.92fr);
+  gap:min(4vw,56px);
+  align-items:center;
+  background:center/cover no-repeat;
+}
+.project:after {
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:linear-gradient(90deg,rgba(255,248,238,.92),rgba(255,248,238,.60) 52%,rgba(255,248,238,.90));
+}
+#whatsroute { background-image:url("assets/images/bg-services.jpg"); }
+#aurelia { background-image:url("assets/images/bg-partner.jpg"); grid-template-columns:minmax(560px,.92fr) minmax(300px,.48fr); }
+#arion { background-image:url("assets/images/bg-home.jpg"); }
+#aurelia .brief { order:2; }
+#aurelia .preview { order:1; }
+.brief {
+  padding:24px;
+  border-radius:22px;
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 20px 46px rgba(20,28,44,.10);
+  backdrop-filter:blur(18px);
+}
+.brief h2 {
+  margin:10px 0 10px;
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-size:clamp(30px,2.7vw,40px);
+  line-height:.98;
+  font-weight:700;
+  letter-spacing:-.045em;
+}
+.brief p {
+  margin:0;
+  color:#35455f;
+  font-size:15px;
+  line-height:1.46;
+  font-weight:650;
+}
+.workList {
+  display:grid;
+  gap:8px;
+  margin:18px 0 0;
+  padding:0;
+  list-style:none;
+}
+.workList li {
+  min-height:38px;
+  padding:10px 12px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  color:#12213e;
+  background:rgba(255,255,255,.66);
+  border:1px solid rgba(255,255,255,.78);
+  font-size:13px;
+  font-weight:760;
+}
+.actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:20px; }
+.btn {
+  min-height:44px;
+  padding:0 18px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:820;
+}
+.btn.dark { color:#fff; background:#0b152e; }
+.btn.light { background:rgba(255,255,255,.72); border:1px solid rgba(255,255,255,.82); }
+.preview {
+  overflow:hidden;
+  border-radius:26px;
+  background:#0b152e;
+  border:1px solid rgba(255,255,255,.68);
+  box-shadow:0 24px 58px rgba(20,28,44,.16);
+  transform:perspective(1400px) rotateX(0) rotateY(0) translateY(0);
+  transform-style:preserve-3d;
+  transition:transform .36s cubic-bezier(.22,.61,.36,1), box-shadow .36s ease, border-color .36s ease;
+}
+.preview:hover {
+  border-color:rgba(255,255,255,.92);
+  box-shadow:0 32px 76px rgba(20,28,44,.22);
+  transform:perspective(1400px) rotateX(1.2deg) rotateY(-1.4deg) translateY(0) scale(1.008);
+}
+.browserTop {
+  height:36px;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#c7d2e4;
+  background:#101b35;
+  font-size:11px;
+  font-weight:760;
+}
+.browserTop i { width:10px; height:10px; border-radius:50%; background:#f25f57; }
+.browserTop i:nth-child(2) { background:#f0bd42; }
+.browserTop i:nth-child(3) { margin-right:8px; background:#55c56f; }
+.frameWrap {
+  position:relative;
+  aspect-ratio:16 / 9;
+  height:auto;
+  min-height:0;
+  overflow:hidden;
+  background:#fff;
+}
+.frameWrap iframe {
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:2;
+  width:1920px;
+  height:1080px;
+  border:0;
+  transform:scale(var(--preview-scale,.42));
+  transform-origin:top left;
+  pointer-events:none;
+  overflow:hidden;
+  display:block;
+  background:#fff;
+  opacity:0;
+  transition:opacity .28s ease;
+}
+.frameWrap iframe.is-loaded {
+  opacity:1;
+}
+.frameWrap .projectPreviewImg {
+  position:absolute;
+  inset:0;
+  z-index:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:top center;
+  display:block;
+  pointer-events:none;
+  background:#fff;
+}
+.tag {
+  position:absolute;
+  left:18px;
+  bottom:18px;
+  z-index:3;
+  min-height:34px;
+  padding:0 14px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  color:#fff;
+  background:rgba(11,21,46,.80);
+  border:1px solid rgba(255,255,255,.22);
+  backdrop-filter:blur(10px);
+  font-size:11px;
+  font-weight:820;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.footer { padding:38px min(5.5vw,78px) 54px; text-align:center; color:#52637d; font-size:14px; font-weight:700; background:rgba(255,248,238,.92); }
+@media (max-width:1250px) {
+  .navLinks { gap:16px; font-size:13px; }
+  .navCta { padding:0 17px; font-size:13px; }
+}
+@media (max-width:1000px) {
+  .nav {
+    top:10px;
+    width:calc(100vw - 20px);
+    min-height:64px;
+    border-radius:28px;
+    padding:9px 10px 9px 12px;
+  }
+  .logo { width:44px; height:44px; font-size:20px; }
+  .brandText strong { font-size:13px; }
+  .brandText span,.navLinks,.navActions .navCta { display:none; }
+  .mobileMenuBtn {
+    min-height:42px;
+    padding:0 16px;
+    border:0;
+    border-radius:999px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    color:#0b152e;
+    background:rgba(255,255,255,.86);
+    box-shadow:0 10px 24px rgba(20,28,44,.09);
+    font:800 12px/1 "Plus Jakarta Sans",Inter,sans-serif;
+  }
+  .pageHero { min-height:auto; padding:96px 18px 26px; }
+  h1 { font-size:clamp(42px,13vw,58px); }
+  .pageHero p { font-size:15px; }
+  .project,#aurelia {
+    min-height:auto;
+    padding:28px 14px;
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+  #aurelia .brief,#aurelia .preview { order:initial; }
+  .brief { padding:20px; border-radius:22px; }
+  .brief h2 { font-size:36px; }
+  .frameWrap { aspect-ratio:16 / 9; min-height:0; height:auto; }
+  .mobileCtaBar {
+    position:fixed;
+    z-index:90;
+    left:10px;
+    right:10px;
+    bottom:8px;
+    min-height:54px;
+    padding:6px;
+    border-radius:24px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:6px;
+    background:rgba(255,255,255,.86);
+    border:1px solid rgba(255,255,255,.82);
+    box-shadow:0 18px 42px rgba(10,20,43,.16);
+    backdrop-filter:blur(18px);
+  }
+  .mobileCtaBar a {
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    color:#0b152e;
+    background:rgba(255,255,255,.70);
+    font-size:12px;
+    font-weight:820;
+  }
+  .mobileCtaBar a:nth-child(2) { color:#fff; background:linear-gradient(135deg,var(--orange),var(--orange2)); }
+  .mobileCtaBar a:nth-child(3) { color:#fff; background:#2fb46d; }
+  .mobileMenuPanel {
+    position:fixed;
+    z-index:100;
+    inset:0;
+    padding:16px;
+    display:none;
+    background:rgba(10,20,43,.42);
+    backdrop-filter:blur(14px);
+  }
+  body.mobileMenuOpen .mobileMenuPanel { display:grid; place-items:center; }
+  .mobileMenuCard {
+    width:min(100%,420px);
+    padding:18px;
+    border-radius:28px;
+    background:rgba(255,255,255,.94);
+    box-shadow:0 30px 70px rgba(10,20,43,.24);
+  }
+  .mobileMenuHead { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; font-weight:820; }
+  .mobileMenuHead button {
+    width:36px;
+    height:36px;
+    border:0;
+    border-radius:50%;
+    color:#0b152e;
+    background:rgba(10,20,43,.08);
+    font-size:24px;
+    line-height:1;
+  }
+  .mobileMenuLinks { display:grid; gap:8px; }
+  .mobileMenuLinks a {
+    min-height:44px;
+    padding:0 14px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    background:rgba(10,20,43,.06);
+    font-size:14px;
+    font-weight:820;
+  }
+  .mobileMenuEmail { color:#fff !important; background:linear-gradient(135deg,var(--orange),var(--orange2)) !important; }
+  .mobileMenuWhatsapp { color:#fff !important; background:#2fb46d !important; }
+  body { padding-bottom:74px; }
+}
+@media (max-width:520px) {
+  .project { padding-left:10px; padding-right:10px; padding-bottom:92px; }
+  .pageHero { padding-top:90px; padding-bottom:20px; }
+  .pageHero p { font-size:14px; line-height:1.35; }
+  .brief { padding:16px; }
+  .brief h2 { margin-top:8px; font-size:32px; }
+  .brief p { font-size:13.5px; line-height:1.38; }
+  .workList { display:none; }
+  .actions { margin-top:14px; gap:8px; }
+  .btn { min-height:40px; padding:0 14px; font-size:12px; }
+  .frameWrap { min-height:0; height:auto; max-height:none; }
+  .tag { display:none; }
+  .browserTop span { max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="index.html" class="brand"><span class="logo">RK</span><span class="brandText"><strong>Ravi Kumar</strong><span>Digital Partner</span></span></a>
+  <div class="navLinks">
+    <a class="active" href="projects.html">Projects</a>
+    <a href="about.html">About Me</a>
+    <a href="index.html#services">Services</a>
+    <a href="index.html#partner">Partner Support</a>
+    <a href="index.html#process">Process</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+  <div class="navActions">
+    <button id="mobileMenuBtn" class="mobileMenuBtn" type="button" aria-label="Open mobile menu" aria-expanded="false">Menu</button>
+    <a class="navCta navCtaMail mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
+    <a class="navCta" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener">Partner With Me</a>
+  </div>
+</nav>
+
+<header class="pageHero">
+  <div class="pageHeroInner">
+    <div class="kicker">Portfolio</div>
+    <h1>Projects</h1>
+    <p>A closer look at current brand websites, their visual direction, and the live home-page experience.</p>
+  </div>
+</header>
+
+<main>
+  <section class="project" id="whatsroute">
+    <div class="brief">
+      <div class="kicker">Real Estate SaaS</div>
+      <h2>WhatsRoute</h2>
+      <p>WhatsRoute is a WhatsApp-first lead conversion system for Dubai real estate teams. It helps agencies answer faster, qualify buyers, route hot leads, book viewings, and stop losing property enquiries.</p>
+      <ul class="workList">
+        <li>Brand mood: sharp, useful, conversion-focused</li>
+        <li>Visual focus: WhatsApp leads, CRM flow, dashboard clarity</li>
+        <li>Experience: demo request and lead leakage audit</li>
+      </ul>
+      <div class="actions">
+        <a class="btn dark" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener">Open Live Site</a>
+      </div>
+    </div>
+    <a class="preview" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener" aria-label="Open WhatsRoute live site">
+      <div class="browserTop"><i></i><i></i><i></i><span>whatsroute.vercel.app</span></div>
+      <div class="frameWrap">
+        <iframe class="livePreviewFrame" src="https://whatsroute.vercel.app/" title="WhatsRoute live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <img class="projectPreviewImg" src="assets/images/project-whatsroute-home.png" alt="WhatsRoute home page preview" loading="lazy" decoding="async">
+        <div class="tag">Home page view</div>
+      </div>
+    </a>
+  </section>
+
+  <section class="project" id="aurelia">
+    <div class="brief">
+      <div class="kicker">Dubai Real Estate Website</div>
+      <h2>Aurelia Villas Dubai</h2>
+      <p>Aurelia Villas Dubai is a luxury villa brand with a calm, elegant, real-estate focused presentation. The website uses refined visuals and simple enquiry paths for a premium property story.</p>
+      <ul class="workList">
+        <li>Brand mood: refined, spacious, high-value</li>
+        <li>Visual focus: villa lifestyle and premium detail</li>
+        <li>Experience: brochure, WhatsApp, and enquiry flow</li>
+      </ul>
+      <div class="actions">
+        <a class="btn dark" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener">Open Live Site</a>
+      </div>
+    </div>
+    <a class="preview" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener" aria-label="Open Aurelia Villas Dubai live site">
+      <div class="browserTop"><i></i><i></i><i></i><span>babybabarj.github.io/Aurelia-Villas-Dubai</span></div>
+      <div class="frameWrap">
+        <iframe class="livePreviewFrame" src="https://babybabarj.github.io/Aurelia-Villas-Dubai" title="Aurelia Villas Dubai live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <img class="projectPreviewImg" src="assets/images/project-aurelia-home.png" alt="Aurelia Villas Dubai home page preview" loading="lazy" decoding="async">
+        <div class="tag">Home page view</div>
+      </div>
+    </a>
+  </section>
+
+  <section class="project" id="arion">
+    <div class="brief">
+      <div class="kicker">Energy Drink Website</div>
+      <h2>ARION</h2>
+      <p>ARION is a performance energy drink brand with a bold, storm-led identity. The website presents the cans with a dark cinematic mood, sharp product focus, and a powerful brand-story feel.</p>
+      <ul class="workList">
+        <li>Brand mood: intense, premium, energetic</li>
+        <li>Visual focus: cans, storm colors, bold contrast</li>
+        <li>Experience: product-first with strong impact</li>
+      </ul>
+      <div class="actions">
+        <a class="btn dark" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener">Open Live Site</a>
+      </div>
+    </div>
+    <a class="preview" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener" aria-label="Open ARION Energy Drink live site">
+      <div class="browserTop"><i></i><i></i><i></i><span>babybabarj.github.io/arion</span></div>
+      <div class="frameWrap">
+        <iframe class="livePreviewFrame" src="https://babybabarj.github.io/arion/" title="ARION Energy Drink live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <img class="projectPreviewImg" src="assets/images/project-arion-home.png" alt="ARION Energy Drink home page preview" loading="lazy" decoding="async">
+        <div class="tag">Home page view</div>
+      </div>
+    </a>
+  </section>
+</main>
+
+<div id="mobileMenuPanel" class="mobileMenuPanel" aria-hidden="true">
+  <div class="mobileMenuCard">
+    <div class="mobileMenuHead">
+      <strong>Ravi Kumar</strong>
+      <button id="mobileMenuClose" type="button" aria-label="Close mobile menu">×</button>
+    </div>
+    <nav class="mobileMenuLinks" aria-label="Mobile navigation">
+      <a href="index.html#home">Home</a>
+      <a href="projects.html">Projects</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#services">Services</a>
+      <a href="index.html#partner">Partner Support</a>
+      <a href="index.html#process">Process</a>
+      <a href="index.html#contact">Contact</a>
+      <a class="mobileMenuEmail mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
+      <a class="mobileMenuWhatsapp waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
+    </nav>
+  </div>
+</div>
+
+<div class="mobileCtaBar" aria-label="Quick mobile actions">
+  <a href="projects.html">Projects</a>
+  <a href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A" class="mailLink"><span class="mailIcon" aria-hidden="true"></span>Email</a>
+  <a href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener" class="waLink"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
+</div>
+
+<script>
+(function(){
+  const btn = document.getElementById('mobileMenuBtn');
+  const panel = document.getElementById('mobileMenuPanel');
+  const close = document.getElementById('mobileMenuClose');
+  function openMenu(){
+    document.body.classList.add('mobileMenuOpen');
+    panel?.setAttribute('aria-hidden','false');
+    btn?.setAttribute('aria-expanded','true');
+  }
+  function closeMenu(){
+    document.body.classList.remove('mobileMenuOpen');
+    panel?.setAttribute('aria-hidden','true');
+    btn?.setAttribute('aria-expanded','false');
+  }
+  btn?.addEventListener('click', openMenu);
+  close?.addEventListener('click', closeMenu);
+  panel?.addEventListener('click', function(e){
+    if (e.target === panel || e.target.closest('a')) closeMenu();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  function fitLivePreviews(){
+    document.querySelectorAll('.frameWrap').forEach((wrap) => {
+      const scale = Math.min(wrap.clientWidth / 1920, wrap.clientHeight / 1080);
+      wrap.style.setProperty('--preview-scale', Math.max(0.12, scale).toFixed(4));
+    });
+  }
+  window.addEventListener('resize', fitLivePreviews);
+  window.addEventListener('load', fitLivePreviews, { once:true });
+  fitLivePreviews();
+  document.querySelectorAll('.livePreviewFrame').forEach((frame) => {
+    if (frame.dataset.loadBound) return;
+    frame.dataset.loadBound = '1';
+    frame.addEventListener('load', () => frame.classList.add('is-loaded'), { once:true });
+  });
+  if ('ResizeObserver' in window) {
+    const previewObserver = new ResizeObserver(fitLivePreviews);
+    document.querySelectorAll('.frameWrap').forEach((wrap) => previewObserver.observe(wrap));
+  }
+})();
+</script>
+</body>
+</html>
