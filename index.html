@@ -3521,6 +3521,15 @@ a[href^="mailto"].btn:hover,
 
 <script>
 (function(){
+  /*
+    The journey snaps between whole panels, so letting the browser drop a visitor
+    back at an arbitrary mid-panel offset on refresh is wrong on its own terms.
+    It also used to run the card measurement at that restored offset.
+  */
+  if ('scrollRestoration' in history) {
+    try { history.scrollRestoration = 'manual'; } catch(e) {}
+  }
+
   const sections = [...document.querySelectorAll('.panel')];
   const dots = [...document.querySelectorAll('.dot')];
   const navs = [...document.querySelectorAll('.navLinks a')];
@@ -3730,12 +3739,45 @@ a[href^="mailto"].btn:hover,
     Returned as a percentage of viewport height: the avatar transform is in vh,
     and a snapped panel's top sits at the viewport top.
   */
+  /* Distance from an element's top to an ancestor's top, walking offsetParent. */
+  function offsetTopWithin(el, ancestor){
+    let y = 0;
+    let node = el;
+    while (node && node !== ancestor && ancestor.contains(node)) {
+      y += node.offsetTop;
+      node = node.offsetParent;
+    }
+    return y;
+  }
+
+  /*
+    Where the avatar should stand on a panel, as a percentage of viewport height.
+
+    A sticky card has to be handled separately, and neither obvious API helps:
+    once #projects .projectHeroWrap is stuck, getBoundingClientRect().top pins to
+    its sticky offset AND Chrome's offsetTop grows with scroll (measured: 0, 0,
+    500, 1400 as the panel scrolled past). Either one gives a different answer
+    depending on when it runs, which is exactly the bug -- on refresh the browser
+    restored a mid-panel scroll position, the measurement ran there, and the
+    avatar was placed at 80% of the viewport instead of 50%, hanging low.
+
+    A stuck element's geometry is knowable without measuring it: it pins at its
+    own `top` and keeps its height, so its centre is top + height / 2. That is
+    scroll-independent by construction.
+  */
   function measureCardCentre(section){
     const card = section.querySelector('.copy') || section.querySelector('.projectHeroWrap');
     const vh = Math.max(1, window.innerHeight);
     if (!card) return 50;
-    const r = card.getBoundingClientRect();
-    const centreFromPanelTop = (r.top + window.scrollY - section.offsetTop) + r.height / 2;
+
+    const cs = getComputedStyle(card);
+    let centreFromPanelTop;
+    if (cs.position === 'sticky') {
+      const stickyTop = parseFloat(cs.top);
+      centreFromPanelTop = (Number.isFinite(stickyTop) ? stickyTop : 0) + card.offsetHeight / 2;
+    } else {
+      centreFromPanelTop = offsetTopWithin(card, section) + card.offsetHeight / 2;
+    }
     return Math.max(20, Math.min(80, (centreFromPanelTop / vh) * 100));
   }
 
