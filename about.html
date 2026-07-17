@@ -114,18 +114,20 @@ a { color:inherit; text-decoration:none; }
   letter-spacing:.24em; text-transform:uppercase;
 }
 .kicker span { width:34px; height:2px; border-radius:99px; background:var(--orange); }
+/* Type scale is taken from projects.html so the standalone pages read as one site.
+   These values are that page's, not new ones. */
 .pageHero h1 {
-  margin:14px 0 12px;
-  font-family:'Cormorant Garamond',serif;
+  margin:12px 0 10px;
+  font-family:"Cormorant Garamond",Georgia,serif;
   font-weight:700;
-  font-size:clamp(44px,6vw,82px);
-  line-height:.98;
-  letter-spacing:-.02em;
+  font-size:clamp(36px,3.2vw,48px);
+  line-height:.96;
+  letter-spacing:-.045em;
 }
 .pageHero p {
-  margin:0; max-width:70ch;
-  color:var(--muted); font-size:clamp(15px,1.15vw,18px);
-  font-weight:600; line-height:1.6;
+  margin:0; max-width:670px;
+  color:#32425c; font-size:clamp(15px,1.15vw,18px);
+  font-weight:700; line-height:1.42;
 }
 
 /* ---------- shared section shell ---------- */
@@ -133,16 +135,16 @@ a { color:inherit; text-decoration:none; }
 .section { padding:64px 0; }
 .sectionHead { margin-bottom:34px; }
 .sectionHead h2 {
-  margin:12px 0 10px;
-  font-family:'Cormorant Garamond',serif;
+  margin:10px 0 10px;
+  font-family:"Cormorant Garamond",Georgia,serif;
   font-weight:700;
-  font-size:clamp(30px,3.4vw,46px);
-  line-height:1.04;
-  letter-spacing:-.02em;
+  font-size:clamp(30px,2.7vw,40px);
+  line-height:.98;
+  letter-spacing:-.045em;
 }
 .sectionHead p {
-  margin:0; max-width:68ch; color:var(--muted);
-  font-size:15.5px; font-weight:600; line-height:1.62;
+  margin:0; max-width:670px; color:#35455f;
+  font-size:clamp(15px,1.15vw,18px); font-weight:700; line-height:1.42;
 }
 
 /* ---------- intro: portrait + prose ---------- */
@@ -160,17 +162,6 @@ a { color:inherit; text-decoration:none; }
   box-shadow:0 26px 70px rgba(12,23,48,.14);
 }
 .portraitCard img { display:block; width:100%; height:auto; }
-/* Placeholder until the real portrait lands: same footprint, no layout shift. */
-.portraitPlaceholder {
-  aspect-ratio:4 / 5;
-  display:grid; place-items:center; gap:10px;
-  background:
-    linear-gradient(145deg,rgba(239,124,34,.14),rgba(247,164,95,.07)),
-    repeating-linear-gradient(45deg,rgba(12,23,48,.035) 0 12px,transparent 12px 24px);
-  color:#7b8aa1; text-align:center; padding:24px;
-}
-.portraitPlaceholder strong { font-size:14px; font-weight:900; color:#5e6e86; }
-.portraitPlaceholder span { font-size:12.5px; font-weight:600; max-width:24ch; line-height:1.5; }
 .portraitMeta {
   padding:18px 20px 20px;
   border-top:1px solid rgba(12,23,48,.08);
@@ -246,9 +237,9 @@ a { color:inherit; text-decoration:none; }
 }
 .bandInner { width:min(1160px,100%); margin:0 auto; }
 .bandDark h2 {
-  margin:12px 0 14px;
-  font-family:'Cormorant Garamond',serif; font-weight:700;
-  font-size:clamp(28px,3.2vw,42px); line-height:1.05;
+  margin:10px 0 12px;
+  font-family:"Cormorant Garamond",Georgia,serif; font-weight:700;
+  font-size:clamp(30px,2.7vw,40px); line-height:.98; letter-spacing:-.045em;
 }
 .bandDark .kicker { color:#9fb0c8; }
 .bandDark p { margin:0 0 26px; max-width:66ch; color:#c3cfe1; font-size:16px; font-weight:600; line-height:1.66; }
@@ -279,7 +270,9 @@ a { color:inherit; text-decoration:none; }
   .portraitCard { position:static; max-width:420px; }
 }
 @media (max-width:640px) {
-  .pageHero { padding:132px 22px 38px; }
+  .pageHero { padding:96px 22px 30px; }
+  .pageHero h1 { font-size:clamp(42px,13vw,58px); }
+  .pageHero p { font-size:15px; }
   .wrap { padding:0 22px; }
   .section { padding:46px 0; }
 }
@@ -319,11 +312,7 @@ a { color:inherit; text-decoration:none; }
   <section class="section">
     <div class="introGrid">
       <figure class="portraitCard" style="margin:0">
-        <!-- Swap this placeholder for the portrait: <img src="assets/images/ravi-portrait.jpg" alt="Ravi Kumar"> -->
-        <div class="portraitPlaceholder">
-          <strong>Portrait goes here</strong>
-          <span>Drop the image at assets/images/ravi-portrait.jpg and replace this block.</span>
-        </div>
+        <img src="assets/images/ravi-portrait.jpg" alt="Ravi Kumar" width="608" height="760" decoding="async">
         <figcaption class="portraitMeta">
           <strong>Ravi Kumar</strong>
           <span>AI systems &amp; business dashboards</span>
