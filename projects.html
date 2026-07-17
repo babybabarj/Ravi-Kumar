@@ -342,6 +342,17 @@ h1 {
   letter-spacing:.08em;
   text-transform:uppercase;
 }
+/* Stand-in for a project poster that has not been supplied yet. Sized by the
+   frameWrap it sits in, so swapping in the real <img> changes nothing. */
+.projectPosterPending {
+  position:absolute; inset:0;
+  display:grid; place-items:center;
+  background:
+    linear-gradient(145deg,rgba(239,124,34,.10),rgba(247,164,95,.05)),
+    repeating-linear-gradient(45deg,rgba(12,23,48,.04) 0 14px,transparent 14px 28px);
+  color:#8494ab; font-size:13px; font-weight:800; letter-spacing:.06em;
+  text-transform:uppercase;
+}
 .footer { padding:38px min(5.5vw,78px) 54px; text-align:center; color:#52637d; font-size:14px; font-weight:700; background:rgba(255,248,238,.92); }
 @media (max-width:1250px) {
   .navLinks { gap:16px; font-size:13px; }
@@ -522,6 +533,32 @@ h1 {
         <iframe class="livePreviewFrame" src="https://whatsroute.vercel.app/" title="WhatsRoute live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
         <img class="projectPreviewImg" src="assets/images/project-whatsroute-home.png" alt="WhatsRoute home page preview" loading="lazy" decoding="async">
         <div class="tag">Home page view</div>
+      </div>
+    </a>
+  </section>
+
+
+  <!--
+    Dimpleit. Pending, same as the homepage slide:
+    - poster: assets/images/project-dimpleit-home.png, then swap .projectPosterPending
+      for the <img> the other blocks use
+    - live preview: dimpleit.com did not respond when this was built, so no iframe
+      is wired up. Add src once the host is serving.
+    - copy: kicker, <p> and workList all need real content.
+  -->
+  <section class="project" id="dimpleit">
+    <div class="brief">
+      <div class="kicker">Pending</div>
+      <h2>Dimpleit</h2>
+      <p>Description pending.</p>
+      <div class="actions">
+        <a class="btn dark" href="https://dimpleit.com" target="_blank" rel="noopener">Open Live Site</a>
+      </div>
+    </div>
+    <a class="preview" href="https://dimpleit.com" target="_blank" rel="noopener" aria-label="Open Dimpleit live site">
+      <div class="browserTop"><i></i><i></i><i></i><span>dimpleit.com</span></div>
+      <div class="frameWrap">
+        <div class="projectPosterPending">Preview pending</div>
       </div>
     </a>
   </section>
