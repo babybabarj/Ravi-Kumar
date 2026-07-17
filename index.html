@@ -17,15 +17,17 @@
   --accent:#ef7c22;
   --navH:66px;
   --maxW:min(1240px,calc(100vw - 56px));
-  /* .panel pads calc(var(--navH) + 26px) top / 24px bottom, so the content card's
-     centre sits (92 - 24) / 2 = 34px below the viewport centre regardless of
-     viewport height. The avatar is placed against raw vh, so it needs the same
-     nudge to line up with the card. Tune this one value if the character reads
-     high or low. */
-  --avatar-align-y:34px;
+  /* Fine-tune only. The avatar's vertical position is measured from each card's real
+     box at runtime (see measureCardCentre), so this should stay 0. Nudge it only if
+     the character reads consistently high or low against the cards. */
+  --avatar-align-y:0px;
 }
 * { box-sizing:border-box; }
-html { scroll-behavior:smooth; scroll-snap-type:y mandatory; }
+/* No CSS scroll snapping on desktop: the JS controller in the avatar script owns
+   snapping. Running both meant the browser re-snapped mid-flight while the rAF
+   loop was still scrolling, which left the page parked between two panels and
+   showed two hero backgrounds at once. */
+html { scroll-behavior:auto; scroll-snap-type:none; }
 body { margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif; color:var(--ink); background:#101827; overflow-x:hidden; }
 a { color:inherit; text-decoration:none; }
 .nav {
@@ -46,7 +48,6 @@ a { color:inherit; text-decoration:none; }
 
 .panel {
   position:relative; isolation:isolate; height:100svh; min-height:620px; overflow:hidden;
-  scroll-snap-align:start; scroll-snap-stop:always;
   display:flex; align-items:center; padding:calc(var(--navH) + 26px) 0 24px;
 }
 .bgMask {
@@ -74,7 +75,12 @@ a { color:inherit; text-decoration:none; }
   display:grid; grid-template-columns:minmax(520px,590px) 1fr; gap:46px; align-items:center;
 }
 .panel.reverse .container { grid-template-columns:1fr minmax(520px,590px); }
-.panel.reverse .copy { grid-column:2; }
+/* .copy is placed explicitly in column 2, so auto-placement pushed .emptyStage onto a
+   second grid row -- which split the row heights and lifted the card ~100px above the
+   centre the non-reverse panels sit at. Pinning both to row 1 keeps a single centred
+   row, so reverse and normal panels agree. */
+.panel.reverse .copy { grid-column:2; grid-row:1; }
+.panel.reverse .emptyStage { grid-column:1; grid-row:1; }
 .copy {
   max-height:100%; overflow:hidden; border-radius:28px; padding:clamp(24px,2.35vw,34px);
   background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(255,247,236,.62));
@@ -308,6 +314,11 @@ h1 { margin:0 0 12px; font-family:'Playfair Display',Georgia,serif; font-weight:
   }
 }
 
+
+/* The avatar canvas stays invisible until its first keyed frame is on screen, so no
+   empty/uninitialised compositing layer can flash before the character appears. */
+.v24AvatarCanvas { opacity:0; }
+.avatarReady .v24AvatarCanvas { opacity:1; transition:opacity .16s linear; }
 
 /* Final-only change: remove walking effect and force direct frame-by-frame diagonal movement */
 #avatarBox.v24VideoBox,
@@ -4101,6 +4112,10 @@ a[href^="mailto"].btn:hover,
 
     gl.clearColor(0, 0, 0, 0);
     gl.disable(gl.DEPTH_TEST);
+    /* Paint the buffer transparent immediately. Creating the GL context promotes the
+       canvas to a compositing layer, and that layer can composite one frame before any
+       content is uploaded -- which showed as a white rectangle on first load. */
+    gl.clear(gl.COLOR_BUFFER_BIT);
 
     let lastGeom = '';
 
@@ -4179,6 +4194,32 @@ a[href^="mailto"].btn:hover,
     }
   }
 
+  /*
+    Where the avatar should stand, measured rather than hardcoded.
+
+    data-y used to carry a guessed percentage per panel, which drifted for two
+    reasons: a card's height changes with viewport and copy length, and the
+    `reverse` panels place .copy in grid-column 2 while .emptyStage auto-places,
+    pushing the card onto a second grid row ~100px above the centre the normal
+    panels sit at. Measuring the card's own box sidesteps both -- the character
+    lands on the card's true centre at any size.
+
+    Returned as a percentage of viewport height: the avatar transform is in vh,
+    and a snapped panel's top sits at the viewport top.
+  */
+  function measureCardCentre(section){
+    const card = section.querySelector('.copy') || section.querySelector('.projectHeroWrap');
+    const vh = Math.max(1, window.innerHeight);
+    if (!card) return 50;
+    const r = card.getBoundingClientRect();
+    const centreFromPanelTop = (r.top + window.scrollY - section.offsetTop) + r.height / 2;
+    return Math.max(20, Math.min(80, (centreFromPanelTop / vh) * 100));
+  }
+
+  function refreshCardCentres(){
+    sections.forEach(section => { section.__cardY = measureCardCentre(section); });
+  }
+
   function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
   function mix(a,b,t){ return a + (b-a)*t; }
   function smoother(t){ return t*t*t*(t*(t*6-15)+10); }
@@ -4230,17 +4271,17 @@ a[href^="mailto"].btn:hover,
         const sideX = [37, 63, 37];
         return {
           x: mix(sideX[current], sideX[next], tStep),
-          y: 56,
+          y: Number.isFinite(projects.__cardY) ? projects.__cardY : 50,
           size: 390
         };
       }
     }
 
     const ax = Number(a.dataset.x || 64);
-    const ay = Number(a.dataset.y || 56);
-    const as = Number(a.dataset.size || 410);
+    const ay = Number.isFinite(a.__cardY) ? a.__cardY : Number(a.dataset.y || 50);
+    const as = Number(a.dataset.size || 390);
     const bx = Number(b.dataset.x || ax);
-    const by = Number(b.dataset.y || ay);
+    const by = Number.isFinite(b.__cardY) ? b.__cardY : Number(b.dataset.y || ay);
     const bs = Number(b.dataset.size || as);
 
     return {
@@ -4351,7 +4392,7 @@ a[href^="mailto"].btn:hover,
     snapState.moving = true;
     snapState.target = targetY;
 
-    const duration = clamp(Math.abs(distance) * .42, 620, 960);
+    const duration = clamp(Math.abs(distance) * .16, 300, 420);
     const start = performance.now();
     const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
@@ -4364,7 +4405,7 @@ a[href^="mailto"].btn:hover,
         window.scrollTo({ left:0, top:targetY, behavior:'instant' });
         snapState.raf = 0;
         snapState.moving = false;
-        snapState.cooldownUntil = Math.max(snapState.cooldownUntil, performance.now() + 980);
+        snapState.cooldownUntil = Math.max(snapState.cooldownUntil, performance.now() + 90);
       }
     }
 
@@ -4384,10 +4425,9 @@ a[href^="mailto"].btn:hover,
 
     const now = performance.now();
     if (snapState.moving || now < snapState.cooldownUntil) {
-      snapState.cooldownUntil = Math.max(snapState.cooldownUntil, now + 980);
       return;
     }
-    snapState.cooldownUntil = now + 1180;
+    snapState.cooldownUntil = now + 120;
     snapState.lastWheel = now;
 
     const stages = desktopSnapStages();
@@ -4430,6 +4470,7 @@ a[href^="mailto"].btn:hover,
       try {
         glKeyer(v, dx, dy, dw, dh, cw, ch);
         box.classList.remove('avatarKeyBlocked');
+        box.classList.add('avatarReady');
       } catch(e) {
         box.classList.add('avatarKeyBlocked');
       }
@@ -4488,6 +4529,7 @@ a[href^="mailto"].btn:hover,
 
     ctx.clearRect(0,0,cw,ch);
     ctx.putImageData(img,0,0);
+    box.classList.add('avatarReady');
     requestAnimationFrame(drawKeyedFrame);
   }
 
@@ -4500,33 +4542,14 @@ a[href^="mailto"].btn:hover,
     const targetIndex = clamp(Math.round(targetRaw), 0, max);
 
     /*
-      v11 motion tuning:
-      This uses one critically-damped spring value for the whole journey.
-      Because only ONE raw section-progress value moves, the avatar follows one clean
-      path forward/backward/skip-scroll without first dropping or stepping.
+      The avatar is bound directly to scroll position rather than chasing it with its
+      own spring. The spring settled on its own schedule, so after the page had already
+      arrived the character was still drifting in -- that was the "floating" motion.
+      scrollToSnapStage already eases the scroll itself, so the avatar inherits that
+      easing and travels in lockstep with the page: one wheel step, one clean move.
     */
-    const diff = targetRaw - displayRaw;
-    const distance = Math.abs(diff);
-
-    // Higher only for large jumps, softer near target. Balanced for forward/backward.
-    const stiffness = distance > 1.2 ? 76 : distance > 0.45 ? 62 : 46;
-    const damping = distance > 1.2 ? 16 : distance > 0.45 ? 14 : 12.5;
-
-    const accel = diff * stiffness - velocityRaw * damping;
-    velocityRaw += accel * dt;
-    displayRaw += velocityRaw * dt;
-
-    // Prevent overshoot past target.
-    if ((diff > 0 && displayRaw > targetRaw) || (diff < 0 && displayRaw < targetRaw)) {
-      displayRaw = targetRaw;
-      velocityRaw = 0;
-    }
-
-    // Snap tiny values to remove micro-jitter.
-    if (Math.abs(targetRaw - displayRaw) < 0.001 && Math.abs(velocityRaw) < 0.01) {
-      displayRaw = targetRaw;
-      velocityRaw = 0;
-    }
+    displayRaw = targetRaw;
+    velocityRaw = 0;
 
     applyAvatar(sectionPoint(displayRaw));
 
@@ -4545,6 +4568,7 @@ a[href^="mailto"].btn:hover,
   }
 
   function start(){
+    refreshCardCentres();
     const raw = clamp(scrollRaw(), 0, Math.max(0, sections.length - 1));
     displayRaw = raw;
     velocityRaw = 0;
@@ -4556,6 +4580,14 @@ a[href^="mailto"].btn:hover,
 
     requestAnimationFrame(drawKeyedFrame);
     requestAnimationFrame(update);
+  }
+
+  /* Card geometry moves with viewport size and with late-arriving webfonts, so
+     re-measure on both rather than trusting the first pass. */
+  window.addEventListener('resize', refreshCardCentres);
+  window.addEventListener('load', refreshCardCentres);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(refreshCardCentres).catch(()=>{});
   }
 
   if (document.readyState === 'loading') {
