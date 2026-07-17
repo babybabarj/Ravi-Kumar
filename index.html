@@ -275,6 +275,14 @@ h1 { margin:0 0 12px; font-family:'Playfair Display',Georgia,serif; font-weight:
   overflow: visible !important;
 }
 .v24AvatarCanvas {
+  /* Single source of truth for the avatar canvas. This selector was declared 9
+     separate times across stacked version patches, and the cascade winner was
+     assembled from five of them: transform from the last block, filter from the
+     7th, opacity from the 2nd, image-rendering from the 3rd, the rest from the
+     1st -- with three different drop-shadow alphas (.18/.16/.145) overriding each
+     other. These are the values that actually applied, confirmed by resolving the
+     cascade and verified by computed-style diff.
+     .avatarKeyBlocked / .avatarReady override this at higher specificity. */
   position: absolute !important;
   inset: 0 !important;
   width: 100% !important;
@@ -282,7 +290,10 @@ h1 { margin:0 0 12px; font-family:'Playfair Display',Georgia,serif; font-weight:
   object-fit: contain !important;
   object-position: center bottom !important;
   display: block !important;
-  filter: drop-shadow(0 30px 24px rgba(24,28,38,.18));
+  transform: translate3d(0,0,0) !important;
+  filter: drop-shadow(0 28px 22px rgba(24,28,38,.145)) !important;
+  image-rendering: auto;
+  opacity: 0;
 }
 .v24AvatarFallback {
   position: absolute !important;
@@ -331,7 +342,6 @@ h1 { margin:0 0 12px; font-family:'Playfair Display',Georgia,serif; font-weight:
 
 /* The avatar canvas stays invisible until its first keyed frame is on screen, so no
    empty/uninitialised compositing layer can flash before the character appears. */
-.v24AvatarCanvas { opacity:0; }
 .avatarReady .v24AvatarCanvas { opacity:1; transition:opacity .16s linear; }
 
 /* Final-only change: remove walking effect and force direct frame-by-frame diagonal movement */
@@ -1272,10 +1282,6 @@ h1 {
   backface-visibility:hidden !important;
   contain:layout paint;
 }
-.v24AvatarCanvas {
-  transform:translateZ(0) !important;
-  image-rendering:auto;
-}
 .v24AvatarShadow,
 .avatarShadow.v24AvatarShadow {
   transition:none !important;
@@ -1485,10 +1491,6 @@ h1 {
   transform:translate3d(-50%,-50%,0) !important;
   backface-visibility:hidden !important;
 }
-.v24AvatarCanvas {
-  transform:translateZ(0) !important;
-  filter:drop-shadow(0 28px 22px rgba(24,28,38,.16)) !important;
-}
 .v24AvatarShadow,
 .avatarShadow.v24AvatarShadow {
   transition:none !important;
@@ -1520,10 +1522,6 @@ h1 {
   backface-visibility:hidden !important;
   contain:layout paint style;
 }
-.v24AvatarCanvas {
-  transform:translate3d(0,0,0) !important;
-  filter:drop-shadow(0 28px 22px rgba(24,28,38,.145)) !important;
-}
 .v24AvatarShadow,
 .avatarShadow.v24AvatarShadow {
   transition:none !important;
@@ -1552,9 +1550,6 @@ h1 {
   animation:none !important;
   will-change:left, top, width, height, transform !important;
   transform:translate3d(-50%,-50%,0) !important;
-}
-.v24AvatarCanvas {
-  transform:translate3d(0,0,0) !important;
 }
 .v24AvatarShadow,
 .avatarShadow.v24AvatarShadow {
@@ -1586,9 +1581,6 @@ h1 {
   transform:translate3d(calc(var(--shadow-x,64) * 1vw), calc(var(--shadow-y,75) * 1vh + var(--avatar-align-y,34px)), 0) translateX(-50%) !important;
   transition:none !important;
   will-change:transform, width, opacity;
-}
-.v24AvatarCanvas {
-  transform:translate3d(0,0,0) !important;
 }
 .btn,
 .navCta,
@@ -1712,10 +1704,6 @@ a[href^="mailto"].btn:hover,
   backface-visibility:hidden !important;
   contain:layout paint style;
 }
-.v24AvatarCanvas {
-  transform:translate3d(0,0,0) !important;
-  filter:drop-shadow(0 28px 22px rgba(24,28,38,.145)) !important;
-}
 .v24AvatarShadow,
 .avatarShadow.v24AvatarShadow {
   left:0 !important;
@@ -1774,9 +1762,6 @@ a[href^="mailto"].btn:hover,
   animation:none !important;
   will-change:transform, width, height !important;
   backface-visibility:hidden !important;
-}
-.v24AvatarCanvas {
-  transform:translate3d(0,0,0) !important;
 }
 .miniCard strong,
 .chip {
