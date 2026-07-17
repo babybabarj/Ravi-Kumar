@@ -3063,7 +3063,10 @@ a[href^="mailto"].btn:hover,
       </div>
       <div class="scrollHint">Scroll journey <i></i></div>
     </section>
-    <section id="projects" class="panel hero-scene hero-scene--portfolio projectHeroFinal" data-effect="silk-snow" data-avatar="welcome" data-x="37" data-y="50" data-size="390" style="background-image:url('assets/images/bg-projects.jpg')">
+    <!-- data-x is where the avatar stands once the reel releases, so it must match the
+         last step of PROJECT_SIDES (63 for four projects) or the avatar jumps sides on
+         handover to #about. -->
+    <section id="projects" class="panel hero-scene hero-scene--portfolio projectHeroFinal" data-effect="silk-snow" data-avatar="welcome" data-x="63" data-y="50" data-size="390" style="background-image:url('assets/images/bg-projects.jpg')">
       <div class="scene-breath"></div>
       <div class="cloud-layer cloud-layer--wide"></div><div class="cloud-layer cloud-layer--soft"></div>
       <div class="bgMask"></div>
@@ -3865,7 +3868,11 @@ a[href^="mailto"].btn:hover,
 
     if (a && a.id === 'projects') {
       const projects = a;
-      const releaseTop = projects.offsetTop + window.innerHeight * 2;
+      /* The reel's last stage sits at offsetTop + vh * PROJECT_LAST. This was
+         hardcoded to vh * 2, correct for three projects; with four, the guard
+         failed on the final stage, so the avatar fell through to the generic
+         dataset.x path and stood on top of the card instead of opposite it. */
+      const releaseTop = projects.offsetTop + window.innerHeight * PROJECT_LAST;
       if (window.scrollY <= releaseTop + 2) {
         const stepValue = Number(projects.style.getPropertyValue('--project-step') || projects.dataset.projectStep || 0);
         const step = clamp(Number.isFinite(stepValue) ? stepValue : 0, 0, PROJECT_LAST);
@@ -4172,8 +4179,16 @@ a[href^="mailto"].btn:hover,
       activateForIndex(targetIndex, false);
     }
 
-    dots.forEach((d,k)=>d.classList.toggle('active', k===targetIndex));
-    navs.forEach(n=>n.classList.toggle('active', n.getAttribute('href') === '#' + (sections[targetIndex]?.id || 'home')));
+    /*
+      Match dots by href, not by index. targetIndex indexes `sections` (7 panels)
+      but the rail has 6 dots -- there is no #projects dot -- so k===targetIndex lit
+      the wrong dot for every panel after home (on #projects the About dot lit, on
+      #about the Services dot lit) and #contact at index 6 lit nothing at all. The
+      nav line below already matched on href; the dots now agree with it.
+    */
+    const activeId = '#' + (sections[targetIndex]?.id || 'home');
+    dots.forEach(d=>d.classList.toggle('active', d.getAttribute('href') === activeId));
+    navs.forEach(n=>n.classList.toggle('active', n.getAttribute('href') === activeId));
 
     requestAnimationFrame(update);
   }
