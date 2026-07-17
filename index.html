@@ -331,18 +331,6 @@ h1 { margin:0 0 12px; font-family:"Cormorant Garamond",Georgia,serif; font-weigh
 }
 
 
-/* Stand-in for a project poster that has not been supplied yet. Sized by the
-   liveFrameWrap it sits in, so swapping in the real <img> changes nothing. */
-.projectPosterPending {
-  position:absolute; inset:0;
-  display:grid; place-items:center;
-  background:
-    linear-gradient(145deg,rgba(239,124,34,.10),rgba(247,164,95,.05)),
-    repeating-linear-gradient(45deg,rgba(12,23,48,.04) 0 14px,transparent 14px 28px);
-  color:#8494ab; font-size:13px; font-weight:800; letter-spacing:.06em;
-  text-transform:uppercase;
-}
-
 /* The avatar canvas stays invisible until its first keyed frame is on screen, so no
    empty/uninitialised compositing layer can flash before the character appears. */
 .avatarReady .v24AvatarCanvas { opacity:1; transition:opacity .16s linear; }
@@ -3103,24 +3091,16 @@ a[href^="mailto"].btn:hover,
               </a>
             </div>
 
-            <!--
-              Dimpleit. Placeholder until the real assets land:
-              - poster: drop the screenshot at assets/images/project-dimpleit-home.png
-                and swap .projectPosterPending for the <img> the other slides use
-              - live preview: dimpleit.com was not resolving when this was built
-                (DNS resolved to 82.112.239.6 but nothing answered on 80/443), so no
-                iframe is wired up. Add data-src once the host is serving.
-              - copy: the <span> below needs the one-line description.
-            -->
             <div class="projectSlide is-left" data-step="1">
-              <a class="projectLiveCard" href="https://dimpleit.com" target="_blank" rel="noopener">
+              <a class="projectLiveCard" href="https://www.dimpleit.com/" target="_blank" rel="noopener">
                 <div class="liveBrowser">
                   <div class="liveBrowserTop"><i></i><i></i><i></i><span>dimpleit.com</span></div>
                   <div class="liveFrameWrap">
-                    <div class="projectPosterPending">Preview pending</div>
+                    <iframe class="livePreviewFrame" data-src="https://www.dimpleit.com/" title="Dimpleit live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                    <img class="projectPreviewImg" src="assets/images/project-dimpleit-home.jpg" alt="Dimpleit home page preview" loading="lazy" decoding="async">
                   </div>
                 </div>
-                <div class="projectBottom"><div><strong>Dimpleit</strong><span>Description pending.</span></div><em>View Live Site ↗</em></div>
+                <div class="projectBottom"><div><strong>Dimpleit</strong><span>Personalized stickers, storybooks and name slips made from your child's photo.</span></div><em>View Live Site ↗</em></div>
               </a>
             </div>
 
@@ -4301,7 +4281,6 @@ a[href^="mailto"].btn:hover,
       </div>
     </section>
 
-    <!-- Dimpleit: see the desktop slide for what is still pending (poster, live URL, copy). -->
     <section class="mcLayer mcContentLayer" data-scene="2" data-bg="projects" id="m-project-dimpleit">
       <div class="mcCard mcProjectPanel">
         <div class="mcProjectHead">
@@ -4311,14 +4290,16 @@ a[href^="mailto"].btn:hover,
           <span class="mcLiveBadge">Live previews</span>
         </div>
         <div class="mcLiveProjects">
-          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://dimpleit.com" role="link" tabindex="0" aria-label="Open Dimpleit live website">
+          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://www.dimpleit.com/" role="link" tabindex="0" aria-label="Open Dimpleit live website">
             <div class="mcBrowserTop">
               <i></i><i></i><i></i>
               <span>dimpleit.com</span>
-              <a class="mcOpenMini" href="https://dimpleit.com" target="_blank" rel="noopener">Open ↗</a>
+              <a class="mcOpenMini" href="https://www.dimpleit.com/" target="_blank" rel="noopener">Open ↗</a>
             </div>
             <div class="mcIframeWrap">
-              <div class="projectPosterPending">Preview pending</div>
+              <iframe class="livePreviewFrame" data-src="https://www.dimpleit.com/" title="Dimpleit live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+              <img class="projectPreviewImg" src="assets/images/project-dimpleit-home.jpg" alt="Dimpleit home page preview" loading="lazy" decoding="async">
+              <div class="mcProjectTag">Personalized Kids Keepsakes</div>
             </div>
           </div>
         </div>
