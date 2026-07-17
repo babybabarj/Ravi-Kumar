@@ -2545,8 +2545,8 @@ a[href^="mailto"].btn:hover,
   }
 }
 #projects.projectHeroFinal {
-  height:300svh !important;
-  min-height:300svh !important;
+  height:400svh !important;
+  min-height:400svh !important;
   overflow:visible !important;
   display:block !important;
 }
@@ -2617,14 +2617,18 @@ a[href^="mailto"].btn:hover,
   grid-column:3;
   transform:rotateY(-6deg) rotateX(1.5deg);
 }
+/* One pair per project: CSS cannot match "this attribute equals that attribute",
+   so each step is enumerated. Add a line here when a project is added. */
 #projects[data-project-step="0"] .projectSlide[data-step="0"],
 #projects[data-project-step="1"] .projectSlide[data-step="1"],
-#projects[data-project-step="2"] .projectSlide[data-step="2"] {
+#projects[data-project-step="2"] .projectSlide[data-step="2"],
+#projects[data-project-step="3"] .projectSlide[data-step="3"] {
   opacity:1;
   pointer-events:auto;
   transform:translate3d(0,0,0) scale(1);
 }
-#projects[data-project-step="2"] .projectSlide[data-step="2"] {
+/* This nudge belonged to the last slide, which is now step 3 rather than step 2. */
+#projects[data-project-step="3"] .projectSlide[data-step="3"] {
   transform:translate3d(0,24px,0) scale(1);
 }
 .projectSlide .projectLiveCard {
@@ -2842,7 +2846,7 @@ a[href^="mailto"].btn:hover,
     opacity:0 !important;
     pointer-events:none !important;
   }
-  #projects[data-project-step="2"] .projectSlide[data-step="2"] {
+  #projects[data-project-step="3"] .projectSlide[data-step="3"] {
     transform:translate3d(0,0,0) scale(1) !important;
   }
   #projects .projectLiveCard:hover {
@@ -2864,10 +2868,12 @@ a[href^="mailto"].btn:hover,
     min-height:620px !important;
   }
   #projects.projectHeroFinal {
-    height:300vh !important;
-    min-height:300vh !important;
-    height:300dvh !important;
-    min-height:300dvh !important;
+    /* vh first as the fallback, dvh for browsers that support it. Both must
+       carry the same stage count or the reel maths and the panel disagree. */
+    height:400vh !important;
+    min-height:400vh !important;
+    height:400dvh !important;
+    min-height:400dvh !important;
   }
   #projects .projectHeroWrap {
     height:100vh !important;
@@ -3086,6 +3092,19 @@ a[href^="mailto"].btn:hover,
             </div>
 
             <div class="projectSlide is-left" data-step="1">
+              <a class="projectLiveCard" href="https://www.dimpleit.com/" target="_blank" rel="noopener">
+                <div class="liveBrowser">
+                  <div class="liveBrowserTop"><i></i><i></i><i></i><span>dimpleit.com</span></div>
+                  <div class="liveFrameWrap">
+                    <iframe class="livePreviewFrame" data-src="https://www.dimpleit.com/" title="Dimpleit live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+                    <img class="projectPreviewImg" src="assets/images/project-dimpleit-home.jpg" alt="Dimpleit home page preview" loading="lazy" decoding="async">
+                  </div>
+                </div>
+                <div class="projectBottom"><div><strong>Dimpleit</strong><span>Personalized stickers, storybooks and name slips made from your child's photo.</span></div><em>View Live Site ↗</em></div>
+              </a>
+            </div>
+
+            <div class="projectSlide is-right" data-step="2">
               <a class="projectLiveCard" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener">
                 <div class="liveBrowser">
                   <div class="liveBrowserTop"><i></i><i></i><i></i><span>babybabarj.github.io/Aurelia-Villas-Dubai</span></div>
@@ -3098,7 +3117,7 @@ a[href^="mailto"].btn:hover,
               </a>
             </div>
 
-            <div class="projectSlide is-right" data-step="2">
+            <div class="projectSlide is-left" data-step="3">
               <a class="projectLiveCard" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener">
                 <div class="liveBrowser">
                   <div class="liveBrowserTop"><i></i><i></i><i></i><span>babybabarj.github.io/arion</span></div>
@@ -3530,6 +3549,17 @@ a[href^="mailto"].btn:hover,
     try { history.scrollRestoration = 'manual'; } catch(e) {}
   }
 
+  /*
+    The reel used to hardcode 3 everywhere: the step clamps, the progress
+    multiplier, the snap stages and the sideX array all assumed exactly three
+    projects, and #projects assumed 300svh. These derive from the markup instead,
+    so a project is added by adding a slide and bumping the panel height.
+  */
+  const PROJECT_SLIDES = document.querySelectorAll('#projects .projectSlide').length || 1;
+  const PROJECT_LAST = Math.max(0, PROJECT_SLIDES - 1);
+  /* Alternate sides so the character never lands on the same side twice running. */
+  const PROJECT_SIDES = Array.from({ length: PROJECT_SLIDES }, (_, i) => (i % 2 === 0 ? 37 : 63));
+
   const sections = [...document.querySelectorAll('.panel')];
   const dots = [...document.querySelectorAll('.dot')];
   const navs = [...document.querySelectorAll('.navLinks a')];
@@ -3838,11 +3868,13 @@ a[href^="mailto"].btn:hover,
       const releaseTop = projects.offsetTop + window.innerHeight * 2;
       if (window.scrollY <= releaseTop + 2) {
         const stepValue = Number(projects.style.getPropertyValue('--project-step') || projects.dataset.projectStep || 0);
-        const step = clamp(Number.isFinite(stepValue) ? stepValue : 0, 0, 2);
+        const step = clamp(Number.isFinite(stepValue) ? stepValue : 0, 0, PROJECT_LAST);
         const current = Math.floor(step);
-        const next = clamp(current + 1, 0, 2);
+        const next = clamp(current + 1, 0, PROJECT_LAST);
         const tStep = clamp(step - current, 0, 1);   /* linear: see note in sectionPoint */
-        const sideX = [37, 63, 37];
+        /* One entry per project, alternating sides. Four steps end on the right,
+           which hands over cleanly to #about on the left. */
+        const sideX = PROJECT_SIDES;
         return {
           x: mix(sideX[current], sideX[next], tStep),
           y: Number.isFinite(projects.__cardY) ? projects.__cardY : 50,
@@ -3882,7 +3914,7 @@ a[href^="mailto"].btn:hover,
         if (section.id === 'projects') {
           const reelDistance = Math.max(1, height - vh);
           const projectProgress = clamp((y - top) / reelDistance, 0, 1);
-          const projectStep = clamp(projectProgress * 2, 0, 2);
+          const projectStep = clamp(projectProgress * PROJECT_LAST, 0, PROJECT_LAST);
           const activeProjectStep = String(Math.round(projectStep));
           section.style.setProperty('--project-step', projectStep.toFixed(4));
           section.dataset.projectStep = activeProjectStep;
@@ -3897,10 +3929,10 @@ a[href^="mailto"].btn:hover,
       }
 
       if (section.id === 'projects') {
-        section.style.setProperty('--project-step', '2');
-        section.dataset.projectStep = '2';
+        section.style.setProperty('--project-step', String(PROJECT_LAST));
+        section.dataset.projectStep = String(PROJECT_LAST);
         section.querySelectorAll('.projectSlide').forEach(slide => {
-          slide.classList.toggle('is-active', slide.dataset.step === '2');
+          slide.classList.toggle('is-active', slide.dataset.step === String(PROJECT_LAST));
         });
       }
       raw = i + 1;
@@ -3932,7 +3964,7 @@ a[href^="mailto"].btn:hover,
     sections.forEach(section => {
       const top = section.offsetTop;
       if (section.id === 'projects') {
-        stages.push(top, top + vh, top + vh * 2);
+        for (let step = 0; step <= PROJECT_LAST; step++) stages.push(top + vh * step);
       } else {
         stages.push(top);
       }
@@ -4243,6 +4275,31 @@ a[href^="mailto"].btn:hover,
               <iframe class="livePreviewFrame" data-src="https://whatsroute.vercel.app/" title="WhatsRoute live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
               <img class="projectPreviewImg" src="assets/images/project-whatsroute-home.png" alt="WhatsRoute home page preview" loading="lazy" decoding="async">
               <div class="mcProjectTag">Real Estate SaaS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mcLayer mcContentLayer" data-scene="2" data-bg="projects" id="m-project-dimpleit">
+      <div class="mcCard mcProjectPanel">
+        <div class="mcProjectHead">
+          <div>
+            <h2>Dimpleit</h2>
+          </div>
+          <span class="mcLiveBadge">Live previews</span>
+        </div>
+        <div class="mcLiveProjects">
+          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://www.dimpleit.com/" role="link" tabindex="0" aria-label="Open Dimpleit live website">
+            <div class="mcBrowserTop">
+              <i></i><i></i><i></i>
+              <span>dimpleit.com</span>
+              <a class="mcOpenMini" href="https://www.dimpleit.com/" target="_blank" rel="noopener">Open ↗</a>
+            </div>
+            <div class="mcIframeWrap">
+              <iframe class="livePreviewFrame" data-src="https://www.dimpleit.com/" title="Dimpleit live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+              <img class="projectPreviewImg" src="assets/images/project-dimpleit-home.jpg" alt="Dimpleit home page preview" loading="lazy" decoding="async">
+              <div class="mcProjectTag">Personalized Kids Keepsakes</div>
             </div>
           </div>
         </div>
