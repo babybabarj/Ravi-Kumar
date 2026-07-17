@@ -176,6 +176,42 @@ h1 { margin:0 0 12px; font-family:"Cormorant Garamond",Georgia,serif; font-weigh
   .chipGrid,.cardGrid { grid-template-columns:1fr; }
 }
 
+/*
+  #projects is the only panel taller than the viewport -- it is 4 stages tall so the
+  reel has somewhere to scroll. background-size:cover sizes against each panel's own
+  box, so its copy of bg-projects.jpg rendered at 3.83x while #about, which shares
+  that exact same image file, rendered at 0.96x like every other panel. Two adjacent
+  panels showing one photo at 4x different zoom is the seam: the same background,
+  apparently "shifted".
+
+  The backdrop holder is absolute so it stays out of the panel's layout; the inner is
+  sticky at viewport height, so the image renders at the same scale as everywhere else
+  and sits still while the reel scrolls past. At the handover #about's box is exactly
+  the viewport, so both paint the identical crop and the seam disappears.
+
+  Requires #projects to be overflow:visible (it is) or the sticky would have nothing
+  to stick to.
+*/
+#projects .projectsBackdrop {
+  position:absolute; inset:0; z-index:-6; pointer-events:none;
+}
+#projects .projectsBackdropInner {
+  position:sticky; top:0; height:100svh;
+  background-image:url('assets/images/bg-projects.jpg');
+  background-position:center; background-size:cover;
+}
+/* Mirrors .panel.hero-scene::before: a static base with a breathing copy over it.
+   Putting the animation on the base itself made it scale, which is what the other
+   panels avoid by keeping the two layers separate. */
+#projects .projectsBackdropInner::before {
+  content:""; position:absolute; inset:-3%;
+  background-image:inherit; background-position:center; background-size:cover;
+  animation:scene-breathe 22s ease-in-out infinite alternate;
+  will-change:transform, filter;
+}
+/* Kills the 3.83x stretched copy on the section box, and the ::before that inherits it. */
+#projects.projectHeroFinal { background-image:none !important; }
+
 /* v22: Corex self-owned background image system, with CSS + canvas atmosphere */
 .panel.hero-scene { background-position:center; background-size:cover; transform:translateZ(0); }
 .panel.hero-scene::before {
@@ -3067,6 +3103,7 @@ a[href^="mailto"].btn:hover,
          last step of PROJECT_SIDES (63 for four projects) or the avatar jumps sides on
          handover to #about. -->
     <section id="projects" class="panel hero-scene hero-scene--portfolio projectHeroFinal" data-effect="silk-snow" data-avatar="welcome" data-x="63" data-y="50" data-size="390" style="background-image:url('assets/images/bg-projects.jpg')">
+      <div class="projectsBackdrop" aria-hidden="true"><div class="projectsBackdropInner"></div></div>
       <div class="scene-breath"></div>
       <div class="cloud-layer cloud-layer--wide"></div><div class="cloud-layer cloud-layer--soft"></div>
       <div class="bgMask"></div>
