@@ -4221,16 +4221,22 @@ a[href^="mailto"].btn:hover,
 
   function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
   function mix(a,b,t){ return a + (b-a)*t; }
-  function smoother(t){ return t*t*t*(t*(t*6-15)+10); }
 
-  function activateForIndex(index, reset=true){
+  function activateForIndex(index, reset=false){
     index = clamp(index, 0, sectionVideo.length - 1);
     const key = sectionVideo[index] || 'contact';
     if (!vids[key]) return;
 
-    if (key !== activeKey || index !== activeSectionIndex) {
+    activeSectionIndex = index;
+
+    /*
+      Only a genuine clip change does any work. The old condition also fired when
+      the index changed but the clip did not -- services and process both map to
+      the 'services' clip -- restarting it from currentTime 0 and snapping the pose
+      for no reason. Restarting is now opt-in and only used at start().
+    */
+    if (key !== activeKey) {
       activeKey = key;
-      activeSectionIndex = index;
       activeVideo = vids[key];
       ensureVideoLoaded(activeVideo);
 
@@ -4253,7 +4259,10 @@ a[href^="mailto"].btn:hover,
     raw = clamp(raw, 0, max);
     const i = Math.floor(raw);
     const j = clamp(i + 1, 0, max);
-    const t = smoother(clamp(raw - i, 0, 1));
+    /* Linear: scrollToSnapStage already eases the scroll (easeInOutCubic) and raw
+       derives straight from scrollY. Applying smootherstep here too squared the
+       ease -- crawl, lurch, crawl. The scroll owns the easing. */
+    const t = clamp(raw - i, 0, 1);
 
     const a = sections[i] || sections[0];
     const b = sections[j] || a;
@@ -4266,7 +4275,7 @@ a[href^="mailto"].btn:hover,
         const step = clamp(Number.isFinite(stepValue) ? stepValue : 0, 0, 2);
         const current = Math.floor(step);
         const next = clamp(current + 1, 0, 2);
-        const tStep = smoother(clamp(step - current, 0, 1));
+        const tStep = clamp(step - current, 0, 1);   /* linear: see note in sectionPoint */
         const sideX = [37, 63, 37];
         return {
           x: mix(sideX[current], sideX[next], tStep),
@@ -4552,12 +4561,17 @@ a[href^="mailto"].btn:hover,
 
     applyAvatar(sectionPoint(displayRaw));
 
-    // If user quickly jumps sections, always show the target section action.
-    // For H1->Projects, delay only a little to avoid flicker, not enough to feel stuck.
-    if (targetIndex === 1 && displayRaw < 0.72) {
-      activateForIndex(0, false);
-    } else {
-      activateForIndex(targetIndex, true);
+    /*
+      Switch the clip on arrival, never in flight.
+
+      targetIndex is Math.round(targetRaw), so it flipped at raw .5 -- the exact
+      midpoint of the travel -- swapping the character's clip and resetting it to
+      frame 0 while it was still gliding across. That mid-air pose snap was the jerk
+      between heroes. Holding the departing clip until the avatar has essentially
+      arrived makes the crossing one continuous movement.
+    */
+    if (Math.abs(targetRaw - targetIndex) < 0.06) {
+      activateForIndex(targetIndex, false);
     }
 
     dots.forEach((d,k)=>d.classList.toggle('active', k===targetIndex));
