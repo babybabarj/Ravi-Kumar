@@ -3177,7 +3177,11 @@ a[href^="mailto"].btn:hover,
     </section>
 
 
-<section id="about" class="panel hero-scene hero-scene--pink reverse" data-effect="silk-snow" data-avatar="about" data-x="34" data-y="50" data-size="390" style="background-image:url('assets/images/bg-projects.jpg')">
+<!-- 6 background images for 7 panels means one image is used twice. Put that pair as
+         far apart as possible: #about (index 2) and #contact (index 6) are the furthest
+         separation available. It used to share with #projects, which sits directly next
+         to it, so the repeat was visible at the seam. -->
+    <section id="about" class="panel hero-scene hero-scene--pink reverse" data-effect="silk-snow" data-avatar="about" data-x="34" data-y="50" data-size="390" style="background-image:url('assets/images/bg-contact.jpg')">
       <div class="scene-breath"></div>
       <div class="light-sweep"></div>
       <div class="bgMask"></div>
@@ -4274,7 +4278,7 @@ a[href^="mailto"].btn:hover,
   <div class="mcStickyStage" aria-live="polite">
     <div class="mcBg mcBgHome is-active" style="background-image:url('assets/images/bg-home.jpg')"></div>
     <div class="mcBg mcBgProjects" style="background-image:url('assets/images/bg-projects.jpg')"></div>
-    <div class="mcBg mcBgAbout" style="background-image:url('assets/images/bg-projects.jpg')"></div>
+    <div class="mcBg mcBgAbout" style="background-image:url('assets/images/bg-contact.jpg')"></div>
     <div class="mcBg mcBgServices" style="background-image:url('assets/images/bg-services.jpg')"></div>
     <div class="mcBg mcBgPartner" style="background-image:url('assets/images/bg-partner.jpg')"></div>
     <div class="mcBg mcBgProcess" style="background-image:url('assets/images/bg-process.jpg')"></div>
