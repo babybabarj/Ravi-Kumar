@@ -100,6 +100,7 @@ a { color:inherit; text-decoration:none; }
   box-shadow:0 14px 32px rgba(12,23,48,.18);
 }
 .navCtaMail { background:linear-gradient(120deg,var(--orange),var(--orange2)); }
+.navCtaWhatsapp { background:#25d366; }
 .mailIcon {
   width:15px; height:11px; border:1.6px solid currentColor; border-radius:2px;
   position:relative; display:inline-block;
@@ -123,7 +124,7 @@ a { color:inherit; text-decoration:none; }
   align-items:center;
   background:
     linear-gradient(90deg,rgba(255,244,226,.08),rgba(255,244,226,.02)),
-    url("assets/images/bg-home.jpg") center/cover no-repeat;
+    url("/assets/images/bg-home.jpg") center/cover no-repeat;
 }
 .pageHeroInner {
   width:min(1160px,100%);
@@ -218,10 +219,10 @@ a { color:inherit; text-decoration:none; }
     linear-gradient(180deg,rgba(255,248,238,.78),rgba(255,248,238,.82)),
     var(--section-bg) center/cover no-repeat;
 }
-.section:nth-child(1) { --section-bg:url("assets/images/bg-partner.jpg"); }
-.section:nth-child(2) { --section-bg:url("assets/images/bg-services.jpg"); }
-.section:nth-child(3) { --section-bg:url("assets/images/bg-projects.jpg"); }
-.section:nth-child(4) { --section-bg:url("assets/images/bg-process.jpg"); }
+.section:nth-child(1) { --section-bg:url("/assets/images/bg-partner.jpg"); }
+.section:nth-child(2) { --section-bg:url("/assets/images/bg-services.jpg"); }
+.section:nth-child(3) { --section-bg:url("/assets/images/bg-projects.jpg"); }
+.section:nth-child(4) { --section-bg:url("/assets/images/bg-process.jpg"); }
 .section > * {
   width:min(1284px,100%);
   margin-left:auto;
@@ -357,7 +358,7 @@ a { color:inherit; text-decoration:none; }
   padding:clamp(38px,4.6vw,64px) min(6vw,84px);
   background:
     linear-gradient(180deg,rgba(255,248,238,.80),rgba(255,248,238,.88)),
-    url("assets/images/bg-contact.jpg") center/cover no-repeat;
+    url("/assets/images/bg-contact.jpg") center/cover no-repeat;
   color:var(--ink);
 }
 .bandInner { width:min(1160px,100%); margin:0 auto; }
@@ -460,7 +461,7 @@ a { color:inherit; text-decoration:none; }
 <nav class="nav">
   <a href="index.html#home" class="brand" aria-label="Ravi Kumar home"><span class="logo"><img src="assets/images/ravi-kumar-logo.png" alt="Ravi Kumar"></span></a>
   <div class="navLinks">
-    <a href="projects.html">Projects</a><a href="/blog/">Blog</a>
+    <a href="projects.html">Projects</a>
     <a class="active" href="about.html">About Me</a>
     <a href="index.html#services">Services</a>
     <a href="index.html#partner">Partner Support</a>
@@ -469,8 +470,9 @@ a { color:inherit; text-decoration:none; }
   </div>
   <div class="navActions">
     <button id="mobileMenuBtn" class="mobileMenuBtn" type="button" aria-label="Open mobile menu" aria-expanded="false">Menu</button>
+    <a class="navCta navCtaWhatsapp waLink" href="https://wa.me/917208782773" target="_blank" rel="noopener">WhatsApp</a>
     <a class="navCta navCtaMail mailLink" href="mailto:work.ravijethani@gmail.com?subject=AI%20Systems%20and%20Dashboards&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
-    <a class="navCta callLink" href="tel:+917208782773">Call Me</a>
+    <a class="navCta callLink" href="tel:+917208782773">Call</a>
   </div>
 </nav>
 
@@ -641,57 +643,7 @@ a { color:inherit; text-decoration:none; }
 
 <footer class="footer">© <span id="yr"></span> Ravi Kumar. AI-enabled systems, dashboards and automation.</footer>
 
-<div id="mobileMenuPanel" class="mobileMenuPanel" aria-hidden="true">
-  <div class="mobileMenuCard">
-    <div class="mobileMenuHead">
-      <strong>Ravi Kumar</strong>
-      <button id="mobileMenuClose" type="button" aria-label="Close mobile menu">×</button>
-    </div>
-    <nav class="mobileMenuLinks" aria-label="Mobile navigation">
-      <a href="index.html#home">Home</a>
-      <a href="projects.html">Projects</a><a href="/blog/">Blog</a>
-      <a href="about.html">About Me</a>
-      <a href="index.html#services">Services</a>
-      <a href="index.html#partner">Partner Support</a>
-      <a href="index.html#process">Process</a>
-      <a href="index.html#contact">Contact</a>
-      <a class="mobileMenuCall callLink" href="tel:+917208782773">Call Me</a>
-      <a class="mobileMenuWhatsapp waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
-      <a class="mobileMenuEmail mailLink" href="mailto:work.ravijethani@gmail.com?subject=AI%20Systems%20and%20Dashboards&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
-    </nav>
-  </div>
-</div>
-
-<div class="mobileCtaBar" aria-label="Quick mobile actions">
-  <a href="tel:+917208782773" class="callLink">Call Me</a>
-  <a href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business." target="_blank" rel="noopener" class="waLink"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
-  <a href="mailto:work.ravijethani@gmail.com?subject=AI%20Systems%20and%20Dashboards&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business.%0A" class="mailLink"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
-</div>
-
-<script>
-  document.getElementById('yr').textContent = new Date().getFullYear();
-  (function(){
-    var btn = document.getElementById('mobileMenuBtn');
-    var panel = document.getElementById('mobileMenuPanel');
-    var close = document.getElementById('mobileMenuClose');
-    function closeMenu(){
-      document.body.classList.remove('mobileMenuOpen');
-      panel && panel.setAttribute('aria-hidden','true');
-      btn && btn.setAttribute('aria-expanded','false');
-    }
-    btn && btn.addEventListener('click', function(){
-      document.body.classList.add('mobileMenuOpen');
-      panel && panel.setAttribute('aria-hidden','false');
-      btn.setAttribute('aria-expanded','true');
-    });
-    close && close.addEventListener('click', closeMenu);
-    panel && panel.addEventListener('click', function(e){ if (e.target === panel) closeMenu(); });
-    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeMenu(); });
-    document.querySelectorAll('.mobileMenuLinks a').forEach(function(link){
-      link.addEventListener('click', closeMenu);
-    });
-  })();
-</script>
-<nav class="siteBottomBar" aria-label="Useful links"><a href="projects.html">Projects</a><a href="/blog/">Blog</a><a href="faq.html">FAQ</a><a href="services/">Services</a><a href="services/seo-ai-readiness.html">SEO + AI</a><a href="sitemap.html">Sitemap</a><a href="privacy-policy.html">Privacy</a><a href="terms-of-use.html">Terms</a><a href="responsible-ai.html">Responsible AI</a><a href="contact.html">Contact</a><a href="mailto:work.ravijethani@gmail.com">Email</a><a href="https://wa.me/917208782773" target="_blank" rel="noopener">WhatsApp</a></nav>
+<div id="mobileMenuPanel" class="mobileMenuPanel" aria-hidden="true"><div class="mobileMenuCard"><div class="mobileMenuHead"><strong>Ravi Kumar</strong><button id="mobileMenuClose" type="button" aria-label="Close mobile menu">×</button></div><nav class="mobileMenuLinks" aria-label="Mobile navigation"><a href="index.html#home">Home</a><a href="projects.html">Projects</a><a href="/blog/">Blog</a><a href="about.html">About Me</a><a href="services/">Services</a><a href="agency-delivery-partner.html">Partner Support</a><a href="process.html">Process</a><a href="contact.html">Contact</a><a class="mobileMenuCall callLink" href="tel:+917208782773">Call</a><a class="mobileMenuWhatsapp waLink" href="https://wa.me/917208782773" target="_blank" rel="noopener">WhatsApp</a><a class="mobileMenuEmail mailLink" href="mailto:work.ravijethani@gmail.com">Email Ravi</a></nav></div></div><div class="mobileCtaBar" aria-label="Quick mobile actions"><a href="tel:+917208782773" class="callLink">Call</a><a href="https://wa.me/917208782773" target="_blank" rel="noopener" class="waLink">WhatsApp</a><a href="mailto:work.ravijethani@gmail.com" class="mailLink">Email Ravi</a></div><script>(function(){var b=document.getElementById('mobileMenuBtn'),p=document.getElementById('mobileMenuPanel'),c=document.getElementById('mobileMenuClose');function close(){document.body.classList.remove('mobileMenuOpen');b&&b.setAttribute('aria-expanded','false');p&&p.setAttribute('aria-hidden','true')}function open(){document.body.classList.add('mobileMenuOpen');b&&b.setAttribute('aria-expanded','true');p&&p.setAttribute('aria-hidden','false')}b&&b.addEventListener('click',open);c&&c.addEventListener('click',close);p&&p.addEventListener('click',function(e){if(e.target===p||e.target.closest('a'))close()});document.addEventListener('keydown',function(e){if(e.key==='Escape')close()})})();</script>
+<nav class="siteBottomBar" aria-label="Useful links"><a href="/blog/">Blog</a><a href="faq.html">FAQ</a><a href="privacy-policy.html">Privacy</a><a href="terms-of-use.html">Terms</a></nav>
 </body>
 </html>

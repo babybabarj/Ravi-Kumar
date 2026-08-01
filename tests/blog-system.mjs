@@ -55,7 +55,7 @@ for (const source of redirectSources) {
 
 for (const file of retained) {
   const html = read(file);
-  assert(hasBlogLink(html), `${file} missing active Blog nav`);
+  assert(hasBlogLink(html), `${file} missing Blog access link`);
   assert(html.includes('"@type":"BlogPosting"') || html.includes('"@type": "BlogPosting"'), `${file} missing BlogPosting`);
   assert(html.includes("Ravi Kumar"), `${file} missing author/name`);
   assert(html.includes("Sources and review"), `${file} missing sources section`);
@@ -73,7 +73,7 @@ for (const file of publicFiles) {
 const htmlFiles = publicFiles.filter((file) => file.endsWith(".html"));
 for (const file of htmlFiles) {
   const html = read(file);
-  if (html.includes("navLinks")) assert(hasBlogLink(html), `${file} desktop nav missing Blog`);
+  if (html.includes("navLinks")) assert(!hasBlogLink(desktopNav(html)), `${file} desktop nav should not include Blog`);
   if (html.includes("mobileMenuLinks")) assert(html.includes('href="/blog/">Blog</a>'), `${file} mobile nav missing Blog`);
 
   for (const [, raw] of html.matchAll(/\b(?:href|src)=["']([^"']+)["']/g)) {
@@ -96,6 +96,11 @@ function hasBlogLink(html) {
   return html.includes('href="/blog/">Blog</a>') ||
     html.includes('href="/blog/" class="active">Blog</a>') ||
     html.includes('class="active" href="/blog/">Blog</a>');
+}
+
+function desktopNav(html) {
+  const match = html.match(/<div class="navLinks"[^>]*>([\s\S]*?)<\/div>/);
+  return match ? match[1] : "";
 }
 
 function resolveLocal(path) {

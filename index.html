@@ -45,8 +45,8 @@
    snapping. Running both meant the browser re-snapped mid-flight while the rAF
    loop was still scrolling, which left the page parked between two panels and
    showed two hero backgrounds at once. */
-html { scroll-behavior:auto; scroll-snap-type:none; }
-body { margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif; color:var(--ink); background:#101827; overflow-x:hidden; }
+html { scroll-behavior:auto; scroll-snap-type:none; overflow-x:clip; max-width:100%; }
+body { margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif; color:var(--ink); background:#101827; overflow-x:clip; max-width:100%; }
 a { color:inherit; text-decoration:none; }
 .nav {
   position:fixed; z-index:90; top:18px; left:50%; transform:translateX(-50%);
@@ -201,7 +201,7 @@ h1 { margin:0 0 12px; font-family:"Cormorant Garamond",Georgia,serif; font-weigh
 }
 #projects .projectsBackdropInner {
   position:sticky; top:0; height:100svh;
-  background-image:url('assets/images/bg-projects.jpg');
+  background-image:url('/assets/images/bg-projects.jpg');
   background-position:center; background-size:cover;
 }
 /* Mirrors .panel.hero-scene::before: a static base with a breathing copy over it.
@@ -399,6 +399,11 @@ h1 { margin:0 0 12px; font-family:"Cormorant Garamond",Georgia,serif; font-weigh
   color:#0c1730;
   border:1px solid rgba(255,255,255,.82);
   box-shadow:0 14px 32px rgba(12,23,48,.08);
+}
+.navCtaWhatsapp {
+  background:#25d366;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.78);
 }
 .mailBtn {
   font-weight:900;
@@ -2972,7 +2977,7 @@ a[href^="mailto"].btn:hover,
   }
   #home.hero-scene {
     background-color:#f6b94a !important;
-    background-image:url('assets/images/bg-home.jpg') !important;
+    background-image:url('/assets/images/bg-home.jpg') !important;
     background-position:center center !important;
     background-size:cover !important;
     overflow:hidden !important;
@@ -2984,7 +2989,7 @@ a[href^="mailto"].btn:hover,
   #home.hero-scene::before {
     inset:-2% !important;
     z-index:0 !important;
-    background-image:url('assets/images/bg-home.jpg') !important;
+    background-image:url('/assets/images/bg-home.jpg') !important;
     background-position:center center !important;
     background-size:cover !important;
   }
@@ -3112,6 +3117,27 @@ a[href^="mailto"].btn:hover,
 @media (max-width:760px) {
   .logo { width:126px !important; height:38px !important; }
 }
+
+/* v42: final width guard for decorative hero/project layers */
+html,
+body {
+  max-width:100% !important;
+  overflow-x:clip !important;
+}
+@media (min-width:1001px) {
+  #desktopJourney,
+  .desktopJourney,
+  #projects.projectHeroFinal {
+    max-width:100vw !important;
+    overflow-x:clip !important;
+  }
+}
+@media (max-width:1000px) {
+  html,
+  body {
+    overflow-x:hidden !important;
+  }
+}
 </style>
 <link rel="preconnect" href="https://babybabarj.github.io">
 <link rel="dns-prefetch" href="https://babybabarj.github.io">
@@ -3120,11 +3146,12 @@ a[href^="mailto"].btn:hover,
 <body>
   <nav class="nav">
     <a href="index.html#home" class="brand" aria-label="Ravi Kumar home"><span class="logo"><img src="assets/images/ravi-kumar-logo.png" alt="Ravi Kumar"></span></a>
-    <div class="navLinks"><a href="projects.html">Projects</a><a href="/blog/">Blog</a><a href="about.html">About Me</a><a href="#services">Services</a><a href="#partner">Partner Support</a><a href="#process">Process</a><a href="#contact">Contact</a></div>
+    <div class="navLinks"><a href="projects.html">Projects</a><a href="about.html">About Me</a><a href="#services">Services</a><a href="#partner">Partner Support</a><a href="#process">Process</a><a href="#contact">Contact</a></div>
     <div class="navActions">
       <button id="mobileMenuBtn" class="mobileMenuBtn" type="button" aria-label="Open mobile menu" aria-expanded="false">Menu</button>
+      <a class="navCta navCtaWhatsapp waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
       <a class="navCta navCtaMail mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
-      <a class="navCta callLink" href="tel:+917208782773">Call Me</a>
+      <a class="navCta callLink" href="tel:+917208782773">Call</a>
     </div>
   </nav>
 
@@ -3149,7 +3176,7 @@ a[href^="mailto"].btn:hover,
 
   <main id="desktopJourney" class="desktopJourney">
     
-    <section id="home" class="panel hero-scene hero-scene--orange" data-effect="solar-drift" data-avatar="welcome" data-x="64" data-y="50" data-size="390" style="background-image:url('assets/images/bg-home.jpg')">
+    <section id="home" class="panel hero-scene hero-scene--orange" data-effect="solar-drift" data-avatar="welcome" data-x="64" data-y="50" data-size="390" style="background-image:url('/assets/images/bg-home.jpg')">
       <div class="scene-breath"></div>
       <div class="cloud-layer cloud-layer--wide"></div><div class="cloud-layer cloud-layer--soft"></div>
       <div class="bgMask"></div>
@@ -3172,7 +3199,7 @@ a[href^="mailto"].btn:hover,
       <div class="scrollHint">Scroll journey <i></i></div>
     </section>
     <!-- data-x matches the final project-safe lane, so handoff to #about does not pop sideways. -->
-    <section id="projects" class="panel hero-scene hero-scene--portfolio projectHeroFinal" data-effect="silk-snow" data-avatar="welcome" data-x="70" data-y="50" data-size="390" style="background-image:url('assets/images/bg-projects.jpg')">
+    <section id="projects" class="panel hero-scene hero-scene--portfolio projectHeroFinal" data-effect="silk-snow" data-avatar="welcome" data-x="70" data-y="50" data-size="390" style="background-image:url('/assets/images/bg-projects.jpg')">
       <div class="projectsBackdrop" aria-hidden="true"><div class="projectsBackdropInner"></div></div>
       <div class="scene-breath"></div>
       <div class="cloud-layer cloud-layer--wide"></div><div class="cloud-layer cloud-layer--soft"></div>
@@ -3251,7 +3278,7 @@ a[href^="mailto"].btn:hover,
          far apart as possible: #about (index 2) and #contact (index 6) are the furthest
          separation available. It used to share with #projects, which sits directly next
          to it, so the repeat was visible at the seam. -->
-    <section id="about" class="panel hero-scene hero-scene--pink reverse" data-effect="silk-snow" data-avatar="about" data-x="34" data-y="50" data-size="390" style="background-image:url('assets/images/bg-contact.jpg')">
+    <section id="about" class="panel hero-scene hero-scene--pink reverse" data-effect="silk-snow" data-avatar="about" data-x="34" data-y="50" data-size="390" style="background-image:url('/assets/images/bg-contact.jpg')">
       <div class="scene-breath"></div>
       <div class="light-sweep"></div>
       <div class="bgMask"></div>
@@ -3269,7 +3296,7 @@ a[href^="mailto"].btn:hover,
       </div>
       <div class="scrollHint">Scroll journey <i></i></div>
     </section>
-    <section id="services" class="panel hero-scene hero-scene--aqua" data-effect="aqua-shimmer" data-avatar="services" data-x="64" data-y="50" data-size="390" style="background-image:url('assets/images/bg-services.jpg')">
+    <section id="services" class="panel hero-scene hero-scene--aqua" data-effect="aqua-shimmer" data-avatar="services" data-x="64" data-y="50" data-size="390" style="background-image:url('/assets/images/bg-services.jpg')">
       <div class="scene-breath"></div>
       <div class="water-shimmer"></div>
       <div class="bgMask"></div>
@@ -3287,7 +3314,7 @@ a[href^="mailto"].btn:hover,
       </div>
       <div class="scrollHint">Scroll journey <i></i></div>
     </section>
-    <section id="partner" class="panel hero-scene hero-scene--mint reverse" data-effect="botanical-breeze" data-avatar="partner" data-x="34" data-y="50" data-size="390" style="background-image:url('assets/images/bg-partner.jpg')">
+    <section id="partner" class="panel hero-scene hero-scene--mint reverse" data-effect="botanical-breeze" data-avatar="partner" data-x="34" data-y="50" data-size="390" style="background-image:url('/assets/images/bg-partner.jpg')">
       <div class="scene-breath"></div>
       <div class="canopy-shadow"></div>
       <div class="bgMask"></div>
@@ -3308,7 +3335,7 @@ a[href^="mailto"].btn:hover,
       </div>
       <div class="scrollHint">Scroll journey <i></i></div>
     </section>
-    <section id="process" class="panel hero-scene hero-scene--gold" data-effect="golden-haze" data-avatar="process" data-x="64" data-y="50" data-size="390" style="background-image:url('assets/images/bg-process.jpg')">
+    <section id="process" class="panel hero-scene hero-scene--gold" data-effect="golden-haze" data-avatar="process" data-x="64" data-y="50" data-size="390" style="background-image:url('/assets/images/bg-process.jpg')">
       <div class="scene-breath"></div>
       <div class="horizon-glow"></div>
       <div class="bgMask"></div>
@@ -3326,7 +3353,7 @@ a[href^="mailto"].btn:hover,
       </div>
       <div class="scrollHint">Scroll journey <i></i></div>
     </section>
-    <section id="contact" class="panel hero-scene hero-scene--lavender reverse" data-effect="twilight-stars" data-avatar="contact" data-x="34" data-y="50" data-size="390" style="background-image:url('assets/images/bg-contact.jpg')">
+    <section id="contact" class="panel hero-scene hero-scene--lavender reverse" data-effect="twilight-stars" data-avatar="contact" data-x="34" data-y="50" data-size="390" style="background-image:url('/assets/images/bg-contact.jpg')">
       <div class="scene-breath"></div>
       <div class="aurora-ribbon"></div>
       <div class="bgMask"></div>
@@ -3338,7 +3365,7 @@ a[href^="mailto"].btn:hover,
           <p class="lead">For agencies, consultants and growing businesses across the UAE, UK, USA and India who need dependable AI-enabled execution.</p>
           <div class="cardGrid contactGrid"><div class="miniCard"><strong>WhatsApp</strong><span>+91 7208782773</span></div><div class="miniCard"><strong>Email</strong><span>work.ravijethani@gmail.com</span></div><div class="miniCard"><strong>Best fit</strong><span>UAE, UK, USA and India: businesses, agencies and startups.</span></div><div class="miniCard"><strong>Delivery style</strong><span>Premium, clear and confidential.</span></div></div>
           <div class="actions">
-      <a class="btn primary waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp Me</a>
+      <a class="btn primary waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
       <a class="btn secondary mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
       <a class="btn secondary" href="#home">Back to Top</a>
     </div>
@@ -4361,13 +4388,13 @@ a[href^="mailto"].btn:hover,
 
 <main id="mobileJourney" class="mobileJourney" aria-label="Mobile cinematic journey">
   <div class="mcStickyStage" aria-live="polite">
-    <div class="mcBg mcBgHome is-active" style="background-image:url('assets/images/bg-home.jpg')"></div>
-    <div class="mcBg mcBgProjects" style="background-image:url('assets/images/bg-projects.jpg')"></div>
-    <div class="mcBg mcBgAbout" style="background-image:url('assets/images/bg-contact.jpg')"></div>
-    <div class="mcBg mcBgServices" style="background-image:url('assets/images/bg-services.jpg')"></div>
-    <div class="mcBg mcBgPartner" style="background-image:url('assets/images/bg-partner.jpg')"></div>
-    <div class="mcBg mcBgProcess" style="background-image:url('assets/images/bg-process.jpg')"></div>
-    <div class="mcBg mcBgContact" style="background-image:url('assets/images/bg-contact.jpg')"></div>
+    <div class="mcBg mcBgHome is-active" style="background-image:url('/assets/images/bg-home.jpg')"></div>
+    <div class="mcBg mcBgProjects" style="background-image:url('/assets/images/bg-projects.jpg')"></div>
+    <div class="mcBg mcBgAbout" style="background-image:url('/assets/images/bg-contact.jpg')"></div>
+    <div class="mcBg mcBgServices" style="background-image:url('/assets/images/bg-services.jpg')"></div>
+    <div class="mcBg mcBgPartner" style="background-image:url('/assets/images/bg-partner.jpg')"></div>
+    <div class="mcBg mcBgProcess" style="background-image:url('/assets/images/bg-process.jpg')"></div>
+    <div class="mcBg mcBgContact" style="background-image:url('/assets/images/bg-contact.jpg')"></div>
     <div class="mcVeil"></div>
 
     <section class="mcLayer mcCharacterLayer is-active" data-scene="0" data-bg="home" id="m-intro">
@@ -4391,7 +4418,7 @@ a[href^="mailto"].btn:hover,
           <span>Web &amp; App Development</span><span>Google &amp; Meta Ads</span><span>SEO + SMO</span><span>AI SaaS</span><span>AI Agents</span><span>AI Readiness</span>
         </div>
         <div class="mcActions">
-          <a class="mcBtn mcBtnDark callLink" href="tel:+917208782773">Call Me</a>
+          <a class="mcBtn mcBtnDark callLink" href="tel:+917208782773">Call</a>
           <a class="mcBtn mcBtnOrange mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
         </div>
       </div>
@@ -4578,7 +4605,7 @@ a[href^="mailto"].btn:hover,
           <div><strong>Delivery style</strong><span>Premium, clear, confidential</span></div>
         </div>
         <div class="mcActions">
-          <a class="mcBtn mcBtnDark waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp Me</a>
+          <a class="mcBtn mcBtnDark waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
           <a class="mcBtn mcBtnOrange mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
           <a class="mcBtn mcBtnLight" href="#m-intro">Back to Top</a>
         </div>
@@ -4589,94 +4616,7 @@ a[href^="mailto"].btn:hover,
 </main>
 
 
-<div id="mobileMenuPanel" class="mobileMenuPanel" aria-hidden="true">
-  <div class="mobileMenuCard">
-    <div class="mobileMenuHead">
-      <strong>Ravi Kumar</strong>
-      <button id="mobileMenuClose" type="button" aria-label="Close mobile menu">×</button>
-    </div>
-    <nav class="mobileMenuLinks" aria-label="Mobile navigation">
-      <a href="#m-home">Home</a>
-      <a href="projects.html">Projects</a><a href="/blog/">Blog</a>
-      <a href="about.html">About Me</a>
-      <a href="#m-services">Services</a>
-      <a href="#m-partner">Partner Support</a>
-      <a href="#m-process">Process</a>
-      <a href="#m-contact">Contact</a>
-      <a class="mobileMenuCall callLink" href="tel:+917208782773">Call Me</a>
-      <a class="mobileMenuWhatsapp waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
-      <a class="mobileMenuEmail mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
-    </nav>
-  </div>
-</div>
-
-
-<div class="mobileCtaBar" aria-label="Quick mobile actions">
-  <a href="tel:+917208782773" class="callLink">Call Me</a>
-  <a href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener" class="waLink"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
-  <a href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A" class="mailLink"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
-</div>
-
-
-
-
-<script>
-(function(){
-  function fitLivePreviews(){
-    document.querySelectorAll('.liveFrameWrap, .mcProjectPanel .mcIframeWrap').forEach((wrap) => {
-      const scale = Math.min(wrap.clientWidth / 1920, wrap.clientHeight / 1080);
-      wrap.style.setProperty('--preview-scale', Math.max(0.12, scale).toFixed(4));
-    });
-  }
-  window.addEventListener('resize', fitLivePreviews);
-  window.addEventListener('load', fitLivePreviews, { once:true });
-  fitLivePreviews();
-  document.querySelectorAll('.livePreviewFrame').forEach((frame) => {
-    if (frame.dataset.loadBound) return;
-    frame.dataset.loadBound = '1';
-    frame.addEventListener('load', () => frame.classList.add('is-loaded'), { once:true });
-  });
-
-  /*
-    The project previews embed three live third-party sites. Loading them from markup
-    meant every visitor booted three entire websites before the hero had settled, for a
-    reel most never scroll to. Each frame now carries data-src and is attached only when
-    its card is actually near the viewport; the PNG poster underneath covers the gap, so
-    nothing looks empty. loading="lazy" alone did not cover this -- the reel sits high
-    enough in the journey to count as near-viewport on load.
-  */
-  function attachPreview(frame){
-    if (!frame || frame.getAttribute('src') || !frame.dataset.src) return;
-    frame.setAttribute('src', frame.dataset.src);
-  }
-
-  const deferredFrames = [...document.querySelectorAll('.livePreviewFrame[data-src]')];
-  if (deferredFrames.length) {
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          attachPreview(entry.target);
-          io.unobserve(entry.target);
-        });
-      }, { rootMargin: '200px' });
-      deferredFrames.forEach((frame) => io.observe(frame));
-    } else {
-      deferredFrames.forEach(attachPreview);
-    }
-    /* A click must not wait on the observer. */
-    document.querySelectorAll('.projectLiveCard').forEach((card) => {
-      card.addEventListener('pointerenter', () => {
-        card.querySelectorAll('.livePreviewFrame[data-src]').forEach(attachPreview);
-      }, { once:true });
-    });
-  }
-  if ('ResizeObserver' in window) {
-    const previewObserver = new ResizeObserver(fitLivePreviews);
-    document.querySelectorAll('.liveFrameWrap, .mcProjectPanel .mcIframeWrap').forEach((wrap) => previewObserver.observe(wrap));
-  }
-})();
-</script>
+<div id="mobileMenuPanel" class="mobileMenuPanel" aria-hidden="true"><div class="mobileMenuCard"><div class="mobileMenuHead"><strong>Ravi Kumar</strong><button id="mobileMenuClose" type="button" aria-label="Close mobile menu">×</button></div><nav class="mobileMenuLinks" aria-label="Mobile navigation"><a href="index.html#home">Home</a><a href="projects.html">Projects</a><a href="/blog/">Blog</a><a href="about.html">About Me</a><a href="services/">Services</a><a href="agency-delivery-partner.html">Partner Support</a><a href="process.html">Process</a><a href="contact.html">Contact</a><a class="mobileMenuCall callLink" href="tel:+917208782773">Call</a><a class="mobileMenuWhatsapp waLink" href="https://wa.me/917208782773" target="_blank" rel="noopener">WhatsApp</a><a class="mobileMenuEmail mailLink" href="mailto:work.ravijethani@gmail.com">Email Ravi</a></nav></div></div><div class="mobileCtaBar" aria-label="Quick mobile actions"><a href="tel:+917208782773" class="callLink">Call</a><a href="https://wa.me/917208782773" target="_blank" rel="noopener" class="waLink">WhatsApp</a><a href="mailto:work.ravijethani@gmail.com" class="mailLink">Email Ravi</a></div><script>(function(){var b=document.getElementById('mobileMenuBtn'),p=document.getElementById('mobileMenuPanel'),c=document.getElementById('mobileMenuClose');function close(){document.body.classList.remove('mobileMenuOpen');b&&b.setAttribute('aria-expanded','false');p&&p.setAttribute('aria-hidden','true')}function open(){document.body.classList.add('mobileMenuOpen');b&&b.setAttribute('aria-expanded','true');p&&p.setAttribute('aria-hidden','false')}b&&b.addEventListener('click',open);c&&c.addEventListener('click',close);p&&p.addEventListener('click',function(e){if(e.target===p||e.target.closest('a'))close()});document.addEventListener('keydown',function(e){if(e.key==='Escape')close()})})();</script>
 
 <script id="mobileCinematicV19">
 (function(){
@@ -4865,6 +4805,6 @@ a[href^="mailto"].btn:hover,
 })();
 </script>
 
-<nav class="siteBottomBar" aria-label="Useful links"><a href="projects.html">Projects</a><a href="/blog/">Blog</a><a href="faq.html">FAQ</a><a href="services/">Services</a><a href="services/seo-ai-readiness.html">SEO + AI</a><a href="sitemap.html">Sitemap</a><a href="privacy-policy.html">Privacy</a><a href="terms-of-use.html">Terms</a><a href="responsible-ai.html">Responsible AI</a><a href="contact.html">Contact</a><a href="mailto:work.ravijethani@gmail.com">Email</a><a href="https://wa.me/917208782773" target="_blank" rel="noopener">WhatsApp</a></nav>
+<nav class="siteBottomBar" aria-label="Useful links"><a href="/blog/">Blog</a><a href="faq.html">FAQ</a><a href="privacy-policy.html">Privacy</a><a href="terms-of-use.html">Terms</a></nav>
 </body>
 </html>
