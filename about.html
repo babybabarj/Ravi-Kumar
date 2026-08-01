@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About Me | Ravi Kumar</title>
 <meta name="description" content="Most businesses don't have a technology problem. They have a joining-up problem. Ravi Kumar builds the dashboards, workflows and AI that tie a business together, across the UAE and India.">
-<link rel="canonical" href="https://babybabarj.github.io/Ravi-Kumar/about.html">
+<link rel="canonical" href="https://ravikumarai.com/about.html">
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="Ravi Kumar">
 <meta property="og:title" content="About Me | Ravi Kumar">
-<meta property="og:description" content="Most businesses don't have a technology problem. They have a joining-up problem. Dashboards, workflows and AI that tie a business together.">
-<meta property="og:url" content="https://babybabarj.github.io/Ravi-Kumar/about.html">
-<meta property="og:image" content="https://babybabarj.github.io/Ravi-Kumar/assets/images/bg-contact.jpg">
+<meta property="og:description" content="Most businesses don't have a technology problem. They have a joining-up problem. Ravi Kumar builds the dashboards, workflows and AI that tie a business together, across the UAE, UK, USA and India.">
+<meta property="og:url" content="https://ravikumarai.com/about.html">
+<meta property="og:image" content="https://ravikumarai.com/assets/images/bg-contact.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="About Me | Ravi Kumar">
 <meta name="twitter:description" content="Most businesses don't have a technology problem. They have a joining-up problem.">
-<meta name="twitter:image" content="https://babybabarj.github.io/Ravi-Kumar/assets/images/bg-contact.jpg">
+<meta name="twitter:image" content="https://ravikumarai.com/assets/images/bg-contact.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%230c1730'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='28' font-weight='700' fill='%23fff' text-anchor='middle'%3ERK%3C/text%3E%3C/svg%3E">
 <meta name="theme-color" content="#0c1730">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -109,6 +109,47 @@ a { color:inherit; text-decoration:none; }
   display:none; height:42px; padding:0 16px; border-radius:999px;
   border:1px solid rgba(12,23,48,.16); background:rgba(255,255,255,.7);
   font:900 13px/1 inherit; color:var(--ink); cursor:pointer;
+}
+/* Mobile slide-out menu (matches the site's glass card treatment) */
+.mobileMenuPanel { display:none; }
+.mobileCtaBar { display:none; }
+@media (max-width:1000px) {
+  .mobileMenuPanel {
+    position:fixed; inset:0; z-index:1500; display:block;
+    opacity:0; pointer-events:none;
+    background:rgba(10,20,43,.44); backdrop-filter:blur(10px);
+    transition:opacity .24s ease;
+  }
+  body.mobileMenuOpen .mobileMenuPanel { opacity:1; pointer-events:auto; }
+  .mobileMenuCard {
+    position:absolute; top:10px; left:10px; right:10px; border-radius:26px; padding:14px;
+    background:linear-gradient(145deg,rgba(255,252,248,.96),rgba(255,244,236,.90));
+    border:1px solid rgba(255,255,255,.88); box-shadow:0 24px 80px rgba(10,20,43,.28);
+    transform:translateY(-14px) scale(.98); transition:transform .25s cubic-bezier(.22,.61,.36,1);
+  }
+  body.mobileMenuOpen .mobileMenuCard { transform:translateY(0) scale(1); }
+  .mobileMenuHead { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .mobileMenuHead strong { color:#0a142b; font-size:16px; font-weight:950; }
+  .mobileMenuHead button {
+    width:40px; height:40px; border:0; border-radius:50%; background:#0a142b; color:#fff; font-size:24px;
+  }
+  .mobileMenuLinks { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+  .mobileMenuLinks a {
+    min-height:44px; border-radius:16px; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:0 10px; background:rgba(255,255,255,.74);
+    border:1px solid rgba(255,255,255,.76); color:#0a142b; font-size:12.5px; font-weight:950; text-decoration:none;
+  }
+  .mobileMenuEmail { color:#fff !important; background:linear-gradient(135deg,var(--orange),var(--orange2)) !important; }
+  .mobileMenuWhatsapp { color:#fff !important; background:#2fb46d !important; }
+  .mobileCtaBar {
+    position:fixed; left:0; right:0; bottom:0; z-index:1100; display:flex; gap:10px; padding:10px 12px;
+    background:rgba(255,248,238,.94); border-top:1px solid rgba(255,255,255,.8);
+  }
+  .mobileCtaBar a {
+    flex:1; min-height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:900; text-decoration:none; color:#0a142b; background:rgba(255,255,255,.74);
+    border:1px solid rgba(255,255,255,.76);
+  }
 }
 
 /* ---------- hero ---------- */
@@ -305,6 +346,7 @@ a { color:inherit; text-decoration:none; }
     <a href="index.html#services">Services</a>
     <a href="index.html#partner">Partner Support</a>
     <a href="index.html#process">Process</a>
+    <a href="/blog/">Blog</a>
     <a href="index.html#contact">Contact</a>
   </div>
   <div class="navActions">
@@ -447,11 +489,43 @@ a { color:inherit; text-decoration:none; }
 
 <footer class="footer">© <span id="yr"></span> Ravi Kumar. AI-enabled systems, dashboards and automation.</footer>
 
+<div id="mobileMenuPanel" class="mobileMenuPanel" aria-hidden="true">
+  <div class="mobileMenuCard">
+    <div class="mobileMenuHead">
+      <strong>Ravi Kumar</strong>
+      <button id="mobileMenuClose" type="button" aria-label="Close mobile menu">×</button>
+    </div>
+    <nav class="mobileMenuLinks" aria-label="Mobile navigation">
+      <a href="about.html">About</a>
+      <a href="projects.html">Projects</a>
+      <a href="index.html#services">Services</a>
+      <a href="/blog/">Blog</a>
+      <a href="index.html#partner">Partner Support</a>
+      <a href="index.html#process">Process</a>
+      <a href="index.html#contact">Contact</a>
+      <a class="mobileMenuEmail" href="mailto:work.ravijethani@gmail.com?subject=AI%20Systems%20and%20Dashboards&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business.%0A">Email Ravi</a>
+      <a class="mobileMenuWhatsapp" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business." target="_blank" rel="noopener">WhatsApp</a>
+    </nav>
+  </div>
+</div>
+
+<div class="mobileCtaBar" aria-label="Quick mobile actions">
+  <a href="mailto:work.ravijethani@gmail.com?subject=AI%20Systems%20and%20Dashboards&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business.%0A">Email</a>
+  <a href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20an%20AI-enabled%20system%20for%20my%20business." target="_blank" rel="noopener">WhatsApp</a>
+</div>
+
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
-  // Mobile menu button routes back to the journey nav on the home page.
+  // On-brand mobile menu drawer.
   var mb = document.getElementById('mobileMenuBtn');
-  if (mb) mb.addEventListener('click', function(){ window.location.href = 'index.html'; });
+  var panel = document.getElementById('mobileMenuPanel');
+  var closeBtn = document.getElementById('mobileMenuClose');
+  function openMenu(){ document.body.classList.add('mobileMenuOpen'); panel.setAttribute('aria-hidden','false'); mb.setAttribute('aria-expanded','true'); }
+  function closeMenu(){ document.body.classList.remove('mobileMenuOpen'); panel.setAttribute('aria-hidden','true'); mb.setAttribute('aria-expanded','false'); }
+  if (mb) mb.addEventListener('click', openMenu);
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+  if (panel) panel.addEventListener('click', function(e){ if (e.target === panel || e.target.closest('a')) closeMenu(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeMenu(); });
 </script>
 </body>
 </html>
