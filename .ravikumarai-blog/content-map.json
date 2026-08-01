@@ -1,4 +1,108 @@
 {
   "version": 1,
-  "articles": []
+  "generated_at": "2026-08-01",
+  "articles": [
+    {
+      "title": "How AI Automation Helps Real-Estate Teams Respond Faster",
+      "slug": "ai-automation-real-estate-teams",
+      "canonical_url": "https://ravikumarai.com/blog/ai-automation-real-estate-teams.html",
+      "category": "Real Estate AI",
+      "primary_search_intent": "AI automation for real estate lead response and qualification",
+      "publication_status": "published",
+      "published_date": "2026-08-01",
+      "modified_date": "2026-08-01",
+      "related_service_page": "https://ravikumarai.com/industries/real-estate.html",
+      "duplicate_group": {
+        "id": "real-estate-ai-automation",
+        "canonical": true,
+        "redirected_from": [
+          "https://ravikumarai.com/blog/ai-automation-real-estate.html"
+        ]
+      }
+    },
+    {
+      "title": "Google Ads vs Meta Ads for Service Businesses",
+      "slug": "google-ads-vs-meta-ads-service-businesses",
+      "canonical_url": "https://ravikumarai.com/blog/google-ads-vs-meta-ads-service-businesses.html",
+      "category": "Campaign Systems",
+      "primary_search_intent": "Google Ads versus Meta Ads planning for service businesses",
+      "publication_status": "published",
+      "published_date": "2026-08-01",
+      "modified_date": "2026-08-01",
+      "related_service_page": "https://ravikumarai.com/services/google-meta-ads.html",
+      "duplicate_group": {
+        "id": "google-meta-ads-service-businesses",
+        "canonical": true,
+        "redirected_from": [
+          "https://ravikumarai.com/blog/google-meta-ads-service-businesses.html"
+        ]
+      }
+    },
+    {
+      "title": "Why Businesses Need Dashboards Before Adding More Tools",
+      "slug": "why-businesses-need-dashboards",
+      "canonical_url": "https://ravikumarai.com/blog/why-businesses-need-dashboards.html",
+      "category": "Dashboards",
+      "primary_search_intent": "Why businesses should clarify reporting and dashboards before adding tools",
+      "publication_status": "published",
+      "published_date": "2026-08-01",
+      "modified_date": "2026-08-01",
+      "related_service_page": "https://ravikumarai.com/services/ai-systems.html",
+      "duplicate_group": {
+        "id": "dashboards-before-ai",
+        "canonical": true,
+        "redirected_from": [
+          "https://ravikumarai.com/blog/dashboards-before-ai.html"
+        ]
+      }
+    },
+    {
+      "title": "How Agencies Can Reduce Manual Operations with AI",
+      "slug": "ai-automation-for-agencies",
+      "canonical_url": "https://ravikumarai.com/blog/ai-automation-for-agencies.html",
+      "category": "Agency Automation",
+      "primary_search_intent": "AI and workflow automation for agency operations",
+      "publication_status": "published",
+      "published_date": "2026-08-01",
+      "modified_date": "2026-08-01",
+      "related_service_page": "https://ravikumarai.com/agency-delivery-partner.html",
+      "duplicate_group": {
+        "id": "agency-ai-automation",
+        "canonical": true,
+        "redirected_from": []
+      }
+    }
+  ],
+  "duplicate_groups": [
+    {
+      "id": "real-estate-ai-automation",
+      "canonical_slug": "ai-automation-real-estate-teams",
+      "redirected_slugs": [
+        "ai-automation-real-estate"
+      ],
+      "reason": "Same real-estate lead automation search intent; retained the fuller team-response article."
+    },
+    {
+      "id": "google-meta-ads-service-businesses",
+      "canonical_slug": "google-ads-vs-meta-ads-service-businesses",
+      "redirected_slugs": [
+        "google-meta-ads-service-businesses"
+      ],
+      "reason": "Same campaign systems search intent; retained the fuller platform comparison article."
+    },
+    {
+      "id": "dashboards-before-ai",
+      "canonical_slug": "why-businesses-need-dashboards",
+      "redirected_slugs": [
+        "dashboards-before-ai"
+      ],
+      "reason": "Same dashboard-before-tools search intent; retained the fuller dashboard article."
+    },
+    {
+      "id": "agency-ai-automation",
+      "canonical_slug": "ai-automation-for-agencies",
+      "redirected_slugs": [],
+      "reason": "Unique agency operations automation article."
+    }
+  ]
 }

@@ -1,6 +1,11 @@
-http://ravikumarai.com/* https://www.ravikumarai.com/:splat 301
-http://www.ravikumarai.com/* https://www.ravikumarai.com/:splat 301
-https://ravikumarai.com/* https://www.ravikumarai.com/:splat 301
+http://ravikumarai.com/* https://ravikumarai.com/:splat 301
+http://www.ravikumarai.com/* https://ravikumarai.com/:splat 301
+https://www.ravikumarai.com/* https://ravikumarai.com/:splat 301
+
+/blogs.html /blog/ 301
+/blog/ai-automation-real-estate.html /blog/ai-automation-real-estate-teams.html 301
+/blog/google-meta-ads-service-businesses.html /blog/google-ads-vs-meta-ads-service-businesses.html 301
+/blog/dashboards-before-ai.html /blog/why-businesses-need-dashboards.html 301
 
 /about/ /about.html 301
 /projects/ /projects.html 301

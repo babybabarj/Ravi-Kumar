@@ -7,7 +7,7 @@ const read = (file) => readFileSync(new URL(file, root), "utf8");
 const sitemap = read("sitemap.xml").trim();
 assert(sitemap.startsWith('<?xml version="1.0" encoding="UTF-8"?>'));
 assert(sitemap.includes("<urlset"));
-assert(sitemap.includes("https://www.ravikumarai.com/"));
+assert(sitemap.includes("https://ravikumarai.com/"));
 [
   "blog/",
   "blog/ai-automation-real-estate-teams.html",
@@ -27,11 +27,11 @@ assert(sitemap.includes("https://www.ravikumarai.com/"));
   "privacy-policy.html",
   "terms-of-use.html",
   "responsible-ai.html",
-].forEach((path) => assert(sitemap.includes(`https://www.ravikumarai.com/${path}`), path));
+].forEach((path) => assert(sitemap.includes(`https://ravikumarai.com/${path}`), path));
 assert(!sitemap.includes("<html"));
 
 const robots = read("robots.txt");
-assert(robots.includes("Sitemap: https://www.ravikumarai.com/sitemap.xml"));
+assert(robots.includes("Sitemap: https://ravikumarai.com/sitemap.xml"));
 assert(!robots.includes("<html"));
 
 const llms = read("llms.txt");
