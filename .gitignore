@@ -1,2 +1,7 @@
 .DS_Store
 qa/
+
+# Hermes blog local files
+.ravikumarai-blog/drafts/
+.ravikumarai-blog/*.local.json
+.ravikumarai-blog/publish-log.jsonl
