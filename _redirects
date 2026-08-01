@@ -1,0 +1,23 @@
+http://ravikumarai.com/* https://www.ravikumarai.com/:splat 301
+http://www.ravikumarai.com/* https://www.ravikumarai.com/:splat 301
+https://ravikumarai.com/* https://www.ravikumarai.com/:splat 301
+
+/about/ /about.html 301
+/projects/ /projects.html 301
+/ai-agents-workflow-automation/ /services/ai-systems.html 301
+/ai-dashboards-saas-development/ /services/ai-systems.html 301
+/website-app-development/ /services/web-app-development.html 301
+/seo-smo-ai-readiness/ /services/seo-ai-readiness.html 301
+/google-meta-ads-support/ /services/google-meta-ads.html 301
+/agency-delivery-partner/ /agency-delivery-partner.html 301
+/process/ /process.html 301
+/faq/ /faq.html 301
+/contact/ /contact.html 301
+/privacy-policy/ /privacy-policy.html 301
+/terms-of-use/ /terms-of-use.html 301
+/cookie-policy/ /cookie-policy.html 301
+/disclaimer/ /disclaimer.html 301
+/cancellation-refund-policy/ /cancellation-refund-policy.html 301
+/accessibility/ /accessibility.html 301
+/responsible-ai/ /responsible-ai.html 301
+/sitemap/ /sitemap.html 301

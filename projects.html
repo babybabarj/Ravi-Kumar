@@ -4,23 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Projects | Ravi Kumar</title>
-<meta name="description" content="Selected work by Ravi Kumar: WhatsRoute, Aurelia Villas Dubai and ARION. Brand websites and live home-page experiences built for clients across the UAE and India.">
-<link rel="canonical" href="https://babybabarj.github.io/Ravi-Kumar/projects.html">
+<meta name="description" content="Selected work by Ravi Kumar: WhatsRoute, Aurelia Villas Dubai and ARION. Brand websites and live home-page experiences built for clients across the UAE, UK, USA and India.">
+<link rel="canonical" href="https://www.ravikumarai.com/projects.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Ravi Kumar">
 <meta property="og:title" content="Projects | Ravi Kumar">
 <meta property="og:description" content="Selected work: WhatsRoute, Aurelia Villas Dubai and ARION.">
-<meta property="og:url" content="https://babybabarj.github.io/Ravi-Kumar/projects.html">
-<meta property="og:image" content="https://babybabarj.github.io/Ravi-Kumar/assets/images/project-whatsroute-home.png">
+<meta property="og:url" content="https://www.ravikumarai.com/projects.html">
+<meta property="og:image" content="https://www.ravikumarai.com/assets/images/project-whatsroute-home.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Projects | Ravi Kumar">
 <meta name="twitter:description" content="Selected work: WhatsRoute, Aurelia Villas Dubai and ARION.">
-<meta name="twitter:image" content="https://babybabarj.github.io/Ravi-Kumar/assets/images/project-whatsroute-home.png">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%230c1730'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='28' font-weight='700' fill='%23fff' text-anchor='middle'%3ERK%3C/text%3E%3C/svg%3E">
+<meta name="twitter:image" content="https://www.ravikumarai.com/assets/images/project-whatsroute-home.png">
+<link rel="icon" type="image/png" href="assets/images/favicon-rk.png?v=2">
+<link rel="apple-touch-icon" href="assets/images/favicon-rk.png">
+<link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0c1730">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"CollectionPage","name":"Projects | Ravi Kumar","url":"https://www.ravikumarai.com/projects.html","description":"Selected work by Ravi Kumar: WhatsRoute, Aurelia Villas Dubai, Dimpleit and ARION.","mainEntity":[{"@type":"CreativeWork","name":"WhatsRoute","url":"https://whatsroute.vercel.app/"},{"@type":"CreativeWork","name":"Aurelia Villas Dubai","url":"https://babybabarj.github.io/Aurelia-Villas-Dubai/"},{"@type":"CreativeWork","name":"ARION Energy Drink","url":"https://babybabarj.github.io/arion/"}]}</script>
 <style>
 :root {
   --ink:#0b152e;
@@ -195,11 +199,14 @@ h1 {
   background:linear-gradient(90deg,rgba(255,248,238,.92),rgba(255,248,238,.60) 52%,rgba(255,248,238,.90));
 }
 #whatsroute { background-image:url("assets/images/bg-services.jpg"); }
-#aurelia { background-image:url("assets/images/bg-partner.jpg"); grid-template-columns:minmax(560px,.92fr) minmax(300px,.48fr); }
+#aurelia { background-image:url("assets/images/bg-partner.jpg"); }
 #dimpleit { background-image:url("assets/images/bg-contact.jpg"); }
 #arion { background-image:url("assets/images/bg-home.jpg"); }
-#aurelia .brief { order:2; }
-#aurelia .preview { order:1; }
+@media (min-width:901px) {
+  #dimpleit,#arion { grid-template-columns:minmax(560px,.92fr) minmax(300px,.48fr); }
+  #dimpleit .brief,#arion .brief { order:2; }
+  #dimpleit .preview,#arion .preview { order:1; }
+}
 .brief {
   padding:24px;
   border-radius:22px;
@@ -413,8 +420,7 @@ h1 {
     font-size:12px;
     font-weight:820;
   }
-  .mobileCtaBar a:nth-child(2) { color:#fff; background:linear-gradient(135deg,var(--orange),var(--orange2)); }
-  .mobileCtaBar a:nth-child(3) { color:#fff; background:#2fb46d; }
+  .mobileCtaBar a:nth-child(3) { color:#fff; background:linear-gradient(135deg,var(--orange),var(--orange2)); }
   .mobileMenuPanel {
     position:fixed;
     z-index:100;
@@ -474,11 +480,30 @@ h1 {
   .tag { display:none; }
   .browserTop span { max-width:230px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 }
+.logo {
+  width:154px !important;
+  height:46px !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  display:block !important;
+  overflow:visible !important;
+}
+.logo img {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+@media (max-width:760px) {
+  .logo { width:126px !important; height:38px !important; }
+}
 </style>
+<link rel="stylesheet" href="assets/bottom-links.css?v=menu-consistent">
 </head>
 <body>
 <nav class="nav">
-  <a href="index.html" class="brand"><span class="logo">RK</span><span class="brandText"><strong>Ravi Kumar</strong><span>Digital Partner</span></span></a>
+  <a href="index.html#home" class="brand" aria-label="Ravi Kumar home"><span class="logo"><img src="assets/images/ravi-kumar-logo.png" alt="Ravi Kumar"></span></a>
   <div class="navLinks">
     <a class="active" href="projects.html">Projects</a>
     <a href="about.html">About Me</a>
@@ -490,7 +515,7 @@ h1 {
   <div class="navActions">
     <button id="mobileMenuBtn" class="mobileMenuBtn" type="button" aria-label="Open mobile menu" aria-expanded="false">Menu</button>
     <a class="navCta navCtaMail mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
-    <a class="navCta" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener">Partner With Me</a>
+    <a class="navCta callLink" href="tel:+917208782773">Call Me</a>
   </div>
 </nav>
 
@@ -610,21 +635,22 @@ h1 {
     <nav class="mobileMenuLinks" aria-label="Mobile navigation">
       <a href="index.html#home">Home</a>
       <a href="projects.html">Projects</a>
-      <a href="index.html#about">About</a>
+      <a href="about.html">About Me</a>
       <a href="index.html#services">Services</a>
       <a href="index.html#partner">Partner Support</a>
       <a href="index.html#process">Process</a>
       <a href="index.html#contact">Contact</a>
-      <a class="mobileMenuEmail mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
+      <a class="mobileMenuCall callLink" href="tel:+917208782773">Call Me</a>
       <a class="mobileMenuWhatsapp waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
+      <a class="mobileMenuEmail mailLink" href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
     </nav>
   </div>
 </div>
 
 <div class="mobileCtaBar" aria-label="Quick mobile actions">
-  <a href="projects.html">Projects</a>
-  <a href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A" class="mailLink"><span class="mailIcon" aria-hidden="true"></span>Email</a>
+  <a href="tel:+917208782773" class="callLink">Call Me</a>
   <a href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener" class="waLink"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
+  <a href="mailto:work.ravijethani@gmail.com?subject=UAE%20Digital%20Delivery%20Partnership&body=Hi%20Ravi%2C%0A%0AI%20would%20like%20to%20discuss%20a%20digital%20delivery%20partnership.%0A" class="mailLink"><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
 </div>
 
 <script>
@@ -671,5 +697,6 @@ h1 {
   }
 })();
 </script>
+<nav class="siteBottomBar" aria-label="Useful links"><a href="projects.html">Projects</a><a href="blog/">Blog</a><a href="faq.html">FAQ</a><a href="services/">Services</a><a href="services/seo-ai-readiness.html">SEO + AI</a><a href="sitemap.html">Sitemap</a><a href="privacy-policy.html">Privacy</a><a href="terms-of-use.html">Terms</a><a href="responsible-ai.html">Responsible AI</a><a href="contact.html">Contact</a><a href="mailto:work.ravijethani@gmail.com">Email</a><a href="https://wa.me/917208782773" target="_blank" rel="noopener">WhatsApp</a></nav>
 </body>
 </html>

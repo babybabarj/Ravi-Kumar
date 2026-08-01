@@ -1,0 +1,5 @@
+Contact: mailto:work.ravijethani@gmail.com
+Canonical: https://www.ravikumarai.com/.well-known/security.txt
+Preferred-Languages: en
+Policy: https://www.ravikumarai.com/responsible-ai.html
+Expires: 2027-08-01T00:00:00.000Z

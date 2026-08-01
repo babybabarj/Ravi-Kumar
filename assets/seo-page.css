@@ -1,0 +1,111 @@
+:root {
+  --ink:#0c1730;
+  --muted:#52637d;
+  --orange:#ef7c22;
+  --orange2:#f7a45f;
+  --line:rgba(255,255,255,.78);
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  font-family:"Plus Jakarta Sans",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:#fff8f0;
+  letter-spacing:-.012em;
+  -webkit-font-smoothing:antialiased;
+}
+a { color:inherit; text-decoration:none; }
+.nav {
+  position:fixed;
+  z-index:20;
+  left:50%;
+  top:16px;
+  transform:translateX(-50%);
+  width:min(1284px,calc(100vw - 64px));
+  height:64px;
+  padding:8px 12px 8px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:linear-gradient(135deg,rgba(255,252,248,.9),rgba(255,245,238,.75));
+  backdrop-filter:blur(22px);
+  box-shadow:0 18px 56px rgba(12,23,48,.13);
+}
+.brand img { width:154px; height:auto; display:block; }
+.navLinks { display:flex; align-items:center; gap:22px; font-size:13.6px; font-weight:900; }
+.navLinks a.active,.navLinks a:hover { color:var(--orange); }
+.navActions { display:flex; gap:10px; }
+.navCta {
+  height:44px;
+  padding:0 22px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#0c1730;
+  color:#fff;
+  font-size:13.6px;
+  font-weight:900;
+}
+.navCtaMail { background:linear-gradient(120deg,var(--orange),var(--orange2)); }
+.hero {
+  min-height:100svh;
+  padding:112px min(5.8vw,82px) 44px;
+  display:grid;
+  align-items:center;
+  background:
+    linear-gradient(90deg,rgba(255,250,242,.76),rgba(255,250,242,.58)),
+    var(--bg, url("../assets/images/bg-home.jpg")) center/cover no-repeat;
+}
+.wrap { width:min(1200px,100%); margin:0 auto; display:grid; grid-template-columns:.58fr .95fr; gap:54px; align-items:center; }
+.wrap.reverse { grid-template-columns:.95fr .58fr; }
+.card {
+  padding:clamp(26px,3vw,42px);
+  border:1px solid var(--line);
+  border-radius:28px;
+  background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(255,247,236,.7));
+  box-shadow:0 24px 70px rgba(13,24,48,.11);
+  backdrop-filter:blur(16px);
+}
+.kicker { display:flex; align-items:center; gap:12px; color:#5e6e86; font-size:12px; font-weight:900; letter-spacing:.24em; text-transform:uppercase; }
+.kicker span { width:34px; height:2px; background:var(--orange); border-radius:99px; }
+h1,h2 {
+  margin:14px 0 14px;
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-weight:700;
+  font-size:clamp(42px,4.6vw,70px);
+  line-height:.96;
+  letter-spacing:-.045em;
+}
+p { color:#32425c; font-size:clamp(15px,1.1vw,18px); font-weight:750; line-height:1.5; }
+.bullets { display:grid; gap:12px; margin:24px 0 0; padding:0; list-style:none; }
+.bullets li { padding:14px 16px; border-radius:16px; background:rgba(255,255,255,.62); font-weight:850; color:#263956; }
+.preview {
+  overflow:hidden;
+  border-radius:28px;
+  border:1px solid rgba(12,23,48,.14);
+  background:#fff;
+  box-shadow:0 26px 74px rgba(12,23,48,.16);
+}
+.browserBar { height:38px; padding:0 18px; display:flex; align-items:center; gap:8px; background:#0c1730; color:#cfd8e8; font-size:12px; font-weight:900; }
+.browserBar i { width:10px; height:10px; border-radius:50%; background:#ef7c22; display:block; }
+.browserBar i:nth-child(2) { background:#f7c948; }
+.browserBar i:nth-child(3) { background:#57c784; margin-right:10px; }
+.preview img { display:block; width:100%; aspect-ratio:16/9; object-fit:cover; object-position:top center; }
+.ctaRow { display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; }
+.btn { min-height:46px; padding:0 22px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; font-size:15px; font-weight:900; }
+.btn.primary { color:#fff; background:#0c1730; }
+.btn.secondary { background:rgba(255,255,255,.7); border:1px solid rgba(12,23,48,.12); }
+.postList { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+.postList a { min-height:230px; }
+@media (max-width:900px) {
+  .nav { width:calc(100vw - 28px); padding-left:16px; }
+  .brand img { width:136px; }
+  .navLinks,.navActions { display:none; }
+  .hero { padding:96px 16px 36px; }
+  .wrap,.wrap.reverse,.postList { grid-template-columns:1fr; gap:22px; }
+  .card { border-radius:22px; }
+}

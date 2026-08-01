@@ -1,0 +1,243 @@
+.mobileMenuPanel,
+.mobileCtaBar {
+  display: none;
+}
+
+.siteBottomBar {
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  min-height: 34px;
+  margin: 18px auto 12px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  border: 1px solid rgba(255,255,255,.78);
+  border-radius: 999px;
+  background: rgba(255,252,248,.82);
+  box-shadow: 0 12px 34px rgba(12,23,48,.14);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  scrollbar-width: none;
+}
+.siteBottomBar::-webkit-scrollbar { display: none; }
+.siteBottomBar a {
+  height: 24px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 999px;
+  color: #0c1730;
+  background: rgba(255,255,255,.56);
+  font-family: "Plus Jakarta Sans", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  text-decoration: none;
+}
+.siteBottomBar a:hover {
+  color: #fff;
+  background: #0c1730;
+}
+.mobileMenuCall {
+  color: #fff !important;
+  background: #0b152e !important;
+}
+.articleCard {
+  max-width: 980px;
+  margin: 0 auto;
+}
+.articleCard h2 {
+  margin-top: 28px;
+  font-size: clamp(28px,3vw,44px);
+}
+.articleCard h3 {
+  margin: 20px 0 8px;
+  font-size: clamp(20px,2vw,28px);
+}
+.articleCard code {
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(12,23,48,.08);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+@media (max-width: 1000px) {
+  body { padding-bottom: 74px; }
+
+  .mobileMenuBtn {
+    height: 38px !important;
+    min-width: 70px !important;
+    padding: 0 16px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #fff !important;
+    background: #0b152e !important;
+    font-family: "Plus Jakarta Sans", Arial, sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    box-shadow: 0 12px 26px rgba(10,20,43,.16) !important;
+  }
+
+  .mobileCtaBar {
+    position: fixed !important;
+    z-index: 90 !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 8px !important;
+    min-height: 52px !important;
+    padding: 6px !important;
+    border-radius: 22px !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 6px !important;
+    background: rgba(255,255,255,.88) !important;
+    border: 1px solid rgba(255,255,255,.82) !important;
+    box-shadow: 0 18px 42px rgba(10,20,43,.16) !important;
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+  }
+
+  .mobileCtaBar a {
+    min-width: 0 !important;
+    min-height: 40px !important;
+    border-radius: 17px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    font-family: "Plus Jakarta Sans", Arial, sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    text-decoration: none !important;
+  }
+
+  .mobileCtaBar .callLink {
+    color: #fff !important;
+    background: #0b152e !important;
+  }
+
+  .mobileCtaBar .waLink {
+    color: #fff !important;
+    background: #25d366 !important;
+  }
+
+  .mobileCtaBar .mailLink {
+    color: #fff !important;
+    background: linear-gradient(135deg,#ef7c22,#f7a45f) !important;
+  }
+
+  .mobileMenuPanel {
+    position: fixed !important;
+    z-index: 1500 !important;
+    inset: 0 !important;
+    padding: 14px !important;
+    display: none !important;
+    place-items: center !important;
+    background: rgba(10,20,43,.42) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+  }
+
+  body.mobileMenuOpen .mobileMenuPanel {
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .mobileMenuCard {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: min(100%, 360px) !important;
+    max-height: calc(100svh - 28px) !important;
+    overflow: auto !important;
+    padding: 18px !important;
+    border-radius: 28px !important;
+    background: rgba(255,250,244,.94) !important;
+    border: 1px solid rgba(255,255,255,.82) !important;
+    box-shadow: 0 26px 70px rgba(10,20,43,.24) !important;
+  }
+
+  .mobileMenuHead {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 14px !important;
+  }
+
+  .mobileMenuHead strong {
+    color: #0b152e !important;
+    font-family: "Plus Jakarta Sans", Arial, sans-serif !important;
+    font-size: 17px !important;
+    font-weight: 950 !important;
+  }
+
+  .mobileMenuHead button {
+    width: 38px !important;
+    height: 38px !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    color: #fff !important;
+    background: #0b152e !important;
+    font-size: 22px !important;
+  }
+
+  .mobileMenuLinks {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .mobileMenuLinks a {
+    min-height: 44px !important;
+    padding: 0 14px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #0b152e !important;
+    background: rgba(255,255,255,.72) !important;
+    font-family: "Plus Jakarta Sans", Arial, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    text-decoration: none !important;
+  }
+
+  .mobileMenuLinks .mobileMenuCall {
+    color: #fff !important;
+    background: #0b152e !important;
+  }
+
+  .mobileMenuLinks .mobileMenuWhatsapp {
+    color: #fff !important;
+    background: #25d366 !important;
+  }
+
+  .mobileMenuLinks .mobileMenuEmail {
+    color: #fff !important;
+    background: linear-gradient(135deg,#ef7c22,#f7a45f) !important;
+  }
+
+  .siteBottomBar {
+    max-width: calc(100vw - 16px);
+    min-height: 32px;
+    margin-bottom: 82px;
+    padding: 4px 6px;
+  }
+
+  .siteBottomBar a {
+    height: 23px;
+    padding: 0 8px;
+    font-size: 10.5px;
+  }
+}
+
+@media (min-width: 1001px) {
+  .mobileCtaBar { display: none !important; }
+}
