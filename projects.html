@@ -22,7 +22,9 @@
 <meta name="theme-color" content="#0c1730">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"CollectionPage","name":"Projects | Ravi Kumar","url":"https://ravikumarai.com/projects.html","description":"Selected work by Ravi Kumar: WhatsRoute, Aurelia Villas Dubai, Dimpleit and ARION.","mainEntity":[{"@type":"CreativeWork","name":"WhatsRoute","url":"https://whatsroute.vercel.app/"},{"@type":"CreativeWork","name":"Aurelia Villas Dubai","url":"https://babybabarj.github.io/Aurelia-Villas-Dubai/"},{"@type":"CreativeWork","name":"ARION Energy Drink","url":"https://babybabarj.github.io/arion/"}]}</script>
 <style>
@@ -122,7 +124,7 @@ a { color:inherit; text-decoration:none; }
 }
 .navCtaWhatsapp {
   color:#fff;
-  background:#25d366;
+  background:#128c7e;
   border:0;
 }
 .mailIcon,.waIcon {
@@ -324,6 +326,16 @@ h1 {
 .frameWrap iframe.is-loaded {
   opacity:1;
 }
+.frameWrap .projectPreviewPicture {
+  position:absolute;
+  inset:0;
+  z-index:0;
+  width:100%;
+  height:100%;
+  display:block;
+  pointer-events:none;
+  background:#fff;
+}
 .frameWrap .projectPreviewImg {
   position:absolute;
   inset:0;
@@ -511,7 +523,7 @@ h1 {
 </head>
 <body>
 <nav class="nav">
-  <a href="index.html#home" class="brand" aria-label="Ravi Kumar home"><span class="logo"><img src="assets/images/ravi-kumar-logo.png" alt="Ravi Kumar"></span></a>
+  <a href="index.html#home" class="brand" aria-label="Ravi Kumar home"><span class="logo"><img src="assets/images/ravi-kumar-logo-320.webp" srcset="assets/images/ravi-kumar-logo-160.webp 160w, assets/images/ravi-kumar-logo-320.webp 320w" sizes="(max-width: 760px) 126px, 180px" width="320" height="102" alt="Ravi Kumar" decoding="async"></span></a>
   <div class="navLinks">
     <a class="active" href="projects.html">Projects</a>
     <a href="about.html">About Me</a>
@@ -548,14 +560,18 @@ h1 {
         <li>Experience: demo request and lead leakage audit</li>
       </ul>
       <div class="actions">
-        <a class="btn dark" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener">Open Live Site</a>
+        <a class="btn dark" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener" aria-label="Open WhatsRoute project in a new tab">Open Live Site</a>
       </div>
     </div>
-    <a class="preview" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener" aria-label="Open WhatsRoute live site">
+    <a class="preview" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener" aria-label="Open WhatsRoute project in a new tab">
       <div class="browserTop"><i></i><i></i><i></i><span>whatsroute.vercel.app</span></div>
       <div class="frameWrap">
-        <iframe class="livePreviewFrame" src="https://whatsroute.vercel.app/" title="WhatsRoute live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-        <img class="projectPreviewImg" src="assets/images/project-whatsroute-home.png" alt="WhatsRoute home page preview" loading="lazy" decoding="async">
+        <iframe class="livePreviewFrame" data-src="https://whatsroute.vercel.app/" title="WhatsRoute live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <picture class="projectPreviewPicture">
+        <source type="image/avif" srcset="assets/images/project-whatsroute-home-640.avif 640w, assets/images/project-whatsroute-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+        <source type="image/webp" srcset="assets/images/project-whatsroute-home-640.webp 640w, assets/images/project-whatsroute-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+        <img class="projectPreviewImg" src="assets/images/project-whatsroute-home-960.webp" alt="WhatsRoute home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
         <div class="tag">Home page view</div>
       </div>
     </a>
@@ -573,14 +589,18 @@ h1 {
         <li>Experience: template browsing, cart and WhatsApp support</li>
       </ul>
       <div class="actions">
-        <a class="btn dark" href="https://www.dimpleit.com/" target="_blank" rel="noopener">Open Live Site</a>
+        <a class="btn dark" href="https://www.dimpleit.com/" target="_blank" rel="noopener" aria-label="Open Dimpleit project in a new tab">Open Live Site</a>
       </div>
     </div>
-    <a class="preview" href="https://www.dimpleit.com/" target="_blank" rel="noopener" aria-label="Open Dimpleit live site">
+    <a class="preview" href="https://www.dimpleit.com/" target="_blank" rel="noopener" aria-label="Open Dimpleit project in a new tab">
       <div class="browserTop"><i></i><i></i><i></i><span>dimpleit.com</span></div>
       <div class="frameWrap">
-        <iframe class="livePreviewFrame" src="https://www.dimpleit.com/" title="Dimpleit live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-        <img class="projectPreviewImg" src="assets/images/project-dimpleit-home.jpg" alt="Dimpleit home page preview" loading="lazy" decoding="async">
+        <iframe class="livePreviewFrame" data-src="https://www.dimpleit.com/" title="Dimpleit live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <picture class="projectPreviewPicture">
+        <source type="image/avif" srcset="assets/images/project-dimpleit-home-640.avif 640w, assets/images/project-dimpleit-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+        <source type="image/webp" srcset="assets/images/project-dimpleit-home-640.webp 640w, assets/images/project-dimpleit-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+        <img class="projectPreviewImg" src="assets/images/project-dimpleit-home-960.webp" alt="Dimpleit home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
         <div class="tag">Home page view</div>
       </div>
     </a>
@@ -597,14 +617,18 @@ h1 {
         <li>Experience: brochure, WhatsApp, and enquiry flow</li>
       </ul>
       <div class="actions">
-        <a class="btn dark" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener">Open Live Site</a>
+        <a class="btn dark" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener" aria-label="Open Aurelia Villas Dubai project in a new tab">Open Live Site</a>
       </div>
     </div>
-    <a class="preview" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener" aria-label="Open Aurelia Villas Dubai live site">
+    <a class="preview" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener" aria-label="Open Aurelia Villas Dubai project in a new tab">
       <div class="browserTop"><i></i><i></i><i></i><span>babybabarj.github.io/Aurelia-Villas-Dubai</span></div>
       <div class="frameWrap">
-        <iframe class="livePreviewFrame" src="https://babybabarj.github.io/Aurelia-Villas-Dubai" title="Aurelia Villas Dubai live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-        <img class="projectPreviewImg" src="assets/images/project-aurelia-home.png" alt="Aurelia Villas Dubai home page preview" loading="lazy" decoding="async">
+        <iframe class="livePreviewFrame" data-src="https://babybabarj.github.io/Aurelia-Villas-Dubai" title="Aurelia Villas Dubai live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <picture class="projectPreviewPicture">
+        <source type="image/avif" srcset="assets/images/project-aurelia-home-640.avif 640w, assets/images/project-aurelia-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+        <source type="image/webp" srcset="assets/images/project-aurelia-home-640.webp 640w, assets/images/project-aurelia-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+        <img class="projectPreviewImg" src="assets/images/project-aurelia-home-960.webp" alt="Aurelia Villas Dubai home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
         <div class="tag">Home page view</div>
       </div>
     </a>
@@ -621,14 +645,18 @@ h1 {
         <li>Experience: product-first with strong impact</li>
       </ul>
       <div class="actions">
-        <a class="btn dark" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener">Open Live Site</a>
+        <a class="btn dark" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener" aria-label="Open ARION Energy Drink project in a new tab">Open Live Site</a>
       </div>
     </div>
-    <a class="preview" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener" aria-label="Open ARION Energy Drink live site">
+    <a class="preview" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener" aria-label="Open ARION Energy Drink project in a new tab">
       <div class="browserTop"><i></i><i></i><i></i><span>babybabarj.github.io/arion</span></div>
       <div class="frameWrap">
-        <iframe class="livePreviewFrame" src="https://babybabarj.github.io/arion/" title="ARION Energy Drink live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-        <img class="projectPreviewImg" src="assets/images/project-arion-home.png" alt="ARION Energy Drink home page preview" loading="lazy" decoding="async">
+        <iframe class="livePreviewFrame" data-src="https://babybabarj.github.io/arion/" title="ARION Energy Drink live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+        <picture class="projectPreviewPicture">
+        <source type="image/avif" srcset="assets/images/project-arion-home-640.avif 640w, assets/images/project-arion-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+        <source type="image/webp" srcset="assets/images/project-arion-home-640.webp 640w, assets/images/project-arion-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+        <img class="projectPreviewImg" src="assets/images/project-arion-home-960.webp" alt="ARION Energy Drink home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
         <div class="tag">Home page view</div>
       </div>
     </a>

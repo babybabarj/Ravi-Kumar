@@ -22,7 +22,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://ravikumarai.com/#person","name":"Ravi Kumar","url":"https://ravikumarai.com/","image":"https://ravikumarai.com/assets/images/ravi-portrait.jpg","jobTitle":"AI Systems, Automation and Digital Growth Partner","knowsAbout":["AI systems","Workflow automation","Dashboards","Google Ads","Meta Ads","Web development","App development"],"areaServed":["United Arab Emirates","United Kingdom","United States","India"],"email":"work.ravijethani@gmail.com"},{"@type":"ProfessionalService","@id":"https://ravikumarai.com/#service","name":"Ravi Kumar","url":"https://ravikumarai.com/","description":"AI-enabled business systems, automation, dashboards, websites, apps and campaign-ready digital systems for businesses across the UAE, UK, USA and India.","founder":{"@id":"https://ravikumarai.com/#person"},"areaServed":["United Arab Emirates","United Kingdom","United States","India"]},{"@type":"WebSite","@id":"https://ravikumarai.com/#website","url":"https://ravikumarai.com/","name":"Ravi Kumar","publisher":{"@id":"https://ravikumarai.com/#person"}}]}</script>
 <style>
@@ -142,9 +144,12 @@ h1 { margin:0 0 12px; font-family:"Cormorant Garamond",Georgia,serif; font-weigh
 .avatarBox.intro .avatarImg.namaste.active { animation:namasteSettle 3.2s ease-out forwards; }
 .avatarBox.walking { animation:walkBob 1.2s ease-in-out infinite alternate; }
 .avatarShadow { position:absolute; left:64%; top:82%; width:260px; height:42px; border-radius:999px; background:radial-gradient(ellipse,rgba(16,24,40,.22),rgba(16,24,40,.08) 56%,transparent 72%); filter:blur(3px); transform:translateX(-50%); transition:left .48s cubic-bezier(.22,.61,.36,1), top .48s cubic-bezier(.22,.61,.36,1), width .48s cubic-bezier(.22,.61,.36,1), opacity .3s ease; }
-.dots { position:fixed; z-index:80; right:20px; top:50%; transform:translateY(-50%); display:grid; gap:10px; padding:13px 9px; border:1px solid rgba(255,255,255,.55); border-radius:999px; background:rgba(255,255,255,.34); backdrop-filter:blur(14px); }
-.dot { width:8px; height:8px; border-radius:99px; background:rgba(12,23,48,.24); transition:.2s ease; }
-.dot.active { height:30px; background:#0c1730; }
+.dots { position:fixed; z-index:80; right:14px; top:50%; transform:translateY(-50%); display:grid; gap:2px; padding:6px 4px; border:1px solid rgba(255,255,255,.55); border-radius:999px; background:rgba(255,255,255,.34); backdrop-filter:blur(14px); }
+.dot { width:40px; height:40px; border-radius:999px; background:transparent; display:grid; place-items:center; transition:.2s ease; }
+.dot::before { content:""; width:8px; height:8px; border-radius:99px; background:rgba(12,23,48,.24); transition:.2s ease; }
+.dot.active { height:40px; background:transparent; }
+.dot.active::before { height:30px; background:#0c1730; }
+.dot:focus-visible { outline:3px solid rgba(239,124,34,.55); outline-offset:2px; }
 
 @keyframes premiumDrift { from { transform:translateX(-3%) scale(1); opacity:.34; } to { transform:translateX(3%) scale(1.04); opacity:.56; } }
 @keyframes scrollCue { 0%,100% { transform:scaleY(.38); opacity:.45; } 50% { transform:scaleY(1); opacity:1; } }
@@ -401,7 +406,7 @@ h1 { margin:0 0 12px; font-family:"Cormorant Garamond",Georgia,serif; font-weigh
   box-shadow:0 14px 32px rgba(12,23,48,.08);
 }
 .navCtaWhatsapp {
-  background:#25d366;
+  background:#128c7e;
   color:#fff;
   border:1px solid rgba(255,255,255,.78);
 }
@@ -2161,8 +2166,8 @@ a[href^="mailto"].btn:hover,
 
 /* v19 fixes: remove character rotation, controlled scene navigation, WhatsApp/email icons */
 :root {
-  --waGreen:#25D366;
-  --waGreenDark:#128C7E;
+  --waGreen:#128C7E;
+  --waGreenDark:#075E54;
 }
 
 .waIcon,
@@ -2194,6 +2199,20 @@ a[href^="mailto"].btn:hover,
 
 .mailLink {
   color:#fff !important;
+}
+
+.mcCharPicture {
+  position:relative;
+  z-index:2;
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.mcCharPicture .mcCharImg {
+  width:100%;
+  height:100%;
+  display:block;
 }
 
 @media (max-width:1000px) {
@@ -2527,6 +2546,17 @@ a[href^="mailto"].btn:hover,
 }
 
 /* v22: fixed, non-scrollable project home-page previews */
+.liveFrameWrap .projectPreviewPicture,
+.mcProjectPanel .mcIframeWrap .projectPreviewPicture {
+  position:absolute !important;
+  inset:0 !important;
+  z-index:0 !important;
+  width:100% !important;
+  height:100% !important;
+  display:block !important;
+  pointer-events:none !important;
+  background:#fff !important;
+}
 .liveFrameWrap .projectPreviewImg,
 .mcProjectPanel .mcIframeWrap .projectPreviewImg {
   position:absolute !important;
@@ -3139,13 +3169,11 @@ body {
   }
 }
 </style>
-<link rel="preconnect" href="https://babybabarj.github.io">
-<link rel="dns-prefetch" href="https://babybabarj.github.io">
 <link rel="stylesheet" href="assets/bottom-links.css?v=menu-consistent">
 </head>
 <body>
   <nav class="nav">
-    <a href="index.html#home" class="brand" aria-label="Ravi Kumar home"><span class="logo"><img src="assets/images/ravi-kumar-logo.png" alt="Ravi Kumar"></span></a>
+    <a href="index.html#home" class="brand" aria-label="Ravi Kumar home"><span class="logo"><img src="assets/images/ravi-kumar-logo-320.webp" srcset="assets/images/ravi-kumar-logo-160.webp 160w, assets/images/ravi-kumar-logo-320.webp 320w" sizes="(max-width: 760px) 126px, 180px" width="320" height="102" alt="Ravi Kumar" decoding="async"></span></a>
     <div class="navLinks"><a href="projects.html">Projects</a><a href="about.html">About Me</a><a href="#services">Services</a><a href="#partner">Partner Support</a><a href="#process">Process</a><a href="#contact">Contact</a></div>
     <div class="navActions">
       <button id="mobileMenuBtn" class="mobileMenuBtn" type="button" aria-label="Open mobile menu" aria-expanded="false">Menu</button>
@@ -3159,7 +3187,7 @@ body {
 <div class="avatarLayer v24AvatarLayer" aria-hidden="true">
   <div id="avatarBox" class="avatarBox v24VideoBox">
     <canvas id="v24AvatarCanvas" class="v24AvatarCanvas" width="420" height="640"></canvas>
-    <img class="v24AvatarFallback" src="assets/images/mobile-character-intro.webp" alt="" decoding="async">
+    <img class="v24AvatarFallback" src="assets/images/mobile-character-intro-368.webp" width="368" height="560" alt="" decoding="async">
     <div class="v24VideoBank">
       <video id="v24-home" class="v24VideoSource" muted playsinline loop preload="none" data-src="assets/videos/avatar-home.mp4"></video>
 <video id="v24-about" class="v24VideoSource" muted playsinline loop preload="none" data-src="assets/videos/avatar-about.mp4"></video>
@@ -3216,12 +3244,16 @@ body {
         <div class="projectHeroGrid projectSingleGrid" id="projectSequence">
           <div class="projectSingleReel">
             <div class="projectSlide is-right" data-step="0">
-              <a class="projectLiveCard" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener">
+              <a class="projectLiveCard" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener" aria-label="Open WhatsRoute project in a new tab">
                 <div class="liveBrowser">
                   <div class="liveBrowserTop"><i></i><i></i><i></i><span>whatsroute.vercel.app</span></div>
                   <div class="liveFrameWrap">
                     <iframe class="livePreviewFrame" data-src="https://whatsroute.vercel.app/" title="WhatsRoute live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-                    <img class="projectPreviewImg" src="assets/images/project-whatsroute-home.png" alt="WhatsRoute home page preview" loading="lazy" decoding="async">
+                    <picture class="projectPreviewPicture">
+                      <source type="image/avif" srcset="assets/images/project-whatsroute-home-640.avif 640w, assets/images/project-whatsroute-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <source type="image/webp" srcset="assets/images/project-whatsroute-home-640.webp 640w, assets/images/project-whatsroute-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <img class="projectPreviewImg" src="assets/images/project-whatsroute-home-960.webp" alt="WhatsRoute home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
                   </div>
                 </div>
                 <div class="projectBottom"><div><strong>WhatsRoute</strong><span>WhatsApp-first lead conversion system for Dubai real estate teams.</span></div><em>View Live Site ↗</em></div>
@@ -3229,12 +3261,16 @@ body {
             </div>
 
             <div class="projectSlide is-left" data-step="1">
-              <a class="projectLiveCard" href="https://www.dimpleit.com/" target="_blank" rel="noopener">
+              <a class="projectLiveCard" href="https://www.dimpleit.com/" target="_blank" rel="noopener" aria-label="Open Dimpleit project in a new tab">
                 <div class="liveBrowser">
                   <div class="liveBrowserTop"><i></i><i></i><i></i><span>dimpleit.com</span></div>
                   <div class="liveFrameWrap">
                     <iframe class="livePreviewFrame" data-src="https://www.dimpleit.com/" title="Dimpleit live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-                    <img class="projectPreviewImg" src="assets/images/project-dimpleit-home.jpg" alt="Dimpleit home page preview" loading="lazy" decoding="async">
+                    <picture class="projectPreviewPicture">
+                      <source type="image/avif" srcset="assets/images/project-dimpleit-home-640.avif 640w, assets/images/project-dimpleit-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <source type="image/webp" srcset="assets/images/project-dimpleit-home-640.webp 640w, assets/images/project-dimpleit-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <img class="projectPreviewImg" src="assets/images/project-dimpleit-home-960.webp" alt="Dimpleit home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
                   </div>
                 </div>
                 <div class="projectBottom"><div><strong>Dimpleit</strong><span>Personalized stickers, storybooks and name slips made from your child's photo.</span></div><em>View Live Site ↗</em></div>
@@ -3242,12 +3278,16 @@ body {
             </div>
 
             <div class="projectSlide is-right" data-step="2">
-              <a class="projectLiveCard" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener">
+              <a class="projectLiveCard" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener" aria-label="Open Aurelia Villas Dubai project in a new tab">
                 <div class="liveBrowser">
                   <div class="liveBrowserTop"><i></i><i></i><i></i><span>babybabarj.github.io/Aurelia-Villas-Dubai</span></div>
                   <div class="liveFrameWrap">
                     <iframe class="livePreviewFrame" data-src="https://babybabarj.github.io/Aurelia-Villas-Dubai" title="Aurelia Villas Dubai live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-                    <img class="projectPreviewImg" src="assets/images/project-aurelia-home.png" alt="Aurelia Villas Dubai home page preview" loading="lazy" decoding="async">
+                    <picture class="projectPreviewPicture">
+                      <source type="image/avif" srcset="assets/images/project-aurelia-home-640.avif 640w, assets/images/project-aurelia-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <source type="image/webp" srcset="assets/images/project-aurelia-home-640.webp 640w, assets/images/project-aurelia-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <img class="projectPreviewImg" src="assets/images/project-aurelia-home-960.webp" alt="Aurelia Villas Dubai home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
                   </div>
                 </div>
                 <div class="projectBottom"><div><strong>Aurelia Villas Dubai</strong><span>Luxury real estate website with premium visuals and flow.</span></div><em>View Live Site ↗</em></div>
@@ -3255,12 +3295,16 @@ body {
             </div>
 
             <div class="projectSlide is-left" data-step="3">
-              <a class="projectLiveCard" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener">
+              <a class="projectLiveCard" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener" aria-label="Open ARION Energy Drink project in a new tab">
                 <div class="liveBrowser">
                   <div class="liveBrowserTop"><i></i><i></i><i></i><span>babybabarj.github.io/arion</span></div>
                   <div class="liveFrameWrap">
                     <iframe class="livePreviewFrame" data-src="https://babybabarj.github.io/arion/" title="ARION Energy Drink live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-                    <img class="projectPreviewImg" src="assets/images/project-arion-home.png" alt="ARION Energy Drink home page preview" loading="lazy" decoding="async">
+                    <picture class="projectPreviewPicture">
+                      <source type="image/avif" srcset="assets/images/project-arion-home-640.avif 640w, assets/images/project-arion-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <source type="image/webp" srcset="assets/images/project-arion-home-640.webp 640w, assets/images/project-arion-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <img class="projectPreviewImg" src="assets/images/project-arion-home-960.webp" alt="ARION Energy Drink home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
                   </div>
                 </div>
                 <div class="projectBottom"><div><strong>ARION Energy Drink</strong><span>Cinematic energy drink product website built for impact and conversion.</span></div><em>View Live Site ↗</em></div>
@@ -4400,7 +4444,11 @@ body {
     <section class="mcLayer mcCharacterLayer is-active" data-scene="0" data-bg="home" id="m-intro">
       <div class="mcCharacterStage">
         <div class="mcCharacterGlow"></div>
-        <img loading="lazy" class="mcCharImg mcSpin" src="assets/images/mobile-character-intro.webp" alt="" decoding="async">
+        <picture class="mcCharPicture">
+          <source type="image/avif" srcset="assets/images/mobile-character-intro-320.avif 320w, assets/images/mobile-character-intro-368.avif 368w" sizes="min(82vw, 360px)">
+          <source type="image/webp" srcset="assets/images/mobile-character-intro-320.webp 320w, assets/images/mobile-character-intro-368.webp 368w" sizes="min(82vw, 360px)">
+          <img loading="eager" fetchpriority="high" class="mcCharImg mcSpin" src="assets/images/mobile-character-intro-368.webp" width="368" height="560" alt="" decoding="async">
+        </picture>
       </div>
       <div class="mcCaption">
         <div class="mcKicker">India-based digital execution partner</div>
@@ -4433,27 +4481,35 @@ body {
           <span class="mcLiveBadge">Live previews</span>
         </div>
         <div class="mcLiveProjects">
-          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://whatsroute.vercel.app/" role="link" tabindex="0" aria-label="Open WhatsRoute live website">
+          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://whatsroute.vercel.app/" role="link" tabindex="0" aria-label="Open WhatsRoute project in a new tab">
             <div class="mcBrowserTop">
               <i></i><i></i><i></i>
               <span>whatsroute.vercel.app</span>
-              <a class="mcOpenMini" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener">Open ↗</a>
+              <a class="mcOpenMini" href="https://whatsroute.vercel.app/" target="_blank" rel="noopener" aria-label="Open WhatsRoute project in a new tab">Open ↗</a>
             </div>
             <div class="mcIframeWrap">
               <iframe class="livePreviewFrame" data-src="https://whatsroute.vercel.app/" title="WhatsRoute live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-              <img class="projectPreviewImg" src="assets/images/project-whatsroute-home.png" alt="WhatsRoute home page preview" loading="lazy" decoding="async">
+                    <picture class="projectPreviewPicture">
+                      <source type="image/avif" srcset="assets/images/project-whatsroute-home-640.avif 640w, assets/images/project-whatsroute-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <source type="image/webp" srcset="assets/images/project-whatsroute-home-640.webp 640w, assets/images/project-whatsroute-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <img class="projectPreviewImg" src="assets/images/project-whatsroute-home-960.webp" alt="WhatsRoute home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
               <div class="mcProjectTag">Real Estate SaaS</div>
             </div>
           </div>
-          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://www.dimpleit.com/" role="link" tabindex="0" aria-label="Open Dimpleit live website">
+          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://www.dimpleit.com/" role="link" tabindex="0" aria-label="Open Dimpleit project in a new tab">
             <div class="mcBrowserTop">
               <i></i><i></i><i></i>
               <span>dimpleit.com</span>
-              <a class="mcOpenMini" href="https://www.dimpleit.com/" target="_blank" rel="noopener">Open ↗</a>
+              <a class="mcOpenMini" href="https://www.dimpleit.com/" target="_blank" rel="noopener" aria-label="Open Dimpleit project in a new tab">Open ↗</a>
             </div>
             <div class="mcIframeWrap">
               <iframe class="livePreviewFrame" data-src="https://www.dimpleit.com/" title="Dimpleit live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-              <img class="projectPreviewImg" src="assets/images/project-dimpleit-home.jpg" alt="Dimpleit home page preview" loading="lazy" decoding="async">
+                    <picture class="projectPreviewPicture">
+                      <source type="image/avif" srcset="assets/images/project-dimpleit-home-640.avif 640w, assets/images/project-dimpleit-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <source type="image/webp" srcset="assets/images/project-dimpleit-home-640.webp 640w, assets/images/project-dimpleit-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <img class="projectPreviewImg" src="assets/images/project-dimpleit-home-960.webp" alt="Dimpleit home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
               <div class="mcProjectTag">Personalized Kids Keepsakes</div>
             </div>
           </div>
@@ -4470,27 +4526,35 @@ body {
           <span class="mcLiveBadge">Live previews</span>
         </div>
         <div class="mcLiveProjects">
-          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://babybabarj.github.io/Aurelia-Villas-Dubai" role="link" tabindex="0" aria-label="Open Aurelia Villas Dubai live website">
+          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://babybabarj.github.io/Aurelia-Villas-Dubai" role="link" tabindex="0" aria-label="Open Aurelia Villas Dubai project in a new tab">
             <div class="mcBrowserTop">
               <i></i><i></i><i></i>
               <span>babybabarj.github.io/Aurelia-Villas-Dubai</span>
-              <a class="mcOpenMini" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener">Open ↗</a>
+              <a class="mcOpenMini" href="https://babybabarj.github.io/Aurelia-Villas-Dubai" target="_blank" rel="noopener" aria-label="Open Aurelia Villas Dubai project in a new tab">Open ↗</a>
             </div>
             <div class="mcIframeWrap">
               <iframe class="livePreviewFrame" data-src="https://babybabarj.github.io/Aurelia-Villas-Dubai" title="Aurelia Villas Dubai live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-              <img class="projectPreviewImg" src="assets/images/project-aurelia-home.png" alt="Aurelia Villas Dubai home page preview" loading="lazy" decoding="async">
+                    <picture class="projectPreviewPicture">
+                      <source type="image/avif" srcset="assets/images/project-aurelia-home-640.avif 640w, assets/images/project-aurelia-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <source type="image/webp" srcset="assets/images/project-aurelia-home-640.webp 640w, assets/images/project-aurelia-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <img class="projectPreviewImg" src="assets/images/project-aurelia-home-960.webp" alt="Aurelia Villas Dubai home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
               <div class="mcProjectTag">Dubai Real Estate Website</div>
             </div>
           </div>
-          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://babybabarj.github.io/arion/" role="link" tabindex="0" aria-label="Open ARION Energy Drink live website">
+          <div class="mcLiveFrame mcLiveFrameClickable" data-url="https://babybabarj.github.io/arion/" role="link" tabindex="0" aria-label="Open ARION Energy Drink project in a new tab">
             <div class="mcBrowserTop">
               <i></i><i></i><i></i>
               <span>babybabarj.github.io/arion</span>
-              <a class="mcOpenMini" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener">Open ↗</a>
+              <a class="mcOpenMini" href="https://babybabarj.github.io/arion/" target="_blank" rel="noopener" aria-label="Open ARION Energy Drink project in a new tab">Open ↗</a>
             </div>
             <div class="mcIframeWrap">
               <iframe class="livePreviewFrame" data-src="https://babybabarj.github.io/arion/" title="ARION Energy Drink live home page preview" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-              <img class="projectPreviewImg" src="assets/images/project-arion-home.png" alt="ARION Energy Drink home page preview" loading="lazy" decoding="async">
+                    <picture class="projectPreviewPicture">
+                      <source type="image/avif" srcset="assets/images/project-arion-home-640.avif 640w, assets/images/project-arion-home-960.avif 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <source type="image/webp" srcset="assets/images/project-arion-home-640.webp 640w, assets/images/project-arion-home-960.webp 960w" sizes="(max-width: 760px) 82vw, 48vw">
+                      <img class="projectPreviewImg" src="assets/images/project-arion-home-960.webp" alt="ARION Energy Drink home page preview" width="960" height="600" loading="lazy" decoding="async">
+                    </picture>
               <div class="mcProjectTag">Energy Drink Website</div>
             </div>
           </div>
@@ -4501,7 +4565,11 @@ body {
     <section class="mcLayer mcCharacterLayer" data-scene="5" data-bg="projects" id="m-transition-1">
       <div class="mcCharacterStage">
         <div class="mcCharacterGlow"></div>
-        <img loading="lazy" class="mcCharImg mcSpin" src="assets/images/mobile-character-portfolio.webp" alt="" decoding="async">
+        <picture class="mcCharPicture">
+          <source type="image/avif" srcset="assets/images/mobile-character-portfolio-320.avif 320w, assets/images/mobile-character-portfolio-373.avif 373w" sizes="min(82vw, 360px)">
+          <source type="image/webp" srcset="assets/images/mobile-character-portfolio-320.webp 320w, assets/images/mobile-character-portfolio-373.webp 373w" sizes="min(82vw, 360px)">
+          <img loading="lazy" class="mcCharImg mcSpin" src="assets/images/mobile-character-portfolio-373.webp" width="373" height="560" alt="" decoding="async">
+        </picture>
       </div>
       <div class="mcCaption">
         <div class="mcKicker">Portfolio to partnership</div>
@@ -4543,7 +4611,11 @@ body {
     <section class="mcLayer mcCharacterLayer" data-scene="6" data-bg="services" id="m-transition-2">
       <div class="mcCharacterStage">
         <div class="mcCharacterGlow"></div>
-        <img loading="lazy" class="mcCharImg mcSpin" src="assets/images/mobile-character-services.webp" alt="" decoding="async">
+        <picture class="mcCharPicture">
+          <source type="image/avif" srcset="assets/images/mobile-character-services-320.avif 320w, assets/images/mobile-character-services-368.avif 368w" sizes="min(82vw, 360px)">
+          <source type="image/webp" srcset="assets/images/mobile-character-services-320.webp 320w, assets/images/mobile-character-services-368.webp 368w" sizes="min(82vw, 360px)">
+          <img loading="lazy" class="mcCharImg mcSpin" src="assets/images/mobile-character-services-368.webp" width="368" height="560" alt="" decoding="async">
+        </picture>
       </div>
       <div class="mcCaption">
         <div class="mcKicker">Partner-ready execution</div>
@@ -4584,7 +4656,11 @@ body {
     <section class="mcLayer mcCharacterLayer" data-scene="9" data-bg="contact" id="m-transition-3">
       <div class="mcCharacterStage">
         <div class="mcCharacterGlow"></div>
-        <img loading="lazy" class="mcCharImg mcSpin" src="assets/images/mobile-character-portfolio.webp" alt="" decoding="async">
+        <picture class="mcCharPicture">
+          <source type="image/avif" srcset="assets/images/mobile-character-portfolio-320.avif 320w, assets/images/mobile-character-portfolio-373.avif 373w" sizes="min(82vw, 360px)">
+          <source type="image/webp" srcset="assets/images/mobile-character-portfolio-320.webp 320w, assets/images/mobile-character-portfolio-373.webp 373w" sizes="min(82vw, 360px)">
+          <img loading="lazy" class="mcCharImg mcSpin" src="assets/images/mobile-character-portfolio-373.webp" width="373" height="560" alt="" decoding="async">
+        </picture>
       </div>
       <div class="mcCaption">
         <div class="mcKicker">Ready to discuss?</div>
