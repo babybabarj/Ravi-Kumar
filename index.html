@@ -365,7 +365,8 @@ h1 { margin:0 0 12px; font-family:"Cormorant Garamond",Georgia,serif; font-weigh
   border-radius:999px;
   background:radial-gradient(ellipse,rgba(16,24,40,.22),rgba(16,24,40,.08) 56%,transparent 72%);
   filter:blur(3px);
-  transform:translateX(-50%);
+  transform:translateX(-50%) scale(1.12);
+  transform-origin:center bottom;
   transition:left .56s cubic-bezier(.22,.61,.36,1), top .56s cubic-bezier(.22,.61,.36,1), width .56s cubic-bezier(.22,.61,.36,1), opacity .3s ease;
 }
 @media (max-width: 760px) {
@@ -1136,7 +1137,7 @@ h1 {
 }
 
 
-/* v9: premium 3D button interactions + consistent orange Email Ravi + smoother transform avatar */
+/* v9: premium 3D button interactions + consistent orange Email + smoother transform avatar */
 :root {
   --emailOrange:#ef7c22;
   --emailOrange2:#f7a45f;
@@ -1955,39 +1956,61 @@ a[href^="mailto"].btn:hover,
   .mobileCtaBar {
     position:fixed;
     left:10px;
-    right:10px;
+    right:auto;
+    width:calc(100svw - 20px);
+    max-width:calc(100vw - 20px);
     bottom:8px;
     z-index:1250;
     display:grid !important;
     grid-template-columns:1fr 1fr 1fr;
-    gap:6px;
-    padding:6px;
-    border-radius:20px;
-    background:rgba(255,250,244,.88);
-    border:1px solid rgba(255,255,255,.84);
-    box-shadow:0 18px 56px rgba(12,23,48,.20), inset 0 1px 0 rgba(255,255,255,.70);
-    backdrop-filter:blur(18px) saturate(1.1);
+    gap:8px;
+    padding:0;
+    background:transparent;
+    border:0;
+    box-shadow:none;
+    backdrop-filter:none;
+    box-sizing:border-box;
   }
   .mobileCtaBar a {
+    min-width:0;
+    width:100%;
     min-height:38px;
+    padding:0 8px;
     border-radius:999px;
     display:flex;
     align-items:center;
     justify-content:center;
     color:#0a142b;
     background:rgba(255,255,255,.72);
-    border:1px solid rgba(255,255,255,.72);
+    border:1px solid rgba(255,255,255,.34);
+    box-sizing:border-box;
     font-size:11.5px;
     font-weight:950;
     text-decoration:none;
+    white-space:nowrap;
   }
-  .mobileCtaBar a:nth-child(3) {
+  .mobileCtaBar .mailLink {
     color:#fff;
     background:linear-gradient(135deg,#ef7c22,#f7a45f);
+  }
+  .mobileCtaBar .waLink {
+    color:#fff;
+    background:#128c7e;
+  }
+  .mobileCtaBar .callLink {
+    color:#fff;
+    background:#0b152e;
   }
   /* Small phones */
   @media (max-width:390px) {
     .mcLayer { padding-left:10px; padding-right:10px; }
+    .mobileCtaBar {
+      left:8px;
+      width:calc(100svw - 16px);
+      max-width:calc(100vw - 16px);
+      gap:6px;
+    }
+    .mobileCtaBar a { padding:0 6px; font-size:11px; }
     .mcCard,
     .mcCaption { padding:20px 16px; border-radius:24px; }
     .mcCard h2,
@@ -2226,12 +2249,55 @@ a[href^="mailto"].btn:hover,
   width:100%;
   height:100%;
   display:block;
+  transition:opacity .32s ease;
 }
 
 .mcCharPicture .mcCharImg {
   width:100%;
   height:100%;
   display:block;
+}
+
+.mcCharacterLayer .mcCharPicture {
+  opacity:0;
+}
+
+.mcCharVideo {
+  position:absolute;
+  left:-9999px;
+  top:-9999px;
+  width:1px;
+  height:1px;
+  opacity:0;
+  pointer-events:none;
+}
+
+.mcCharCanvas {
+  position:absolute;
+  left:50%;
+  right:auto;
+  top:auto;
+  bottom:0;
+  z-index:3;
+  width:auto;
+  height:100%;
+  max-width:100%;
+  max-height:100%;
+  aspect-ratio:320 / 488;
+  opacity:0;
+  pointer-events:none;
+  transform:translateX(-50%) scale(1.28,1.42);
+  transform-origin:center bottom;
+  filter:saturate(1) drop-shadow(0 28px 26px rgba(10,20,43,.22));
+  transition:opacity .32s ease;
+}
+
+.mcCharacterLayer.is-active .mcCharCanvas.is-ready {
+  opacity:1;
+}
+
+.mcCharacterLayer.is-active .mcCharCanvas.is-ready ~ .mcCharPicture {
+  opacity:0;
 }
 
 @media (max-width:1000px) {
@@ -2265,6 +2331,22 @@ a[href^="mailto"].btn:hover,
 
   .mcLayer {
     transition:opacity .46s ease, transform .46s ease !important;
+  }
+
+  .mcCharacterLayer {
+    gap:0 !important;
+  }
+
+  .mcCharacterGlow {
+    display:none !important;
+  }
+
+  .mcCharacterStage {
+    transform:translateY(76px) !important;
+  }
+
+  #m-intro .mcCharacterStage {
+    transform:translateY(88px) !important;
   }
 
   .mcLayer.is-before {
@@ -2322,6 +2404,35 @@ a[href^="mailto"].btn:hover,
 
   .mobileMenuPanel {
     touch-action:auto !important;
+  }
+}
+
+@media (max-width:390px) {
+  .mcCharacterStage {
+    transform:translateY(68px) !important;
+  }
+
+  #m-intro .mcCharacterStage {
+    transform:translateY(78px) !important;
+  }
+}
+
+@media (max-width:1000px) and (max-height:740px) {
+  .mcCharacterStage,
+  #m-intro .mcCharacterStage {
+    transform:translateY(54px) !important;
+  }
+}
+
+@media (max-width:1000px) {
+  .mcCharCanvas {
+    transform:translateX(-50%) scale(1.14,1.24) !important;
+  }
+}
+
+@media (max-width:390px) {
+  .mcCharCanvas {
+    transform:translateX(-50%) scale(1.12,1.22) !important;
   }
 }
 
@@ -3195,12 +3306,7 @@ body {
   <nav class="nav">
     <a href="index.html#home" class="brand" aria-label="Ravi Kumar home"><span class="logo"><img src="assets/images/ravi-kumar-logo-320.webp" srcset="assets/images/ravi-kumar-logo-160.webp 160w, assets/images/ravi-kumar-logo-320.webp 320w" sizes="(max-width: 760px) 126px, 180px" width="320" height="102" alt="Ravi Kumar" decoding="async"></span></a>
     <div class="navLinks"><a href="projects.html">Projects</a><a href="about.html">About Me</a><a href="#services">Services</a><a href="#partner">Partner Support</a><a href="#process">Process</a><a href="#contact">Contact</a></div>
-    <div class="navActions">
-      <button id="mobileMenuBtn" class="mobileMenuBtn" type="button" aria-label="Open mobile menu" aria-expanded="false">Menu</button>
-      <a class="navCta navCtaWhatsapp waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
-      <a class="navCta navCtaMail mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
-      <a class="navCta callLink" href="tel:+917208782773">Call</a>
-    </div>
+    <div class="navActions"><button id="mobileMenuBtn" class="mobileMenuBtn" type="button" aria-label="Open mobile menu" aria-expanded="false">Menu</button><a class="navCta navCtaMail mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email</a><a class="navCta navCtaWhatsapp waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a><a class="navCta callLink" href="tel:+917208782773">Call</a></div>
   </nav>
 
   
@@ -3238,7 +3344,7 @@ body {
           <div class="actions">
       <a class="btn primary" href="#services">Explore Services</a>
       <a class="btn secondary" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener">Start Partnership</a>
-      <a class="btn secondary mailBtn mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
+      <a class="btn secondary mailBtn mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email</a>
     </div>
         </div>
         <div class="emptyStage"></div>
@@ -3430,7 +3536,7 @@ body {
           <div class="cardGrid contactGrid"><div class="miniCard"><strong>WhatsApp</strong><span>+91 7208782773</span></div><div class="miniCard"><strong>Email</strong><span data-mail-text>Email button ready</span></div><div class="miniCard"><strong>Best fit</strong><span>UAE, UK, USA and India: businesses, agencies and startups.</span></div><div class="miniCard"><strong>Delivery style</strong><span>Premium, clear and confidential.</span></div></div>
           <div class="actions">
       <a class="btn primary waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
-      <a class="btn secondary mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
+      <a class="btn secondary mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email</a>
       <a class="btn secondary" href="#home">Back to Top</a>
     </div>
         </div>
@@ -4467,6 +4573,8 @@ body {
     <section class="mcLayer mcCharacterLayer is-active" data-scene="0" data-bg="home" id="m-intro">
       <div class="mcCharacterStage">
         <div class="mcCharacterGlow"></div>
+        <canvas class="mcCharCanvas" width="320" height="488"></canvas>
+        <video class="mcCharVideo" muted playsinline loop preload="none" poster="assets/images/mobile-character-intro-368.webp" data-src="assets/videos/avatar-home.mp4"></video>
         <picture class="mcCharPicture">
           <source type="image/avif" srcset="assets/images/mobile-character-intro-320.avif 320w, assets/images/mobile-character-intro-368.avif 368w" sizes="min(82vw, 360px)">
           <source type="image/webp" srcset="assets/images/mobile-character-intro-320.webp 320w, assets/images/mobile-character-intro-368.webp 368w" sizes="min(82vw, 360px)">
@@ -4490,7 +4598,7 @@ body {
         </div>
         <div class="mcActions">
           <a class="mcBtn mcBtnDark callLink" href="tel:+917208782773">Call</a>
-          <a class="mcBtn mcBtnOrange mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
+          <a class="mcBtn mcBtnOrange mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email</a>
         </div>
       </div>
     </section>
@@ -4588,6 +4696,8 @@ body {
     <section class="mcLayer mcCharacterLayer" data-scene="5" data-bg="projects" id="m-transition-1">
       <div class="mcCharacterStage">
         <div class="mcCharacterGlow"></div>
+        <canvas class="mcCharCanvas" width="320" height="488"></canvas>
+        <video class="mcCharVideo" muted playsinline loop preload="none" poster="assets/images/mobile-character-portfolio-373.webp" data-src="assets/videos/avatar-about.mp4"></video>
         <picture class="mcCharPicture">
           <source type="image/avif" srcset="assets/images/mobile-character-portfolio-320.avif 320w, assets/images/mobile-character-portfolio-373.avif 373w" sizes="min(82vw, 360px)">
           <source type="image/webp" srcset="assets/images/mobile-character-portfolio-320.webp 320w, assets/images/mobile-character-portfolio-373.webp 373w" sizes="min(82vw, 360px)">
@@ -4634,6 +4744,8 @@ body {
     <section class="mcLayer mcCharacterLayer" data-scene="6" data-bg="services" id="m-transition-2">
       <div class="mcCharacterStage">
         <div class="mcCharacterGlow"></div>
+        <canvas class="mcCharCanvas" width="320" height="488"></canvas>
+        <video class="mcCharVideo" muted playsinline loop preload="none" poster="assets/images/mobile-character-services-368.webp" data-src="assets/videos/avatar-services.mp4"></video>
         <picture class="mcCharPicture">
           <source type="image/avif" srcset="assets/images/mobile-character-services-320.avif 320w, assets/images/mobile-character-services-368.avif 368w" sizes="min(82vw, 360px)">
           <source type="image/webp" srcset="assets/images/mobile-character-services-320.webp 320w, assets/images/mobile-character-services-368.webp 368w" sizes="min(82vw, 360px)">
@@ -4679,6 +4791,8 @@ body {
     <section class="mcLayer mcCharacterLayer" data-scene="9" data-bg="contact" id="m-transition-3">
       <div class="mcCharacterStage">
         <div class="mcCharacterGlow"></div>
+        <canvas class="mcCharCanvas" width="320" height="488"></canvas>
+        <video class="mcCharVideo" muted playsinline loop preload="none" poster="assets/images/mobile-character-portfolio-373.webp" data-src="assets/videos/avatar-process-contact.mp4"></video>
         <picture class="mcCharPicture">
           <source type="image/avif" srcset="assets/images/mobile-character-portfolio-320.avif 320w, assets/images/mobile-character-portfolio-373.avif 373w" sizes="min(82vw, 360px)">
           <source type="image/webp" srcset="assets/images/mobile-character-portfolio-320.webp 320w, assets/images/mobile-character-portfolio-373.webp 373w" sizes="min(82vw, 360px)">
@@ -4705,7 +4819,7 @@ body {
         </div>
         <div class="mcActions">
           <a class="mcBtn mcBtnDark waLink" href="https://wa.me/917208782773?text=Hi%20Ravi%2C%20I%20want%20to%20discuss%20a%20UAE%20digital%20delivery%20partnership." target="_blank" rel="noopener"><span class="waIcon" aria-hidden="true"></span>WhatsApp</a>
-          <a class="mcBtn mcBtnOrange mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email Ravi</a>
+          <a class="mcBtn mcBtnOrange mailLink" href="contact.html" data-mail-link data-mail-subject="UAE Digital Delivery Partnership" data-mail-body="Hi Ravi, I would like to discuss a digital delivery partnership."><span class="mailIcon" aria-hidden="true"></span>Email</a>
           <a class="mcBtn mcBtnLight" href="#m-intro">Back to Top</a>
         </div>
       </div>
@@ -4727,16 +4841,16 @@ body {
       <a href="agency-delivery-partner.html">Partner Support</a>
       <a href="process.html">Process</a>
       <a href="contact.html">Contact</a>
-      <a class="mobileMenuCall callLink" href="tel:+917208782773">Call</a>
+      <a class="mobileMenuEmail mailLink" href="contact.html" data-mail-link>Email</a>
       <a class="mobileMenuWhatsapp waLink" href="https://wa.me/917208782773" target="_blank" rel="noopener">WhatsApp</a>
-      <a class="mobileMenuEmail mailLink" href="contact.html" data-mail-link>Email Ravi</a>
+      <a class="mobileMenuCall callLink" href="tel:+917208782773">Call</a>
     </nav>
   </div>
 </div>
 <div class="mobileCtaBar" aria-label="Quick mobile actions">
-  <a href="tel:+917208782773" class="callLink">Call</a>
+  <a href="contact.html" class="mailLink" data-mail-link>Email</a>
   <a href="https://wa.me/917208782773" target="_blank" rel="noopener" class="waLink">WhatsApp</a>
-  <a href="contact.html" class="mailLink" data-mail-link>Email Ravi</a>
+  <a href="tel:+917208782773" class="callLink">Call</a>
 </div>
 
 <script id="mobileCinematicV19">
@@ -4787,6 +4901,21 @@ body {
   let touchStartX = 0;
   let touchMoved = false;
   const total = layers.length || 1;
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mobileVideos = Array.from(document.querySelectorAll('.mcCharVideo[data-src]'));
+  const mobileVideoItems = mobileVideos.map(video => {
+    const stage = video.closest('.mcCharacterStage');
+    return {
+      video,
+      layer: video.closest('.mcLayer'),
+      canvas: stage ? stage.querySelector('.mcCharCanvas') : null,
+      ctx: null,
+      keyCanvas: null,
+      keyCtx: null,
+      raf: 0,
+      lastDraw: 0
+    };
+  }).filter(item => item.layer && item.canvas);
 
   function isMobileStage(){
     return window.innerWidth <= 1000 && journey;
@@ -4807,6 +4936,105 @@ body {
     Object.keys(bgs).forEach(key => {
       if (bgs[key]) bgs[key].classList.toggle('is-active', key === bgKey);
     });
+
+    syncMobileVideos();
+  }
+
+  function syncMobileVideos(){
+    if (!isMobileStage() || reduceMotion) return;
+
+    mobileVideoItems.forEach(item => {
+      const video = item.video;
+      const active = item.layer.classList.contains('is-active');
+
+      if (active) {
+        if (!video.src) {
+          video.src = video.dataset.src;
+          video.load();
+        }
+        const play = video.play();
+        if (play && play.catch) play.catch(() => {});
+        if (!item.raf) item.raf = requestAnimationFrame(now => drawMobileKeyed(item, now));
+      } else {
+        video.pause();
+        item.canvas.classList.remove('is-ready');
+        if (item.raf) {
+          cancelAnimationFrame(item.raf);
+          item.raf = 0;
+        }
+      }
+    });
+  }
+
+  function drawMobileKeyed(item, now){
+    item.raf = 0;
+    if (!isMobileStage() || reduceMotion || !item.layer.classList.contains('is-active')) return;
+
+    if (now - item.lastDraw < 33) {
+      item.raf = requestAnimationFrame(next => drawMobileKeyed(item, next));
+      return;
+    }
+    item.lastDraw = now;
+
+    const video = item.video;
+    const canvas = item.canvas;
+    if (!item.ctx) {
+      item.ctx = canvas.getContext('2d', { alpha:true, willReadFrequently:true });
+      item.keyCanvas = document.createElement('canvas');
+      item.keyCanvas.width = canvas.width;
+      item.keyCanvas.height = canvas.height;
+      item.keyCtx = item.keyCanvas.getContext('2d', { alpha:true, willReadFrequently:true });
+    }
+
+    if (item.ctx && item.keyCtx && video.readyState >= 2 && video.videoWidth && video.videoHeight) {
+      const cw = canvas.width;
+      const ch = canvas.height;
+      const scale = Math.min(cw / video.videoWidth, ch / video.videoHeight);
+      const dw = Math.round(video.videoWidth * scale);
+      const dh = Math.round(video.videoHeight * scale);
+      const dx = Math.round((cw - dw) / 2);
+      const dy = Math.round(ch - dh);
+
+      item.keyCtx.clearRect(0, 0, cw, ch);
+      item.keyCtx.drawImage(video, dx, dy, dw, dh);
+
+      try {
+        const frame = item.keyCtx.getImageData(0, 0, cw, ch);
+        const data = frame.data;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          const maxRB = Math.max(r, b);
+          const minRB = Math.min(r, b);
+          const spill = g - maxRB;
+          const pixel = i / 4;
+          const x = pixel % cw;
+          const y = Math.floor(pixel / cw);
+
+          if (x > cw * .78 && y > ch * .88) {
+            data[i + 3] = 0;
+            continue;
+          }
+
+          if ((g > 112 && spill > 28) ||
+              (g > 88 && g > r * 1.08 && g > b * 1.08 && spill > 18) ||
+              (g > 58 && spill > 10 && (g - minRB) > 16 && r < 205 && b < 205)) {
+            data[i + 3] = spill > 70 && g > 110 ? 0 : spill > 48 && g > 92 ? 18 : spill > 32 ? 48 : 88;
+            data[i + 1] = Math.min(g, maxRB + 3);
+          } else if (spill > 10 && g > 55 && r < 212 && b < 212) {
+            data[i + 1] = Math.min(g, maxRB + 5);
+          }
+        }
+
+        item.ctx.clearRect(0, 0, cw, ch);
+        item.ctx.putImageData(frame, 0, 0);
+        canvas.classList.add('is-ready');
+      } catch(e) {}
+    }
+
+    item.raf = requestAnimationFrame(next => drawMobileKeyed(item, next));
   }
 
   function releaseLock(){

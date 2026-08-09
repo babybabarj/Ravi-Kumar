@@ -5,6 +5,7 @@
 }
 
 .siteBottomBar {
+  display: none !important;
   width: max-content;
   max-width: calc(100vw - 24px);
   min-height: 34px;
@@ -65,7 +66,7 @@
   font-family: ui-monospace, Menlo, Consolas, monospace;
 }
 @media (max-width: 900px) {
-  body { padding-bottom: 74px; }
+  body { padding-bottom: 56px; }
 
   .mobileMenuBtn {
     height: 38px !important;
@@ -86,33 +87,35 @@
 
   .mobileCtaBar {
     position: fixed !important;
-    z-index: 90 !important;
+    z-index: 1250 !important;
     left: 10px !important;
-    right: 10px !important;
-    bottom: 8px !important;
-    min-height: 52px !important;
-    padding: 6px !important;
-    border-radius: 22px !important;
+    right: auto !important;
+    width: calc(100svw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    bottom: 6px !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
     display: grid !important;
     grid-template-columns: 1fr 1fr 1fr !important;
-    gap: 6px !important;
-    background: rgba(255,255,255,.88) !important;
-    border: 1px solid rgba(255,255,255,.82) !important;
-    box-shadow: 0 18px 42px rgba(10,20,43,.16) !important;
-    backdrop-filter: blur(18px) !important;
-    -webkit-backdrop-filter: blur(18px) !important;
+    gap: 7px !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   .mobileCtaBar a {
     min-width: 0 !important;
-    min-height: 40px !important;
-    border-radius: 17px !important;
+    min-height: 36px !important;
+    border-radius: 16px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 6px !important;
     font-family: "Plus Jakarta Sans", Arial, sans-serif !important;
-    font-size: 12px !important;
+    font-size: 11.5px !important;
     font-weight: 900 !important;
     text-decoration: none !important;
   }
@@ -241,4 +244,60 @@
 
 @media (min-width: 901px) {
   .mobileCtaBar { display: none !important; }
+}
+
+.siteFooterFull {
+  padding: 18px min(4vw, 52px) 20px !important;
+}
+
+.footerInner {
+  width: min(780px, 100%) !important;
+}
+
+.footerBrand {
+  margin-bottom: 10px !important;
+}
+
+.footerBrand strong {
+  font-size: 16px !important;
+}
+
+.footerBrand span {
+  margin-top: 3px !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+}
+
+.footerGrid {
+  gap: 8px 18px !important;
+}
+
+.footerCol h3 {
+  margin-bottom: 5px !important;
+  font-size: 10px !important;
+  letter-spacing: .14em !important;
+}
+
+.footerCol a {
+  margin-right: 10px !important;
+  padding: 2px 0 !important;
+  font-size: 11px !important;
+  font-weight: 780 !important;
+}
+
+.footerBottom {
+  margin-top: 10px !important;
+  padding-top: 9px !important;
+  font-size: 10.5px !important;
+  line-height: 1.35 !important;
+}
+
+@media (max-width: 900px) {
+  .siteFooterFull {
+    padding: 16px 20px calc(52px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr !important;
+  }
 }
