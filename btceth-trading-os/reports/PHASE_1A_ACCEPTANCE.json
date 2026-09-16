@@ -1,0 +1,209 @@
+{
+  "phase": "1A",
+  "status": "VERIFIED",
+  "canonical_live_capture": "VERIFIED",
+  "trading_capability": "ZERO",
+  "criteria": {
+    "automated_tests_pass": true,
+    "security_scan_pass": true,
+    "live_smoke_process_pass": true,
+    "all_rest_collectors_observed": true,
+    "required_ws_streams_observed": true,
+    "liquidation_streams_reachable": true,
+    "four_orderbooks_synchronized": true,
+    "no_source_errors": true,
+    "raw_append_only_evidence_present": true,
+    "silver_parquet_readback": true,
+    "catalog_present": true,
+    "sqlite_wal": true
+  },
+  "checks": {
+    "pytest_exit": 0,
+    "security_exit": 0,
+    "live_smoke_exit": 0,
+    "smoke": {
+      "rest": 20,
+      "ws": 12,
+      "duplicates": 0,
+      "conflicts": 0,
+      "errors": [],
+      "ws_stream_results": [
+        {
+          "market": "spot",
+          "dataset": "aggtrade",
+          "instrument_id": "BINANCE:SPOT:BTCUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "spot",
+          "dataset": "book_ticker",
+          "instrument_id": "BINANCE:SPOT:BTCUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "spot",
+          "dataset": "depth_delta",
+          "instrument_id": "BINANCE:SPOT:BTCUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "usdm",
+          "dataset": "aggtrade",
+          "instrument_id": "BINANCE:USD_M_PERP:BTCUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "usdm",
+          "dataset": "book_ticker",
+          "instrument_id": "BINANCE:USD_M_PERP:BTCUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "usdm",
+          "dataset": "depth_delta",
+          "instrument_id": "BINANCE:USD_M_PERP:BTCUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "usdm",
+          "dataset": "liquidation_sample",
+          "instrument_id": "BINANCE:USD_M_PERP:BTCUSDT",
+          "sparse": true,
+          "messages_received": 0,
+          "status": "CONNECTED_NO_EVENT_ACCEPTABLE"
+        },
+        {
+          "market": "spot",
+          "dataset": "aggtrade",
+          "instrument_id": "BINANCE:SPOT:ETHUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "spot",
+          "dataset": "book_ticker",
+          "instrument_id": "BINANCE:SPOT:ETHUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "spot",
+          "dataset": "depth_delta",
+          "instrument_id": "BINANCE:SPOT:ETHUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "usdm",
+          "dataset": "aggtrade",
+          "instrument_id": "BINANCE:USD_M_PERP:ETHUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "usdm",
+          "dataset": "book_ticker",
+          "instrument_id": "BINANCE:USD_M_PERP:ETHUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "usdm",
+          "dataset": "depth_delta",
+          "instrument_id": "BINANCE:USD_M_PERP:ETHUSDT",
+          "sparse": false,
+          "messages_received": 1,
+          "status": "EVENT_RECEIVED"
+        },
+        {
+          "market": "usdm",
+          "dataset": "liquidation_sample",
+          "instrument_id": "BINANCE:USD_M_PERP:ETHUSDT",
+          "sparse": true,
+          "messages_received": 0,
+          "status": "CONNECTED_NO_EVENT_ACCEPTABLE"
+        }
+      ],
+      "ws_required_missing": [],
+      "orderbooks_synced": 4,
+      "orderbook_results": [
+        {
+          "market": "spot",
+          "symbol": "BTCUSDT",
+          "last_update_id": 100221941385,
+          "best_bid": "75998.00000000",
+          "best_ask": "75998.01000000",
+          "deltas_applied": 3
+        },
+        {
+          "market": "spot",
+          "symbol": "ETHUSDT",
+          "last_update_id": 81070725038,
+          "best_bid": "2407.34000000",
+          "best_ask": "2407.35000000",
+          "deltas_applied": 3
+        },
+        {
+          "market": "usdm",
+          "symbol": "BTCUSDT",
+          "last_update_id": 11574755392217,
+          "best_bid": "75991.80",
+          "best_ask": "75991.90",
+          "deltas_applied": 3
+        },
+        {
+          "market": "usdm",
+          "symbol": "ETHUSDT",
+          "last_update_id": 11574756044726,
+          "best_bid": "2406.47",
+          "best_ask": "2406.48",
+          "deltas_applied": 3
+        }
+      ],
+      "orderbook_errors": [],
+      "silver_rows": 32,
+      "catalog_heartbeats": 34
+    },
+    "rest_required": 20,
+    "rest_observed": 20,
+    "ws_observed_events": 12,
+    "required_ws_streams_expected": 12,
+    "required_ws_streams_reported": 12,
+    "required_ws_streams_missing": [],
+    "liquidation_streams_expected": 2,
+    "liquidation_streams_reported": 2,
+    "liquidation_streams_ok": true,
+    "orderbooks_required": 4,
+    "orderbooks_synced": 4,
+    "source_errors": [],
+    "raw_files": 28,
+    "silver_readback_rows": 32,
+    "silver_schema_ok": true,
+    "journal_mode": "wal",
+    "catalog_collector_runs": 30,
+    "catalog_collector_heartbeats": 34,
+    "catalog_connection_runs": 0,
+    "catalog_raw_live_objects": 0,
+    "catalog_live_gaps": 0,
+    "catalog_subscription_state": 0,
+    "catalog_collector_errors": 0,
+    "trading_capability_zero": true
+  }
+}

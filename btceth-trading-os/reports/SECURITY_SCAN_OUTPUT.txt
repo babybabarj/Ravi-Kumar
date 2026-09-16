@@ -1,0 +1,4 @@
+{
+  "trading_capability": "ZERO",
+  "hits": []
+}

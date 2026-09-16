@@ -5,3 +5,11 @@ qa/
 .ravikumarai-blog/drafts/
 .ravikumarai-blog/*.local.json
 .ravikumarai-blog/publish-log.jsonl
+
+# Python & Phase1 artifacts
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.venv*/
+artifacts/
