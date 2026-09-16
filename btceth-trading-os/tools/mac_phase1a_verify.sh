@@ -94,8 +94,29 @@ else:
 checks["smoke"] = smoke
 checks["rest_required"] = 20
 checks["rest_observed"] = int(smoke.get("rest", 0))
-checks["ws_minimum_required"] = 12
-checks["ws_observed"] = int(smoke.get("ws", 0))
+checks["ws_observed_events"] = int(smoke.get("ws", 0))
+
+ws_results = list(smoke.get("ws_stream_results", []))
+required_ws = [r for r in ws_results if not r.get("sparse", False)]
+liquidation_ws = [r for r in ws_results if r.get("sparse", False)]
+required_missing = [
+    f"{r.get('market')}:{r.get('dataset')}:{r.get('instrument_id')}:{r.get('status')}"
+    for r in required_ws
+    if int(r.get("messages_received", 0)) < 1 or r.get("status") != "EVENT_RECEIVED"
+]
+checks["required_ws_streams_expected"] = 12
+checks["required_ws_streams_reported"] = len(required_ws)
+checks["required_ws_streams_missing"] = required_missing
+checks["liquidation_streams_expected"] = 2
+checks["liquidation_streams_reported"] = len(liquidation_ws)
+checks["liquidation_streams_ok"] = (
+    len(liquidation_ws) == 2
+    and all(
+        r.get("status") in {"EVENT_RECEIVED", "CONNECTED_NO_EVENT_ACCEPTABLE"}
+        for r in liquidation_ws
+    )
+)
+
 checks["orderbooks_required"] = 4
 checks["orderbooks_synced"] = int(smoke.get("orderbooks_synced", 0))
 checks["source_errors"] = list(smoke.get("errors", []))
@@ -161,7 +182,11 @@ criteria = {
     "security_scan_pass": checks["security_exit"] == 0 and checks["trading_capability_zero"],
     "live_smoke_process_pass": checks["live_smoke_exit"] == 0,
     "all_rest_collectors_observed": checks["rest_observed"] >= checks["rest_required"],
-    "active_ws_collectors_observed": checks["ws_observed"] >= checks["ws_minimum_required"],
+    "required_ws_streams_observed": (
+        checks["required_ws_streams_reported"] == checks["required_ws_streams_expected"]
+        and len(checks["required_ws_streams_missing"]) == 0
+    ),
+    "liquidation_streams_reachable": bool(checks["liquidation_streams_ok"]),
     "four_orderbooks_synchronized": checks["orderbooks_synced"] == 4,
     "no_source_errors": len(checks["source_errors"]) == 0,
     "raw_append_only_evidence_present": checks["raw_files"] > 0,
@@ -242,6 +267,11 @@ print("\n================ FINAL ================")
 print(f"PHASE_1A = {status}")
 print(f"CANONICAL LIVE CAPTURE = {'VERIFIED' if verified else 'NOT VERIFIED'}")
 print(f"TRADING CAPABILITY = {'ZERO' if criteria['security_scan_pass'] else 'NOT PROVEN'}")
+if not verified:
+    failed = [name for name, passed in criteria.items() if not passed]
+    print("FAILED CRITERIA =", ", ".join(failed))
+    if checks["required_ws_streams_missing"]:
+        print("MISSING REQUIRED WS =", ", ".join(checks["required_ws_streams_missing"]))
 print(f"NEXT = {'PHASE 1B' if verified else 'REMEDIATE FAILED ITEMS'}")
 print("Reports:", reports)
 raise SystemExit(0 if verified else 20)
