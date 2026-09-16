@@ -22,6 +22,13 @@ def _source_ts(payload):
     return None, None
 
 
+def _is_sparse_ws_dataset(dataset: str) -> bool:
+    # Binance forceOrder is event-driven. A quiet two-second acceptance window can
+    # legitimately contain no liquidation event; successful connection without an
+    # exception is therefore valid liveness evidence for this sparse stream.
+    return dataset == "liquidation_sample"
+
+
 async def run(root: str = "artifacts/phase1a") -> dict:
     rootp = Path(root)
     raw = RawStore(rootp / "raw")
@@ -36,6 +43,8 @@ async def run(root: str = "artifacts/phase1a") -> dict:
         "duplicates": 0,
         "conflicts": 0,
         "errors": [],
+        "ws_stream_results": [],
+        "ws_required_missing": [],
         "orderbooks_synced": 0,
         "orderbook_results": [],
         "orderbook_errors": [],
@@ -93,6 +102,7 @@ async def run(root: str = "artifacts/phase1a") -> dict:
 
         for source, market, dataset, iid, url in phase1a_ws_urls():
             cid = f"{source}-{market}-{dataset}-{iid}"
+            sparse = _is_sparse_ws_dataset(dataset)
             cat.start_run(cid, run_id, source, dataset, iid, now_ns())
             received = 0
             try:
@@ -131,16 +141,50 @@ async def run(root: str = "artifacts/phase1a") -> dict:
                     stats["ws"] += 1
                     received += 1
                     break
+
+                if received:
+                    stream_status = "EVENT_RECEIVED"
+                elif sparse:
+                    stream_status = "CONNECTED_NO_EVENT_ACCEPTABLE"
+                else:
+                    stream_status = "NO_EVENT"
+                    missing = f"{market}:{dataset}:{iid}"
+                    stats["ws_required_missing"].append(missing)
+                    stats["errors"].append(f"ws-required-no-event:{missing}")
+
+                stats["ws_stream_results"].append(
+                    {
+                        "market": market,
+                        "dataset": dataset,
+                        "instrument_id": iid,
+                        "sparse": sparse,
+                        "messages_received": received,
+                        "status": stream_status,
+                    }
+                )
                 cat.heartbeat(
                     cid,
                     run_id,
                     now_ns(),
                     messages_received=received,
                     records_written=received,
-                    status="HEALTHY" if received else "STALE",
+                    status="HEALTHY" if (received or sparse) else "STALE",
                 )
             except Exception as e:
+                stats["ws_stream_results"].append(
+                    {
+                        "market": market,
+                        "dataset": dataset,
+                        "instrument_id": iid,
+                        "sparse": sparse,
+                        "messages_received": received,
+                        "status": "FAILED",
+                        "error": f"{type(e).__name__}:{e}",
+                    }
+                )
                 stats["errors"].append(f"{cid}:{type(e).__name__}:{e}")
+                if not sparse:
+                    stats["ws_required_missing"].append(f"{market}:{dataset}:{iid}")
                 cat.error(cid, now_ns(), type(e).__name__, str(e))
                 cat.heartbeat(cid, run_id, now_ns(), source_errors=1, status="FAILED")
 
@@ -173,9 +217,15 @@ async def run(root: str = "artifacts/phase1a") -> dict:
 
 if __name__ == "__main__":
     result = asyncio.run(run())
+    sparse_results = [r for r in result["ws_stream_results"] if r.get("sparse")]
+    sparse_ok = len(sparse_results) == 2 and all(
+        r.get("status") in {"EVENT_RECEIVED", "CONNECTED_NO_EVENT_ACCEPTABLE"}
+        for r in sparse_results
+    )
     if (
-        result["rest"] < 10
-        or result["ws"] < 8
+        result["rest"] < 20
+        or result["ws_required_missing"]
+        or not sparse_ok
         or result["silver_rows"] <= 0
         or result["orderbooks_synced"] != 4
         or result["errors"]
