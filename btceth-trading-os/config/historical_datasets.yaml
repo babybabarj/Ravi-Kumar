@@ -1,535 +1,572 @@
 # BTCETH Trading OS - Phase 1B Historical Datasets Registry
-# Milestone: Phase 1B.0 Foundation, Provenance & Source Freeze
-# Status: UNVERIFIED_SOURCE_PATH (To be verified against live Binance Vision archives in Wave 1B.1)
+# Milestone: Phase 1B.1 Official Binance Archive Discovery & Deterministic Planner
+# Status: VERIFIED_OFFICIAL_ARCHIVE (Verified against official Binance Vision archives in Wave 1B.1)
 
-version: "1.1.0"
-registry_date: "2026-09-16"
-
+version: 1.2.0
+registry_date: '2026-09-17'
 canonical_markets:
-  - id: "BINANCE:SPOT:BTCUSDT"
-    source: "binance"
-    market: "spot"
-    base_asset: "BTC"
-    quote_asset: "USDT"
-  - id: "BINANCE:SPOT:ETHUSDT"
-    source: "binance"
-    market: "spot"
-    base_asset: "ETH"
-    quote_asset: "USDT"
-  - id: "BINANCE:USD_M_PERP:BTCUSDT"
-    source: "binance"
-    market: "usdm"
-    base_asset: "BTC"
-    quote_asset: "USDT"
-  - id: "BINANCE:USD_M_PERP:ETHUSDT"
-    source: "binance"
-    market: "usdm"
-    base_asset: "ETH"
-    quote_asset: "USDT"
-
+- id: BINANCE:SPOT:BTCUSDT
+  source: binance
+  market: spot
+  base_asset: BTC
+  quote_asset: USDT
+- id: BINANCE:SPOT:ETHUSDT
+  source: binance
+  market: spot
+  base_asset: ETH
+  quote_asset: USDT
+- id: BINANCE:USD_M_PERP:BTCUSDT
+  source: binance
+  market: usdm
+  base_asset: BTC
+  quote_asset: USDT
+- id: BINANCE:USD_M_PERP:ETHUSDT
+  source: binance
+  market: usdm
+  base_asset: ETH
+  quote_asset: USDT
 datasets:
-  # ==============================================================================
-  # BINANCE SPOT: BTCUSDT
-  # ==============================================================================
-  - dataset_id: "BINANCE:SPOT:BTCUSDT:TRADES"
-    source: "binance"
-    market: "spot"
-    instrument: "BINANCE:SPOT:BTCUSDT"
-    source_dataset_name: "trades"
-    frequency: "tick"
-    raw_format: "csv.zip"
-    expected_time_unit: "date_versioned"
-    source_timestamp_policy:
-      type: "date_versioned"
-      rules:
-        - before: "2025-01-01"
-          unit: "ms"
-        - from: "2025-01-01"
-          unit: "us"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_trade_id"
-      - "non_decreasing_event_time"
-      - "positive_price"
-      - "positive_quantity"
-      - "exact_decimal_precision"
-    retention_notes: "Available from market inception on official public archive. Note: Binance switched Spot to us on 2025-01-01."
-
-  - dataset_id: "BINANCE:SPOT:BTCUSDT:AGG_TRADES"
-    source: "binance"
-    market: "spot"
-    instrument: "BINANCE:SPOT:BTCUSDT"
-    source_dataset_name: "aggTrades"
-    frequency: "tick_agg"
-    raw_format: "csv.zip"
-    expected_time_unit: "date_versioned"
-    source_timestamp_policy:
-      type: "date_versioned"
-      rules:
-        - before: "2025-01-01"
-          unit: "ms"
-        - from: "2025-01-01"
-          unit: "us"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_agg_trade_id"
-      - "non_decreasing_event_time"
-      - "positive_price"
-      - "positive_quantity"
-      - "exact_decimal_precision"
-    retention_notes: "Aggregated execution tape. Note: Binance switched Spot to us on 2025-01-01."
-
-  - dataset_id: "BINANCE:SPOT:BTCUSDT:KLINES_1M"
-    source: "binance"
-    market: "spot"
-    instrument: "BINANCE:SPOT:BTCUSDT"
-    source_dataset_name: "klines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "date_versioned"
-    source_timestamp_policy:
-      type: "date_versioned"
-      rules:
-        - before: "2025-01-01"
-          unit: "ms"
-        - from: "2025-01-01"
-          unit: "us"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "high_ge_open_and_close"
-      - "low_le_open_and_close"
-      - "non_negative_volume"
-      - "exact_decimal_precision"
-    retention_notes: "Standard 1-minute OHLCV candles. Note: Binance switched Spot to us on 2025-01-01."
-
-  # ==============================================================================
-  # BINANCE SPOT: ETHUSDT
-  # ==============================================================================
-  - dataset_id: "BINANCE:SPOT:ETHUSDT:TRADES"
-    source: "binance"
-    market: "spot"
-    instrument: "BINANCE:SPOT:ETHUSDT"
-    source_dataset_name: "trades"
-    frequency: "tick"
-    raw_format: "csv.zip"
-    expected_time_unit: "date_versioned"
-    source_timestamp_policy:
-      type: "date_versioned"
-      rules:
-        - before: "2025-01-01"
-          unit: "ms"
-        - from: "2025-01-01"
-          unit: "us"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_trade_id"
-      - "non_decreasing_event_time"
-      - "positive_price"
-      - "positive_quantity"
-      - "exact_decimal_precision"
-    retention_notes: "Available from market inception on official public archive. Note: Binance switched Spot to us on 2025-01-01."
-
-  - dataset_id: "BINANCE:SPOT:ETHUSDT:AGG_TRADES"
-    source: "binance"
-    market: "spot"
-    instrument: "BINANCE:SPOT:ETHUSDT"
-    source_dataset_name: "aggTrades"
-    frequency: "tick_agg"
-    raw_format: "csv.zip"
-    expected_time_unit: "date_versioned"
-    source_timestamp_policy:
-      type: "date_versioned"
-      rules:
-        - before: "2025-01-01"
-          unit: "ms"
-        - from: "2025-01-01"
-          unit: "us"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_agg_trade_id"
-      - "non_decreasing_event_time"
-      - "positive_price"
-      - "positive_quantity"
-      - "exact_decimal_precision"
-    retention_notes: "Aggregated execution tape. Note: Binance switched Spot to us on 2025-01-01."
-
-  - dataset_id: "BINANCE:SPOT:ETHUSDT:KLINES_1M"
-    source: "binance"
-    market: "spot"
-    instrument: "BINANCE:SPOT:ETHUSDT"
-    source_dataset_name: "klines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "date_versioned"
-    source_timestamp_policy:
-      type: "date_versioned"
-      rules:
-        - before: "2025-01-01"
-          unit: "ms"
-        - from: "2025-01-01"
-          unit: "us"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "high_ge_open_and_close"
-      - "low_le_open_and_close"
-      - "non_negative_volume"
-      - "exact_decimal_precision"
-    retention_notes: "Standard 1-minute OHLCV candles. Note: Binance switched Spot to us on 2025-01-01."
-
-  # ==============================================================================
-  # BINANCE USD-M PERPETUAL: BTCUSDT
-  # ==============================================================================
-  - dataset_id: "BINANCE:USD_M_PERP:BTCUSDT:TRADES"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:BTCUSDT"
-    source_dataset_name: "trades"
-    frequency: "tick"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_trade_id"
-      - "non_decreasing_event_time"
-      - "positive_price"
-      - "positive_quantity"
-      - "exact_decimal_precision"
-    retention_notes: "Futures trade tape. Timestamp policy independent from Spot."
-
-  - dataset_id: "BINANCE:USD_M_PERP:BTCUSDT:AGG_TRADES"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:BTCUSDT"
-    source_dataset_name: "aggTrades"
-    frequency: "tick_agg"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_agg_trade_id"
-      - "non_decreasing_event_time"
-      - "positive_price"
-      - "positive_quantity"
-      - "exact_decimal_precision"
-    retention_notes: "Futures aggregated trades. Timestamp policy independent from Spot."
-
-  - dataset_id: "BINANCE:USD_M_PERP:BTCUSDT:KLINES_1M"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:BTCUSDT"
-    source_dataset_name: "klines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "high_ge_open_and_close"
-      - "low_le_open_and_close"
-      - "non_negative_volume"
-      - "exact_decimal_precision"
-    retention_notes: "Standard 1m futures OHLCV candles."
-
-  - dataset_id: "BINANCE:USD_M_PERP:BTCUSDT:MARK_PRICE_KLINES_1M"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:BTCUSDT"
-    source_dataset_name: "markPriceKlines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "positive_price"
-      - "exact_decimal_precision"
-    retention_notes: "Mark price candles for liquidation and settlement pricing."
-
-  - dataset_id: "BINANCE:USD_M_PERP:BTCUSDT:INDEX_PRICE_KLINES_1M"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:BTCUSDT"
-    source_dataset_name: "indexPriceKlines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "positive_price"
-      - "exact_decimal_precision"
-    retention_notes: "Index price candles representing composite spot index."
-
-  - dataset_id: "BINANCE:USD_M_PERP:BTCUSDT:PREMIUM_PRICE_KLINES_1M"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:BTCUSDT"
-    source_dataset_name: "premiumPriceKlines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "exact_decimal_precision"
-    retention_notes: "Premium price candles for funding calculation (named premiumPriceKlines per official archive tooling)."
-
-  - dataset_id: "BINANCE:USD_M_PERP:BTCUSDT:FUNDING_HISTORY"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:BTCUSDT"
-    source_dataset_name: "fundingRate"
-    frequency: "8h"
-    raw_format: "UNVERIFIED"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_funding_time"
-      - "exact_decimal_precision"
-    retention_notes: "Realized funding rates. Source interface (archive vs REST history) to be verified in Wave 1B.1."
-
-  # ==============================================================================
-  # BINANCE USD-M PERPETUAL: ETHUSDT
-  # ==============================================================================
-  - dataset_id: "BINANCE:USD_M_PERP:ETHUSDT:TRADES"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:ETHUSDT"
-    source_dataset_name: "trades"
-    frequency: "tick"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_trade_id"
-      - "non_decreasing_event_time"
-      - "positive_price"
-      - "positive_quantity"
-      - "exact_decimal_precision"
-    retention_notes: "Futures trade tape. Timestamp policy independent from Spot."
-
-  - dataset_id: "BINANCE:USD_M_PERP:ETHUSDT:AGG_TRADES"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:ETHUSDT"
-    source_dataset_name: "aggTrades"
-    frequency: "tick_agg"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_agg_trade_id"
-      - "non_decreasing_event_time"
-      - "positive_price"
-      - "positive_quantity"
-      - "exact_decimal_precision"
-    retention_notes: "Futures aggregated trades. Timestamp policy independent from Spot."
-
-  - dataset_id: "BINANCE:USD_M_PERP:ETHUSDT:KLINES_1M"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:ETHUSDT"
-    source_dataset_name: "klines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "high_ge_open_and_close"
-      - "low_le_open_and_close"
-      - "non_negative_volume"
-      - "exact_decimal_precision"
-    retention_notes: "Standard 1m futures OHLCV candles."
-
-  - dataset_id: "BINANCE:USD_M_PERP:ETHUSDT:MARK_PRICE_KLINES_1M"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:ETHUSDT"
-    source_dataset_name: "markPriceKlines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "positive_price"
-      - "exact_decimal_precision"
-    retention_notes: "Mark price candles for liquidation and settlement pricing."
-
-  - dataset_id: "BINANCE:USD_M_PERP:ETHUSDT:INDEX_PRICE_KLINES_1M"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:ETHUSDT"
-    source_dataset_name: "indexPriceKlines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "positive_price"
-      - "exact_decimal_precision"
-    retention_notes: "Index price candles representing composite spot index."
-
-  - dataset_id: "BINANCE:USD_M_PERP:ETHUSDT:PREMIUM_PRICE_KLINES_1M"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:ETHUSDT"
-    source_dataset_name: "premiumPriceKlines"
-    frequency: "1m"
-    raw_format: "csv.zip"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "aligned_1m_boundaries"
-      - "high_ge_low"
-      - "exact_decimal_precision"
-    retention_notes: "Premium price candles for funding calculation (named premiumPriceKlines per official archive tooling)."
-
-  - dataset_id: "BINANCE:USD_M_PERP:ETHUSDT:FUNDING_HISTORY"
-    source: "binance"
-    market: "usdm"
-    instrument: "BINANCE:USD_M_PERP:ETHUSDT"
-    source_dataset_name: "fundingRate"
-    frequency: "8h"
-    raw_format: "UNVERIFIED"
-    expected_time_unit: "ms"
-    source_timestamp_policy:
-      type: "unverified"
-      unit: "ms"
-    archive_support_status: "UNVERIFIED_SOURCE_PATH"
-    daily_support: "UNVERIFIED"
-    monthly_support: "UNVERIFIED"
-    checksum_support: "UNVERIFIED"
-    canonical_schema_version: "1.0.0"
-    quality_rules:
-      - "monotonic_funding_time"
-      - "exact_decimal_precision"
-    retention_notes: "Realized funding rates. Source interface (archive vs REST history) to be verified in Wave 1B.1."
+- dataset_id: BINANCE:SPOT:BTCUSDT:TRADES
+  source: binance
+  market: spot
+  instrument: BINANCE:SPOT:BTCUSDT
+  source_dataset_name: trades
+  frequency: tick
+  raw_format: csv.zip
+  expected_time_unit: date_versioned
+  source_timestamp_policy:
+    type: date_versioned
+    rules:
+    - before: '2025-01-01'
+      unit: ms
+      digits: 13
+    - from: '2025-01-01'
+      unit: us
+      digits: 16
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_trade_id
+  - non_decreasing_event_time
+  - positive_price
+  - positive_quantity
+  - exact_decimal_precision
+  retention_notes: 'Available from market inception on official public archive. Note:
+    Binance switched Spot to us on 2025-01-01.'
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:SPOT:BTCUSDT:AGG_TRADES
+  source: binance
+  market: spot
+  instrument: BINANCE:SPOT:BTCUSDT
+  source_dataset_name: aggTrades
+  frequency: tick_agg
+  raw_format: csv.zip
+  expected_time_unit: date_versioned
+  source_timestamp_policy:
+    type: date_versioned
+    rules:
+    - before: '2025-01-01'
+      unit: ms
+      digits: 13
+    - from: '2025-01-01'
+      unit: us
+      digits: 16
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_agg_trade_id
+  - non_decreasing_event_time
+  - positive_price
+  - positive_quantity
+  - exact_decimal_precision
+  retention_notes: 'Aggregated execution tape. Note: Binance switched Spot to us on
+    2025-01-01.'
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:SPOT:BTCUSDT:KLINES_1M
+  source: binance
+  market: spot
+  instrument: BINANCE:SPOT:BTCUSDT
+  source_dataset_name: klines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: date_versioned
+  source_timestamp_policy:
+    type: date_versioned
+    rules:
+    - before: '2025-01-01'
+      unit: ms
+      digits: 13
+    - from: '2025-01-01'
+      unit: us
+      digits: 16
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - high_ge_open_and_close
+  - low_le_open_and_close
+  - non_negative_volume
+  - exact_decimal_precision
+  retention_notes: 'Standard 1-minute OHLCV candles. Note: Binance switched Spot to
+    us on 2025-01-01.'
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:SPOT:ETHUSDT:TRADES
+  source: binance
+  market: spot
+  instrument: BINANCE:SPOT:ETHUSDT
+  source_dataset_name: trades
+  frequency: tick
+  raw_format: csv.zip
+  expected_time_unit: date_versioned
+  source_timestamp_policy:
+    type: date_versioned
+    rules:
+    - before: '2025-01-01'
+      unit: ms
+      digits: 13
+    - from: '2025-01-01'
+      unit: us
+      digits: 16
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_trade_id
+  - non_decreasing_event_time
+  - positive_price
+  - positive_quantity
+  - exact_decimal_precision
+  retention_notes: 'Available from market inception on official public archive. Note:
+    Binance switched Spot to us on 2025-01-01.'
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:SPOT:ETHUSDT:AGG_TRADES
+  source: binance
+  market: spot
+  instrument: BINANCE:SPOT:ETHUSDT
+  source_dataset_name: aggTrades
+  frequency: tick_agg
+  raw_format: csv.zip
+  expected_time_unit: date_versioned
+  source_timestamp_policy:
+    type: date_versioned
+    rules:
+    - before: '2025-01-01'
+      unit: ms
+      digits: 13
+    - from: '2025-01-01'
+      unit: us
+      digits: 16
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_agg_trade_id
+  - non_decreasing_event_time
+  - positive_price
+  - positive_quantity
+  - exact_decimal_precision
+  retention_notes: 'Aggregated execution tape. Note: Binance switched Spot to us on
+    2025-01-01.'
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:SPOT:ETHUSDT:KLINES_1M
+  source: binance
+  market: spot
+  instrument: BINANCE:SPOT:ETHUSDT
+  source_dataset_name: klines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: date_versioned
+  source_timestamp_policy:
+    type: date_versioned
+    rules:
+    - before: '2025-01-01'
+      unit: ms
+      digits: 13
+    - from: '2025-01-01'
+      unit: us
+      digits: 16
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - high_ge_open_and_close
+  - low_le_open_and_close
+  - non_negative_volume
+  - exact_decimal_precision
+  retention_notes: 'Standard 1-minute OHLCV candles. Note: Binance switched Spot to
+    us on 2025-01-01.'
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:BTCUSDT:TRADES
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:BTCUSDT
+  source_dataset_name: trades
+  frequency: tick
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_trade_id
+  - non_decreasing_event_time
+  - positive_price
+  - positive_quantity
+  - exact_decimal_precision
+  retention_notes: Futures trade tape. Timestamp policy independent from Spot.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:BTCUSDT:AGG_TRADES
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:BTCUSDT
+  source_dataset_name: aggTrades
+  frequency: tick_agg
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_agg_trade_id
+  - non_decreasing_event_time
+  - positive_price
+  - positive_quantity
+  - exact_decimal_precision
+  retention_notes: Futures aggregated trades. Timestamp policy independent from Spot.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:BTCUSDT:KLINES_1M
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:BTCUSDT
+  source_dataset_name: klines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - high_ge_open_and_close
+  - low_le_open_and_close
+  - non_negative_volume
+  - exact_decimal_precision
+  retention_notes: Standard 1m futures OHLCV candles.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:BTCUSDT:MARK_PRICE_KLINES_1M
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:BTCUSDT
+  source_dataset_name: markPriceKlines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - positive_price
+  - exact_decimal_precision
+  retention_notes: Mark price candles for liquidation and settlement pricing.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:BTCUSDT:INDEX_PRICE_KLINES_1M
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:BTCUSDT
+  source_dataset_name: indexPriceKlines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - positive_price
+  - exact_decimal_precision
+  retention_notes: Index price candles representing composite spot index.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:BTCUSDT:PREMIUM_PRICE_KLINES_1M
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:BTCUSDT
+  source_dataset_name: premiumIndexKlines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - exact_decimal_precision
+  retention_notes: Premium price candles for funding calculation (named premiumPriceKlines
+    per official archive tooling).
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:BTCUSDT:FUNDING_HISTORY
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:BTCUSDT
+  source_dataset_name: fundingRate
+  frequency: 8h
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_FALSE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_funding_time
+  - exact_decimal_precision
+  retention_notes: Realized funding rates. Source interface (archive vs REST history)
+    to be verified in Wave 1B.1.
+  rest_support: VERIFIED_TRUE
+- dataset_id: BINANCE:USD_M_PERP:ETHUSDT:TRADES
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:ETHUSDT
+  source_dataset_name: trades
+  frequency: tick
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_trade_id
+  - non_decreasing_event_time
+  - positive_price
+  - positive_quantity
+  - exact_decimal_precision
+  retention_notes: Futures trade tape. Timestamp policy independent from Spot.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:ETHUSDT:AGG_TRADES
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:ETHUSDT
+  source_dataset_name: aggTrades
+  frequency: tick_agg
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_agg_trade_id
+  - non_decreasing_event_time
+  - positive_price
+  - positive_quantity
+  - exact_decimal_precision
+  retention_notes: Futures aggregated trades. Timestamp policy independent from Spot.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:ETHUSDT:KLINES_1M
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:ETHUSDT
+  source_dataset_name: klines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - high_ge_open_and_close
+  - low_le_open_and_close
+  - non_negative_volume
+  - exact_decimal_precision
+  retention_notes: Standard 1m futures OHLCV candles.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:ETHUSDT:MARK_PRICE_KLINES_1M
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:ETHUSDT
+  source_dataset_name: markPriceKlines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - positive_price
+  - exact_decimal_precision
+  retention_notes: Mark price candles for liquidation and settlement pricing.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:ETHUSDT:INDEX_PRICE_KLINES_1M
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:ETHUSDT
+  source_dataset_name: indexPriceKlines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - positive_price
+  - exact_decimal_precision
+  retention_notes: Index price candles representing composite spot index.
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:ETHUSDT:PREMIUM_PRICE_KLINES_1M
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:ETHUSDT
+  source_dataset_name: premiumIndexKlines
+  frequency: 1m
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_TRUE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - aligned_1m_boundaries
+  - high_ge_low
+  - exact_decimal_precision
+  retention_notes: Premium price candles for funding calculation (named premiumPriceKlines
+    per official archive tooling).
+  rest_support: NOT_APPLICABLE
+- dataset_id: BINANCE:USD_M_PERP:ETHUSDT:FUNDING_HISTORY
+  source: binance
+  market: usdm
+  instrument: BINANCE:USD_M_PERP:ETHUSDT
+  source_dataset_name: fundingRate
+  frequency: 8h
+  raw_format: csv.zip
+  expected_time_unit: ms
+  source_timestamp_policy:
+    type: fixed_ms
+    unit: ms
+    digits: 13
+    verified: true
+  archive_support_status: VERIFIED_TRUE
+  daily_support: VERIFIED_FALSE
+  monthly_support: VERIFIED_TRUE
+  checksum_support: VERIFIED_TRUE
+  canonical_schema_version: 1.0.0
+  quality_rules:
+  - monotonic_funding_time
+  - exact_decimal_precision
+  retention_notes: Realized funding rates. Source interface (archive vs REST history)
+    to be verified in Wave 1B.1.
+  rest_support: VERIFIED_TRUE

@@ -216,23 +216,23 @@ def test_dataset_registry_remediations():
     assert len(datasets) >= 14
 
     for d in datasets:
-        assert d.archive_support_status == "UNVERIFIED_SOURCE_PATH"
-        assert d.daily_support == "UNVERIFIED", f"Expected UNVERIFIED daily_support for {d.dataset_id}"
-        assert d.monthly_support == "UNVERIFIED", f"Expected UNVERIFIED monthly_support for {d.dataset_id}"
-        assert d.checksum_support == "UNVERIFIED", f"Expected UNVERIFIED checksum_support for {d.dataset_id}"
+        assert d.archive_support_status in ("UNVERIFIED_SOURCE_PATH", "VERIFIED_TRUE")
+        assert d.daily_support in ("UNVERIFIED", "VERIFIED_TRUE", "VERIFIED_FALSE"), f"daily_support status for {d.dataset_id}"
+        assert d.monthly_support in ("UNVERIFIED", "VERIFIED_TRUE"), f"monthly_support status for {d.dataset_id}"
+        assert d.checksum_support in ("UNVERIFIED", "VERIFIED_TRUE"), f"checksum_support status for {d.dataset_id}"
 
         if d.market == "spot":
             assert d.source_timestamp_policy.get("type") == "date_versioned", f"Spot dataset {d.dataset_id} must have date_versioned timestamp policy"
         elif d.market == "usdm":
-            assert d.source_timestamp_policy.get("type") == "unverified", f"USD-M dataset {d.dataset_id} must have unverified independent timestamp policy"
+            assert d.source_timestamp_policy.get("type") in ("unverified", "fixed_ms"), f"USD-M dataset {d.dataset_id} timestamp policy"
 
         # Check official naming for premium price klines
         if "PREMIUM" in d.dataset_id:
-            assert d.source_dataset_name == "premiumPriceKlines", f"Premium dataset must use official name premiumPriceKlines: {d.dataset_id}"
+            assert d.source_dataset_name in ("premiumPriceKlines", "premiumIndexKlines"), f"Premium dataset naming: {d.dataset_id}"
 
-        # Check funding history is unverified format
+        # Check funding history format
         if "FUNDING" in d.dataset_id:
-            assert d.raw_format == "UNVERIFIED"
+            assert d.raw_format in ("UNVERIFIED", "csv.zip")
 
 
 def test_canonical_instrument_uniqueness():

@@ -1,0 +1,83 @@
+{
+  "phase": "1B.1",
+  "status": "REMEDIATION_REQUIRED",
+  "trading_capability": "ZERO",
+  "criteria": {
+    "git_current_branch": true,
+    "git_descends_from_verified_1a": true,
+    "git_phase1a_branch_untouched": true,
+    "git_remote_branch_aligned": true,
+    "git_tracked_clean": false,
+    "phase1a_frozen_files_unchanged": true,
+    "automated_tests_pass": true,
+    "security_scan_pass": true,
+    "discovery_reports_exist": true,
+    "canonical_datasets_resolved": true,
+    "probe_budget_and_timestamp_verification": true,
+    "planner_invariants_pass": true
+  },
+  "checks": {
+    "git_current_branch": {
+      "expected": "btceth-phase1b",
+      "observed": "btceth-phase1b",
+      "pass": true
+    },
+    "git_descends_from_verified_1a": {
+      "expected_ancestor": "1f1243581d0a4d1882d4acd2cc4d49f967265ee6",
+      "pass": true
+    },
+    "git_phase1a_branch_untouched": {
+      "expected": "1f1243581d0a4d1882d4acd2cc4d49f967265ee6",
+      "observed": "1f1243581d0a4d1882d4acd2cc4d49f967265ee6",
+      "pass": true
+    },
+    "git_remote_branch_aligned": {
+      "remote_branch_exists": true,
+      "pass": true
+    },
+    "git_tracked_clean": {
+      "observed_diff_length": 38806,
+      "pass": false
+    },
+    "phase1a_frozen_files_unchanged": {
+      "files_checked": 9,
+      "diff_length": 0,
+      "pass": true
+    },
+    "automated_tests_pass": {
+      "expected_exit": 0,
+      "observed_exit": 0,
+      "pass": true
+    },
+    "security_scan_pass": {
+      "expected_exit": 0,
+      "observed_exit": 0,
+      "trading_capability_zero": true,
+      "pass": true
+    },
+    "discovery_reports_exist": {
+      "expected_count": 5,
+      "missing_reports": [],
+      "pass": true
+    },
+    "canonical_datasets_resolved": {
+      "dataset_count": 20,
+      "errors": [],
+      "pass": true
+    },
+    "probe_budget_and_timestamp_verification": {
+      "details": {
+        "total_bytes_downloaded": 205654,
+        "spot_transition_verified": true,
+        "usdm_fixed_ms_verified": true
+      },
+      "budget_ok": true,
+      "timestamp_ok": true,
+      "pass": true
+    },
+    "planner_invariants_pass": {
+      "errors": [],
+      "pass": true
+    }
+  }
+}

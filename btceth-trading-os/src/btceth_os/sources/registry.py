@@ -33,6 +33,7 @@ class DatasetDefinition:
     monthly_support: str | bool | None
     checksum_support: str | bool | None
     canonical_schema_version: str
+    rest_support: str | bool | None = "NOT_APPLICABLE"
     source_timestamp_policy: dict[str, Any] = field(default_factory=dict)
     quality_rules: list[str] = field(default_factory=list)
     retention_notes: str = ""
@@ -69,6 +70,7 @@ def load_historical_datasets_registry(config_path: Path | str | None = None) -> 
                 daily_support=d.get("daily_support", "UNVERIFIED"),
                 monthly_support=d.get("monthly_support", "UNVERIFIED"),
                 checksum_support=d.get("checksum_support", "UNVERIFIED"),
+                rest_support=d.get("rest_support", "NOT_APPLICABLE"),
                 canonical_schema_version=str(d.get("canonical_schema_version", "1.0.0")),
                 source_timestamp_policy=dict(d.get("source_timestamp_policy", {})),
                 quality_rules=list(d.get("quality_rules", [])),
