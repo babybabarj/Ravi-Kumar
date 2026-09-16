@@ -11,7 +11,7 @@ from .core import RawEnvelope, now_ns, ns_from_source_timestamp, DedupIndex, Sou
 from .storage import RawStore, SilverStore
 from .catalog import Catalog
 from .collectors import PublicRestClient, phase1a_rest_requests, phase1a_ws_urls, websocket_messages
-from .live_orderbook import sync_all as sync_all_orderbooks
+from .live_orderbook import sync_one as sync_one_orderbook
 
 
 def _source_ts(payload):
@@ -38,6 +38,7 @@ async def run(root: str = "artifacts/phase1a") -> dict:
         "errors": [],
         "orderbooks_synced": 0,
         "orderbook_results": [],
+        "orderbook_errors": [],
     }
 
     async with aiohttp.ClientSession(headers={"User-Agent": "btceth-phase1a/0.1"}) as session:
@@ -143,14 +144,18 @@ async def run(root: str = "artifacts/phase1a") -> dict:
                 cat.error(cid, now_ns(), type(e).__name__, str(e))
                 cat.heartbeat(cid, run_id, now_ns(), source_errors=1, status="FAILED")
 
-    # A received depth message is not enough. Prove that all four books can be
-    # built from REST snapshot + live diff updates without a sequence gap.
-    try:
-        books = await sync_all_orderbooks()
-        stats["orderbooks_synced"] = len(books)
-        stats["orderbook_results"] = [b.__dict__ for b in books]
-    except Exception as e:
-        stats["errors"].append(f"orderbook-sync:{type(e).__name__}:{e}")
+    # Prove every book independently so one failure does not hide successful books.
+    async with aiohttp.ClientSession(headers={"User-Agent": "btceth-phase1a/0.1"}) as book_session:
+        for market in ("spot", "usdm"):
+            for symbol in ("BTCUSDT", "ETHUSDT"):
+                try:
+                    book = await sync_one_orderbook(book_session, market, symbol)
+                    stats["orderbook_results"].append(book.__dict__)
+                except Exception as e:
+                    msg = f"{market}:{symbol}:{type(e).__name__}:{e}"
+                    stats["orderbook_errors"].append(msg)
+                    stats["errors"].append(f"orderbook-sync:{msg}")
+    stats["orderbooks_synced"] = len(stats["orderbook_results"])
 
     if rows:
         p = silver.write(rows, "live_smoke.parquet")
