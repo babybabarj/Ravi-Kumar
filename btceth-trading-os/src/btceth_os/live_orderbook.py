@@ -88,8 +88,8 @@ async def sync_one(
     """Prove live snapshot + diff alignment for one Binance book.
 
     The WebSocket reader runs continuously before and during REST snapshot fetches.
-    This follows Binance's documented bootstrap order and prevents a fast book from
-    advancing past the snapshot while our client is blocked waiting for REST.
+    Spot and USD-M use market-specific first-event bridge targets, then strict
+    continuity rules are enforced for subsequent deltas.
     """
     url = _stream_url(market, symbol)
     last_error: Exception | None = None
@@ -107,58 +107,56 @@ async def sync_one(
                 queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue(maxsize=20_000)
                 reader = asyncio.create_task(_buffer_depth(ws, queue))
                 try:
-                    # Prove the stream is alive before asking REST for a snapshot.
                     first_event = await _next_event(queue, reader)
                     buffered: list[dict[str, Any]] = [first_event]
 
-                    # While REST responds, _buffer_depth keeps receiving every delta.
-                    # If the snapshot is still too old for our earliest usable event,
-                    # refetch it while keeping the same live stream/buffer.
                     bridge_event: dict[str, Any] | None = None
+                    bridge_target: int | None = None
                     snap: dict[str, Any] | None = None
-                    for _snapshot_attempt in range(6):
+
+                    for _snapshot_attempt in range(8):
                         snap = await _snapshot(session, market, symbol)
                         snapshot_id = int(snap["lastUpdateId"])
 
                         while not queue.empty():
                             buffered.append(queue.get_nowait())
 
-                        # Binance Spot drops u <= snapshot id. USD-M docs say u < id.
-                        def is_stale(event: dict[str, Any]) -> bool:
-                            final_id = int(event["u"])
-                            return final_id <= snapshot_id if market == "spot" else final_id < snapshot_id
-
-                        buffered = [event for event in buffered if not is_stale(event)]
-
-                        if not buffered:
-                            buffered.append(await _next_event(queue, reader))
-                            while not queue.empty():
-                                buffered.append(queue.get_nowait())
-                            buffered = [event for event in buffered if not is_stale(event)]
+                        # Spot docs discard u <= snapshot id. USD-M discards u < id.
+                        if market == "spot":
+                            buffered = [e for e in buffered if int(e["u"]) > snapshot_id]
+                            # The next update expected by the snapshot can be snapshot+1.
+                            bridge_target = snapshot_id + 1
+                        else:
+                            buffered = [e for e in buffered if int(e["u"]) >= snapshot_id]
+                            bridge_target = snapshot_id
 
                         if not buffered:
+                            await asyncio.sleep(0.02)
                             continue
 
-                        candidate = buffered[0]
-                        first_id = int(candidate["U"])
-                        final_id = int(candidate["u"])
+                        # Find the first event that covers the market-specific bridge
+                        # target. Do not assume buffered[0] must be the bridge event.
+                        match_index: int | None = None
+                        for idx, event in enumerate(buffered):
+                            first_id = int(event["U"])
+                            final_id = int(event["u"])
+                            if first_id <= bridge_target <= final_id:
+                                match_index = idx
+                                break
+                            if first_id > bridge_target:
+                                # Snapshot is behind the buffered stream. Keep the WS
+                                # reader alive and fetch a newer snapshot.
+                                break
 
-                        # Binance's documented first-event bridge rule for both Spot
-                        # and USD-M is that lastUpdateId lies inside [U, u].
-                        if first_id <= snapshot_id <= final_id:
+                        if match_index is not None:
+                            # Events before the bridge are stale relative to snapshot.
+                            buffered = buffered[match_index:]
                             bridge_event = buffered.pop(0)
                             break
 
-                        # If candidate starts after snapshot, REST was too old. Keep
-                        # buffering and fetch a newer snapshot; do not discard WS.
-                        if first_id > snapshot_id:
-                            await asyncio.sleep(0.05)
-                            continue
+                        await asyncio.sleep(0.02)
 
-                        # Candidate overlaps oddly but cannot bridge; drop and continue.
-                        buffered.pop(0)
-
-                    if snap is None or bridge_event is None:
+                    if snap is None or bridge_event is None or bridge_target is None:
                         raise SequenceGap("unable to bridge buffered depth to REST snapshot")
 
                     book = OrderBookSync()
@@ -170,10 +168,10 @@ async def sync_one(
                         int(bridge_event["u"]),
                         bridge_event.get("b", []),
                         bridge_event.get("a", []),
+                        bridge_id=bridge_target,
                     )
 
                     applied = 1
-                    previous_u = int(bridge_event["u"])
 
                     while applied < required_deltas:
                         event = buffered.pop(0) if buffered else await _next_event(queue, reader)
@@ -201,7 +199,6 @@ async def sync_one(
                                 event.get("a", []),
                             )
 
-                        previous_u = final_id
                         applied += 1
 
                     bid, ask = book.best_bid_ask()
