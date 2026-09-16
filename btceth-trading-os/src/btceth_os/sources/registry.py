@@ -29,10 +29,11 @@ class DatasetDefinition:
     raw_format: str
     expected_time_unit: str
     archive_support_status: str
-    daily_support: bool
-    monthly_support: bool
-    checksum_support: bool
+    daily_support: str | bool | None
+    monthly_support: str | bool | None
+    checksum_support: str | bool | None
     canonical_schema_version: str
+    source_timestamp_policy: dict[str, Any] = field(default_factory=dict)
     quality_rules: list[str] = field(default_factory=list)
     retention_notes: str = ""
 
@@ -65,10 +66,11 @@ def load_historical_datasets_registry(config_path: Path | str | None = None) -> 
                 raw_format=d.get("raw_format", "csv.zip"),
                 expected_time_unit=d.get("expected_time_unit", "ms"),
                 archive_support_status=d.get("archive_support_status", "UNVERIFIED_SOURCE_PATH"),
-                daily_support=bool(d.get("daily_support", False)),
-                monthly_support=bool(d.get("monthly_support", False)),
-                checksum_support=bool(d.get("checksum_support", False)),
+                daily_support=d.get("daily_support", "UNVERIFIED"),
+                monthly_support=d.get("monthly_support", "UNVERIFIED"),
+                checksum_support=d.get("checksum_support", "UNVERIFIED"),
                 canonical_schema_version=str(d.get("canonical_schema_version", "1.0.0")),
+                source_timestamp_policy=dict(d.get("source_timestamp_policy", {})),
                 quality_rules=list(d.get("quality_rules", [])),
                 retention_notes=str(d.get("retention_notes", "")),
             )

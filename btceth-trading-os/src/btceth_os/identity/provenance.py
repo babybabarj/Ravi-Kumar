@@ -27,8 +27,11 @@ class ProvenanceRecord:
             raise ValueError("source_dataset cannot be empty")
         if not self.source_filename:
             raise ValueError("source_filename cannot be empty")
-        if len(self.source_physical_sha256) != 64:
-            raise ValueError(f"invalid SHA-256 digest length: {self.source_physical_sha256}")
+        sha = str(self.source_physical_sha256)
+        if len(sha) != 64 or any(c not in "0123456789abcdef" for c in sha):
+            raise ValueError(
+                f"invalid SHA-256 digest: must be exactly 64 lowercase hexadecimal characters, got {self.source_physical_sha256!r}"
+            )
         if not isinstance(self.quality_status, QualityState):
             raise TypeError(f"quality_status must be a QualityState enum, got {type(self.quality_status)}")
 

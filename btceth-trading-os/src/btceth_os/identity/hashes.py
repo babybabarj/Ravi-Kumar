@@ -44,14 +44,38 @@ class IncrementalSha256:
         return self._hasher.hexdigest()
 
 
-def compute_logical_sha256(record_keys: Iterable[str], payload_hashes: Iterable[str]) -> str:
+def compute_logical_sha256(
+    record_keys_or_pairs: Iterable[tuple[str, str]] | Sequence[str],
+    payload_hashes: Sequence[str] | None = None,
+) -> str:
     """Compute deterministic logical dataset hash independent of filesystem or compression metadata.
 
-    The logical hash represents semantic content identity based on sorted record keys and payload hashes.
+    The logical hash represents semantic content identity based on sorted (record_key, payload_hash) pairs.
+    Accepts either:
+      - A single iterable of (record_key, payload_hash) tuples
+      - Two sequences: record_keys and payload_hashes of identical length
     """
-    paired = sorted(zip(record_keys, payload_hashes), key=lambda x: x[0])
+    pairs: list[tuple[str, str]] = []
+    if payload_hashes is not None:
+        keys_seq = list(record_keys_or_pairs)  # type: ignore[arg-type]
+        hashes_seq = list(payload_hashes)
+        if len(keys_seq) != len(hashes_seq):
+            raise ValueError(
+                f"Length mismatch in compute_logical_sha256: record_keys={len(keys_seq)} != payload_hashes={len(hashes_seq)}"
+            )
+        pairs = list(zip(keys_seq, hashes_seq))
+    else:
+        for item in record_keys_or_pairs:
+            if not isinstance(item, (tuple, list)) or len(item) != 2:
+                raise ValueError(f"Expected (record_key, payload_hash) tuple, got: {item!r}")
+            pairs.append((str(item[0]), str(item[1])))
+
+    # Sort deterministically by the entire semantic pair (key, payload_hash)
+    pairs.sort(key=lambda x: (x[0], x[1]))
+
+    # Use unambiguous length-prefixed framing: {len_key}:{key}:{len_hash}:{hash}\n
     h = hashlib.sha256()
-    for key, phash in paired:
-        line = f"{key}:{phash}\n"
-        h.update(line.encode("utf-8"))
+    for key, phash in pairs:
+        framed = f"{len(key)}:{key}:{len(phash)}:{phash}\n"
+        h.update(framed.encode("utf-8"))
     return h.hexdigest()

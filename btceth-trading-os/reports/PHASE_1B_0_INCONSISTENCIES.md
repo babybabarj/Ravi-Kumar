@@ -54,3 +54,27 @@ In the initial intake summary, approximate sizes were reported using fractional 
 3. **Module Layout Preservation:**
    - *Observation:* P0 blueprint proposed a deeply nested folder structure (`contracts/`, `schemas/`, `sources/binance/`, etc.), whereas the actual Phase 1A codebase is flat in `src/btceth_os/`.
    - *Authoritative Decision:* In accordance with Phase 1B.0 instructions, existing Phase 1A files (`core.py`, `storage.py`, `catalog.py`, `collectors.py`, `orderbook.py`, `live_orderbook.py`, `live_smoke.py`, `security_scan.py`) will **NOT** be moved or refactored during Phase 1B.0. Modular namespaces will be added only for new Phase 1B components.
+
+---
+
+## 4. Phase 1B.0 Dataset Registry & Timestamp Policy Remediations
+
+1. **Spot Historical Timestamp Policy (2025 Microsecond Switch):**
+   - *Observation:* Initial registry draft universally assigned `expected_time_unit: "ms"` to all Spot datasets.
+   - *Authoritative Finding:* Official Binance public-data documentation establishes that Binance Spot transitioned from millisecond (`ms`) to microsecond (`us`) timestamps on January 1, 2025 (`1735689600000000` us). Assuming fixed milliseconds causes catastrophic timestamp overflow (e.g. `1735689600010866` interpreted as ms evaluates to the year 56976).
+   - *Status:* Remediated. Replaced fixed `"ms"` with a date-versioned policy (`before: 2025-01-01 -> ms`, `from: 2025-01-01 -> us`), implemented `resolve_spot_timestamp()` in `contracts.py`, and verified that canonical internal time normalizes to int64 nanoseconds while preserving `source_ts_raw`, `source_ts_unit`, and `source_precision`.
+2. **Independence of USD-M Futures Timestamp Policy:**
+   - *Observation:* Spot's 2025 microsecond change must not be assumed for USD-M Perpetuals without official verification.
+   - *Status:* Kept USD-M timestamp policy completely independent (`type: "unverified"`, `unit: "ms"`) until proven in Wave 1B.1.
+3. **Binance Futures Premium Dataset Official Naming:**
+   - *Observation:* Early project notes referred to the perpetual premium index candle feed as `premiumIndexKlines`.
+   - *Authoritative Finding:* Current official Binance public-data documentation and download tooling name the downloadable futures archive family `premiumPriceKlines`.
+   - *Status:* Remediated in `config/historical_datasets.yaml` (`source_dataset_name: "premiumPriceKlines"`). Archive support status remains `UNVERIFIED_SOURCE_PATH` pending Wave 1B.1 discovery.
+4. **Pre-Certified Archive Support Flags Replaced with UNVERIFIED:**
+   - *Observation:* The initial registry draft prematurely asserted `daily_support: true`, `monthly_support: true`, `checksum_support: true` on datasets whose paths were marked `UNVERIFIED_SOURCE_PATH`.
+   - *Status:* Remediated. Replaced premature booleans with explicit `"UNVERIFIED"` state across all unverified datasets.
+5. **USD-M Funding History Status:**
+   - *Observation:* Funding history was initially described as a downloadable `csv.zip` archive with daily/monthly support.
+   - *Authoritative Finding:* Authoritative historical funding truth may be published via public archive, REST history API, or a hybrid.
+   - *Status:* Remediated. Marked format and capabilities as `"UNVERIFIED"` until Wave 1B.1 proves the authoritative source interface.
+
