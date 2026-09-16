@@ -1,0 +1,58 @@
+name: btceth-phase1a
+
+on:
+  push:
+    branches: [btceth-phase1a]
+    paths:
+      - 'btceth-trading-os/**'
+      - '.github/workflows/btceth-phase1a.yml'
+  workflow_dispatch:
+
+jobs:
+  phase1a:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: btceth-trading-os
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install
+        run: python -m pip install -U pip && pip install -e '.[test]'
+      - name: Unit and failure tests
+        run: pytest -q | tee reports-test.txt
+      - name: Trading prohibition scan
+        run: python -m btceth_os.security_scan
+      - name: Live public-market smoke capture
+        run: python -m btceth_os.live_smoke
+      - name: Build reports
+        if: always()
+        run: |
+          mkdir -p reports
+          cp -f reports-test.txt reports/TEST_RESULTS.txt || true
+          cp -f artifacts/phase1a/LIVE_SMOKE.json reports/PHASE_1A_ACCEPTANCE.json || true
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          r=Path('reports'); smoke=Path('artifacts/phase1a/LIVE_SMOKE.json')
+          data=json.loads(smoke.read_text()) if smoke.exists() else {'errors':['live smoke missing']}
+          verified=bool(data.get('rest',0)>=10 and data.get('ws',0)>=8 and data.get('silver_rows',0)>0 and not data.get('errors'))
+          status='VERIFIED' if verified else 'REMEDIATION_REQUIRED'
+          (r/'PHASE_1A_ACCEPTANCE.md').write_text(f'# Phase 1A Acceptance\n\nPHASE_1A = {status}\n\n```json\n{json.dumps(data,indent=2)}\n```\n')
+          (r/'COLLECTOR_HEALTH.md').write_text('# Collector Health\n\n'+json.dumps(data,indent=2)+'\n')
+          (r/'SOURCE_RETENTION_MATRIX.md').write_text('# Source Retention Matrix\n\nBinance perishable derivatives statistics are captured forward; exact retention is source-controlled and must be revalidated on API changes.\n')
+          (r/'SCHEMA_MATRIX.md').write_text('# Schema Matrix\n\nRAW: append-only compressed JSONL.\n\nSilver: PyArrow/Parquet, int64 timestamps, exact source numeric strings retained in values_json.\n')
+          (r/'GAP_REPORT.md').write_text('# Gap Report\n\nSee catalog.sqlite live_gaps and smoke errors.\n')
+          (r/'LIVE_SMOKE_CAPTURE.md').write_text('# Live Smoke Capture\n\n'+json.dumps(data,indent=2)+'\n')
+          PY
+      - name: Upload Phase 1A evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase1a-evidence
+          path: |
+            btceth-trading-os/reports/
+            btceth-trading-os/artifacts/phase1a/
