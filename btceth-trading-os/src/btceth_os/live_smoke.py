@@ -105,8 +105,9 @@ async def run(root: str = "artifacts/phase1a") -> dict:
             sparse = _is_sparse_ws_dataset(dataset)
             cat.start_run(cid, run_id, source, dataset, iid, now_ns())
             received = 0
+            timeout_seconds = 2.0 if sparse else 6.0
             try:
-                async for payload in websocket_messages(url, seconds=2.0, reconnects=1):
+                async for payload in websocket_messages(url, seconds=timeout_seconds, reconnects=1):
                     recv = now_ns()
                     ts, unit = _source_ts(payload)
                     ev = ns_from_source_timestamp(ts, unit) if ts else None
