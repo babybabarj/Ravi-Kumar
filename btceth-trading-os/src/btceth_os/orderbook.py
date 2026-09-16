@@ -27,6 +27,11 @@ class OrderBookSync:
     The exact bridge target is market-specific. USD-M bridges the snapshot's
     lastUpdateId itself. Spot bridges the next expected update id
     (lastUpdateId + 1) after stale events are discarded.
+
+    Post-bootstrap continuity is also market-specific:
+      * Spot uses U/u coverage of the next expected local update id.
+      * USD-M uses pu == previous event's u. Once pu continuity is proven,
+        Binance does not require U to contain previous_u + 1.
     """
 
     state: BookState = BookState.EMPTY
@@ -90,15 +95,25 @@ class OrderBookSync:
             raise SequenceGap("book not synchronized")
         if final_id <= self.last_update_id:
             return
-        expected = self.last_update_id + 1
-        if previous_final_id is not None and previous_final_id != self.last_update_id:
-            self.invalidate()
-            raise SequenceGap(
-                f"previous_final_id={previous_final_id} expected={self.last_update_id}"
-            )
-        if not (first_id <= expected <= final_id):
-            self.invalidate()
-            raise SequenceGap(f"range={first_id}-{final_id} expected={expected}")
+
+        # USD-M continuity rule: every new event's pu must equal the previous
+        # event's u. When that holds, the event is contiguous even when its U is
+        # numerically greater than previous_u + 1 because one event may cover a
+        # large aggregate of matching-engine updates.
+        if previous_final_id is not None:
+            if previous_final_id != self.last_update_id:
+                self.invalidate()
+                raise SequenceGap(
+                    f"previous_final_id={previous_final_id} expected={self.last_update_id}"
+                )
+        else:
+            # Spot continuity rule: the next expected local update id must be
+            # covered by the event's [U, u] range.
+            expected = self.last_update_id + 1
+            if not (first_id <= expected <= final_id):
+                self.invalidate()
+                raise SequenceGap(f"range={first_id}-{final_id} expected={expected}")
+
         self._apply(self.bids, bids)
         self._apply(self.asks, asks)
         self.last_update_id = int(final_id)
