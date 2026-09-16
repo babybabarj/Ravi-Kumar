@@ -40,7 +40,6 @@ is_ancestor = subprocess.run(
 ).returncode == 0
 checks["git_descends_from_verified_1a"] = {
     "expected_ancestor": expected_base,
-    "observed_head": local_head,
     "pass": is_ancestor,
 }
 
@@ -57,8 +56,6 @@ remote_branch_exists = subprocess.run(
 ).returncode == 0
 remote_head = git_cmd(["rev-parse", "origin/btceth-phase1b"])
 checks["git_remote_branch_aligned"] = {
-    "expected_remote_head": local_head,
-    "observed_remote_head": remote_head,
     "remote_branch_exists": remote_branch_exists,
     "pass": remote_branch_exists and (local_head == remote_head),
 }
@@ -260,7 +257,7 @@ md = [
     f"PHASE_1B_0 = {status}",
     "",
     f"- Current Branch: `{checks['git_current_branch']['observed']}`",
-    f"- Local HEAD: `{checks['git_descends_from_verified_1a']['observed_head']}`",
+    f"- Verified Phase 1A Base: `{expected_base}`",
     f"- Remote Branch Aligned: `{'PASS' if criteria['git_remote_branch_aligned'] else 'FAIL'}`",
     f"- Trading Capability: `{'ZERO' if criteria['security_scan_pass'] else 'NOT PROVEN'}`",
     "",
@@ -293,6 +290,8 @@ md.extend([
 print("\n================ FINAL ================")
 print(f"PHASE_1B_0 = {status}")
 print(f"TRADING CAPABILITY = {'ZERO' if criteria['security_scan_pass'] else 'NOT PROVEN'}")
+print(f"LOCAL HEAD = {local_head}")
+print(f"ORIGIN HEAD = {remote_head}")
 if not all_passed:
     failed = [name for name, passed in criteria.items() if not passed]
     print("FAILED CRITERIA =", ", ".join(failed))
