@@ -52,6 +52,31 @@ async def _snapshot(session: aiohttp.ClientSession, market: str, symbol: str) ->
         return payload
 
 
+async def _buffer_depth(ws, queue: asyncio.Queue[dict[str, Any]]) -> None:
+    """Continuously read diff-depth messages so REST snapshot latency cannot create a gap."""
+    while True:
+        raw = await ws.recv()
+        event = json.loads(raw)
+        if isinstance(event, dict) and "U" in event and "u" in event:
+            await queue.put(event)
+
+
+async def _next_event(
+    queue: asyncio.Queue[dict[str, Any]],
+    reader: asyncio.Task[None],
+    *,
+    timeout: float = 10.0,
+) -> dict[str, Any]:
+    try:
+        return await asyncio.wait_for(queue.get(), timeout=timeout)
+    except asyncio.TimeoutError:
+        if reader.done():
+            exc = reader.exception()
+            if exc is not None:
+                raise exc
+        raise
+
+
 async def sync_one(
     session: aiohttp.ClientSession,
     market: str,
@@ -62,15 +87,14 @@ async def sync_one(
 ) -> LiveBookResult:
     """Prove live snapshot + diff alignment for one Binance book.
 
-    The routine intentionally restarts from scratch on any unbridgeable sequence gap.
-    It publishes no book until snapshot and streamed update IDs are aligned.
+    The WebSocket reader runs continuously before and during REST snapshot fetches.
+    This follows Binance's documented bootstrap order and prevents a fast book from
+    advancing past the snapshot while our client is blocked waiting for REST.
     """
     url = _stream_url(market, symbol)
     last_error: Exception | None = None
 
     for _ in range(max_attempts):
-        book = OrderBookSync()
-        book.begin_buffering()
         try:
             async with websockets.connect(
                 url,
@@ -80,70 +104,126 @@ async def sync_one(
                 ping_timeout=10,
                 max_size=8 * 1024 * 1024,
             ) as ws:
-                # Begin buffering before fetching the REST snapshot, per Binance's
-                # documented local-order-book procedure.
-                buffered: list[dict[str, Any]] = []
-                raw = await asyncio.wait_for(ws.recv(), timeout=10)
-                buffered.append(json.loads(raw))
+                queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue(maxsize=20_000)
+                reader = asyncio.create_task(_buffer_depth(ws, queue))
+                try:
+                    # Prove the stream is alive before asking REST for a snapshot.
+                    first_event = await _next_event(queue, reader)
+                    buffered: list[dict[str, Any]] = [first_event]
 
-                snap = await _snapshot(session, market, symbol)
-                snapshot_id = int(snap["lastUpdateId"])
-                book.load_snapshot(snapshot_id, snap.get("bids", []), snap.get("asks", []))
+                    # While REST responds, _buffer_depth keeps receiving every delta.
+                    # If the snapshot is still too old for our earliest usable event,
+                    # refetch it while keeping the same live stream/buffer.
+                    bridge_event: dict[str, Any] | None = None
+                    snap: dict[str, Any] | None = None
+                    for _snapshot_attempt in range(6):
+                        snap = await _snapshot(session, market, symbol)
+                        snapshot_id = int(snap["lastUpdateId"])
 
-                applied = 0
-                previous_u: int | None = None
+                        while not queue.empty():
+                            buffered.append(queue.get_nowait())
 
-                async def next_event() -> dict[str, Any]:
-                    if buffered:
-                        return buffered.pop(0)
-                    raw_event = await asyncio.wait_for(ws.recv(), timeout=10)
-                    return json.loads(raw_event)
+                        # Binance Spot drops u <= snapshot id. USD-M docs say u < id.
+                        def is_stale(event: dict[str, Any]) -> bool:
+                            final_id = int(event["u"])
+                            return final_id <= snapshot_id if market == "spot" else final_id < snapshot_id
 
-                # Search for the first event that bridges the snapshot, then require
-                # at least one additional contiguous delta. Bound the scan so a bad
-                # stream can never hang acceptance indefinitely.
-                for _scan in range(100):
-                    event = await next_event()
-                    if not isinstance(event, dict) or "U" not in event or "u" not in event:
-                        continue
-                    first_id = int(event["U"])
-                    final_id = int(event["u"])
-                    if final_id <= (book.last_update_id or -1):
-                        continue
+                        buffered = [event for event in buffered if not is_stale(event)]
 
-                    try:
-                        if market == "usdm" and previous_u is not None:
+                        if not buffered:
+                            buffered.append(await _next_event(queue, reader))
+                            while not queue.empty():
+                                buffered.append(queue.get_nowait())
+                            buffered = [event for event in buffered if not is_stale(event)]
+
+                        if not buffered:
+                            continue
+
+                        candidate = buffered[0]
+                        first_id = int(candidate["U"])
+                        final_id = int(candidate["u"])
+
+                        # Binance's documented first-event bridge rule for both Spot
+                        # and USD-M is that lastUpdateId lies inside [U, u].
+                        if first_id <= snapshot_id <= final_id:
+                            bridge_event = buffered.pop(0)
+                            break
+
+                        # If candidate starts after snapshot, REST was too old. Keep
+                        # buffering and fetch a newer snapshot; do not discard WS.
+                        if first_id > snapshot_id:
+                            await asyncio.sleep(0.05)
+                            continue
+
+                        # Candidate overlaps oddly but cannot bridge; drop and continue.
+                        buffered.pop(0)
+
+                    if snap is None or bridge_event is None:
+                        raise SequenceGap("unable to bridge buffered depth to REST snapshot")
+
+                    book = OrderBookSync()
+                    book.begin_buffering()
+                    snapshot_id = int(snap["lastUpdateId"])
+                    book.load_snapshot(snapshot_id, snap.get("bids", []), snap.get("asks", []))
+                    book.bridge_first_delta(
+                        int(bridge_event["U"]),
+                        int(bridge_event["u"]),
+                        bridge_event.get("b", []),
+                        bridge_event.get("a", []),
+                    )
+
+                    applied = 1
+                    previous_u = int(bridge_event["u"])
+
+                    while applied < required_deltas:
+                        event = buffered.pop(0) if buffered else await _next_event(queue, reader)
+                        first_id = int(event["U"])
+                        final_id = int(event["u"])
+
+                        if final_id <= (book.last_update_id or -1):
+                            continue
+
+                        if market == "usdm":
+                            if "pu" not in event:
+                                raise SequenceGap("USD-M depth event missing pu")
                             book.apply_delta(
                                 first_id,
                                 final_id,
                                 event.get("b", []),
                                 event.get("a", []),
-                                previous_final_id=int(event.get("pu", -1)),
+                                previous_final_id=int(event["pu"]),
                             )
                         else:
-                            book.apply_delta(first_id, final_id, event.get("b", []), event.get("a", []))
-                    except SequenceGap as exc:
-                        last_error = exc
-                        break
+                            book.apply_delta(
+                                first_id,
+                                final_id,
+                                event.get("b", []),
+                                event.get("a", []),
+                            )
 
-                    previous_u = final_id
-                    applied += 1
-                    if applied >= required_deltas:
-                        bid, ask = book.best_bid_ask()
-                        if book.state != BookState.VALID or bid is None or ask is None:
-                            raise RuntimeError("book did not reach valid two-sided state")
-                        if not (Decimal(bid) < Decimal(ask)):
-                            raise RuntimeError(f"crossed/locked book bid={bid} ask={ask}")
-                        return LiveBookResult(
-                            market=market,
-                            symbol=symbol,
-                            last_update_id=int(book.last_update_id),
-                            best_bid=str(bid),
-                            best_ask=str(ask),
-                            deltas_applied=applied,
-                        )
-                else:
-                    last_error = RuntimeError("unable to find bridge event within bounded scan")
+                        previous_u = final_id
+                        applied += 1
+
+                    bid, ask = book.best_bid_ask()
+                    if book.state != BookState.VALID or bid is None or ask is None:
+                        raise RuntimeError("book did not reach valid two-sided state")
+                    if not (Decimal(bid) < Decimal(ask)):
+                        raise RuntimeError(f"crossed/locked book bid={bid} ask={ask}")
+
+                    return LiveBookResult(
+                        market=market,
+                        symbol=symbol,
+                        last_update_id=int(book.last_update_id),
+                        best_bid=str(bid),
+                        best_ask=str(ask),
+                        deltas_applied=applied,
+                    )
+                finally:
+                    reader.cancel()
+                    try:
+                        await reader
+                    except asyncio.CancelledError:
+                        pass
         except Exception as exc:
             last_error = exc
 
