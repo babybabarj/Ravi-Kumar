@@ -128,10 +128,11 @@ def phase1a_ws_urls() -> list[tuple[str, str, str, str, str]]:
         out.extend([
             ("binance", "spot", "aggtrade", f"BINANCE:SPOT:{up}", f"{BINANCE_SPOT_WS}/{s}@aggTrade"),
             ("binance", "spot", "book_ticker", f"BINANCE:SPOT:{up}", f"{BINANCE_SPOT_WS}/{s}@bookTicker"),
-            ("binance", "spot", "depth", f"BINANCE:SPOT:{up}", f"{BINANCE_SPOT_WS}/{s}@depth20@100ms"),
+            # Diff-depth streams are required for a reconstructable local order book.
+            ("binance", "spot", "depth_delta", f"BINANCE:SPOT:{up}", f"{BINANCE_SPOT_WS}/{s}@depth@100ms"),
             ("binance", "usdm", "aggtrade", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_PUBLIC_WS}/{s}@aggTrade"),
             ("binance", "usdm", "book_ticker", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_PUBLIC_WS}/{s}@bookTicker"),
-            ("binance", "usdm", "depth", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_PUBLIC_WS}/{s}@depth20@100ms"),
+            ("binance", "usdm", "depth_delta", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_PUBLIC_WS}/{s}@depth@100ms"),
             ("binance", "usdm", "liquidation_sample", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_PUBLIC_WS}/{s}@forceOrder"),
         ])
     return out
