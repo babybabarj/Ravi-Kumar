@@ -34,42 +34,25 @@ def test_duplicate_after_reconnect_is_not_double_counted():
     d = DedupIndex()
     payload_hash = "same-event-hash"
     assert d.observe("binance|spot|BTCUSDT|123", payload_hash) == "NEW"
-    # Simulates receiving the same source event after subscription restoration.
     assert d.observe("binance|spot|BTCUSDT|123", payload_hash) == "DUPLICATE"
 
 
 def test_raw_and_silver_roundtrip(tmp_path: Path):
     n = now_ns()
     env = RawEnvelope(
-        "binance",
-        "spot",
-        "book_ticker",
-        "BINANCE:SPOT:BTCUSDT",
+        "binance", "spot", "book_ticker", "BINANCE:SPOT:BTCUSDT",
         {"bidPrice": "1.10", "askPrice": "1.20"},
-        1,
-        "ms",
-        "ms",
-        1_000_000,
-        n,
-        n,
+        1, "ms", "ms", 1_000_000, n, n,
     )
     rp = RawStore(tmp_path / "raw").append(env)
     data = RawStore.read(rp)
     assert data[0]["payload"]["bidPrice"] == "1.10"
     row = {
-        "source": "binance",
-        "market": "spot",
-        "dataset": "book_ticker",
-        "instrument_id": "BINANCE:SPOT:BTCUSDT",
-        "ts_event_ns": 1_000_000,
-        "ts_recv_ns": n,
-        "ts_ingest_ns": n,
-        "source_ts_raw": 1,
-        "source_ts_unit": "ms",
-        "source_precision": "ms",
-        "record_key": "k",
-        "payload_hash": env.payload_hash,
-        "values": {"price": "1.10", "float_guard": 1.1},
+        "source": "binance", "market": "spot", "dataset": "book_ticker",
+        "instrument_id": "BINANCE:SPOT:BTCUSDT", "ts_event_ns": 1_000_000,
+        "ts_recv_ns": n, "ts_ingest_ns": n, "source_ts_raw": 1,
+        "source_ts_unit": "ms", "source_precision": "ms", "record_key": "k",
+        "payload_hash": env.payload_hash, "values": {"price": "1.10", "float_guard": 1.1},
     }
     sp = SilverStore(tmp_path / "silver").write([row], "x.parquet")
     table = SilverStore.read(sp)
@@ -113,10 +96,21 @@ def test_collector_crash_is_recordable_and_catalog_survives(tmp_path: Path):
     reopened.close()
 
 
+def test_snapshot_is_not_valid_until_first_stream_bridge():
+    b = OrderBookSync()
+    b.begin_buffering()
+    b.load_snapshot(100, [["10", "2"]], [["11", "3"]])
+    assert b.state == BookState.BUFFERING
+    b.bridge_first_delta(95, 105, [["10", "1"]], [])
+    assert b.state == BookState.VALID
+    assert b.last_update_id == 105
+
+
 def test_orderbook_gap_forces_invalid():
     b = OrderBookSync()
     b.begin_buffering()
     b.load_snapshot(100, [["10", "2"]], [["11", "3"]])
+    b.bridge_first_delta(99, 100, [], [])
     b.apply_delta(101, 101, [["10", "1"]], [])
     assert b.state == BookState.VALID and b.last_update_id == 101
     with pytest.raises(SequenceGap):
@@ -126,7 +120,9 @@ def test_orderbook_gap_forces_invalid():
 
 def test_previous_sequence_mismatch_invalidates():
     b = OrderBookSync()
+    b.begin_buffering()
     b.load_snapshot(50, [["1", "1"]], [["2", "1"]])
+    b.bridge_first_delta(49, 50, [], [])
     with pytest.raises(SequenceGap):
         b.apply_delta(51, 51, [], [], previous_final_id=49)
     assert b.state == BookState.INVALID
@@ -134,19 +130,21 @@ def test_previous_sequence_mismatch_invalidates():
 
 def test_out_of_order_stale_delta_is_ignored_without_corruption():
     b = OrderBookSync()
+    b.begin_buffering()
     b.load_snapshot(100, [["10", "2"]], [["11", "3"]])
+    b.bridge_first_delta(99, 100, [], [])
     b.apply_delta(90, 99, [["10", "999"]], [])
     assert b.state == BookState.VALID
     assert b.last_update_id == 100
     assert str(b.bids[next(iter(b.bids))]) == "2"
 
 
-def test_snapshot_older_than_next_delta_forces_resync():
+def test_snapshot_older_than_first_buffered_delta_forces_resync():
     b = OrderBookSync()
+    b.begin_buffering()
     b.load_snapshot(100, [["10", "2"]], [["11", "3"]])
-    # A first buffered event beginning at 150 means the snapshot cannot bridge the stream.
     with pytest.raises(SequenceGap):
-        b.apply_delta(150, 160, [], [])
+        b.bridge_first_delta(150, 160, [], [])
     assert b.state == BookState.INVALID
 
 
@@ -170,14 +168,9 @@ class _FakeResponse:
         self.status = status
         self._body = body
 
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc, tb):
-        return False
-
-    async def text(self):
-        return self._body
+    async def __aenter__(self): return self
+    async def __aexit__(self, exc_type, exc, tb): return False
+    async def text(self): return self._body
 
 
 class _FakeSession:
@@ -229,25 +222,17 @@ async def test_malformed_success_payload_is_rejected():
 
 
 class _FakeWS:
-    def __init__(self, behavior):
-        self.behavior = list(behavior)
-
+    def __init__(self, behavior): self.behavior = list(behavior)
     async def recv(self):
         item = self.behavior.pop(0)
-        if isinstance(item, BaseException):
-            raise item
+        if isinstance(item, BaseException): raise item
         return item
 
 
 class _FakeConnection:
-    def __init__(self, ws):
-        self.ws = ws
-
-    async def __aenter__(self):
-        return self.ws
-
-    async def __aexit__(self, exc_type, exc, tb):
-        return False
+    def __init__(self, ws): self.ws = ws
+    async def __aenter__(self): return self.ws
+    async def __aexit__(self, exc_type, exc, tb): return False
 
 
 @pytest.mark.asyncio
