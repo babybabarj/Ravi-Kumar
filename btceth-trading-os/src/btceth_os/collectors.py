@@ -67,7 +67,14 @@ async def websocket_messages(url: str, *, seconds: float = 5.0, reconnects: int 
     failures = 0
     while asyncio.get_running_loop().time() < deadline:
         try:
-            async with websockets.connect(url, open_timeout=15, close_timeout=5, ping_interval=20, ping_timeout=10, max_size=8 * 1024 * 1024) as ws:
+            async with websockets.connect(
+                url,
+                open_timeout=15,
+                close_timeout=5,
+                ping_interval=20,
+                ping_timeout=10,
+                max_size=8 * 1024 * 1024,
+            ) as ws:
                 policy.reset()
                 while asyncio.get_running_loop().time() < deadline:
                     timeout = max(0.1, deadline - asyncio.get_running_loop().time())
@@ -85,7 +92,11 @@ async def websocket_messages(url: str, *, seconds: float = 5.0, reconnects: int 
 BINANCE_SPOT_REST = "https://api.binance.com"
 BINANCE_USDM_REST = "https://fapi.binance.com"
 BINANCE_SPOT_WS = "wss://stream.binance.com:9443/ws"
-BINANCE_USDM_WS = "wss://fstream.binance.com/ws"
+# Binance permanently retired the legacy USD-M market-stream URLs on 2026-04-23.
+# Phase 1A only uses high-frequency public streams, so route them through /public/ws.
+BINANCE_USDM_PUBLIC_WS = "wss://fstream.binance.com/public/ws"
+# Reserved for regular public market streams such as markPrice when Phase 1A moves them to WS.
+BINANCE_USDM_MARKET_WS = "wss://fstream.binance.com/market/ws"
 DERIBIT_REST = "https://www.deribit.com/api/v2"
 
 
@@ -110,17 +121,17 @@ def phase1a_rest_requests() -> list[tuple[str, str, str, str, dict[str, Any]]]:
     return out
 
 
-def phase1a_ws_urls() -> list[tuple[str, str, str, str]]:
-    out=[]
+def phase1a_ws_urls() -> list[tuple[str, str, str, str, str]]:
+    out: list[tuple[str, str, str, str, str]] = []
     for s in ("btcusdt", "ethusdt"):
-        up=s.upper()
+        up = s.upper()
         out.extend([
             ("binance", "spot", "aggtrade", f"BINANCE:SPOT:{up}", f"{BINANCE_SPOT_WS}/{s}@aggTrade"),
             ("binance", "spot", "book_ticker", f"BINANCE:SPOT:{up}", f"{BINANCE_SPOT_WS}/{s}@bookTicker"),
             ("binance", "spot", "depth", f"BINANCE:SPOT:{up}", f"{BINANCE_SPOT_WS}/{s}@depth20@100ms"),
-            ("binance", "usdm", "aggtrade", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_WS}/{s}@aggTrade"),
-            ("binance", "usdm", "book_ticker", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_WS}/{s}@bookTicker"),
-            ("binance", "usdm", "depth", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_WS}/{s}@depth20@100ms"),
-            ("binance", "usdm", "liquidation_sample", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_WS}/{s}@forceOrder"),
+            ("binance", "usdm", "aggtrade", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_PUBLIC_WS}/{s}@aggTrade"),
+            ("binance", "usdm", "book_ticker", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_PUBLIC_WS}/{s}@bookTicker"),
+            ("binance", "usdm", "depth", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_PUBLIC_WS}/{s}@depth20@100ms"),
+            ("binance", "usdm", "liquidation_sample", f"BINANCE:USD_M_PERP:{up}", f"{BINANCE_USDM_PUBLIC_WS}/{s}@forceOrder"),
         ])
     return out
