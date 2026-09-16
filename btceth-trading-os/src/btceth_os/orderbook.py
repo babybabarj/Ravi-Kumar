@@ -24,9 +24,9 @@ class OrderBookSync:
       1. load_snapshot()
       2. bridge_first_delta()
 
-    Binance documents a special rule for the first processed diff event: the
-    REST snapshot update id must be contained inside the event's [U, u] range.
-    Only after that bridge is established do normal continuity rules apply.
+    The exact bridge target is market-specific. USD-M bridges the snapshot's
+    lastUpdateId itself. Spot bridges the next expected update id
+    (lastUpdateId + 1) after stale events are discarded.
     """
 
     state: BookState = BookState.EMPTY
@@ -54,20 +54,24 @@ class OrderBookSync:
         final_id: int,
         bids: list[list[str]],
         asks: list[list[str]],
+        *,
+        bridge_id: int | None = None,
     ) -> None:
         """Bridge the REST snapshot to the first usable streamed diff.
 
-        Current Binance Spot and USD-M procedures require the snapshot's
-        lastUpdateId to fall within the first processed event's [U, u] range.
-        Events entirely older than the snapshot must be discarded by the caller.
+        ``bridge_id`` is the update id that must be covered by the first event.
+        When omitted, it defaults to the snapshot id (USD-M semantics). Spot
+        callers pass ``snapshot_id + 1`` after discarding events whose ``u`` is
+        less than or equal to the snapshot id.
         """
         if self.state != BookState.BUFFERING or self.last_update_id is None:
             raise SequenceGap("snapshot not loaded for bridge")
         snapshot_id = self.last_update_id
-        if not (int(first_id) <= snapshot_id <= int(final_id)):
+        target = snapshot_id if bridge_id is None else int(bridge_id)
+        if not (int(first_id) <= target <= int(final_id)):
             self.invalidate()
             raise SequenceGap(
-                f"first bridge range={first_id}-{final_id} snapshot={snapshot_id}"
+                f"first bridge range={first_id}-{final_id} target={target} snapshot={snapshot_id}"
             )
         self._apply(self.bids, bids)
         self._apply(self.asks, asks)
