@@ -61,7 +61,7 @@ checks["git_remote_branch_aligned"] = {
 }
 
 git_status = git_cmd(["status", "--porcelain"])
-tracked_diff = git_cmd(["diff", "HEAD", "--", ":!reports/PHASE_1B_0_*", ":!reports/SECURITY_SCAN*"])
+tracked_diff = git_cmd(["diff", "HEAD", "--", ":!**/PHASE_1B_0_*", ":!**/SECURITY_SCAN*"])
 checks["git_tracked_clean"] = {
     "observed_diff_length": len(tracked_diff),
     "pass": len(tracked_diff) == 0,
