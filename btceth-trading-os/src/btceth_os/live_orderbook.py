@@ -9,7 +9,12 @@ from typing import Any
 import aiohttp
 import websockets
 
-from .collectors import BINANCE_SPOT_REST, BINANCE_USDM_REST, BINANCE_SPOT_WS, BINANCE_USDM_PUBLIC_WS
+from .collectors import (
+    BINANCE_SPOT_REST,
+    BINANCE_USDM_REST,
+    BINANCE_SPOT_WS,
+    BINANCE_USDM_PUBLIC_WS,
+)
 from .orderbook import OrderBookSync, BookState, SequenceGap
 
 
@@ -34,7 +39,9 @@ def _stream_url(market: str, symbol: str) -> str:
 
 def _snapshot_request(market: str, symbol: str) -> tuple[str, dict[str, Any]]:
     if market == "spot":
-        return f"{BINANCE_SPOT_REST}/api/v3/depth", {"symbol": symbol, "limit": 1000}
+        # Binance's published Spot local-book procedure uses the maximum 5000
+        # levels for the bootstrap snapshot.
+        return f"{BINANCE_SPOT_REST}/api/v3/depth", {"symbol": symbol, "limit": 5000}
     if market == "usdm":
         return f"{BINANCE_USDM_REST}/fapi/v1/depth", {"symbol": symbol, "limit": 1000}
     raise ValueError(market)
@@ -53,7 +60,6 @@ async def _snapshot(session: aiohttp.ClientSession, market: str, symbol: str) ->
 
 
 async def _buffer_depth(ws, queue: asyncio.Queue[dict[str, Any]]) -> None:
-    """Continuously read diff-depth messages so REST snapshot latency cannot create a gap."""
     while True:
         raw = await ws.recv()
         event = json.loads(raw)
@@ -77,24 +83,141 @@ async def _next_event(
         raise
 
 
+def _drain(queue: asyncio.Queue[dict[str, Any]], buffered: list[dict[str, Any]]) -> None:
+    while not queue.empty():
+        buffered.append(queue.get_nowait())
+
+
+def _drop_stale(market: str, buffered: list[dict[str, Any]], snapshot_id: int) -> None:
+    if market == "spot":
+        # Spot: discard u <= snapshot lastUpdateId.
+        buffered[:] = [e for e in buffered if int(e["u"]) > snapshot_id]
+    else:
+        # USD-M: discard u < snapshot lastUpdateId.
+        buffered[:] = [e for e in buffered if int(e["u"]) >= snapshot_id]
+
+
+def _candidate_is_bridge(market: str, event: dict[str, Any], snapshot_id: int) -> bool:
+    first_id = int(event["U"])
+    final_id = int(event["u"])
+    if market == "spot":
+        # Once u <= snapshot is discarded, applying the update procedure means
+        # U must not skip the next local update id.
+        target = snapshot_id + 1
+        return first_id <= target <= final_id
+    # USD-M first processed event must contain snapshot lastUpdateId itself.
+    return first_id <= snapshot_id <= final_id
+
+
+async def _wait_for_spot_bridge(
+    queue: asyncio.Queue[dict[str, Any]],
+    reader: asyncio.Task[None],
+    buffered: list[dict[str, Any]],
+    snapshot_id: int,
+) -> dict[str, Any]:
+    """Wait on the frozen Spot snapshot until its first applicable diff exists."""
+    deadline = asyncio.get_running_loop().time() + 12.0
+    while asyncio.get_running_loop().time() < deadline:
+        _drop_stale("spot", buffered, snapshot_id)
+        if buffered:
+            candidate = buffered[0]
+            first_id = int(candidate["U"])
+            if first_id > snapshot_id + 1:
+                raise SequenceGap(
+                    f"Spot gap after snapshot: U={first_id} expected<={snapshot_id + 1}"
+                )
+            if _candidate_is_bridge("spot", candidate, snapshot_id):
+                return buffered.pop(0)
+            # Defensive: a non-stale candidate which cannot bridge is not safe.
+            raise SequenceGap(
+                f"Spot unbridgeable candidate U={candidate['U']} u={candidate['u']} snapshot={snapshot_id}"
+            )
+        remaining = max(0.1, deadline - asyncio.get_running_loop().time())
+        buffered.append(await _next_event(queue, reader, timeout=min(2.0, remaining)))
+    raise SequenceGap(f"Spot timed out waiting for post-snapshot diff snapshot={snapshot_id}")
+
+
+async def _bootstrap_spot(
+    session: aiohttp.ClientSession,
+    symbol: str,
+    queue: asyncio.Queue[dict[str, Any]],
+    reader: asyncio.Task[None],
+    buffered: list[dict[str, Any]],
+) -> tuple[dict[str, Any], dict[str, Any], int]:
+    """Follow Binance Spot bootstrap literally without chasing the snapshot."""
+    first_stream_u = int(buffered[0]["U"])
+    snap: dict[str, Any] | None = None
+
+    # Binance Spot step 4: only refetch while snapshot is strictly behind the U
+    # of the first event received. Once it catches up, freeze this snapshot.
+    for _ in range(10):
+        snap = await _snapshot(session, "spot", symbol)
+        snapshot_id = int(snap["lastUpdateId"])
+        _drain(queue, buffered)
+        if snapshot_id >= first_stream_u:
+            bridge = await _wait_for_spot_bridge(queue, reader, buffered, snapshot_id)
+            return snap, bridge, snapshot_id + 1
+        await asyncio.sleep(0.03)
+
+    raise SequenceGap(
+        f"Spot snapshot remained behind first stream U={first_stream_u}; last snapshot={snap and snap.get('lastUpdateId')}"
+    )
+
+
+async def _bootstrap_usdm(
+    session: aiohttp.ClientSession,
+    symbol: str,
+    queue: asyncio.Queue[dict[str, Any]],
+    reader: asyncio.Task[None],
+    buffered: list[dict[str, Any]],
+) -> tuple[dict[str, Any], dict[str, Any], int]:
+    """Bootstrap USD-M using U/u bridge and later pu continuity."""
+    for _ in range(10):
+        snap = await _snapshot(session, "usdm", symbol)
+        snapshot_id = int(snap["lastUpdateId"])
+        _drain(queue, buffered)
+        _drop_stale("usdm", buffered, snapshot_id)
+
+        # If all buffered events are older than the snapshot, do not chase the
+        # snapshot forward. Wait for the next streamed event first.
+        if not buffered:
+            buffered.append(await _next_event(queue, reader, timeout=3.0))
+            _drain(queue, buffered)
+            _drop_stale("usdm", buffered, snapshot_id)
+
+        if not buffered:
+            continue
+
+        candidate = buffered[0]
+        if _candidate_is_bridge("usdm", candidate, snapshot_id):
+            return snap, buffered.pop(0), snapshot_id
+
+        # Earliest usable stream event begins after the snapshot: REST is behind;
+        # keep the same live buffer and fetch a newer snapshot.
+        if int(candidate["U"]) > snapshot_id:
+            await asyncio.sleep(0.03)
+            continue
+
+        # Candidate should otherwise have bridged snapshot_id.
+        raise SequenceGap(
+            f"USD-M unbridgeable candidate U={candidate['U']} u={candidate['u']} snapshot={snapshot_id}"
+        )
+
+    raise SequenceGap("USD-M unable to bridge buffered depth to REST snapshot")
+
+
 async def sync_one(
     session: aiohttp.ClientSession,
     market: str,
     symbol: str,
     *,
-    max_attempts: int = 4,
-    required_deltas: int = 2,
+    max_attempts: int = 6,
+    required_deltas: int = 3,
 ) -> LiveBookResult:
-    """Prove live snapshot + diff alignment for one Binance book.
-
-    The WebSocket reader runs continuously before and during REST snapshot fetches.
-    Spot and USD-M use market-specific first-event bridge targets, then strict
-    continuity rules are enforced for subsequent deltas.
-    """
     url = _stream_url(market, symbol)
     last_error: Exception | None = None
 
-    for _ in range(max_attempts):
+    for _attempt in range(max_attempts):
         try:
             async with websockets.connect(
                 url,
@@ -107,70 +230,31 @@ async def sync_one(
                 queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue(maxsize=20_000)
                 reader = asyncio.create_task(_buffer_depth(ws, queue))
                 try:
-                    first_event = await _next_event(queue, reader)
+                    first_event = await _next_event(queue, reader, timeout=10.0)
                     buffered: list[dict[str, Any]] = [first_event]
 
-                    bridge_event: dict[str, Any] | None = None
-                    bridge_target: int | None = None
-                    snap: dict[str, Any] | None = None
+                    if market == "spot":
+                        snap, bridge_event, bridge_id = await _bootstrap_spot(
+                            session, symbol, queue, reader, buffered
+                        )
+                    elif market == "usdm":
+                        snap, bridge_event, bridge_id = await _bootstrap_usdm(
+                            session, symbol, queue, reader, buffered
+                        )
+                    else:
+                        raise ValueError(market)
 
-                    for _snapshot_attempt in range(8):
-                        snap = await _snapshot(session, market, symbol)
-                        snapshot_id = int(snap["lastUpdateId"])
-
-                        while not queue.empty():
-                            buffered.append(queue.get_nowait())
-
-                        # Spot docs discard u <= snapshot id. USD-M discards u < id.
-                        if market == "spot":
-                            buffered = [e for e in buffered if int(e["u"]) > snapshot_id]
-                            # The next update expected by the snapshot can be snapshot+1.
-                            bridge_target = snapshot_id + 1
-                        else:
-                            buffered = [e for e in buffered if int(e["u"]) >= snapshot_id]
-                            bridge_target = snapshot_id
-
-                        if not buffered:
-                            await asyncio.sleep(0.02)
-                            continue
-
-                        # Find the first event that covers the market-specific bridge
-                        # target. Do not assume buffered[0] must be the bridge event.
-                        match_index: int | None = None
-                        for idx, event in enumerate(buffered):
-                            first_id = int(event["U"])
-                            final_id = int(event["u"])
-                            if first_id <= bridge_target <= final_id:
-                                match_index = idx
-                                break
-                            if first_id > bridge_target:
-                                # Snapshot is behind the buffered stream. Keep the WS
-                                # reader alive and fetch a newer snapshot.
-                                break
-
-                        if match_index is not None:
-                            # Events before the bridge are stale relative to snapshot.
-                            buffered = buffered[match_index:]
-                            bridge_event = buffered.pop(0)
-                            break
-
-                        await asyncio.sleep(0.02)
-
-                    if snap is None or bridge_event is None or bridge_target is None:
-                        raise SequenceGap("unable to bridge buffered depth to REST snapshot")
-
+                    snapshot_id = int(snap["lastUpdateId"])
                     book = OrderBookSync()
                     book.begin_buffering()
-                    snapshot_id = int(snap["lastUpdateId"])
                     book.load_snapshot(snapshot_id, snap.get("bids", []), snap.get("asks", []))
                     book.bridge_first_delta(
                         int(bridge_event["U"]),
                         int(bridge_event["u"]),
                         bridge_event.get("b", []),
                         bridge_event.get("a", []),
-                        bridge_id=bridge_target,
+                        bridge_id=bridge_id,
                     )
-
                     applied = 1
 
                     while applied < required_deltas:
@@ -198,7 +282,6 @@ async def sync_one(
                                 event.get("b", []),
                                 event.get("a", []),
                             )
-
                         applied += 1
 
                     bid, ask = book.best_bid_ask()
@@ -224,7 +307,7 @@ async def sync_one(
         except Exception as exc:
             last_error = exc
 
-        await asyncio.sleep(0.25)
+        await asyncio.sleep(0.2)
 
     raise RuntimeError(f"orderbook sync failed {market}:{symbol}: {last_error}")
 
