@@ -1,0 +1,21 @@
+{
+  "manifest_version": "3.1.0",
+  "parent_dataset": "3.0.0",
+  "created_at_utc": "2026-09-20T21:59:17.484647+00:00",
+  "period_start": "2020-01",
+  "period_end": "2023-12",
+  "total_months": 48,
+  "holdout_period": "2024-01 to 2024-11",
+  "holdout_locked": true,
+  "dataset_logical_sha256": "a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+  "source_gap_policy": "FAIL_CLOSED_NO_FALLBACK",
+  "alignment_version": "v3.1.0_EXACT_HOUR",
+  "official_premium_dataset_family": "premiumIndexKlines",
+  "official_premium_source_path": "https://data.binance.vision/data/futures/um/monthly/premiumIndexKlines/",
+  "coverage_summary": {
+    "total_hourly_timestamps": 35064,
+    "fully_valid_hours": 34624,
+    "incomplete_or_gap_hours": 440,
+    "valid_ratio_pct": 98.75
+  }
+}

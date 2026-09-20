@@ -1,0 +1,20 @@
+{
+  "acceptance_status": "VERIFIED",
+  "timestamp_utc": "2026-09-20T22:01:28.344197+00:00",
+  "code_commit": "8d4fbef1fa3da2bba18c0416f8c558bb97e0d727",
+  "dataset_version": "3.1.0",
+  "holdout_status": "LOCKED",
+  "gates": {
+    "defect_reproduction": "PASS",
+    "premium_archive_provenance": "PASS",
+    "dataset_v3_1_integrity": "PASS",
+    "source_alignment_quality": "PASS",
+    "exact_accounting_fixtures": "PASS",
+    "portfolio_equity_sanity": "PASS",
+    "candidate_semantics_policy": "PASS",
+    "zero_forced_promotion": "PASS",
+    "holdout_locked": "PASS",
+    "mainnet_security_boundary": "PASS",
+    "automated_tests": "PASS"
+  }
+}

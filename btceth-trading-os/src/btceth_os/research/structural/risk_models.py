@@ -76,19 +76,32 @@ def evaluate_margin_and_basis_stress(
     )
 
 
+def compute_legging_friction_bps(
+    notional_usd: float,
+    delay_bps: float = 2.0,
+) -> float:
+    """Compute temporary unhedged legging execution friction proportional to notional in basis points."""
+    return max(0.0, notional_usd * (delay_bps / 10000.0))
+
+
 def simulate_legging_friction(
     spot_quantity: float,
     spot_price_entry: float,
-    perp_price_delay: float,
-    perp_price_intended: float,
+    perp_price_delay: float | None = None,
+    perp_price_intended: float | None = None,
     delay_ms: int = 500,
+    delay_bps: float = 2.0,
 ) -> tuple[float, float]:
     """Simulate execution friction when spot fills first and perp is delayed.
     
+    Supports proportional basis point model (e.g. 2 bps) or explicit delayed price.
     Returns:
         (slippage_from_delay_usd, temporary_unhedged_delta_usd)
     """
     unhedged_delta_usd = spot_quantity * spot_price_entry
-    adverse_move = perp_price_intended - perp_price_delay
-    delay_loss_usd = max(0.0, spot_quantity * adverse_move)
+    if perp_price_delay is not None and perp_price_intended is not None:
+        adverse_move = perp_price_intended - perp_price_delay
+        delay_loss_usd = max(0.0, spot_quantity * adverse_move)
+    else:
+        delay_loss_usd = compute_legging_friction_bps(unhedged_delta_usd, delay_bps)
     return delay_loss_usd, unhedged_delta_usd

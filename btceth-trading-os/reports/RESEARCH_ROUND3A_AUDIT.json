@@ -1,0 +1,73 @@
+{
+  "phase": "RESEARCH_ROUND3A_AUDIT",
+  "audit_timestamp_utc": "2026-09-21T03:31:00Z",
+  "baseline_commit": "8d4fbef1fa3da2bba18c0416f8c558bb97e0d727",
+  "baseline_status": "ROUND3_KNOWN_DEFECTIVE_BASELINE",
+  "remediation_status": "REMEDIATED_AND_VERIFIED",
+  "old_round3_status": "SUPERSEDED_BY_ROUND3A",
+  "audit_findings": [
+    {
+      "finding_id": "AUD-R3A-001",
+      "category": "STRUCTURAL_PNL_NORMALIZATION",
+      "defect": "Binance Vision monthly fundingRate CSV column offset (row[1]=8 instead of row[2]=last_funding_rate) produced phantom 800% funding rates.",
+      "remediation": "Corrected index parsing to row[2] for funding_rate and row[1] for interval hours. Rebuilt funding tables.",
+      "status": "REMEDIATED"
+    },
+    {
+      "finding_id": "AUD-R3A-002",
+      "category": "PORTFOLIO_RETURN_ACCOUNTING",
+      "defect": "Backtester divided cumulative multi-trade P&L by capital of first trade only, producing 631,000% RoC.",
+      "remediation": "Implemented PortfolioEquityEngine with discrete time-series equity curve, FIXED_NOTIONAL sizing, and daily Sharpe.",
+      "status": "REMEDIATED"
+    },
+    {
+      "finding_id": "AUD-R3A-003",
+      "category": "CANDIDATE_IMPLEMENTATION_SEMANTICS",
+      "defect": "Arbitrary fixed 1.0 BTC sizing and hardcoded asset='BTC' across all candidates; flat $2 legging delay loss.",
+      "remediation": "Implemented dynamic notional sizing ($50,000/leg), genuine ETH carry, and proportional bps legging model.",
+      "status": "REMEDIATED"
+    },
+    {
+      "finding_id": "AUD-R3A-004",
+      "category": "CROSS_ASSET_STRATEGY_CONSTRUCTION",
+      "defect": "STRUCT_C1 used BTC spot-perp episode accounting while referencing eth_dev[i] during validation period.",
+      "remediation": "Implemented RelativePerpPairEpisode with 2 perp legs and strict timestamp join on ts_event_ns.",
+      "status": "REMEDIATED"
+    },
+    {
+      "finding_id": "AUD-R3A-005",
+      "category": "SOURCE_SERIES_TIMESTAMP_ALIGNMENT",
+      "defect": "Perp observations could be taken from future timestamps if spot hour preceded perp index.",
+      "remediation": "Exact-hour grouping and strict equality perp_hour_ts == spot_hour_ts.",
+      "status": "REMEDIATED"
+    },
+    {
+      "finding_id": "AUD-R3A-006",
+      "category": "MISSING_DATA_HANDLING",
+      "defect": "Silent fallback substitutions: perp close for mark, spot close for index, 0.0 for premium.",
+      "remediation": "Removed all fallback substitutions. Implemented FAIL_CLOSED_NO_FALLBACK policy and explicit availability booleans.",
+      "status": "REMEDIATED"
+    },
+    {
+      "finding_id": "AUD-R3A-007",
+      "category": "STRATEGY_STATUS_PROMOTION_LOGIC",
+      "defect": "Status was hardcoded to REJECTED with empty rejection_reasons=[].",
+      "remediation": "Dynamic policy evaluation returning PRELIMINARY_PASS or REJECTED with mandatory rejection reasons.",
+      "status": "REMEDIATED"
+    },
+    {
+      "finding_id": "AUD-R3A-008",
+      "category": "ACCEPTANCE_GATE_COMPLETENESS",
+      "defect": "Round 3 verifier checked only basic file existence without testing mathematical invariants or sanity limits.",
+      "remediation": "Created tools/verify_research_round3a.py with 11 strict economic, provenance, and accounting gates.",
+      "status": "REMEDIATED"
+    },
+    {
+      "finding_id": "AUD-R3A-009",
+      "category": "OFFICIAL_PREMIUM_ARCHIVE_NAMING",
+      "defect": "Documentation discrepancy between premiumIndexKlines and premiumPriceKlines.",
+      "remediation": "Direct HEAD verification confirmed premiumIndexKlines is 200 OK and premiumPriceKlines is 404.",
+      "status": "REMEDIATED"
+    }
+  ]
+}

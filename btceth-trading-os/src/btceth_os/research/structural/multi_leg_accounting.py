@@ -151,3 +151,107 @@ class MultiLegTradeEpisode:
             "total_costs": float(self.total_costs),
             "net_pnl": float(self.net_pnl),
         }
+
+
+@dataclass(frozen=True)
+class RelativePerpPairEpisode:
+    """Complete accounting for a 2-perp relative funding carry trade (e.g. BTC Perp vs ETH Perp)."""
+    episode_id: str
+    strategy_id: str
+    entry_ts_ns: int
+    exit_ts_ns: int
+    
+    # Leg 1 (e.g. BTC Perp)
+    asset1_symbol: str
+    asset1_side: int  # +1 long, -1 short
+    asset1_entry_price: Decimal
+    asset1_exit_price: Decimal
+    asset1_quantity: Decimal
+    asset1_cost_policy: DetailedCostPolicy
+    
+    # Leg 2 (e.g. ETH Perp)
+    asset2_symbol: str
+    asset2_side: int  # -1 short, +1 long
+    asset2_entry_price: Decimal
+    asset2_exit_price: Decimal
+    asset2_quantity: Decimal
+    asset2_cost_policy: DetailedCostPolicy
+
+    # Funding events
+    asset1_funding_events: tuple[FundingCashFlowEvent, ...] = field(default_factory=tuple)
+    asset2_funding_events: tuple[FundingCashFlowEvent, ...] = field(default_factory=tuple)
+    
+    # Frictions
+    legging_delay_ms: int = 0
+    temporary_delta_loss_usd: Decimal = Decimal("0")
+
+    @property
+    def holding_hours(self) -> Decimal:
+        diff_ns = self.exit_ts_ns - self.entry_ts_ns
+        return Decimal(diff_ns) / Decimal(3_600_000_000_000)
+
+    @property
+    def asset1_notional_entry(self) -> Decimal:
+        return self.asset1_quantity * self.asset1_entry_price
+
+    @property
+    def asset2_notional_entry(self) -> Decimal:
+        return self.asset2_quantity * self.asset2_entry_price
+
+    @property
+    def gross_notional_entry(self) -> Decimal:
+        return self.asset1_notional_entry + self.asset2_notional_entry
+
+    @property
+    def net_delta_entry(self) -> Decimal:
+        return (Decimal(self.asset1_side) * self.asset1_notional_entry) + (Decimal(self.asset2_side) * self.asset2_notional_entry)
+
+    @property
+    def asset1_pnl(self) -> Decimal:
+        return Decimal(self.asset1_side) * self.asset1_quantity * (self.asset1_exit_price - self.asset1_entry_price)
+
+    @property
+    def asset2_pnl(self) -> Decimal:
+        return Decimal(self.asset2_side) * self.asset2_quantity * (self.asset2_exit_price - self.asset2_entry_price)
+
+    @property
+    def price_pnl(self) -> Decimal:
+        return self.asset1_pnl + self.asset2_pnl
+
+    @property
+    def asset1_funding_pnl(self) -> Decimal:
+        return sum((f.cash_flow_usd for f in self.asset1_funding_events), Decimal("0"))
+
+    @property
+    def asset2_funding_pnl(self) -> Decimal:
+        return sum((f.cash_flow_usd for f in self.asset2_funding_events), Decimal("0"))
+
+    @property
+    def total_funding_pnl(self) -> Decimal:
+        return self.asset1_funding_pnl + self.asset2_funding_pnl
+
+    @property
+    def asset1_costs(self) -> Decimal:
+        notional_exit = self.asset1_quantity * self.asset1_exit_price
+        fee_entry = self.asset1_notional_entry * bps_to_fraction(self.asset1_cost_policy.exchange_fee_bps)
+        fee_exit = notional_exit * bps_to_fraction(self.asset1_cost_policy.exchange_fee_bps)
+        slip_entry = self.asset1_notional_entry * bps_to_fraction(self.asset1_cost_policy.spread_bps + self.asset1_cost_policy.slippage_bps)
+        slip_exit = notional_exit * bps_to_fraction(self.asset1_cost_policy.spread_bps + self.asset1_cost_policy.slippage_bps)
+        return fee_entry + fee_exit + slip_entry + slip_exit
+
+    @property
+    def asset2_costs(self) -> Decimal:
+        notional_exit = self.asset2_quantity * self.asset2_exit_price
+        fee_entry = self.asset2_notional_entry * bps_to_fraction(self.asset2_cost_policy.exchange_fee_bps)
+        fee_exit = notional_exit * bps_to_fraction(self.asset2_cost_policy.exchange_fee_bps)
+        slip_entry = self.asset2_notional_entry * bps_to_fraction(self.asset2_cost_policy.spread_bps + self.asset2_cost_policy.slippage_bps)
+        slip_exit = notional_exit * bps_to_fraction(self.asset2_cost_policy.spread_bps + self.asset2_cost_policy.slippage_bps)
+        return fee_entry + fee_exit + slip_entry + slip_exit
+
+    @property
+    def total_costs(self) -> Decimal:
+        return self.asset1_costs + self.asset2_costs + self.temporary_delta_loss_usd
+
+    @property
+    def net_pnl(self) -> Decimal:
+        return self.price_pnl + self.total_funding_pnl - self.total_costs

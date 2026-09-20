@@ -1,0 +1,221 @@
+{
+  "phase": "RESEARCH_ROUND3A_RESULTS",
+  "dataset_version": "3.1.0",
+  "holdout_status": "LOCKED",
+  "total_candidates_tested": 11,
+  "preliminary_pass": 0,
+  "rejected": 11,
+  "approved_for_shadow": 0,
+  "approved_for_paper": 0,
+  "results": [
+    {
+      "strategy_id": "STRUCT_A1_BTC_CARRY_8H",
+      "family": "STRUCT_FAMILY_A_SPOT_PERP_CARRY",
+      "asset": "BTC",
+      "dev_return_pct": 0.0,
+      "val_base_return_pct": 0.0,
+      "val_stressed_return_pct": 0.0,
+      "val_trades": 0,
+      "val_sharpe": 0.0,
+      "val_max_dd_pct": 0.0,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (0 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (0.00% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (0.00% <= 0%)",
+        "LOW_SHARPE_RATIO (0.00 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_A2_BTC_CARRY_24H",
+      "family": "STRUCT_FAMILY_A_SPOT_PERP_CARRY",
+      "asset": "BTC",
+      "dev_return_pct": -0.214,
+      "val_base_return_pct": 0.0,
+      "val_stressed_return_pct": 0.0,
+      "val_trades": 0,
+      "val_sharpe": 0.0,
+      "val_max_dd_pct": 0.0,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (0 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (0.00% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (0.00% <= 0%)",
+        "LOW_SHARPE_RATIO (0.00 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_A3_BTC_CARRY_72H",
+      "family": "STRUCT_FAMILY_A_SPOT_PERP_CARRY",
+      "asset": "BTC",
+      "dev_return_pct": 0.0148,
+      "val_base_return_pct": 0.0,
+      "val_stressed_return_pct": 0.0,
+      "val_trades": 0,
+      "val_sharpe": 0.0,
+      "val_max_dd_pct": 0.0,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (0 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (0.00% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (0.00% <= 0%)",
+        "LOW_SHARPE_RATIO (0.00 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_A4_ETH_CARRY_24H",
+      "family": "STRUCT_FAMILY_A_SPOT_PERP_CARRY",
+      "asset": "ETH",
+      "dev_return_pct": -0.1152,
+      "val_base_return_pct": 0.0,
+      "val_stressed_return_pct": 0.0,
+      "val_trades": 0,
+      "val_sharpe": 0.0,
+      "val_max_dd_pct": 0.0,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (0 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (0.00% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (0.00% <= 0%)",
+        "LOW_SHARPE_RATIO (0.00 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_B1_BTC_BASIS_Z20",
+      "family": "STRUCT_FAMILY_B_BASIS_DISLOCATION",
+      "asset": "BTC",
+      "dev_return_pct": -0.1964,
+      "val_base_return_pct": -0.2524,
+      "val_stressed_return_pct": -0.6175,
+      "val_trades": 1,
+      "val_sharpe": -13.51,
+      "val_max_dd_pct": 0.2524,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (1 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (-0.25% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (-0.62% <= 0%)",
+        "LOW_SHARPE_RATIO (-13.51 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_B2_BTC_BASIS_Z25",
+      "family": "STRUCT_FAMILY_B_BASIS_DISLOCATION",
+      "asset": "BTC",
+      "dev_return_pct": -0.1964,
+      "val_base_return_pct": -0.2431,
+      "val_stressed_return_pct": -0.6086,
+      "val_trades": 1,
+      "val_sharpe": -13.51,
+      "val_max_dd_pct": 0.2431,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (1 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (-0.24% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (-0.61% <= 0%)",
+        "LOW_SHARPE_RATIO (-13.51 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_C1_BTCETH_REL_FUNDING",
+      "family": "STRUCT_FAMILY_C_RELATIVE_CARRY",
+      "asset": "BTC/ETH",
+      "dev_return_pct": -5.0576,
+      "val_base_return_pct": 0.0,
+      "val_stressed_return_pct": 0.0,
+      "val_trades": 0,
+      "val_sharpe": 0.0,
+      "val_max_dd_pct": 0.0,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (0 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (0.00% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (0.00% <= 0%)",
+        "LOW_SHARPE_RATIO (0.00 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_D1_BTC_PREMIUM_DIVERGENCE",
+      "family": "STRUCT_FAMILY_D_FUNDING_PREMIUM_DIVERGENCE",
+      "asset": "BTC",
+      "dev_return_pct": -0.1806,
+      "val_base_return_pct": -0.2267,
+      "val_stressed_return_pct": -0.5919,
+      "val_trades": 1,
+      "val_sharpe": -13.51,
+      "val_max_dd_pct": 0.2267,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (1 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (-0.23% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (-0.59% <= 0%)",
+        "LOW_SHARPE_RATIO (-13.51 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_E1_BTC_CARRY_TIMING",
+      "family": "STRUCT_FAMILY_E_CARRY_TIMING",
+      "asset": "BTC",
+      "dev_return_pct": 0.0,
+      "val_base_return_pct": 0.0,
+      "val_stressed_return_pct": 0.0,
+      "val_trades": 0,
+      "val_sharpe": 0.0,
+      "val_max_dd_pct": 0.0,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (0 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (0.00% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (0.00% <= 0%)",
+        "LOW_SHARPE_RATIO (0.00 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_F1_BTC_WEEKEND_REVERSION",
+      "family": "STRUCT_FAMILY_F_WEEKEND_SESSION_EFFECTS",
+      "asset": "BTC",
+      "dev_return_pct": -0.2053,
+      "val_base_return_pct": -0.267,
+      "val_stressed_return_pct": -0.6414,
+      "val_trades": 1,
+      "val_sharpe": -13.51,
+      "val_max_dd_pct": 0.267,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (1 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (-0.27% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (-0.64% <= 0%)",
+        "LOW_SHARPE_RATIO (-13.51 < 1.0)"
+      ],
+      "sanity_flags": []
+    },
+    {
+      "strategy_id": "STRUCT_G1_BTC_POST_STRESS",
+      "family": "STRUCT_FAMILY_G_POST_STRESS_REVERSION",
+      "asset": "BTC",
+      "dev_return_pct": -0.4477,
+      "val_base_return_pct": 0.0,
+      "val_stressed_return_pct": 0.0,
+      "val_trades": 0,
+      "val_sharpe": 0.0,
+      "val_max_dd_pct": 0.0,
+      "status": "REJECTED",
+      "rejection_reasons": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES (0 < 30)",
+        "NEGATIVE_VALIDATION_BASE_RETURN (0.00% <= 0%)",
+        "FAILED_COST_STRESS_SURVIVAL (0.00% <= 0%)",
+        "LOW_SHARPE_RATIO (0.00 < 1.0)"
+      ],
+      "sanity_flags": []
+    }
+  ]
+}
