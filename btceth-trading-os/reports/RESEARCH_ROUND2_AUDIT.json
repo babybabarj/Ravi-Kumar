@@ -1,0 +1,143 @@
+{
+  "phase": "RESEARCH_ROUND2_AUDIT",
+  "audit_date": "2026-09-21",
+  "audited_commit": "e0a94eb22b92d823849c041627b87bedaf06e347",
+  "branch": "btceth-phase1b",
+  "total_findings": 18,
+  "summary_by_classification": {
+    "SEMANTIC_BUG": 4,
+    "IMPLEMENTATION_BUG": 3,
+    "STATISTICAL_WEAKNESS": 3,
+    "DOCUMENTATION_OVERCLAIM": 1,
+    "IMPRECISE": 2,
+    "CORRECT": 5
+  },
+  "findings": [
+    {
+      "finding_id": "AUD-001",
+      "classification": "SEMANTIC_BUG",
+      "component": "src/btceth_os/research/market_brain.py",
+      "description": "OI_EXPANSION was triggered solely by ATR expansion ratio (> 1.35) without requiring or verifying open interest data.",
+      "remediation": "Rename to VOLATILITY_EXPANSION. Only emit OI_EXPANSION when verified open-interest data exists."
+    },
+    {
+      "finding_id": "AUD-002",
+      "classification": "SEMANTIC_BUG",
+      "component": "src/btceth_os/research/market_brain.py",
+      "description": "OI_UNWIND was triggered solely by ATR compression ratio (<= 0.65) and flat slope without open interest data.",
+      "remediation": "Rename to RANGE_COMPRESSION / VOLATILITY_COMPRESSION. Explicitly report oi_state = 'UNAVAILABLE'."
+    },
+    {
+      "finding_id": "AUD-003",
+      "classification": "SEMANTIC_BUG",
+      "component": "src/btceth_os/research/market_brain.py",
+      "description": "LIQUIDITY_STRESS was triggered solely by realized volatility >= 0.85 or 2h drawdown >= 3.5% without order book depth or spread metrics.",
+      "remediation": "Rename to MARKET_STRESS. Reserve LIQUIDITY_STRESS for periods with verified order book depth or spread deterioration."
+    },
+    {
+      "finding_id": "AUD-004",
+      "classification": "SEMANTIC_BUG",
+      "component": "src/btceth_os/research/market_brain.py",
+      "description": "Single mutually exclusive MarketRegime enum erased multi-dimensional market state (e.g. extreme funding obscured trend).",
+      "remediation": "Refactor into multi-dimensional compositional MarketState dataclass preserving all dimensions simultaneously."
+    },
+    {
+      "finding_id": "AUD-005",
+      "classification": "IMPLEMENTATION_BUG",
+      "component": "src/btceth_os/research/market_brain.py",
+      "description": "FUNDING_EXTREME_ABS = 0.0004 commented as '40 bps / 8h'. However 0.0004 = 4 bps (0.04%), whereas 40 bps = 0.0040 (0.40%).",
+      "remediation": "Correct threshold to 30 bps (0.0030) based on empirical funding distribution and create unit-safe conversion helpers."
+    },
+    {
+      "finding_id": "AUD-006",
+      "classification": "IMPLEMENTATION_BUG",
+      "component": "tools/run_strategy_research.py",
+      "description": "Placeholder pbo_val = 0.50 was hardcoded during per-strategy promotion evaluation rather than computed from the candidate variant search space.",
+      "remediation": "Calculate CSCV PBO across the actual parameter variant matrix of each strategy family."
+    },
+    {
+      "finding_id": "AUD-007",
+      "classification": "IMPLEMENTATION_BUG",
+      "component": "src/btceth_os/research/validation/statistical.py",
+      "description": "compute_pbo_cscv silently returned 0.0 on insufficient inputs, creating the false appearance of zero overfitting probability.",
+      "remediation": "Return explicit PBO_NOT_COMPUTABLE / null with diagnostic reason codes when uncomputable."
+    },
+    {
+      "finding_id": "AUD-008",
+      "classification": "STATISTICAL_WEAKNESS",
+      "component": "tools/run_strategy_research.py",
+      "description": "Hardcoded var_sr = 0.25 cross-sectional Sharpe variance assumption in DSR calculation rather than evidence-based estimation.",
+      "remediation": "Compute empirical cross-sectional variance across the actual explored variant universe."
+    },
+    {
+      "finding_id": "AUD-009",
+      "classification": "STATISTICAL_WEAKNESS",
+      "component": "tools/run_strategy_research.py",
+      "description": "Single 15-day train / 15-day test split on 1 month of data. High-frequency 1m horizon caused severe friction churn.",
+      "remediation": "Compile multi-year canonical dataset (2021-2024), implement rolling walk-forward validation with dynamic purging & embargo, and research lower-turnover horizons."
+    },
+    {
+      "finding_id": "AUD-010",
+      "classification": "STATISTICAL_WEAKNESS",
+      "component": "src/btceth_os/research/validation/robustness.py",
+      "description": "Cost model used lump-sum turnover without separating exchange fees, spread, slippage, and point-in-time funding cash flows.",
+      "remediation": "Create audited cost policy layer with exact point-in-time funding payments crossing 8-hour boundaries."
+    },
+    {
+      "finding_id": "AUD-011",
+      "classification": "DOCUMENTATION_OVERCLAIM",
+      "component": "src/btceth_os/research/validation/statistical.py",
+      "description": "Docstring labeled fixed-length moving block bootstrap (k=5) as 'stationary block bootstrap'.",
+      "remediation": "Accurately name function run_moving_block_bootstrap and implement sensitivity checks across block lengths."
+    },
+    {
+      "finding_id": "AUD-012",
+      "classification": "IMPRECISE",
+      "component": "src/btceth_os/research/unit_rates.py",
+      "description": "Scattered decimal constants without dedicated unit conversion utilities.",
+      "remediation": "Implement unit-safe conversion helpers with exact Decimal precision and comprehensive tests."
+    },
+    {
+      "finding_id": "AUD-013",
+      "classification": "IMPRECISE",
+      "component": "config/strategy_validation_policy.yaml",
+      "description": "Policy v1.0.0 lacked multi-year consistency, regime breakdown criteria, and NOT_COMPUTABLE state handling.",
+      "remediation": "Upgrade policy to Version 2.0.0 with explicit multi-year and statistical requirements."
+    },
+    {
+      "finding_id": "AUD-014",
+      "classification": "CORRECT",
+      "component": "src/btceth_os/research/manifest.py",
+      "description": "Deterministic logical SHA-256 calculation across records is sound and verified.",
+      "remediation": "Retain as canonical dataset identity standard."
+    },
+    {
+      "finding_id": "AUD-015",
+      "classification": "CORRECT",
+      "component": "src/btceth_os/research/experiment_registry.py",
+      "description": "SQLite WAL persistence and permanent experiment tracking correctly recorded all 7 Round 1 failures without deletion.",
+      "remediation": "Retain; preserve Round 1 records without overwriting."
+    },
+    {
+      "finding_id": "AUD-016",
+      "classification": "CORRECT",
+      "component": "src/btceth_os/research/features/registry.py",
+      "description": "Point-in-time verification via future perturbation and truncated history equivalence tests is sound.",
+      "remediation": "Retain and enforce for all future features."
+    },
+    {
+      "finding_id": "AUD-017",
+      "classification": "CORRECT",
+      "component": "src/btceth_os/security_scan.py",
+      "description": "Security scanner correctly verified TRADING CAPABILITY = ZERO with 0 hits on forbidden mutation endpoints.",
+      "remediation": "Inviolable security invariant; maintain unchanged."
+    },
+    {
+      "finding_id": "AUD-018",
+      "classification": "CORRECT",
+      "component": "Autopilot / Policy Gate",
+      "description": "Zero forced promotion upheld: all 7 Round 1 strategies were rejected, and APPROVED_FOR_PAPER = 0 was maintained.",
+      "remediation": "Inviolable scientific honesty invariant; maintain in Round 2."
+    }
+  ]
+}

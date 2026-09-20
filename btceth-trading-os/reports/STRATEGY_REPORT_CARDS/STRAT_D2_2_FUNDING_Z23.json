@@ -1,0 +1,39 @@
+{
+  "strategy_id": "STRAT_D2_2_FUNDING_Z23",
+  "family": "FAMILY_D2_FUNDING_CROWD_CONTRARIAN",
+  "symbol": "BTCUSDT",
+  "hypothesis": "Persistent funding rate dislocation (|z| >= 2.0) precedes directional deleveraging squeeze.",
+  "dataset_logical_sha256": "59af81165778615664e54b39acb688b13910a98775256a06928b597ec491203c",
+  "code_commit": "e0a94eb22b92d823849c041627b87bedaf06e347",
+  "parameters": {
+    "z_thresh": 2.3,
+    "strat_id": "STRAT_D2_2_FUNDING_Z23"
+  },
+  "out_of_sample_trades": 0,
+  "gross_return": 0.0,
+  "net_return_base": 0.0,
+  "net_return_stressed": 0.0,
+  "annualized_sharpe": 0.0,
+  "annualized_sortino": 0.0,
+  "max_drawdown": 0.0,
+  "profit_factor": 0.0,
+  "win_rate": 0.0,
+  "net_expectancy_bps": 0.0,
+  "parameter_stability_pct": 0.5,
+  "deflated_sharpe_ratio": 0.0,
+  "pbo": 0.0,
+  "top1_trade_share_pct": 1.0,
+  "bootstrap_lower_ci_bps": 0.0,
+  "status": "REJECTED",
+  "rejection_reasons": [
+    "Insufficient OOS trades (0 < 30)",
+    "Negative net return after base costs (0.0000 <= 0)",
+    "Fails cost stress survival: net return under stressed costs is 0.0000 <= 0",
+    "Sharpe ratio below threshold (0.00 < 1.00)",
+    "Excessive trade profit concentration (top 1 trade is 100.0% > 35.0%)",
+    "Parameter instability (50.0% profitable neighbors < 60.0%)",
+    "Multi-year inconsistency: profitable years 0.0% < 66.0% or max single-year drawdown 0.0% > 12.0%",
+    "Deflated Sharpe Ratio failed multiple testing penalty (DSR=0.000 < 0.95)"
+  ],
+  "created_at_utc": "2026-09-20T21:32:49.800287+00:00"
+}

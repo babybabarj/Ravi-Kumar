@@ -1,0 +1,49 @@
+{
+  "dataset_version": "2.0.0",
+  "dataset_universe": "CORE_LONG_HISTORY",
+  "dataset_logical_sha256": "59af81165778615664e54b39acb688b13910a98775256a06928b597ec491203c",
+  "round1_dataset_sha256": "a24103d810c36c44a2d8bf26a51c4a034a012906d6463284d50ec175102e5d9a",
+  "code_commit": "e0a94eb22b92d823849c041627b87bedaf06e347",
+  "created_at_utc": "2026-09-20T21:30:59.582134+00:00",
+  "date_range": {
+    "start": "2022-01",
+    "end": "2024-11",
+    "total_months": 35
+  },
+  "streams": {
+    "BTCUSDT_PERP_1M": {
+      "parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver_v2/BTCUSDT-perp-1m-2022-01-2024-11.parquet",
+      "total_rows": 1533600,
+      "start_ts_ns": 1640995200000000000,
+      "end_ts_ns": 1733011140000000000
+    },
+    "ETHUSDT_PERP_1M": {
+      "parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver_v2/ETHUSDT-perp-1m-2022-01-2024-11.parquet",
+      "total_rows": 1533600,
+      "start_ts_ns": 1640995200000000000,
+      "end_ts_ns": 1733011140000000000
+    },
+    "BTCUSDT_FUNDING": {
+      "parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver_v2/BTCUSDT-funding-2022-01-2024-11.parquet",
+      "total_rows": 3195
+    },
+    "ETHUSDT_FUNDING": {
+      "parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver_v2/ETHUSDT-funding-2022-01-2024-11.parquet",
+      "total_rows": 3195
+    },
+    "BTCUSDT_SPOT_1M": {
+      "parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver_v2/BTCUSDT-spot-1m-2022-01-2024-11.parquet",
+      "total_rows": 1533600
+    },
+    "ETHUSDT_SPOT_1M": {
+      "parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver_v2/ETHUSDT-spot-1m-2022-01-2024-11.parquet",
+      "total_rows": 1533600
+    }
+  },
+  "holdout_config": {
+    "development_period": "2021-01 to 2022-12 (24 months)",
+    "validation_period": "2023-01 to 2023-12 (12 months)",
+    "final_holdout_period": "2024-01 to 2024-11 (11 months)",
+    "holdout_locked": true
+  }
+}

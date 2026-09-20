@@ -1,0 +1,39 @@
+{
+  "strategy_id": "STRAT_B2_2_SQUEEZE_96H",
+  "family": "FAMILY_B2_SQUEEZE_BREAKOUT",
+  "symbol": "BTCUSDT",
+  "hypothesis": "Extended volatility compression followed by Donchian channel breakout generates directional trend persistence.",
+  "dataset_logical_sha256": "59af81165778615664e54b39acb688b13910a98775256a06928b597ec491203c",
+  "code_commit": "e0a94eb22b92d823849c041627b87bedaf06e347",
+  "parameters": {
+    "channel": 96,
+    "exit_ch": 48,
+    "strat_id": "STRAT_B2_2_SQUEEZE_96H"
+  },
+  "out_of_sample_trades": 336,
+  "gross_return": -0.02934760515160123,
+  "net_return_base": -0.36534760515160125,
+  "net_return_stressed": -0.7687992970614022,
+  "annualized_sharpe": -2.0932032677338355,
+  "annualized_sortino": -3.625601064086543,
+  "max_drawdown": 0.4396098056578794,
+  "profit_factor": 0.7073587746381536,
+  "win_rate": 0.23809523809523808,
+  "net_expectancy_bps": -12.771725416114531,
+  "parameter_stability_pct": 0.5,
+  "deflated_sharpe_ratio": 0.0,
+  "pbo": 0.0,
+  "top1_trade_share_pct": 0.07994103504536587,
+  "bootstrap_lower_ci_bps": 0.0,
+  "status": "REJECTED",
+  "rejection_reasons": [
+    "Negative net return after base costs (-0.3653 <= 0)",
+    "Fails cost stress survival: net return under stressed costs is -0.7688 <= 0",
+    "Max drawdown exceeded limit (0.440 > 0.150)",
+    "Sharpe ratio below threshold (-2.09 < 1.00)",
+    "Parameter instability (50.0% profitable neighbors < 60.0%)",
+    "Multi-year inconsistency: profitable years 0.0% < 66.0% or max single-year drawdown 57.9% > 12.0%",
+    "Deflated Sharpe Ratio failed multiple testing penalty (DSR=0.000 < 0.95)"
+  ],
+  "created_at_utc": "2026-09-20T21:32:48.852500+00:00"
+}

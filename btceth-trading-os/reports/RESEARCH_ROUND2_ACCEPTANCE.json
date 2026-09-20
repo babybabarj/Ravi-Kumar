@@ -1,0 +1,30 @@
+{
+  "phase": "RESEARCH_ROUND2_ACCEPTANCE",
+  "acceptance_status": "ALL_GATES_PASSED",
+  "evaluated_at_utc": "2026-09-20T21:33:07.291052+00:00",
+  "code_commit": "e0a94eb22b92d823849c041627b87bedaf06e347",
+  "checks": {
+    "audit_classification_complete": true,
+    "capacity_plan_documented": true,
+    "multi_year_dataset_ready": true,
+    "statistical_audit_documented": true,
+    "experiment_registry_continuity": true,
+    "scientific_honesty_zero_promotion": true,
+    "security_scan_clean": true,
+    "automated_tests_passing": true
+  },
+  "details": {
+    "audit_total_findings": 18,
+    "dataset_logical_sha256": "59af81165778615664e54b39acb688b13910a98775256a06928b597ec491203c",
+    "total_btc_bars": 1533600,
+    "total_eth_bars": 1533600,
+    "total_funding_events": 3195,
+    "total_experiments_recorded": 16,
+    "approved_for_paper": 0,
+    "approved_for_shadow": 0,
+    "rejected": 9,
+    "research_engine_status": "VERIFIED",
+    "edge_discovery_status": "NO_VALIDATED_EDGE",
+    "pytest_summary": "135 passed in 1.70s"
+  }
+}

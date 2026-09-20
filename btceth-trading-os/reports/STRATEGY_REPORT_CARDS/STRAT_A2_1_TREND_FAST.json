@@ -1,0 +1,40 @@
+{
+  "strategy_id": "STRAT_A2_1_TREND_FAST",
+  "family": "FAMILY_A2_MULTI_TF_TREND",
+  "symbol": "BTCUSDT",
+  "hypothesis": "Multi-day trend continuation on 1h bars when 48h trend slope confirms and funding rate is non-extreme.",
+  "dataset_logical_sha256": "59af81165778615664e54b39acb688b13910a98775256a06928b597ec491203c",
+  "code_commit": "e0a94eb22b92d823849c041627b87bedaf06e347",
+  "parameters": {
+    "fast": 24,
+    "slow": 96,
+    "slope_thresh": 0.005,
+    "strat_id": "STRAT_A2_1_TREND_FAST"
+  },
+  "out_of_sample_trades": 679,
+  "gross_return": -0.017194938807965743,
+  "net_return_base": -0.6961949388079658,
+  "net_return_stressed": -0.9605278008279207,
+  "annualized_sharpe": -3.65692602882707,
+  "annualized_sortino": -5.629280376473002,
+  "max_drawdown": 0.7512518411758633,
+  "profit_factor": 0.6119824979567843,
+  "win_rate": 0.16494845360824742,
+  "net_expectancy_bps": -16.603806527425565,
+  "parameter_stability_pct": 0.5,
+  "deflated_sharpe_ratio": 0.0,
+  "pbo": 0.0,
+  "top1_trade_share_pct": 0.18034636114325728,
+  "bootstrap_lower_ci_bps": 0.0,
+  "status": "REJECTED",
+  "rejection_reasons": [
+    "Negative net return after base costs (-0.6962 <= 0)",
+    "Fails cost stress survival: net return under stressed costs is -0.9605 <= 0",
+    "Max drawdown exceeded limit (0.751 > 0.150)",
+    "Sharpe ratio below threshold (-3.66 < 1.00)",
+    "Parameter instability (50.0% profitable neighbors < 60.0%)",
+    "Multi-year inconsistency: profitable years 0.0% < 66.0% or max single-year drawdown 79.5% > 12.0%",
+    "Deflated Sharpe Ratio failed multiple testing penalty (DSR=0.000 < 0.95)"
+  ],
+  "created_at_utc": "2026-09-20T21:32:47.247335+00:00"
+}

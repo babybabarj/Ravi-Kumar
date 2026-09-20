@@ -1,15 +1,16 @@
 # BTCETH Trading OS - Quantitative Strategy Promotion Policy
-# Version: 1.0.0
+# Version: 2.0.0
 # Purpose: Defines rigorous machine-readable criteria required for strategy promotion
-# to APPROVED_FOR_SHADOW and APPROVED_FOR_PAPER.
+# to APPROVED_FOR_SHADOW and APPROVED_FOR_PAPER across multi-year and multi-regime evaluations.
 
-version: "1.0.0"
+version: "2.0.0"
 policy_date: "2026-09-21"
 
 thresholds:
   # Minimum sample requirements
   minimum_out_of_sample_trades: 30
-  minimum_out_of_sample_days: 14
+  minimum_out_of_sample_days: 60
+  minimum_walk_forward_folds: 3
   
   # Return & Expectancy requirements (evaluated after all costs)
   minimum_net_expectancy_bps: 2.0         # Must earn at least 2 bps per trade after costs
@@ -25,31 +26,37 @@ thresholds:
   
   # Cost Stress & Resilience
   cost_scenarios:
-    base:
-      taker_fee_bps: 10
-      slippage_bps: 5
+    perp:
+      base_turnover_rate_bps: 10.0         # 5 bps fee + 1 bp spread + 4 bps slippage (one-way)
+      stressed_turnover_rate_bps: 25.0     # 10 bps fee + 3 bps spread + 12 bps slippage (one-way)
       include_funding: true
-    stressed:
-      taker_fee_bps: 20
-      slippage_bps: 15
-      include_funding: true
+    spot:
+      base_turnover_rate_bps: 15.0         # 10 bps fee + 1 bp spread + 4 bps slippage (one-way)
+      stressed_turnover_rate_bps: 35.0     # 20 bps fee + 3 bps spread + 12 bps slippage (one-way)
+      include_funding: false
   minimum_cost_stress_survival: true       # Strategy MUST maintain positive net return under stressed costs
   
   # Parameter Neighborhood & Robustness
   parameter_stability:
     minimum_profitable_neighbors_pct: 0.60 # At least 60% of adjacent parameters must be profitable
     reject_needle_in_haystack: true
+
+  # Multi-Year Consistency Requirements
+  multi_year_consistency:
+    minimum_profitable_years_ratio: 0.66   # Profitable in at least 2 of 3 years
+    maximum_single_year_drawdown_pct: 0.12 # No single calendar year drawdown > 12%
     
   # Multiple Testing & Statistical Significance
   statistical_significance:
     minimum_deflated_sharpe_ratio: 0.95    # Bailey & Lopez de Prado DSR >= 0.95 (p < 0.05)
     maximum_pbo: 0.50                      # Probability of Backtest Overfitting < 0.50
+    require_computable_statistics: true    # Rejects if DSR or PBO is UNCOMPUTABLE
     bootstrap_samples: 1000
     bootstrap_confidence_level: 0.95
     minimum_bootstrap_expectancy_lower_ci_bps: 0.0  # 95% lower CI of expectancy must be >= 0
     
   # Independent Challenger Agreement
   independent_validation:
-    required: true
+    required_for_shadow: true
     direction_agreement_required: true
     maximum_performance_divergence_pct: 0.25 # Challenger must agree within 25% of baseline expectancy

@@ -116,7 +116,7 @@ def test_truncated_history_equivalence():
 
 
 def test_market_brain_regime_classification():
-    # 1. Liquidity stress
+    # 1. Market stress
     st1 = MarketBrain.classify_bar(
         timestamp_ns=1000,
         symbol="BTCUSDT",
@@ -128,7 +128,7 @@ def test_market_brain_regime_classification():
         compression_ratio=1.0,
         rolling_drawdown_2h=0.01,
     )
-    assert st1.regime == MarketRegime.LIQUIDITY_STRESS
+    assert st1.regime == MarketRegime.MARKET_STRESS
 
     # 2. Extreme funding dislocation
     st2 = MarketBrain.classify_bar(
@@ -137,7 +137,7 @@ def test_market_brain_regime_classification():
         price=70000.0,
         trend_slope_30m=0.001,
         volatility_realized_60m=0.30,
-        funding_rate=0.0006,  # >= 0.0004
+        funding_rate=0.0035,  # >= 0.0030 (35 bps)
         funding_zscore=2.8,   # >= 2.5
         compression_ratio=1.0,
         rolling_drawdown_2h=0.01,
@@ -156,7 +156,7 @@ def test_market_brain_regime_classification():
         compression_ratio=1.45,  # >= 1.35
         rolling_drawdown_2h=0.01,
     )
-    assert st3.regime == MarketRegime.OI_EXPANSION
+    assert st3.regime == MarketRegime.VOLATILITY_EXPANSION
 
     # 4. Range compression coil
     st4 = MarketBrain.classify_bar(
@@ -170,7 +170,7 @@ def test_market_brain_regime_classification():
         compression_ratio=0.55,  # <= 0.65
         rolling_drawdown_2h=0.01,
     )
-    assert st4.regime == MarketRegime.OI_UNWIND
+    assert st4.regime == MarketRegime.RANGE_COMPRESSION
 
     # 5. Trend up low vol
     st5 = MarketBrain.classify_bar(
