@@ -14,6 +14,7 @@ from .archive_downloader import (
     ArchiveTransportError,
     ArchiveZipIntegrityError,
 )
+from .archive_catalog import ArchiveCatalog, ArchiveCatalogWrite
 
 __all__ = [
     "ArchiveObjectSpec",
@@ -28,4 +29,6 @@ __all__ = [
     "ArchiveObjectMissing",
     "ArchiveTransportError",
     "ArchiveZipIntegrityError",
+    "ArchiveCatalog",
+    "ArchiveCatalogWrite",
 ]
