@@ -1,0 +1,66 @@
+{
+  "phase": "1B.4",
+  "status": "VERIFIED",
+  "trading_capability": "ZERO",
+  "checks": {
+    "automated_tests_pass": true,
+    "security_scan_pass": true,
+    "public_archive_parse_pass": true
+  },
+  "evidence": {
+    "download": {
+      "status": "DOWNLOADED",
+      "spec": {
+        "source": "binance",
+        "market": "usdm",
+        "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:FUNDING_HISTORY",
+        "source_dataset_name": "fundingRate",
+        "instrument": "BINANCE:USD_M_PERP:BTCUSDT",
+        "symbol": "BTCUSDT",
+        "cadence": "monthly",
+        "interval": null,
+        "period_key": "2024-11",
+        "period_start_utc": "2024-11-01T00:00:00+00:00",
+        "period_end_utc": "2024-11-30T23:59:59.999999+00:00",
+        "archive_url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip",
+        "checksum_url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip.CHECKSUM",
+        "archive_filename": "BTCUSDT-fundingRate-2024-11.zip",
+        "checksum_filename": "BTCUSDT-fundingRate-2024-11.zip.CHECKSUM",
+        "expected_timestamp_policy": {
+          "type": "fixed_ms",
+          "unit": "ms",
+          "digits": 13,
+          "verified": true
+        },
+        "support_status": "VERIFIED_TRUE",
+        "discovery_evidence_id": "plan-monthly-2024-11"
+      },
+      "local_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b4_acceptance/raw/binance/usdm/fundingRate/BINANCE:USD_M_PERP:BTCUSDT/monthly/2024-11/BTCUSDT-fundingRate-2024-11.e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51.zip",
+      "receipt_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b4_acceptance/raw/binance/usdm/fundingRate/BINANCE:USD_M_PERP:BTCUSDT/monthly/2024-11/BTCUSDT-fundingRate-2024-11.e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51.zip.receipt.json",
+      "physical_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "official_checksum": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "content_length": 746,
+      "etag": "\"485f8c0e395f480fb9a4a29afca75c41\"",
+      "last_modified": "Tue, 17 Dec 2024 12:45:32 GMT",
+      "retrieved_at_utc": "2026-09-20T19:07:03.024572+00:00"
+    },
+    "parsed_rows": 90,
+    "first_record": {
+      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:FUNDING_HISTORY",
+      "instrument_id": "BINANCE:USD_M_PERP:BTCUSDT",
+      "source_dataset_name": "fundingRate",
+      "source_member": "BTCUSDT-fundingRate-2024-11.csv",
+      "row_number": 2,
+      "ts_event_ns": 1730419200000000000,
+      "source_ts_raw": 1730419200000,
+      "source_ts_unit": "ms",
+      "source_precision": "ms",
+      "values": {
+        "calc_time": 1730419200000,
+        "funding_interval_hours": 8,
+        "last_funding_rate": "0.00010000"
+      }
+    }
+  },
+  "error": null
+}

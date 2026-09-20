@@ -15,6 +15,7 @@ from .archive_downloader import (
     ArchiveZipIntegrityError,
 )
 from .archive_catalog import ArchiveCatalog, ArchiveCatalogWrite
+from .archive_parser import ArchiveSchemaError, BronzeRecord, iter_bronze_records
 
 __all__ = [
     "ArchiveObjectSpec",
@@ -31,4 +32,7 @@ __all__ = [
     "ArchiveZipIntegrityError",
     "ArchiveCatalog",
     "ArchiveCatalogWrite",
+    "ArchiveSchemaError",
+    "BronzeRecord",
+    "iter_bronze_records",
 ]
