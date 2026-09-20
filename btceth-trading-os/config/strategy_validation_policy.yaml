@@ -1,0 +1,55 @@
+# BTCETH Trading OS - Quantitative Strategy Promotion Policy
+# Version: 1.0.0
+# Purpose: Defines rigorous machine-readable criteria required for strategy promotion
+# to APPROVED_FOR_SHADOW and APPROVED_FOR_PAPER.
+
+version: "1.0.0"
+policy_date: "2026-09-21"
+
+thresholds:
+  # Minimum sample requirements
+  minimum_out_of_sample_trades: 30
+  minimum_out_of_sample_days: 14
+  
+  # Return & Expectancy requirements (evaluated after all costs)
+  minimum_net_expectancy_bps: 2.0         # Must earn at least 2 bps per trade after costs
+  minimum_profit_factor: 1.25              # Gross wins / Gross losses >= 1.25
+  minimum_annualized_sharpe: 1.00          # Annualized net Sharpe ratio >= 1.0
+  minimum_annualized_sortino: 1.30         # Downside deviation ratio >= 1.30
+  
+  # Risk & Drawdown limits
+  maximum_acceptable_drawdown_pct: 0.15    # Maximum 15% drawdown
+  maximum_losing_streak_trades: 8          # Maximum consecutive losses
+  maximum_single_trade_loss_pct: 0.03      # Maximum 3% loss on single trade
+  maximum_trade_concentration_top1_pct: 0.35  # Top 1 trade cannot exceed 35% of total net profits
+  
+  # Cost Stress & Resilience
+  cost_scenarios:
+    base:
+      taker_fee_bps: 10
+      slippage_bps: 5
+      include_funding: true
+    stressed:
+      taker_fee_bps: 20
+      slippage_bps: 15
+      include_funding: true
+  minimum_cost_stress_survival: true       # Strategy MUST maintain positive net return under stressed costs
+  
+  # Parameter Neighborhood & Robustness
+  parameter_stability:
+    minimum_profitable_neighbors_pct: 0.60 # At least 60% of adjacent parameters must be profitable
+    reject_needle_in_haystack: true
+    
+  # Multiple Testing & Statistical Significance
+  statistical_significance:
+    minimum_deflated_sharpe_ratio: 0.95    # Bailey & Lopez de Prado DSR >= 0.95 (p < 0.05)
+    maximum_pbo: 0.50                      # Probability of Backtest Overfitting < 0.50
+    bootstrap_samples: 1000
+    bootstrap_confidence_level: 0.95
+    minimum_bootstrap_expectancy_lower_ci_bps: 0.0  # 95% lower CI of expectancy must be >= 0
+    
+  # Independent Challenger Agreement
+  independent_validation:
+    required: true
+    direction_agreement_required: true
+    maximum_performance_divergence_pct: 0.25 # Challenger must agree within 25% of baseline expectancy

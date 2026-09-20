@@ -31,6 +31,15 @@ DEFAULT_STATE = {
         "usdm": {"balances": [], "positions": [], "open_orders": 0},
         "error": None,
     },
+    "research": {
+        "status": "NO_VALIDATED_EDGE",
+        "active_regime": "RANGE_LOW_VOL",
+        "strategies_evaluated": 7,
+        "approved_for_paper": 0,
+        "approved_for_shadow": 0,
+        "rejected": 7,
+        "policy": "1.0.0",
+    },
     "recent_decisions": [],
     "proposals": [],
 }
@@ -269,6 +278,15 @@ async function refresh(){
     cardsHtml += card('Market state', s.market.status, [
       ['Instrument', s.market.instrument],
       ['Price', s.market.price]
+    ]);
+
+    let res = s.research || {};
+    cardsHtml += card('Market Brain & Edge', res.status || 'NO_VALIDATED_EDGE', [
+      ['Active Regime', res.active_regime || 'RANGE_LOW_VOL'],
+      ['Evaluated Strategies', res.strategies_evaluated || 7],
+      ['Approved for Paper', res.approved_for_paper || 0],
+      ['Rejected Strategies', res.rejected || 7],
+      ['Policy Gate', res.policy ? `v${res.policy}` : 'v1.0.0']
     ]);
 
     cardsHtml += card('Signal & Risk', s.signal.status, [

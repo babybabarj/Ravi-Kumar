@@ -1,0 +1,37 @@
+{
+  "strategy_id": "STRAT_G1_ETH_CROSS_ASSET_DIV",
+  "family": "FAMILY_G_CROSS_ASSET_DIVERGENCE",
+  "symbol": "ETHUSDT",
+  "hypothesis": "Extreme divergence between ETH and BTC relative performance mean-reverts toward historical equilibrium.",
+  "dataset_logical_sha256": "a24103d810c36c44a2d8bf26a51c4a034a012906d6463284d50ec175102e5d9a",
+  "code_commit": "37d204017586f3d695da12a8c9151f71acce824e",
+  "parameters": {
+    "ratio_zscores": "<array_len_43200>",
+    "threshold": 1.8
+  },
+  "out_of_sample_trades": 38,
+  "gross_return": -0.06370367826644562,
+  "net_return_base": -0.11562257705710219,
+  "net_return_stressed": -0.18050660987752754,
+  "annualized_sharpe": -4.647705559850915,
+  "annualized_sortino": -6.454510093256126,
+  "max_drawdown": 0.1617034937068313,
+  "profit_factor": 0.42802725573524664,
+  "win_rate": 0.47368421052631576,
+  "net_expectancy_bps": -60.291580031789444,
+  "parameter_stability_pct": 0.0,
+  "deflated_sharpe_ratio": 0.0,
+  "pbo": 0.5,
+  "top1_trade_share_pct": 0.281032707289277,
+  "bootstrap_lower_ci_bps": -122.39326023438115,
+  "status": "REJECTED",
+  "rejection_reasons": [
+    "Negative net return after base costs (-0.1156 <= 0)",
+    "Fails cost stress survival: net return under stressed costs is -0.1805 <= 0",
+    "Max drawdown exceeded limit (0.162 > 0.150)",
+    "Sharpe ratio below threshold (-4.65 < 1.00)",
+    "Parameter instability (0.0% profitable neighbors < 60.0%)",
+    "Deflated Sharpe Ratio failed multiple testing penalty (DSR=0.000 < 0.95)"
+  ],
+  "created_at_utc": "2026-09-20T21:18:28.378316+00:00"
+}

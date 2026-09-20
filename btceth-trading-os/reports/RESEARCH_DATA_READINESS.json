@@ -1,0 +1,63 @@
+{
+  "phase": "RESEARCH_DATA_READINESS",
+  "research_data_ready": true,
+  "dataset_version": "1.1.0",
+  "dataset_logical_sha256": "a24103d810c36c44a2d8bf26a51c4a034a012906d6463284d50ec175102e5d9a",
+  "code_commit": "37d204017586f3d695da12a8c9151f71acce824e",
+  "created_at_utc": "2026-09-20T21:15:08.208064+00:00",
+  "total_datasets": 4,
+  "total_kline_bars": 86400,
+  "datasets": [
+    {
+      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:KLINES_1M",
+      "instrument_id": "BINANCE:USD_M_PERP:BTCUSDT",
+      "market": "usdm",
+      "period_key": "2024-11",
+      "source_file_sha256": "9c3dad038f4b043ec51d4200f57d15a0a07b3fc32b3ea3dca6a96543b9624941",
+      "silver_parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver/BTCUSDT-klines-2024-11.parquet",
+      "rows_count": 43200,
+      "start_ts_ns": 1730419200000000000,
+      "end_ts_ns": 1733011140000000000
+    },
+    {
+      "dataset_id": "BINANCE:USD_M_PERP:ETHUSDT:KLINES_1M",
+      "instrument_id": "BINANCE:USD_M_PERP:ETHUSDT",
+      "market": "usdm",
+      "period_key": "2024-11",
+      "source_file_sha256": "4170f68dd576e8af35ecc9b19808dcb673c0423838bd560c7c4c1fabefdad5ad",
+      "silver_parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver/ETHUSDT-klines-2024-11.parquet",
+      "rows_count": 43200,
+      "start_ts_ns": 1730419200000000000,
+      "end_ts_ns": 1733011140000000000
+    },
+    {
+      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:FUNDING_HISTORY",
+      "instrument_id": "BINANCE:USD_M_PERP:BTCUSDT",
+      "market": "usdm",
+      "period_key": "2024-11",
+      "source_file_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "silver_parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver/BTCUSDT-fundingRate-2024-11.parquet",
+      "rows_count": 90,
+      "start_ts_ns": 1730419200000000000,
+      "end_ts_ns": 1732982400000000000
+    },
+    {
+      "dataset_id": "BINANCE:USD_M_PERP:ETHUSDT:FUNDING_HISTORY",
+      "instrument_id": "BINANCE:USD_M_PERP:ETHUSDT",
+      "market": "usdm",
+      "period_key": "2024-11",
+      "source_file_sha256": "636a4c7c86445c2774b4eae8598c480fcbc57de7dde5d40f6937c7fac510797c",
+      "silver_parquet_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/research/silver/ETHUSDT-fundingRate-2024-11.parquet",
+      "rows_count": 90,
+      "start_ts_ns": 1730419200000000000,
+      "end_ts_ns": 1732982400000000000
+    }
+  ],
+  "validation_notes": [
+    "BINANCE:USD_M_PERP:BTCUSDT:KLINES_1M: 43200 verified Silver rows compiled from SHA-256 9c3dad038f4b043e",
+    "BINANCE:USD_M_PERP:ETHUSDT:KLINES_1M: 43200 verified Silver rows compiled from SHA-256 4170f68dd576e8af",
+    "BINANCE:USD_M_PERP:BTCUSDT:FUNDING_HISTORY: 90 verified Silver rows compiled from SHA-256 e1b19cccfe2cdcba",
+    "BINANCE:USD_M_PERP:ETHUSDT:FUNDING_HISTORY: 90 verified Silver rows compiled from SHA-256 636a4c7c86445c27"
+  ],
+  "error": null
+}

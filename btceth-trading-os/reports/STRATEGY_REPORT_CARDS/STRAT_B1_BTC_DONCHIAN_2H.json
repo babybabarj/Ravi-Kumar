@@ -1,0 +1,37 @@
+{
+  "strategy_id": "STRAT_B1_BTC_DONCHIAN_2H",
+  "family": "FAMILY_B_BREAKOUT_EXPANSION",
+  "symbol": "BTCUSDT",
+  "hypothesis": "Price breaking out of multi-hour Donchian channels leads to continuation before mean-reverting.",
+  "dataset_logical_sha256": "a24103d810c36c44a2d8bf26a51c4a034a012906d6463284d50ec175102e5d9a",
+  "code_commit": "37d204017586f3d695da12a8c9151f71acce824e",
+  "parameters": {
+    "entry_window": 120,
+    "exit_window": 60
+  },
+  "out_of_sample_trades": 470,
+  "gross_return": -0.014938478007765002,
+  "net_return_base": -0.5135301605409964,
+  "net_return_stressed": -0.8104185374073802,
+  "annualized_sharpe": -44.76388458093773,
+  "annualized_sortino": -58.13504492521981,
+  "max_drawdown": 0.5135301605409964,
+  "profit_factor": 0.16722980258778533,
+  "win_rate": 0.14042553191489363,
+  "net_expectancy_bps": -30.517252624947076,
+  "parameter_stability_pct": 0.0,
+  "deflated_sharpe_ratio": 0.0,
+  "pbo": 0.5,
+  "top1_trade_share_pct": 0.14619087037995376,
+  "bootstrap_lower_ci_bps": -33.908239700257795,
+  "status": "REJECTED",
+  "rejection_reasons": [
+    "Negative net return after base costs (-0.5135 <= 0)",
+    "Fails cost stress survival: net return under stressed costs is -0.8104 <= 0",
+    "Max drawdown exceeded limit (0.514 > 0.150)",
+    "Sharpe ratio below threshold (-44.76 < 1.00)",
+    "Parameter instability (0.0% profitable neighbors < 60.0%)",
+    "Deflated Sharpe Ratio failed multiple testing penalty (DSR=0.000 < 0.95)"
+  ],
+  "created_at_utc": "2026-09-20T21:18:26.184019+00:00"
+}
