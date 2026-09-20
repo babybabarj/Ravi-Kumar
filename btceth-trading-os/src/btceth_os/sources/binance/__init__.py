@@ -5,6 +5,15 @@ from __future__ import annotations
 from .models import ArchiveObjectSpec, DiscoveryEvidence
 from .archive_paths import build_archive_paths, BinancePathError
 from .archive_planner import plan_archive_requests
+from .archive_downloader import (
+    ArchiveChecksumError,
+    ArchiveDownloadError,
+    ArchiveDownloadResult,
+    ArchiveDownloader,
+    ArchiveObjectMissing,
+    ArchiveTransportError,
+    ArchiveZipIntegrityError,
+)
 
 __all__ = [
     "ArchiveObjectSpec",
@@ -12,4 +21,11 @@ __all__ = [
     "build_archive_paths",
     "BinancePathError",
     "plan_archive_requests",
+    "ArchiveChecksumError",
+    "ArchiveDownloadError",
+    "ArchiveDownloadResult",
+    "ArchiveDownloader",
+    "ArchiveObjectMissing",
+    "ArchiveTransportError",
+    "ArchiveZipIntegrityError",
 ]

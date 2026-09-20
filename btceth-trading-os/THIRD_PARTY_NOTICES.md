@@ -27,8 +27,9 @@ This document provides legal attribution, provenance records, and license bounda
 - **License:** The Unlicense (Public Domain)
 - **Local Archive:** `passivbot-master.zip` (SHA-256: `bad79d36587b3812481e343c4a47c76ca3ce6d527e8ba42e88bfdc1a88e6c468`)
 - **Inspected Source Files:** `src/binance_ohlcv_archive.py`, `docs/plans/hlcvs_downloader_determinism_handoff.md`
-- **Adaptation Scope:** Archive month/day eligibility calculations, `.CHECKSUM` verification parsing, and cancellation-safe async concurrency.
-- **Required Modifications:** Replaced in-memory buffering with streaming `.part` downloads, incremental SHA-256 calculation, and strict decimal typing.
+- **Adaptation Scope:** Archive month/day eligibility calculations and strict `.CHECKSUM` sidecar parsing.
+- **Adapted Components:** `src/binance_ohlcv_archive.py::_parse_checksum()` informed `src/btceth_os/sources/binance/archive_downloader.py::parse_checksum_sidecar()` (2026-09-21). The BTCETH implementation validates the exact referenced filename and rejects malformed sidecars.
+- **Required Modifications:** Replaced in-memory buffering with streaming `.part` downloads, incremental SHA-256 calculation, fsync, ZIP integrity verification, atomic promotion, immutable retrieval receipts, and strict decimal typing.
 - **License Text:**
 ```text
 This is free and unencumbered software released into the public domain.
