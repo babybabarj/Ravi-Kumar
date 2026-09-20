@@ -13,3 +13,5 @@ The local safety gate fails closed for stale signals, failed data-quality checks
 Run `python -m btceth_os.dashboard` and open `http://127.0.0.1:8000/` to view the read-only localhost dashboard. Until a local process writes `artifacts/dashboard/state.json`, it deliberately displays degraded/not-ready status instead of inventing market state, signals, or P&L.
 
 For a visual-only local check, run `python tools/publish_paper_demo.py` while the dashboard is open. It publishes a clearly labeled simulated BTC position and P&L; it does not read live prices, connect to Binance, or submit anything.
+
+Read-only Spot and USD-M account sync is available with `python tools/sync_binance_readonly.py`. It requires separate environment variables named `BINANCE_SPOT_READONLY_API_KEY`, `BINANCE_SPOT_READONLY_API_SECRET`, `BINANCE_USDM_READONLY_API_KEY`, and `BINANCE_USDM_READONLY_API_SECRET`. Use newly created, IP-restricted, read-only API keys. The tool makes signed `GET` requests only; never place a secret in the dashboard or repository.

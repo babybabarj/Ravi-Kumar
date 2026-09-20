@@ -28,6 +28,7 @@ def main() -> int:
         "market": {"status": "PAPER_DEMO", "instrument": proposal.instrument_id, "price": str(mark)},
         "signal": {"status": result.decision.reason, "target_position": str(proposal.target_position), "reason": "Local simulated fill; not live data"},
         "paper": {"status": "PAPER_DEMO", "cash": str(result.portfolio.cash), "position": str(result.portfolio.position), "equity": str(equity), "pnl": str(equity - Decimal("1000"))},
+        "account": {"status": "NOT_CONNECTED", "last_sync_ns": None, "spot": {"balances": [], "open_orders": 0}, "usdm": {"balances": [], "positions": [], "open_orders": 0}, "error": None},
     })
     print(f"dashboard_state={args.state}")
     return 0

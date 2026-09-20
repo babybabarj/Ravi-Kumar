@@ -11,6 +11,7 @@ def state():
         "market": {"status": "READY", "instrument": "BINANCE:SPOT:BTCUSDT", "price": "100"},
         "signal": {"status": "SHADOW_ACCEPTED", "target_position": "1", "reason": "test"},
         "paper": {"status": "PAPER_FILLED", "cash": "900", "position": "1", "equity": "1000", "pnl": "0"},
+        "account": {"status": "READ_ONLY_CONNECTED", "last_sync_ns": 1, "spot": {"balances": [], "open_orders": 0}, "usdm": {"balances": [], "positions": [], "open_orders": 0}, "error": None},
     }
 
 
@@ -26,7 +27,7 @@ def test_dashboard_serves_local_snapshot(tmp_path):
         await client.start_server()
         try:
             assert (await (await client.get("/api/state")).json())["signal"]["status"] == "SHADOW_ACCEPTED"
-            assert "BTCETH Trading OS" in await (await client.get("/")).text()
+            assert "Binance account" in await (await client.get("/")).text()
         finally:
             await client.close()
     asyncio.run(check())
