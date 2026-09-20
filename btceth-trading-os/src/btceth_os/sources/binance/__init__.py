@@ -16,6 +16,7 @@ from .archive_downloader import (
 )
 from .archive_catalog import ArchiveCatalog, ArchiveCatalogWrite
 from .archive_parser import ArchiveSchemaError, BronzeRecord, iter_bronze_records
+from .historical_silver import SilverBuildError, write_historical_silver
 
 __all__ = [
     "ArchiveObjectSpec",
@@ -35,4 +36,6 @@ __all__ = [
     "ArchiveSchemaError",
     "BronzeRecord",
     "iter_bronze_records",
+    "SilverBuildError",
+    "write_historical_silver",
 ]

@@ -152,8 +152,10 @@ def _boolean(value: str | int | bool, field: str, row_number: int) -> bool:
 def _decimal_fields(dataset: str) -> tuple[str, ...]:
     if dataset == "fundingRate":
         return ("last_funding_rate",)
-    if dataset in {"trades", "aggTrades"}:
-        return ("price", "qty" if dataset == "trades" else "quantity")
+    if dataset == "trades":
+        return ("price", "qty", "quote_qty")
+    if dataset == "aggTrades":
+        return ("price", "quantity")
     return ("open", "high", "low", "close", "volume", "quote_volume", "taker_buy_volume", "taker_buy_quote_volume")
 
 

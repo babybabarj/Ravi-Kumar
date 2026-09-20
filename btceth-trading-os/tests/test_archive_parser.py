@@ -61,3 +61,5 @@ def test_unknown_headers_and_malformed_rows_fail_closed(tmp_path: Path):
         list(iter_bronze_records(archive(tmp_path, "time,rate\n1,2\n"), spec("fundingRate")))
     with pytest.raises(ArchiveSchemaError, match="expected 3"):
         list(iter_bronze_records(archive(tmp_path, "calc_time,funding_interval_hours,last_funding_rate\n1,8\n"), spec("fundingRate")))
+    with pytest.raises(ValueError, match="Invalid financial decimal"):
+        list(iter_bronze_records(archive(tmp_path, "id,price,qty,quote_qty,time,is_buyer_maker,is_best_match\n1,1,2,not-a-number,1730000000000,true,false\n"), spec("trades", "spot")))
