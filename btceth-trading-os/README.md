@@ -9,3 +9,5 @@ The Phase 1B.2 downloader stores only checksum-verified, ZIP-verified archive by
 Offline research is deterministic and cannot access an exchange account. Use `python tools/run_walk_forward.py INPUT.parquet OUTPUT.json --train-bars 10000 --test-bars 2000 --lookbacks 30,60,120 --taker-fee-bps FEE --slippage-bps SLIPPAGE` with costs you have evidenced for the market and period under study. The command refuses to overwrite reports and evaluates each selected lookback only on its next out-of-sample block; it does not predict or promise profitability.
 
 The local safety gate fails closed for stale signals, failed data-quality checks, unresolved gaps, drawdown, daily loss, and position limits. Paper fills are local Decimal calculations only; no exchange order or account functionality exists.
+
+Run `python -m btceth_os.dashboard` and open `http://127.0.0.1:8000/` to view the read-only localhost dashboard. Until a local process writes `artifacts/dashboard/state.json`, it deliberately displays degraded/not-ready status instead of inventing market state, signals, or P&L.
