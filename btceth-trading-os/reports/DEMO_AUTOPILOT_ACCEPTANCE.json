@@ -1,0 +1,31 @@
+{
+  "phase": "DEMO_AUTOPILOT",
+  "status": "VERIFIED",
+  "trading_capability": "ZERO",
+  "checks": {
+    "automated_tests_pass": true,
+    "security_scan_pass": true,
+    "automatic_entry_pass": true,
+    "fees_and_slippage_applied_pass": true,
+    "automatic_partial_target_pass": true,
+    "automatic_full_target_exit_pass": true,
+    "pnl_persists_pass": true,
+    "automatic_stop_pass": true,
+    "restart_recovery_pass": true,
+    "duplicate_intent_protection_pass": true,
+    "kill_switch_pass": true,
+    "credential_safety_pass": true,
+    "live_approval_mock_gate_pass": true,
+    "dashboard_state_pass": true
+  },
+  "evidence": {
+    "completed_trades_count": 4,
+    "total_decisions_count": 4,
+    "audit_logs_count": 12,
+    "starting_equity": "1000",
+    "final_equity": "983.51399500000",
+    "dashboard_state_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/demo_acceptance/test_state.json",
+    "ledger_db_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/demo_acceptance/test_ledger.sqlite"
+  },
+  "error": null
+}

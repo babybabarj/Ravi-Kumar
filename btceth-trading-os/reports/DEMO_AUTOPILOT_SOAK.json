@@ -1,0 +1,12 @@
+{
+  "status": "HEALTHY",
+  "duration_seconds": 31.05,
+  "ticks_processed": 23,
+  "unhandled_exceptions": 0,
+  "reconnections": 0,
+  "start_memory_mb": 58.97,
+  "end_memory_mb": 62.23,
+  "memory_growth_mb": 3.27,
+  "dashboard_health": "HEALTHY",
+  "paper_equity": "1000"
+}

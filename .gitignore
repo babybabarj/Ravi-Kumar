@@ -13,3 +13,12 @@ __pycache__/
 *.egg-info/
 .venv*/
 artifacts/
+
+# Secrets & Environment Configurations
+.env
+.env.*
+*.env
+*.secret*
+*.key
+*.credentials
+
