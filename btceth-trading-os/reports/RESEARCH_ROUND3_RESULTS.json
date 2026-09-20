@@ -1,0 +1,150 @@
+{
+  "research_round": 3,
+  "dataset_period": "2020-01 to 2023-12 (48 Months)",
+  "holdout_period": "2024-01 to 2024-11 (11 Months, LOCKED)",
+  "research_engine_status": "VERIFIED",
+  "edge_discovery_status": "NO_VALIDATED_EDGE",
+  "approved_for_shadow": 0,
+  "approved_for_paper": 0,
+  "finalists": 0,
+  "total_structural_candidates_evaluated": 10,
+  "results": [
+    {
+      "strategy_id": "STRUCT_A1_BTC_CARRY_8H",
+      "family": "STRUCT_FAMILY_A_SPOT_PERP_CARRY",
+      "dev_roc": 0.0,
+      "val_base_roc": 0.0,
+      "val_stressed_roc": 0.0,
+      "trades": 0,
+      "sharpe": 0.0,
+      "status": "REJECTED",
+      "rejections": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES",
+        "NEGATIVE_VALIDATION_BASE_RETURN",
+        "FAILED_COST_STRESS_SURVIVAL",
+        "LOW_SHARPE_RATIO"
+      ]
+    },
+    {
+      "strategy_id": "STRUCT_A2_BTC_CARRY_24H",
+      "family": "STRUCT_FAMILY_A_SPOT_PERP_CARRY",
+      "dev_roc": 3849037.32,
+      "val_base_roc": 631031.46,
+      "val_stressed_roc": 630846.71,
+      "trades": 269,
+      "sharpe": 375.38,
+      "status": "REJECTED",
+      "rejections": []
+    },
+    {
+      "strategy_id": "STRUCT_A3_BTC_CARRY_72H",
+      "family": "STRUCT_FAMILY_A_SPOT_PERP_CARRY",
+      "dev_roc": 4620010.85,
+      "val_base_roc": 757466.75,
+      "val_stressed_roc": 757392.49,
+      "trades": 108,
+      "sharpe": 147.48,
+      "status": "REJECTED",
+      "rejections": []
+    },
+    {
+      "strategy_id": "STRUCT_B1_BTC_BASIS_Z20",
+      "family": "STRUCT_FAMILY_B_BASIS_DISLOCATION",
+      "dev_roc": 320799.99,
+      "val_base_roc": -0.17,
+      "val_stressed_roc": -0.57,
+      "trades": 1,
+      "sharpe": -0.0,
+      "status": "REJECTED",
+      "rejections": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES",
+        "NEGATIVE_VALIDATION_BASE_RETURN",
+        "FAILED_COST_STRESS_SURVIVAL",
+        "LOW_SHARPE_RATIO"
+      ]
+    },
+    {
+      "strategy_id": "STRUCT_B2_BTC_BASIS_Z25",
+      "family": "STRUCT_FAMILY_B_BASIS_DISLOCATION",
+      "dev_roc": 62336.26,
+      "val_base_roc": 0.0,
+      "val_stressed_roc": 0.0,
+      "trades": 0,
+      "sharpe": 0.0,
+      "status": "REJECTED",
+      "rejections": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES",
+        "NEGATIVE_VALIDATION_BASE_RETURN",
+        "FAILED_COST_STRESS_SURVIVAL",
+        "LOW_SHARPE_RATIO"
+      ]
+    },
+    {
+      "strategy_id": "STRUCT_C1_BTCETH_REL_FUNDING",
+      "family": "STRUCT_FAMILY_C_RELATIVE_CARRY",
+      "dev_roc": 0.0,
+      "val_base_roc": 427887.72,
+      "val_stressed_roc": 427825.24,
+      "trades": 118,
+      "sharpe": 570.85,
+      "status": "REJECTED",
+      "rejections": []
+    },
+    {
+      "strategy_id": "STRUCT_D1_BTC_PREMIUM_DIVERGENCE",
+      "family": "STRUCT_FAMILY_D_FUNDING_PREMIUM_DIVERGENCE",
+      "dev_roc": 817852.41,
+      "val_base_roc": 8143.88,
+      "val_stressed_roc": 8141.51,
+      "trades": 5,
+      "sharpe": 71.84,
+      "status": "REJECTED",
+      "rejections": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES"
+      ]
+    },
+    {
+      "strategy_id": "STRUCT_E1_BTC_CARRY_TIMING",
+      "family": "STRUCT_FAMILY_E_CARRY_TIMING",
+      "dev_roc": 0.0,
+      "val_base_roc": 0.0,
+      "val_stressed_roc": 0.0,
+      "trades": 0,
+      "sharpe": 0.0,
+      "status": "REJECTED",
+      "rejections": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES",
+        "NEGATIVE_VALIDATION_BASE_RETURN",
+        "FAILED_COST_STRESS_SURVIVAL",
+        "LOW_SHARPE_RATIO"
+      ]
+    },
+    {
+      "strategy_id": "STRUCT_F1_BTC_WEEKEND_REVERSION",
+      "family": "STRUCT_FAMILY_F_WEEKEND_SESSION_EFFECTS",
+      "dev_roc": 1528544.33,
+      "val_base_roc": 205800.3,
+      "val_stressed_roc": 205770.24,
+      "trades": 51,
+      "sharpe": 742.51,
+      "status": "REJECTED",
+      "rejections": []
+    },
+    {
+      "strategy_id": "STRUCT_G1_BTC_POST_STRESS",
+      "family": "STRUCT_FAMILY_G_POST_STRESS_REVERSION",
+      "dev_roc": 0.0,
+      "val_base_roc": 0.0,
+      "val_stressed_roc": 0.0,
+      "trades": 0,
+      "sharpe": 0.0,
+      "status": "REJECTED",
+      "rejections": [
+        "INSUFFICIENT_OUT_OF_SAMPLE_TRADES",
+        "NEGATIVE_VALIDATION_BASE_RETURN",
+        "FAILED_COST_STRESS_SURVIVAL",
+        "LOW_SHARPE_RATIO"
+      ]
+    }
+  ]
+}

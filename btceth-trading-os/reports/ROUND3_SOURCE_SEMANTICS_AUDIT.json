@@ -1,0 +1,44 @@
+{
+  "phase": "RESEARCH_ROUND3_SOURCE_SEMANTICS_AUDIT",
+  "audit_date": "2026-09-21",
+  "audited_statement": "MARK/INDEX/PREMIUM DATA = DERIVED_AND_ALIGNED",
+  "status": "REMEDIATED",
+  "findings": [
+    {
+      "finding_id": "AUD-R3-001",
+      "classification": "SEMANTIC_BUG",
+      "description": "Derived Perp minus Spot spread was incorrectly used as a substitute for Mark Price, Index Price, and Premium Index.",
+      "remediation": "Ingest official Binance Vision archives: markPriceKlines, indexPriceKlines, and premiumIndexKlines. Explicitly differentiate trade_basis, mark_spot_basis, perp_index_basis, and official_premium_index."
+    },
+    {
+      "finding_id": "AUD-R3-002",
+      "classification": "IMPLEMENTATION_BUG",
+      "description": "Liquidation proximity and margin requirements cannot be accurately evaluated using traded price; Binance liquidations trigger on official Mark Price.",
+      "remediation": "Enforce liquidation proximity and maintenance margin checks using official markPriceKlines."
+    },
+    {
+      "finding_id": "AUD-R3-003",
+      "classification": "STATISTICAL_WEAKNESS",
+      "description": "Estimating future funding settlement from traded spot/perp spread is noisy and ignores the official 8h TWAP formula of premium index.",
+      "remediation": "Use official premiumIndexKlines rolling 8h TWAP plus interest rate clamp for point-in-time funding rate forecasting."
+    }
+  ],
+  "official_sources_verified": {
+    "BTCUSDT": {
+      "spot_klines": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1m/",
+      "perp_klines": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1m/",
+      "funding_rate": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/",
+      "mark_price_klines": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/BTCUSDT/1m/",
+      "index_price_klines": "https://data.binance.vision/data/futures/um/monthly/indexPriceKlines/BTCUSDT/1m/",
+      "premium_index_klines": "https://data.binance.vision/data/futures/um/monthly/premiumIndexKlines/BTCUSDT/1m/"
+    },
+    "ETHUSDT": {
+      "spot_klines": "https://data.binance.vision/data/spot/monthly/klines/ETHUSDT/1m/",
+      "perp_klines": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1m/",
+      "funding_rate": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/",
+      "mark_price_klines": "https://data.binance.vision/data/futures/um/monthly/markPriceKlines/ETHUSDT/1m/",
+      "index_price_klines": "https://data.binance.vision/data/futures/um/monthly/indexPriceKlines/ETHUSDT/1m/",
+      "premium_index_klines": "https://data.binance.vision/data/futures/um/monthly/premiumIndexKlines/ETHUSDT/1m/"
+    }
+  }
+}

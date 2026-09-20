@@ -1,0 +1,270 @@
+{
+  "FUNDING_EXTREME_POS": {
+    "8h": {
+      "sample_size": 4358,
+      "mean_net_pnl_bps": 79944.89,
+      "median_net_pnl_bps": 79999.99,
+      "q05_tail_loss_bps": 79995.17,
+      "q95_gain_bps": 80004.8,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 79944.93,
+      "avg_basis_pnl_bps": -0.03
+    },
+    "16h": {
+      "sample_size": 4357,
+      "mean_net_pnl_bps": 159889.77,
+      "median_net_pnl_bps": 160000.01,
+      "q05_tail_loss_bps": 159994.36,
+      "q95_gain_bps": 160005.4,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 159889.83,
+      "avg_basis_pnl_bps": -0.06
+    },
+    "24h": {
+      "sample_size": 4356,
+      "mean_net_pnl_bps": 239834.63,
+      "median_net_pnl_bps": 239999.96,
+      "q05_tail_loss_bps": 239993.58,
+      "q95_gain_bps": 240005.57,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 239834.71,
+      "avg_basis_pnl_bps": -0.08
+    },
+    "48h": {
+      "sample_size": 4353,
+      "mean_net_pnl_bps": 479669.08,
+      "median_net_pnl_bps": 480000.04,
+      "q05_tail_loss_bps": 479992.91,
+      "q95_gain_bps": 480006.29,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 479669.19,
+      "avg_basis_pnl_bps": -0.11
+    },
+    "72h": {
+      "sample_size": 4350,
+      "mean_net_pnl_bps": 719503.31,
+      "median_net_pnl_bps": 720000.02,
+      "q05_tail_loss_bps": 719991.91,
+      "q95_gain_bps": 720006.82,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 719503.45,
+      "avg_basis_pnl_bps": -0.14
+    },
+    "168h": {
+      "sample_size": 4338,
+      "mean_net_pnl_bps": 1678837.89,
+      "median_net_pnl_bps": 1679999.93,
+      "q05_tail_loss_bps": 1679988.99,
+      "q95_gain_bps": 1680007.94,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 1678838.17,
+      "avg_basis_pnl_bps": -0.28
+    }
+  },
+  "FUNDING_EXTREME_NEG": {
+    "8h": {
+      "sample_size": 0
+    },
+    "16h": {
+      "sample_size": 0
+    },
+    "24h": {
+      "sample_size": 0
+    },
+    "48h": {
+      "sample_size": 0
+    },
+    "72h": {
+      "sample_size": 0
+    },
+    "168h": {
+      "sample_size": 0
+    }
+  },
+  "BASIS_DISLOCATION_POS": {
+    "8h": {
+      "sample_size": 1346,
+      "mean_net_pnl_bps": 80004.18,
+      "median_net_pnl_bps": 80002.63,
+      "q05_tail_loss_bps": 79997.54,
+      "q95_gain_bps": 80014.22,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 80000.0,
+      "avg_basis_pnl_bps": 4.18
+    },
+    "16h": {
+      "sample_size": 1346,
+      "mean_net_pnl_bps": 160123.36,
+      "median_net_pnl_bps": 160003.03,
+      "q05_tail_loss_bps": 159997.29,
+      "q95_gain_bps": 160014.51,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 160118.87,
+      "avg_basis_pnl_bps": 4.49
+    },
+    "24h": {
+      "sample_size": 1346,
+      "mean_net_pnl_bps": 240123.76,
+      "median_net_pnl_bps": 240003.33,
+      "q05_tail_loss_bps": 239997.36,
+      "q95_gain_bps": 240015.18,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 240118.87,
+      "avg_basis_pnl_bps": 4.89
+    },
+    "48h": {
+      "sample_size": 1346,
+      "mean_net_pnl_bps": 480124.4,
+      "median_net_pnl_bps": 480004.03,
+      "q05_tail_loss_bps": 479997.62,
+      "q95_gain_bps": 480016.13,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 480118.87,
+      "avg_basis_pnl_bps": 5.53
+    },
+    "72h": {
+      "sample_size": 1346,
+      "mean_net_pnl_bps": 720124.68,
+      "median_net_pnl_bps": 720004.16,
+      "q05_tail_loss_bps": 719997.42,
+      "q95_gain_bps": 720017.21,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 720118.87,
+      "avg_basis_pnl_bps": 5.81
+    },
+    "168h": {
+      "sample_size": 1334,
+      "mean_net_pnl_bps": 1680366.09,
+      "median_net_pnl_bps": 1680004.38,
+      "q05_tail_loss_bps": 1679996.53,
+      "q95_gain_bps": 1680023.17,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 1680359.82,
+      "avg_basis_pnl_bps": 6.27
+    }
+  },
+  "BASIS_DISLOCATION_NEG": {
+    "8h": {
+      "sample_size": 893,
+      "mean_net_pnl_bps": 80084.91,
+      "median_net_pnl_bps": 79997.52,
+      "q05_tail_loss_bps": 79988.81,
+      "q95_gain_bps": 80001.48,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 80089.59,
+      "avg_basis_pnl_bps": -4.68
+    },
+    "16h": {
+      "sample_size": 893,
+      "mean_net_pnl_bps": 160353.44,
+      "median_net_pnl_bps": 159997.12,
+      "q05_tail_loss_bps": 159987.38,
+      "q95_gain_bps": 160001.6,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 160358.34,
+      "avg_basis_pnl_bps": -4.9
+    },
+    "24h": {
+      "sample_size": 893,
+      "mean_net_pnl_bps": 240442.05,
+      "median_net_pnl_bps": 239996.86,
+      "q05_tail_loss_bps": 239984.72,
+      "q95_gain_bps": 240001.52,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 240447.93,
+      "avg_basis_pnl_bps": -5.88
+    },
+    "48h": {
+      "sample_size": 893,
+      "mean_net_pnl_bps": 480621.2,
+      "median_net_pnl_bps": 479996.7,
+      "q05_tail_loss_bps": 479985.45,
+      "q95_gain_bps": 480001.47,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 480627.1,
+      "avg_basis_pnl_bps": -5.9
+    },
+    "72h": {
+      "sample_size": 893,
+      "mean_net_pnl_bps": 720979.35,
+      "median_net_pnl_bps": 719996.58,
+      "q05_tail_loss_bps": 719986.64,
+      "q95_gain_bps": 720001.27,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 720985.44,
+      "avg_basis_pnl_bps": -6.09
+    },
+    "168h": {
+      "sample_size": 893,
+      "mean_net_pnl_bps": 1681784.55,
+      "median_net_pnl_bps": 1679996.39,
+      "q05_tail_loss_bps": 1679981.19,
+      "q95_gain_bps": 1680003.01,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 1681791.71,
+      "avg_basis_pnl_bps": -7.16
+    }
+  },
+  "WEEKEND_ENTRY": {
+    "8h": {
+      "sample_size": 9966,
+      "mean_net_pnl_bps": 80064.21,
+      "median_net_pnl_bps": 79999.98,
+      "q05_tail_loss_bps": 79995.51,
+      "q95_gain_bps": 80004.43,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 80064.22,
+      "avg_basis_pnl_bps": -0.01
+    },
+    "16h": {
+      "sample_size": 9958,
+      "mean_net_pnl_bps": 160128.51,
+      "median_net_pnl_bps": 160000.01,
+      "q05_tail_loss_bps": 159995.06,
+      "q95_gain_bps": 160005.21,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 160128.54,
+      "avg_basis_pnl_bps": -0.03
+    },
+    "24h": {
+      "sample_size": 9950,
+      "mean_net_pnl_bps": 240152.7,
+      "median_net_pnl_bps": 240000.0,
+      "q05_tail_loss_bps": 239994.3,
+      "q95_gain_bps": 240005.54,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 240152.76,
+      "avg_basis_pnl_bps": -0.07
+    },
+    "48h": {
+      "sample_size": 9926,
+      "mean_net_pnl_bps": 480104.56,
+      "median_net_pnl_bps": 480000.06,
+      "q05_tail_loss_bps": 479992.69,
+      "q95_gain_bps": 480006.14,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 480104.78,
+      "avg_basis_pnl_bps": -0.21
+    },
+    "72h": {
+      "sample_size": 9926,
+      "mean_net_pnl_bps": 719967.59,
+      "median_net_pnl_bps": 720000.04,
+      "q05_tail_loss_bps": 719991.69,
+      "q95_gain_bps": 720006.76,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 719967.76,
+      "avg_basis_pnl_bps": -0.17
+    },
+    "168h": {
+      "sample_size": 9926,
+      "mean_net_pnl_bps": 1680338.24,
+      "median_net_pnl_bps": 1680000.05,
+      "q05_tail_loss_bps": 1679989.69,
+      "q95_gain_bps": 1680008.84,
+      "positive_rate_pct": 100.0,
+      "avg_funding_income_bps": 1680338.5,
+      "avg_basis_pnl_bps": -0.26
+    }
+  }
+}

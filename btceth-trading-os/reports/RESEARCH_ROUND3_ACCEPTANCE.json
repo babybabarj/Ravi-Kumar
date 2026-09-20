@@ -1,0 +1,15 @@
+{
+  "acceptance_status": "VERIFIED",
+  "timestamp_utc": "2026-09-20T21:51:10.196400+00:00",
+  "code_commit": "beaa1b4b9f62eb0e8687a56f371b9b479d599dd1",
+  "gates": {
+    "source_semantics_audit": "PASS",
+    "history_extension_and_capacity": "PASS",
+    "canonical_dataset_v3": "PASS",
+    "holdout_lock_preserved": "PASS",
+    "experiment_continuity": "PASS",
+    "zero_forced_promotion": "PASS",
+    "mainnet_security_boundary": "PASS",
+    "automated_tests": "PASS"
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "manifest_version": "3.0.0",
+  "dataset_name": "BTCETH_TRADING_OS_CANONICAL_V3",
+  "created_at_utc": "2026-09-20T21:47:54.937635+00:00",
+  "code_commit": "beaa1b4b9f62eb0e8687a56f371b9b479d599dd1",
+  "period_start": "2020-01",
+  "period_end": "2023-12",
+  "total_months": 48,
+  "holdout_period": "2024-01 to 2024-11",
+  "holdout_locked": true,
+  "dataset_logical_sha256": "ef6360234af470d7c273a7d3f7301adcc0c4d92fefc56ce463edce2156522acb",
+  "series": [
+    {
+      "dataset_id": "BTCUSDT-spot-1m",
+      "symbol": "BTCUSDT",
+      "category": "spot",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/BTCUSDT-spot-1m-2020-01-2023-12.parquet",
+      "rows_count": 2101515,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "5cfb3d9235296b0543728a01d0a9301fe1b89078b338b5fbbc088635ff3f9020",
+      "gap_stats": {
+        "gap_count": 15,
+        "missing_bars": 2325
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "BTCUSDT-perp-1m",
+      "symbol": "BTCUSDT",
+      "category": "perp",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/BTCUSDT-perp-1m-2020-01-2023-12.parquet",
+      "rows_count": 2103840,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "caffb464fcab8c7522ae48f319a965eb9887830ed059d3f87e0ad37af630421f",
+      "gap_stats": {
+        "gap_count": 0,
+        "missing_bars": 0
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "BTCUSDT-funding",
+      "symbol": "BTCUSDT",
+      "category": "funding",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/BTCUSDT-funding-2020-01-2023-12.parquet",
+      "rows_count": 4383,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704038400000000000,
+      "file_sha256": "9a709a7646ab4593bd65b9b6be251d8d021069e6bd944fcd6ff0b6073bb62ca1",
+      "gap_stats": {
+        "gap_count": 0,
+        "missing_bars": 0
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "BTCUSDT-mark-1m",
+      "symbol": "BTCUSDT",
+      "category": "mark",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/BTCUSDT-mark-1m-2020-01-2023-12.parquet",
+      "rows_count": 2092267,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "fa2ae7cd478ee37afc75904ed703f21ddd47a96ff7d5e8f8d3c659da0e2aad19",
+      "gap_stats": {
+        "gap_count": 7,
+        "missing_bars": 11573
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "BTCUSDT-index-1m",
+      "symbol": "BTCUSDT",
+      "category": "index",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/BTCUSDT-index-1m-2020-01-2023-12.parquet",
+      "rows_count": 2086502,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "586ec3a342a4d46c431d641dc6c50efc7b0ecff22a2d6ec71a5f14af305006e2",
+      "gap_stats": {
+        "gap_count": 11,
+        "missing_bars": 17338
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "BTCUSDT-premium-1m",
+      "symbol": "BTCUSDT",
+      "category": "premium",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/BTCUSDT-premium-1m-2020-01-2023-12.parquet",
+      "rows_count": 2093561,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "5d420fd93d54a9031a2d4d6175b708a4ba256b1dd877f0eef7da341da4fc8762",
+      "gap_stats": {
+        "gap_count": 13,
+        "missing_bars": 10279
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "ETHUSDT-spot-1m",
+      "symbol": "ETHUSDT",
+      "category": "spot",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/ETHUSDT-spot-1m-2020-01-2023-12.parquet",
+      "rows_count": 2101514,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "3d0b81c04e074a01ea0c025cf2d8c3ca3de3caf56827fc9e5ec5a1d9d1a93ecb",
+      "gap_stats": {
+        "gap_count": 15,
+        "missing_bars": 2326
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "ETHUSDT-perp-1m",
+      "symbol": "ETHUSDT",
+      "category": "perp",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/ETHUSDT-perp-1m-2020-01-2023-12.parquet",
+      "rows_count": 2103840,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "1919c98171eb3b7b26590f1187c5aae11712f1748493d3c3a28dc39b8ae29e0c",
+      "gap_stats": {
+        "gap_count": 0,
+        "missing_bars": 0
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "ETHUSDT-funding",
+      "symbol": "ETHUSDT",
+      "category": "funding",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/ETHUSDT-funding-2020-01-2023-12.parquet",
+      "rows_count": 4383,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704038400000000000,
+      "file_sha256": "209c3d6e8ed4c59e57130925e5bccd868c6fbb75dbf3ce84ed88d261e9d6dc41",
+      "gap_stats": {
+        "gap_count": 0,
+        "missing_bars": 0
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "ETHUSDT-mark-1m",
+      "symbol": "ETHUSDT",
+      "category": "mark",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/ETHUSDT-mark-1m-2020-01-2023-12.parquet",
+      "rows_count": 2100896,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "12448c463e9b391230b6cd778e98702ed2268f22c99a80ce852f32e257477e93",
+      "gap_stats": {
+        "gap_count": 9,
+        "missing_bars": 2944
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "ETHUSDT-index-1m",
+      "symbol": "ETHUSDT",
+      "category": "index",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/ETHUSDT-index-1m-2020-01-2023-12.parquet",
+      "rows_count": 2099461,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "15870caa720b4803c6b7e19839751a7531eac8de439e89da104a06134f3ba916",
+      "gap_stats": {
+        "gap_count": 6,
+        "missing_bars": 4379
+      },
+      "source_files_count": 48
+    },
+    {
+      "dataset_id": "ETHUSDT-premium-1m",
+      "symbol": "ETHUSDT",
+      "category": "premium",
+      "period": "2020-01 to 2023-12",
+      "parquet_file": "artifacts/research/silver_v3/ETHUSDT-premium-1m-2020-01-2023-12.parquet",
+      "rows_count": 2093564,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704067140000000000,
+      "file_sha256": "2c231c9340e017799e9340261fd2099f7dfd6f526a5780cab44f82152817ca84",
+      "gap_stats": {
+        "gap_count": 13,
+        "missing_bars": 10276
+      },
+      "source_files_count": 48
+    }
+  ]
+}

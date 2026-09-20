@@ -37,6 +37,16 @@ class ExperimentRecord:
     status: str  # REJECTED, APPROVED_FOR_SHADOW, APPROVED_FOR_PAPER
     rejection_reasons: list[str]
     created_at_utc: str = ""
+    # Structural Strategy Extensions (Round 3)
+    research_round: int = 2
+    strategy_type: str = "DIRECTIONAL"
+    market_neutral_target: bool = False
+    gross_exposure: float = 0.0
+    net_delta: float = 0.0
+    capital_committed: float = 0.0
+    funding_pnl: float = 0.0
+    basis_pnl: float = 0.0
+    execution_cost: float = 0.0
 
     def __post_init__(self) -> None:
         if not self.created_at_utc:
@@ -104,6 +114,24 @@ class ExperimentRegistry:
             conn.execute("CREATE INDEX IF NOT EXISTS idx_family ON experiments(family);")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_status ON experiments(status);")
 
+            # Migration for Round 3 structural columns
+            extra_cols = [
+                ("research_round", "INTEGER DEFAULT 2"),
+                ("strategy_type", "TEXT DEFAULT 'DIRECTIONAL'"),
+                ("market_neutral_target", "INTEGER DEFAULT 0"),
+                ("gross_exposure", "REAL DEFAULT 0.0"),
+                ("net_delta", "REAL DEFAULT 0.0"),
+                ("capital_committed", "REAL DEFAULT 0.0"),
+                ("funding_pnl", "REAL DEFAULT 0.0"),
+                ("basis_pnl", "REAL DEFAULT 0.0"),
+                ("execution_cost", "REAL DEFAULT 0.0"),
+            ]
+            for col_name, col_def in extra_cols:
+                try:
+                    conn.execute(f"ALTER TABLE experiments ADD COLUMN {col_name} {col_def};")
+                except sqlite3.OperationalError:
+                    pass
+
     def record_experiment(self, exp: ExperimentRecord) -> None:
         with self._get_connection() as conn:
             conn.execute(
@@ -116,8 +144,11 @@ class ExperimentRegistry:
                     out_of_sample_net_return, out_of_sample_stressed_return,
                     out_of_sample_trades, out_of_sample_sharpe, max_drawdown,
                     deflated_sharpe_ratio, pbo, status,
-                    rejection_reasons_json, created_at_utc
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    rejection_reasons_json, created_at_utc,
+                    research_round, strategy_type, market_neutral_target,
+                    gross_exposure, net_delta, capital_committed,
+                    funding_pnl, basis_pnl, execution_cost
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """,
                 (
                     exp.experiment_id,
@@ -144,6 +175,15 @@ class ExperimentRegistry:
                     exp.status,
                     json.dumps(exp.rejection_reasons),
                     exp.created_at_utc,
+                    exp.research_round,
+                    exp.strategy_type,
+                    1 if exp.market_neutral_target else 0,
+                    exp.gross_exposure,
+                    exp.net_delta,
+                    exp.capital_committed,
+                    exp.funding_pnl,
+                    exp.basis_pnl,
+                    exp.execution_cost,
                 ),
             )
 
@@ -162,6 +202,7 @@ class ExperimentRegistry:
             rows = conn.execute("SELECT * FROM experiments ORDER BY rowid ASC;").fetchall()
             records = []
             for r in rows:
+                keys = r.keys()
                 records.append(
                     ExperimentRecord(
                         experiment_id=r["experiment_id"],
@@ -188,6 +229,15 @@ class ExperimentRegistry:
                         status=r["status"],
                         rejection_reasons=json.loads(r["rejection_reasons_json"]),
                         created_at_utc=r["created_at_utc"],
+                        research_round=r["research_round"] if "research_round" in keys else 2,
+                        strategy_type=r["strategy_type"] if "strategy_type" in keys else "DIRECTIONAL",
+                        market_neutral_target=bool(r["market_neutral_target"]) if "market_neutral_target" in keys else False,
+                        gross_exposure=r["gross_exposure"] if "gross_exposure" in keys else 0.0,
+                        net_delta=r["net_delta"] if "net_delta" in keys else 0.0,
+                        capital_committed=r["capital_committed"] if "capital_committed" in keys else 0.0,
+                        funding_pnl=r["funding_pnl"] if "funding_pnl" in keys else 0.0,
+                        basis_pnl=r["basis_pnl"] if "basis_pnl" in keys else 0.0,
+                        execution_cost=r["execution_cost"] if "execution_cost" in keys else 0.0,
                     )
                 )
             return records
