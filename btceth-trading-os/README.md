@@ -11,3 +11,5 @@ Offline research is deterministic and cannot access an exchange account. Use `py
 The local safety gate fails closed for stale signals, failed data-quality checks, unresolved gaps, drawdown, daily loss, and position limits. Paper fills are local Decimal calculations only; no exchange order or account functionality exists.
 
 Run `python -m btceth_os.dashboard` and open `http://127.0.0.1:8000/` to view the read-only localhost dashboard. Until a local process writes `artifacts/dashboard/state.json`, it deliberately displays degraded/not-ready status instead of inventing market state, signals, or P&L.
+
+For a visual-only local check, run `python tools/publish_paper_demo.py` while the dashboard is open. It publishes a clearly labeled simulated BTC position and P&L; it does not read live prices, connect to Binance, or submit anything.
