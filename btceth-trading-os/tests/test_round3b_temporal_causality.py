@@ -17,6 +17,12 @@ from btceth_os.research.temporal import (
     FutureUnsettledRealizedFunding,
     assert_causal_funding_access,
 )
+from btceth_os.research.backtest import (
+    Candle,
+    CostModel,
+    run_causal_backtest,
+    run_backtest,
+)
 
 from btceth_os.research.features.price_returns import (
     compute_log_returns,
@@ -369,9 +375,9 @@ def test_real_feature_modules_future_row_perturbation_invariance() -> None:
     assert base_weekend[: t_eval + 1] == pert_weekend[: t_eval + 1]
     features_verified.append("time_session.compute_session_flags")
 
-    # Generate ROUND3B_0A_TEMPORAL_INTEGRATION_AUDIT.json
+    # Generate ROUND3B_0B_TEMPORAL_RUNTIME_AUDIT.json
     audit_report = {
-        "report_version": "ROUND3B.0A",
+        "report_version": "ROUND3B.0B",
         "status": "VERIFIED",
         "features_tested_count": len(features_verified),
         "features_tested": features_verified,
@@ -384,6 +390,101 @@ def test_real_feature_modules_future_row_perturbation_invariance() -> None:
         "total_series_length": n,
     }
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    (REPORTS_DIR / "ROUND3B_0A_TEMPORAL_INTEGRATION_AUDIT.json").write_text(
+    (REPORTS_DIR / "ROUND3B_0B_TEMPORAL_RUNTIME_AUDIT.json").write_text(
         json.dumps(audit_report, indent=2) + "\n", encoding="utf-8"
     )
+
+
+def test_real_causal_backtest_execution() -> None:
+    """Run real backtest simulation through run_causal_backtest and verify TemporalEventContract on each fill."""
+    candles = [
+        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0")),  # 00:00
+        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0")),  # 01:00
+        Candle(ts_event_ns=1609466400_000_000_000, close=Decimal("31000.0")),  # 02:00
+        Candle(ts_event_ns=1609470000_000_000_000, close=Decimal("30800.0")),  # 03:00
+        Candle(ts_event_ns=1609473600_000_000_000, close=Decimal("31200.0")),  # 04:00
+    ]
+    positions = [1, 1, 0, -1, 0]
+    costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
+
+    causal_res = run_causal_backtest(candles, positions, costs)
+    legacy_res = run_backtest(candles, positions, costs)
+
+    # Result equivalence with legacy run_backtest
+    assert causal_res.result.bars == legacy_res.bars
+    assert causal_res.result.trades == legacy_res.trades
+    assert causal_res.result.net_return == legacy_res.net_return
+    assert causal_res.result.total_cost == legacy_res.total_cost
+
+    # Contract verification: every bar execution has a valid contract
+    assert len(causal_res.contracts) == len(candles)  # 4 bar contracts + 1 terminal flat contract
+    for c in causal_res.contracts:
+        c.validate()  # Strictly enforces source <= available <= decision <= execution <= fill
+        assert c.source_ts_ns <= c.available_ts_ns
+        assert c.available_ts_ns <= c.decision_ts_ns
+        assert c.decision_ts_ns <= c.execution_ts_ns
+        assert c.execution_ts_ns <= c.fill_ts_ns
+
+    # Bar availability: decision cannot occur before bar close timestamp
+    for exec_record in causal_res.executions:
+        assert exec_record.contract.decision_ts_ns >= exec_record.contract.source_ts_ns
+
+
+def test_real_causal_backtest_clock_inversion_fails_closed() -> None:
+    """Deliberate clock inversion in real runner fails closed immediately."""
+    candles = [
+        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0")),
+        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0")),
+    ]
+    positions = [1, 0]
+    costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
+
+    # 1. Negative latency causes decision_ts < available_ts (TEMPORAL_LEAKAGE_DETECTED)
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        run_causal_backtest(candles, positions, costs, decision_latency_ns=-10_000_000)
+    assert "TEMPORAL_LEAKAGE_DETECTED" in str(exc_info.value)
+
+    # 2. Execution latency negative causes execution_ts < decision_ts
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info2:
+        run_causal_backtest(candles, positions, costs, execution_latency_ns=-5_000_000)
+    assert "Causality violated" in str(exc_info2.value)
+
+
+def test_real_causal_backtest_funding_boundary() -> None:
+    """Strategy funding boundary accepts only causal typed funding signals and blocks unsettled funding."""
+    candles = [
+        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0")),
+        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0")),
+    ]
+    positions = [1, 0]
+    costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
+
+    # 1. Valid typed funding signals pass
+    valid_signals = [
+        ObservableEstimatedFunding(
+            signal_ts_ns=1609459200_000_000_000,
+            estimated_rate=Decimal("0.0001"),
+            as_of_ts_ns=1609459200_000_000_000,
+        ),
+        RealizedHistoricalFunding(
+            settlement_ts_ns=1609455600_000_000_000,
+            realized_rate=Decimal("0.00015"),
+        ),
+    ]
+    res = run_causal_backtest(candles, positions, costs, funding_signals=valid_signals)
+    assert res.result.trades > 0
+
+    # 2. Future unsettled funding fails closed
+    future_unsettled = FutureUnsettledRealizedFunding(
+        settlement_ts_ns=1609462800_000_000_000,
+        _future_realized_rate=Decimal("0.0002"),
+    )
+    with pytest.raises(TemporalIntegrityViolationError) as exc1:
+        run_causal_backtest(candles, positions, costs, funding_signals=[future_unsettled])
+    assert "STRATEGY_FUNDING_BOUNDARY_VIOLATION" in str(exc1.value)
+
+    # 3. Untyped / raw funding input fails closed
+    with pytest.raises(TemporalIntegrityViolationError) as exc2:
+        run_causal_backtest(candles, positions, costs, funding_signals=[0.0001])
+    assert "STRATEGY_FUNDING_BOUNDARY_VIOLATION" in str(exc2.value)
+

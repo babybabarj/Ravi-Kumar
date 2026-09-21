@@ -36,9 +36,37 @@ def test_capital_policy_derived_commitments() -> None:
     assert pair_comm == Decimal("1500.0")
 
 
+TEST_POLICY = CapitalPolicy(
+    policy_name="TEST_V1",
+    starting_equity=Decimal("10000.0"),
+    max_gross_exposure_ratio=Decimal("3.0"),
+    max_strategy_allocation_ratio=Decimal("1.0"),
+    perp_leverage=Decimal("10.0"),
+    margin_buffer_ratio=Decimal("0.05"),
+    reserve_cash_requirement=Decimal("0.0"),
+    max_concurrent_episodes=5,
+    scale_down_enabled=False,
+)
+
+
+def test_portfolio_capital_governor_defaults_to_canonical_yaml() -> None:
+    """PortfolioCapitalGovernor() with no arguments defaults to config/research_capital_policy_v1.yaml (BASE_RESEARCH_POLICY)."""
+    gov = PortfolioCapitalGovernor()
+    assert gov.policy.policy_name == "BASE_RESEARCH_POLICY"
+    assert gov.starting_equity == Decimal("100000.0")
+    assert gov.policy.reserve_cash_requirement == Decimal("20000.0")
+    assert gov.available_capital == Decimal("80000.0")
+    assert gov.policy.max_gross_exposure_ratio == Decimal("2.0")
+    assert gov.policy.max_strategy_allocation_ratio == Decimal("0.25")
+    assert gov.policy.perp_leverage == Decimal("10.0")
+    assert gov.policy.margin_buffer_ratio == Decimal("0.05")
+    assert gov.policy.max_concurrent_episodes == 5
+    assert gov.policy.scale_down_enabled is False
+
+
 def test_two_concurrent_chronologically_overlapping_episodes() -> None:
     """Test 2 chronologically overlapping episodes track capital correctly across time."""
-    gov = PortfolioCapitalGovernor()
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
     assert gov.available_capital == Decimal("10000.0")
 
     # EP1: Entry T=0, Exit T=10, Capital $4,000
@@ -62,7 +90,7 @@ def test_two_concurrent_chronologically_overlapping_episodes() -> None:
 
 def test_five_concurrent_episodes_and_sixth_rejected() -> None:
     """5 concurrent episodes saturate the pool; 6th is rejected with CapitalExhaustionError."""
-    gov = PortfolioCapitalGovernor()
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
 
     # 5 episodes of $2,000 each = $10,000 total
     for i in range(5):
@@ -79,7 +107,7 @@ def test_five_concurrent_episodes_and_sixth_rejected() -> None:
 
 def test_capital_released_after_close_enables_new_trade() -> None:
     """Capital freed upon episode close allows subsequent trade to open."""
-    gov = PortfolioCapitalGovernor()
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
     gov.request_allocation("EP1", "STRAT_A", 0, 50, Decimal("8000.0"), Decimal("10000.0"))
     assert gov.available_capital == Decimal("2000.0")
 
@@ -99,7 +127,7 @@ def test_capital_released_after_close_enables_new_trade() -> None:
 
 def test_capital_mutation_over_allocation_fails_closed() -> None:
     """Mutation test: Requesting $12,000 from $10,000 pool fails closed (SCALE_DOWN = DISABLED)."""
-    gov = PortfolioCapitalGovernor()
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
     assert gov.policy.scale_down_enabled is False
 
     with pytest.raises(CapitalExhaustionError) as exc_info:
@@ -110,7 +138,7 @@ def test_capital_mutation_over_allocation_fails_closed() -> None:
 
 def test_unallocated_cash_earns_zero() -> None:
     """Verify unallocated cash maintains zero return without artificial appreciation."""
-    gov = PortfolioCapitalGovernor()
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
     gov.request_allocation("EP_FLAT", "STRAT_FLAT", 0, 10, Decimal("3000.0"), Decimal("4000.0"))
     gov.close_episode("EP_FLAT", 10, net_pnl=Decimal("0.0"))
     assert gov.current_cash == Decimal("10000.0")
@@ -137,9 +165,89 @@ def test_capital_policy_from_yaml_loader() -> None:
     assert stressed_policy.max_concurrent_episodes == 3
 
 
+def test_capital_policy_missing_mandatory_field_raises_invalid(tmp_path: Path) -> None:
+    """Missing any mandatory field in YAML scenario raises CAPITAL_POLICY_INVALID."""
+    import yaml
+    incomplete_data = {
+        "INCOMPLETE_SCENARIO": {
+            "label": "INCOMPLETE",
+            "starting_equity": 100000.0,
+            # Missing all other mandatory fields
+        }
+    }
+    p = tmp_path / "incomplete_policy.yaml"
+    p.write_text(yaml.dump(incomplete_data), encoding="utf-8")
+
+    with pytest.raises(ValueError) as exc:
+        CapitalPolicy.from_yaml(p, "INCOMPLETE_SCENARIO")
+    assert "CAPITAL_POLICY_INVALID" in str(exc.value)
+    assert "Missing mandatory field" in str(exc.value)
+
+
+def test_capital_policy_invalid_bounds() -> None:
+    """CapitalPolicy validation rejects invalid bounds on all parameters."""
+    # Negative starting equity
+    with pytest.raises(ValueError, match="CAPITAL_POLICY_INVALID: starting_equity"):
+        CapitalPolicy(starting_equity=Decimal("-1000.0"))
+
+    # Zero starting equity
+    with pytest.raises(ValueError, match="CAPITAL_POLICY_INVALID: starting_equity"):
+        CapitalPolicy(starting_equity=Decimal("0.0"))
+
+    # Invalid max gross exposure
+    with pytest.raises(ValueError, match="CAPITAL_POLICY_INVALID: max_gross_exposure_ratio"):
+        CapitalPolicy(max_gross_exposure_ratio=Decimal("0.0"))
+
+    # Invalid max strategy allocation ratio (> 1.0)
+    with pytest.raises(ValueError, match="CAPITAL_POLICY_INVALID: max_strategy_allocation_ratio"):
+        CapitalPolicy(max_strategy_allocation_ratio=Decimal("1.5"))
+
+    # Invalid perp leverage (< 1.0)
+    with pytest.raises(ValueError, match="CAPITAL_POLICY_INVALID: perp_leverage"):
+        CapitalPolicy(perp_leverage=Decimal("0.5"))
+
+    # Invalid margin buffer (>= 1.0)
+    with pytest.raises(ValueError, match="CAPITAL_POLICY_INVALID: margin_buffer_ratio"):
+        CapitalPolicy(margin_buffer_ratio=Decimal("1.2"))
+
+    # Reserve >= starting equity
+    with pytest.raises(ValueError, match="CAPITAL_POLICY_INVALID: reserve_cash_requirement"):
+        CapitalPolicy(starting_equity=Decimal("10000.0"), reserve_cash_requirement=Decimal("10000.0"))
+
+    # Concurrency < 1
+    with pytest.raises(ValueError, match="CAPITAL_POLICY_INVALID: max_concurrent_episodes"):
+        CapitalPolicy(max_concurrent_episodes=0)
+
+    # Scale down enabled = True must fail closed
+    with pytest.raises(ValueError, match="CAPITAL_POLICY_INVALID: scale_down_enabled"):
+        CapitalPolicy(scale_down_enabled=True)
+
+
+def test_close_episode_net_pnl_validation() -> None:
+    """close_episode strictly validates net_pnl as finite Decimal."""
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
+    gov.request_allocation("EP_VAL", "STRAT_A", 0, 10, Decimal("1000.0"), Decimal("2000.0"))
+
+    # Non-Decimal (float) rejected
+    with pytest.raises(ValueError, match="net_pnl must be a finite Decimal"):
+        gov.close_episode("EP_VAL", 10, net_pnl=100.0)  # type: ignore[arg-type]
+
+    # NaN rejected
+    with pytest.raises(ValueError, match="net_pnl must be a finite Decimal"):
+        gov.close_episode("EP_VAL", 10, net_pnl=Decimal("NaN"))
+
+    # Inf rejected
+    with pytest.raises(ValueError, match="net_pnl must be a finite Decimal"):
+        gov.close_episode("EP_VAL", 10, net_pnl=Decimal("Infinity"))
+
+    # Valid Decimal accepted
+    gov.close_episode("EP_VAL", 10, net_pnl=Decimal("50.0"))
+    assert gov.current_cash == Decimal("10050.0")
+
+
 def test_input_validation_rejections() -> None:
     """Adversarial input validation tests: reject invalid timestamps, notional, capital, empty IDs."""
-    gov = PortfolioCapitalGovernor()
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
 
     # Empty episode ID
     with pytest.raises(ValueError, match="episode_id must be a non-empty string"):
@@ -180,7 +288,7 @@ def test_input_validation_rejections() -> None:
 
 def test_duplicate_episode_allocation_fails_closed() -> None:
     """Duplicate episode allocation attempt must fail closed."""
-    gov = PortfolioCapitalGovernor()
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
     gov.request_allocation("EP_DUP", "STRAT_A", 0, 100, Decimal("1000.0"), Decimal("2000.0"))
 
     with pytest.raises(CapitalExhaustionError, match="DUPLICATE_EPISODE_ID"):
@@ -189,33 +297,24 @@ def test_duplicate_episode_allocation_fails_closed() -> None:
 
 def test_unknown_episode_close_fails_closed() -> None:
     """Attempting to close an unknown episode ID raises KeyError."""
-    gov = PortfolioCapitalGovernor()
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
     with pytest.raises(KeyError, match="UNKNOWN_EPISODE"):
         gov.close_episode("EP_NONEXISTENT", 10)
 
 
 def test_chronology_violation_on_close_fails_closed() -> None:
     """Closing an episode with an exit timestamp before its entry timestamp raises ValueError."""
-    gov = PortfolioCapitalGovernor()
+    gov = PortfolioCapitalGovernor(TEST_POLICY)
     gov.request_allocation("EP_TIME", "STRAT_A", 50, 100, Decimal("1000.0"), Decimal("2000.0"))
 
     with pytest.raises(ValueError, match="Chronology violation"):
         gov.close_episode("EP_TIME", exit_ts_ns=40)
 
 
-def test_scale_down_enabled_fails_closed_with_not_implemented() -> None:
-    """When scale_down_enabled is True and capacity is exceeded, governor raises NotImplementedError."""
-    policy = CapitalPolicy(starting_equity=Decimal("1000.0"), scale_down_enabled=True)
-    gov = PortfolioCapitalGovernor(policy)
-
-    with pytest.raises(NotImplementedError, match="SCALE_DOWN_UNSUPPORTED"):
-        gov.request_allocation("EP_HUGE", "STRAT", 0, 10, Decimal("2000.0"), Decimal("3000.0"))
-
-
-def test_generate_round3b_0a_capital_governor_audit() -> None:
-    """Generate ROUND3B_0A_CAPITAL_GOVERNOR_AUDIT.json report."""
+def test_generate_round3b_0b_capital_governor_audit() -> None:
+    """Generate ROUND3B_0B_CAPITAL_POLICY_AUDIT.json report."""
     audit_data = {
-        "report_version": "ROUND3B.0A",
+        "report_version": "ROUND3B.0B",
         "status": "VERIFIED",
         "policy_file": "config/research_capital_policy_v1.yaml",
         "classification": "RESEARCH_ASSUMPTION",
@@ -224,11 +323,15 @@ def test_generate_round3b_0a_capital_governor_audit() -> None:
         "duplicate_episode_rejection_verified": True,
         "unknown_episode_rejection_verified": True,
         "chronology_violation_rejection_verified": True,
+        "net_pnl_decimal_validation_verified": True,
+        "strict_schema_validation_verified": True,
+        "parameter_bounds_validation_verified": True,
         "scale_down_policy": "DISABLED_FAIL_CLOSED",
         "exhaustion_behavior": "REJECT",
         "multi_strategy_concurrency_verified": True,
     }
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    (REPORTS_DIR / "ROUND3B_0A_CAPITAL_GOVERNOR_AUDIT.json").write_text(
+    (REPORTS_DIR / "ROUND3B_0B_CAPITAL_POLICY_AUDIT.json").write_text(
         json.dumps(audit_data, indent=2) + "\n", encoding="utf-8"
     )
+

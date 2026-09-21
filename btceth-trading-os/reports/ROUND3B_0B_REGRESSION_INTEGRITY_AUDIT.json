@@ -1,0 +1,21 @@
+{
+  "report_version": "ROUND3B.0B",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-21T18:24:34.128119+00:00",
+  "canonical_baseline_sha": "cfa80f3aabbb75a28969701d8013f6784c35a495",
+  "canonical_baseline_ancestor": true,
+  "milestones_verified": {
+    "PHASE_1A": true,
+    "PHASE_1B_1": true,
+    "PHASE_1B_2": true,
+    "PHASE_1B_3": true,
+    "PHASE_1B_4": true,
+    "PHASE_1B_5": true,
+    "RESEARCH_ROUND3A": true
+  },
+  "all_milestones_verified": true,
+  "security_capability": "ZERO",
+  "holdout_status": "LOCKED",
+  "approved_for_shadow": 0,
+  "approved_for_paper": 0
+}

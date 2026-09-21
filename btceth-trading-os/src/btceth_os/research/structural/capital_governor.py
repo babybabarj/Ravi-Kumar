@@ -6,6 +6,21 @@ from pathlib import Path
 from typing import Optional, Union
 
 
+ROOT = Path(__file__).resolve().parents[4]
+DEFAULT_POLICY_PATH = ROOT / "config" / "research_capital_policy_v1.yaml"
+
+MANDATORY_POLICY_FIELDS = (
+    "starting_equity",
+    "max_gross_exposure_ratio",
+    "max_strategy_allocation_ratio",
+    "perp_leverage",
+    "margin_buffer_ratio",
+    "reserve_cash_requirement",
+    "max_concurrent_episodes",
+    "scale_down_enabled",
+)
+
+
 class CapitalExhaustionError(RuntimeError):
     """Raised when capital or concurrency limits are exceeded under REJECT policy."""
     pass
@@ -23,22 +38,67 @@ class CapitalPolicy:
     max_concurrent_episodes: int = 5
     scale_down_enabled: bool = False                          # Strict default: SCALE_DOWN = DISABLED
 
+    def __post_init__(self) -> None:
+        self.validate()
+
+    def validate(self) -> None:
+        """Validate all policy bounds; fail closed on invalid or insecure parameters."""
+        if not isinstance(self.starting_equity, Decimal) or self.starting_equity.is_nan() or self.starting_equity.is_infinite() or self.starting_equity <= Decimal("0"):
+            raise ValueError("CAPITAL_POLICY_INVALID: starting_equity must be a finite positive Decimal")
+        if not isinstance(self.max_gross_exposure_ratio, Decimal) or self.max_gross_exposure_ratio <= Decimal("0"):
+            raise ValueError("CAPITAL_POLICY_INVALID: max_gross_exposure_ratio must be positive")
+        if not isinstance(self.max_strategy_allocation_ratio, Decimal) or not (Decimal("0") < self.max_strategy_allocation_ratio <= Decimal("1.0")):
+            raise ValueError("CAPITAL_POLICY_INVALID: max_strategy_allocation_ratio must be in (0.0, 1.0]")
+        if not isinstance(self.perp_leverage, Decimal) or self.perp_leverage < Decimal("1.0"):
+            raise ValueError("CAPITAL_POLICY_INVALID: perp_leverage must be >= 1.0")
+        if not isinstance(self.margin_buffer_ratio, Decimal) or not (Decimal("0") <= self.margin_buffer_ratio < Decimal("1.0")):
+            raise ValueError("CAPITAL_POLICY_INVALID: margin_buffer_ratio must be in [0.0, 1.0)")
+        if not isinstance(self.reserve_cash_requirement, Decimal) or self.reserve_cash_requirement < Decimal("0"):
+            raise ValueError("CAPITAL_POLICY_INVALID: reserve_cash_requirement cannot be negative")
+        if self.reserve_cash_requirement >= self.starting_equity:
+            raise ValueError("CAPITAL_POLICY_INVALID: reserve_cash_requirement must be strictly less than starting_equity")
+        if not isinstance(self.max_concurrent_episodes, int) or self.max_concurrent_episodes < 1:
+            raise ValueError("CAPITAL_POLICY_INVALID: max_concurrent_episodes must be an integer >= 1")
+        if self.scale_down_enabled is not False:
+            raise ValueError("CAPITAL_POLICY_INVALID: scale_down_enabled must be strictly False in research mode")
+
     @classmethod
     def from_yaml(cls, path: Union[str, Path], scenario: str = "BASE_RESEARCH_POLICY") -> CapitalPolicy:
-        """Load capital policy configuration from a YAML policy file."""
+        """Load capital policy configuration from a YAML policy file with strict schema validation."""
         import yaml
-        data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
-        scen = data.get(scenario, {})
+        yaml_path = Path(path)
+        if not yaml_path.is_file():
+            raise ValueError(f"CAPITAL_POLICY_INVALID: Policy file not found: {yaml_path}")
+        
+        try:
+            data = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            raise ValueError(f"CAPITAL_POLICY_INVALID: Failed to parse YAML file: {e}")
+
+        if not isinstance(data, dict):
+            raise ValueError("CAPITAL_POLICY_INVALID: Policy file root must be a YAML dictionary")
+
+        if scenario not in data:
+            raise ValueError(f"CAPITAL_POLICY_INVALID: Scenario '{scenario}' not found in policy file")
+
+        scen = data[scenario]
+        if not isinstance(scen, dict):
+            raise ValueError(f"CAPITAL_POLICY_INVALID: Scenario '{scenario}' must be a dictionary")
+
+        for field in MANDATORY_POLICY_FIELDS:
+            if field not in scen:
+                raise ValueError(f"CAPITAL_POLICY_INVALID: Missing mandatory field '{field}' in policy '{scenario}'")
+
         return cls(
             policy_name=scen.get("label", scenario),
-            starting_equity=Decimal(str(scen.get("starting_equity", "100000.0"))),
-            max_gross_exposure_ratio=Decimal(str(scen.get("max_gross_exposure_ratio", "2.0"))),
-            max_strategy_allocation_ratio=Decimal(str(scen.get("max_strategy_allocation_ratio", "0.25"))),
-            perp_leverage=Decimal(str(scen.get("perp_leverage", "10.0"))),
-            margin_buffer_ratio=Decimal(str(scen.get("margin_buffer_ratio", "0.05"))),
-            reserve_cash_requirement=Decimal(str(scen.get("reserve_cash_requirement", "20000.0"))),
-            max_concurrent_episodes=int(scen.get("max_concurrent_episodes", 5)),
-            scale_down_enabled=bool(scen.get("scale_down_enabled", False)),
+            starting_equity=Decimal(str(scen["starting_equity"])),
+            max_gross_exposure_ratio=Decimal(str(scen["max_gross_exposure_ratio"])),
+            max_strategy_allocation_ratio=Decimal(str(scen["max_strategy_allocation_ratio"])),
+            perp_leverage=Decimal(str(scen["perp_leverage"])),
+            margin_buffer_ratio=Decimal(str(scen["margin_buffer_ratio"])),
+            reserve_cash_requirement=Decimal(str(scen["reserve_cash_requirement"])),
+            max_concurrent_episodes=int(scen["max_concurrent_episodes"]),
+            scale_down_enabled=bool(scen["scale_down_enabled"]),
         )
 
     @property
@@ -78,10 +138,17 @@ class PortfolioCapitalGovernor:
 
     Enforces portfolio equity preservation, explicit capital reservation,
     chronological timeline concurrency, and fail-closed capital exhaustion.
+    Defaults to loading config/research_capital_policy_v1.yaml (BASE_RESEARCH_POLICY).
     """
 
     def __init__(self, policy: Optional[CapitalPolicy] = None) -> None:
-        self.policy = policy or CapitalPolicy()
+        if policy is None:
+            if DEFAULT_POLICY_PATH.is_file():
+                self.policy = CapitalPolicy.from_yaml(DEFAULT_POLICY_PATH, scenario="BASE_RESEARCH_POLICY")
+            else:
+                self.policy = CapitalPolicy()
+        else:
+            self.policy = policy
         self.starting_equity: Decimal = self.policy.starting_equity
         self.current_cash: Decimal = self.starting_equity
         self.active_commitments: dict[str, ActiveEpisodeCommitment] = {}
@@ -184,6 +251,8 @@ class PortfolioCapitalGovernor:
             raise ValueError("episode_id must be a non-empty string")
         if episode_id not in self.active_commitments:
             raise KeyError(f"UNKNOWN_EPISODE: Cannot release commitment for untracked episode ID '{episode_id}'")
+        if not isinstance(net_pnl, Decimal) or net_pnl.is_nan() or net_pnl.is_infinite():
+            raise ValueError(f"net_pnl must be a finite Decimal, got {net_pnl} (type: {type(net_pnl).__name__})")
 
         comm = self.active_commitments[episode_id]
         if exit_ts_ns < comm.entry_ts_ns:

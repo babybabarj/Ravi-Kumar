@@ -1,0 +1,25 @@
+{
+  "report_version": "ROUND3B.0B",
+  "status": "VERIFIED",
+  "features_tested_count": 11,
+  "features_tested": [
+    "price_returns.compute_log_returns",
+    "price_returns.compute_trend_slope",
+    "price_returns.compute_rolling_drawdown",
+    "volatility.compute_realized_volatility",
+    "volatility.compute_average_true_range",
+    "derivatives.align_funding_rates_to_klines",
+    "derivatives.compute_funding_zscore",
+    "cross_asset.compute_eth_btc_ratio",
+    "cross_asset.compute_relative_return_diff",
+    "cross_asset.compute_rolling_correlation",
+    "time_session.compute_session_flags"
+  ],
+  "all_real_features_perturbation_invariant": true,
+  "clock_hierarchy_verified": true,
+  "backtest_simulation_contract_verified": true,
+  "typed_funding_signals_verified": true,
+  "future_funding_leakage_blocked": true,
+  "evaluation_index": 50,
+  "total_series_length": 100
+}

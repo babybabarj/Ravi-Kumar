@@ -126,7 +126,7 @@ def test_dataset_identity_mismatch_fails_closed() -> None:
 
 
 def test_renamed_holdout_file_blocked_by_metadata(tmp_path: Path) -> None:
-    """Renamed holdout file with innocent name is blocked by metadata timestamps."""
+    """Renamed holdout file with innocent name is blocked by metadata timestamps or row timestamps."""
     innocent_file = tmp_path / "innocent_dev_data.parquet"
     ts_mid_2024 = int(datetime(2024, 6, 15, tzinfo=timezone.utc).timestamp() * 1e9)
     
@@ -142,7 +142,7 @@ def test_renamed_holdout_file_blocked_by_metadata(tmp_path: Path) -> None:
     pq.write_table(table, innocent_file)
 
     with pytest.raises(HoldoutAccessDeniedError) as exc:
-        load_research_parquet(innocent_file, operation=ResearchOperation.BACKTEST)
+        load_research_parquet(innocent_file, dataset_id="BTCUSDT_DEV", operation=ResearchOperation.BACKTEST)
     assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
 
 
@@ -269,3 +269,155 @@ def test_access_ledger_tamper_detection(tmp_path: Path, monkeypatch: pytest.Monk
     ok_tampered, count_tampered, msg_tampered, _ = verify_access_ledger_integrity()
     assert ok_tampered is False
     assert "TAMPER_DETECTED" in msg_tampered
+
+
+def test_exact_bypass_stripped_metadata_blocked(tmp_path: Path) -> None:
+    """Synthetic Parquet file innocent.parquet with stripped metadata and mid-2024 rows must fail closed."""
+    innocent_file = tmp_path / "innocent.parquet"
+    ts_mid_2024 = int(datetime(2024, 6, 15, tzinfo=timezone.utc).timestamp() * 1e9)
+    # Write table with NO metadata
+    table = pa.Table.from_arrays(
+        [pa.array([ts_mid_2024], type=pa.int64()), pa.array([65000.0], type=pa.float64())],
+        names=["ts_event_ns", "close"],
+    )
+    pq.write_table(table, innocent_file)
+
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        load_research_parquet(innocent_file, dataset_id="BTCUSDT_DEV", operation=ResearchOperation.BACKTEST)
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
+
+
+def test_forged_metadata_bypass_blocked(tmp_path: Path) -> None:
+    """Parquet file with forged metadata claiming DEV 2021 but row-level 2024 timestamps must fail closed."""
+    forged_file = tmp_path / "forged.parquet"
+    ts_mid_2024 = int(datetime(2024, 6, 15, tzinfo=timezone.utc).timestamp() * 1e9)
+    schema = pa.schema(
+        [("ts_event_ns", pa.int64()), ("close", pa.float64())],
+        metadata={
+            b"dataset_role": b"DEVELOPMENT",
+            b"start_ts_ns": b"1609459200000000000",
+            b"end_ts_ns": b"1640995200000000000",
+        },
+    )
+    table = pa.Table.from_arrays([[ts_mid_2024], [65000.0]], schema=schema)
+    pq.write_table(table, forged_file)
+
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        load_research_parquet(forged_file, dataset_id="BTCUSDT_DEV", operation=ResearchOperation.BACKTEST)
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
+
+
+def test_wrong_file_right_id_physical_mismatch(tmp_path: Path) -> None:
+    """Providing a file whose physical SHA does not match registered physical SHA fails closed."""
+    wrong_file = tmp_path / "wrong_btc.parquet"
+    ts_2021 = int(datetime(2021, 6, 15, tzinfo=timezone.utc).timestamp() * 1e9)
+    table = pa.Table.from_arrays(
+        [pa.array([ts_2021], type=pa.int64()), pa.array([35000.0], type=pa.float64())],
+        names=["ts_event_ns", "close"],
+    )
+    pq.write_table(table, wrong_file)
+
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        load_research_parquet(wrong_file, dataset_id="BTCUSDT-resampled-1h-v3.1.0", operation=ResearchOperation.BACKTEST)
+    assert "DATASET_PHYSICAL_IDENTITY_MISMATCH" in str(exc.value)
+
+
+def test_unknown_operation_fails_closed() -> None:
+    """Unknown research operation string fails closed with UNKNOWN_RESEARCH_OPERATION."""
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation="EXFILTRATE_DATA_UNAUTHORIZED",
+            dataset_id="BTCUSDT_DEV",
+        )
+    assert "UNKNOWN_RESEARCH_OPERATION" in str(exc.value)
+
+
+def test_prospective_whitelist_blocks_final_holdout_audit() -> None:
+    """FINAL_HOLDOUT_AUDIT is blocked on prospective data and locked holdout."""
+    with pytest.raises(HoldoutAccessDeniedError):
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.FINAL_HOLDOUT_AUDIT,
+            dataset_id="BTCUSDT_2025_PROSPECTIVE",
+            dataset_role=DatasetRole.PROSPECTIVE_FORWARD,
+            start_ts_ns=1740000000_000_000_000,
+            end_ts_ns=1740003600_000_000_000,
+        )
+
+
+def test_corrupt_ledger_refuses_append(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Corrupted ledger triggers LedgerIntegrityFailureError before appending any new entry."""
+    from btceth_os.research.data_guard import LedgerIntegrityFailureError
+
+    test_ledger = tmp_path / "corrupt_ledger.jsonl"
+    monkeypatch.setattr("btceth_os.research.data_guard.LEDGER_PATH", test_ledger)
+
+    # 1. Add valid entry
+    ResearchDataAccessGuard.check_access(
+        operation=ResearchOperation.BACKTEST,
+        dataset_id="BTCUSDT_DEV",
+        dataset_role=DatasetRole.DEVELOPMENT,
+        start_ts_ns=1600000000_000_000_000,
+        end_ts_ns=1600003600_000_000_000,
+    )
+
+    # 2. Corrupt ledger
+    test_ledger.write_text("CORRUPTED_NON_JSON_DATA\n")
+
+    # 3. Next check_access must fail pre-append integrity check
+    with pytest.raises(LedgerIntegrityFailureError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="BTCUSDT_DEV",
+            dataset_role=DatasetRole.DEVELOPMENT,
+            start_ts_ns=1600000000_000_000_000,
+            end_ts_ns=1600003600_000_000_000,
+        )
+    assert "LEDGER_INTEGRITY_FAILURE" in str(exc.value)
+
+
+def test_registry_immutability() -> None:
+    """CANONICAL_DATASET_REGISTRY cannot be mutated at runtime in production."""
+    from btceth_os.research.data_guard import (
+        CANONICAL_DATASET_REGISTRY,
+        CanonicalPartitionEntry,
+        register_canonical_dataset,
+    )
+
+    with pytest.raises(TypeError):
+        CANONICAL_DATASET_REGISTRY["ILLEGAL_INJECTION"] = CanonicalPartitionEntry(  # type: ignore[index]
+            dataset_id="ILLEGAL",
+            dataset_version="v1",
+            partition_id="p1",
+            canonical_relative_path=None,
+            physical_sha256=None,
+            dataset_logical_sha256=None,
+            start_ts_ns=0,
+            end_ts_ns=1,
+            role=DatasetRole.DEVELOPMENT,
+        )
+
+    with pytest.raises(TypeError, match="CANONICAL_DATASET_REGISTRY is immutable in production"):
+        register_canonical_dataset(
+            CanonicalPartitionEntry(
+                dataset_id="ILLEGAL",
+                dataset_version="v1",
+                partition_id="p1",
+                canonical_relative_path=None,
+                physical_sha256=None,
+                dataset_logical_sha256=None,
+                start_ts_ns=0,
+                end_ts_ns=1,
+                role=DatasetRole.DEVELOPMENT,
+            )
+        )
+
+
+def test_missing_dataset_id_fails_closed(tmp_path: Path) -> None:
+    """Calling load_research_parquet with empty dataset_id fails closed."""
+    dummy_file = tmp_path / "dummy.parquet"
+    table = pa.Table.from_arrays([pa.array([1000], type=pa.int64())], names=["ts_event_ns"])
+    pq.write_table(table, dummy_file)
+
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        load_research_parquet(dummy_file, dataset_id="")
+    assert "DATASET_IDENTITY_REQUIRED" in str(exc.value)

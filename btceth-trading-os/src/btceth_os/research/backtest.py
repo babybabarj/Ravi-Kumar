@@ -6,11 +6,18 @@ from hashlib import sha256
 import re
 import json
 from pathlib import Path
-from typing import Iterable, Sequence
+from typing import Any, Iterable, Optional, Sequence
 
 import pyarrow.parquet as pq
 
 from ..core import canonical_json
+from .temporal import (
+    FutureUnsettledRealizedFunding,
+    ObservableEstimatedFunding,
+    RealizedHistoricalFunding,
+    TemporalEventContract,
+    TemporalIntegrityViolationError,
+)
 
 
 ONE = Decimal("1")
@@ -200,3 +207,177 @@ def _select_lookback(candles: Sequence[Candle], start: int, end: int, candidates
 
 def _momentum_positions(candles: Sequence[Candle], lookback: int) -> list[int]:
     return [0 if index < lookback else (1 if candle.close > candles[index - lookback].close else -1) for index, candle in enumerate(candles)]
+
+
+@dataclass(frozen=True)
+class CausalExecutionRecord:
+    bar_index: int
+    contract: TemporalEventContract
+    position_before: int
+    position_after: int
+    fill_price: Decimal
+    turnover: int
+    charge: Decimal
+
+
+@dataclass(frozen=True)
+class CausalBacktestResult:
+    result: BacktestResult
+    contracts: tuple[TemporalEventContract, ...]
+    executions: tuple[CausalExecutionRecord, ...]
+
+    def __iter__(self):
+        return iter((self.result, self.contracts))
+
+
+def run_causal_backtest(
+    candles: Sequence[Candle],
+    positions: Sequence[int],
+    costs: CostModel,
+    *,
+    decision_latency_ns: int = 1_000_000,
+    execution_latency_ns: int = 1_000_000,
+    fill_latency_ns: int = 1_000_000,
+    funding_signals: Optional[Sequence[Any]] = None,
+    override_contracts: Optional[Sequence[TemporalEventContract]] = None,
+) -> CausalBacktestResult:
+    """Run an offline research backtest enforcing strict runtime temporal event contracts on every execution.
+
+    Invariants enforced:
+    1. Clock hierarchy: source_ts <= available_ts <= decision_ts <= execution_ts <= fill_ts.
+    2. Bar availability: A candle is not available for trading decisions before its close (available_ts >= source_ts).
+    3. Causal funding boundary: Strategies may only receive ObservableEstimatedFunding or RealizedHistoricalFunding.
+       FutureUnsettledRealizedFunding or raw unsettled data raises TemporalIntegrityViolationError.
+    4. Deliberate clock inversion fails closed immediately.
+    """
+    if len(candles) != len(positions):
+        raise ValueError("candles and positions must have equal length")
+    if len(candles) < 2:
+        raise ValueError("at least two candles are required")
+    if any(position not in {-1, 0, 1} for position in positions):
+        raise ValueError("positions must be -1, 0, or 1")
+    if any(later.ts_event_ns <= earlier.ts_event_ns for earlier, later in zip(candles, candles[1:])):
+        raise ValueError("candles must be strictly increasing")
+
+    # Validate strategy funding boundary if funding signals provided
+    if funding_signals is not None:
+        for idx, sig in enumerate(funding_signals):
+            if isinstance(sig, FutureUnsettledRealizedFunding):
+                raise TemporalIntegrityViolationError(
+                    f"STRATEGY_FUNDING_BOUNDARY_VIOLATION: FutureUnsettledRealizedFunding (settlement: {sig.settlement_ts_ns}) "
+                    f"cannot cross strategy boundary before settlement."
+                )
+            if not isinstance(sig, (ObservableEstimatedFunding, RealizedHistoricalFunding)):
+                raise TemporalIntegrityViolationError(
+                    f"STRATEGY_FUNDING_BOUNDARY_VIOLATION: Signal at index {idx} must be typed "
+                    f"ObservableEstimatedFunding or RealizedHistoricalFunding, got {type(sig).__name__}"
+                )
+
+    contracts: list[TemporalEventContract] = []
+    executions: list[CausalExecutionRecord] = []
+
+    # If override contracts are provided (e.g. adversarial test injection), validate each
+    if override_contracts is not None:
+        for oc in override_contracts:
+            oc.validate()
+            contracts.append(oc)
+
+    gross_equity = net_equity = peak = ONE
+    max_drawdown = total_cost = Decimal("0")
+    previous = 0
+    trades = 0
+
+    for index, candle in enumerate(candles[:-1]):
+        position = positions[index]
+        turnover = abs(position - previous)
+
+        # Enforce temporal contract on bar decision / execution
+        source_ts_ns = candle.ts_event_ns
+        available_ts_ns = candle.ts_event_ns  # Bar availability strictly at or after bar close
+        decision_ts_ns = available_ts_ns + decision_latency_ns
+        execution_ts_ns = decision_ts_ns + execution_latency_ns
+        fill_ts_ns = execution_ts_ns + fill_latency_ns
+
+        contract = TemporalEventContract(
+            source_ts_ns=source_ts_ns,
+            available_ts_ns=available_ts_ns,
+            decision_ts_ns=decision_ts_ns,
+            execution_ts_ns=execution_ts_ns,
+            fill_ts_ns=fill_ts_ns,
+        )
+        contract.validate()
+        contracts.append(contract)
+
+        if turnover:
+            trades += 1
+
+        charge = Decimal(turnover) * costs.turnover_rate + abs(position) * costs.carry_bps_per_bar / BPS
+        gross_period_return = Decimal(position) * (candles[index + 1].close / candle.close - ONE)
+        net_period_return = gross_period_return - charge
+
+        if ONE + net_period_return <= 0:
+            raise ValueError("cost model or return would exhaust capital")
+
+        gross_equity *= ONE + gross_period_return
+        net_equity *= ONE + net_period_return
+        total_cost += charge
+        peak = max(peak, net_equity)
+        max_drawdown = max(max_drawdown, ONE - net_equity / peak)
+
+        executions.append(
+            CausalExecutionRecord(
+                bar_index=index,
+                contract=contract,
+                position_before=previous,
+                position_after=position,
+                fill_price=candle.close,
+                turnover=turnover,
+                charge=charge,
+            )
+        )
+        previous = position
+
+    if previous:
+        trades += 1
+        exit_cost = Decimal(abs(previous)) * costs.turnover_rate
+        net_equity *= ONE - exit_cost
+        total_cost += exit_cost
+        max_drawdown = max(max_drawdown, ONE - net_equity / peak)
+
+        # Terminal flattening contract
+        last_candle = candles[-1]
+        exit_contract = TemporalEventContract(
+            source_ts_ns=last_candle.ts_event_ns,
+            available_ts_ns=last_candle.ts_event_ns,
+            decision_ts_ns=last_candle.ts_event_ns + decision_latency_ns,
+            execution_ts_ns=last_candle.ts_event_ns + decision_latency_ns + execution_latency_ns,
+            fill_ts_ns=last_candle.ts_event_ns + decision_latency_ns + execution_latency_ns + fill_latency_ns,
+        )
+        exit_contract.validate()
+        contracts.append(exit_contract)
+        executions.append(
+            CausalExecutionRecord(
+                bar_index=len(candles) - 1,
+                contract=exit_contract,
+                position_before=previous,
+                position_after=0,
+                fill_price=last_candle.close,
+                turnover=abs(previous),
+                charge=exit_cost,
+            )
+        )
+
+    bt_result = BacktestResult(
+        bars=len(candles),
+        trades=trades,
+        gross_return=gross_equity - ONE,
+        net_return=net_equity - ONE,
+        total_cost=total_cost,
+        max_drawdown=max_drawdown,
+    )
+    return CausalBacktestResult(
+        result=bt_result,
+        contracts=tuple(contracts),
+        executions=tuple(executions),
+    )
+

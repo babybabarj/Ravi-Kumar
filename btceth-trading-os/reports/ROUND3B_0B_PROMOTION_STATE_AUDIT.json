@@ -1,0 +1,15 @@
+{
+  "report_version": "ROUND3B.0B",
+  "status": "VERIFIED",
+  "persistent_db_path": "artifacts/research/experiments.sqlite",
+  "persistent_db_exists": true,
+  "persistent_total_experiments": 26,
+  "persistent_approved_shadow": 0,
+  "persistent_approved_paper": 0,
+  "runtime_registry_initialized": true,
+  "runtime_total_registered": 0,
+  "runtime_approved_shadow": 0,
+  "runtime_approved_paper": 0,
+  "trading_capability": 0,
+  "all_zero_promotions_verified": true
+}
