@@ -9,7 +9,6 @@
   },
   "evidence": {
     "download": {
-      "status": "DOWNLOADED",
       "spec": {
         "source": "binance",
         "market": "usdm",
@@ -35,14 +34,28 @@
         "support_status": "VERIFIED_TRUE",
         "discovery_evidence_id": "plan-monthly-2024-11"
       },
-      "local_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/raw/binance/usdm/fundingRate/BINANCE:USD_M_PERP:BTCUSDT/monthly/2024-11/BTCUSDT-fundingRate-2024-11.e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51.zip",
-      "receipt_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/raw/binance/usdm/fundingRate/BINANCE:USD_M_PERP:BTCUSDT/monthly/2024-11/BTCUSDT-fundingRate-2024-11.e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51.zip.receipt.json",
-      "physical_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "status": "DOWNLOADED",
+      "http_archive_status": 200,
+      "http_checksum_status": 200,
+      "retrieved_at_utc": "2026-09-21T07:54:54.035553+00:00",
+      "archive_byte_size": 746,
       "official_checksum": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "computed_archive_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "os_computed_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "checksum_verified": true,
+      "local_archive_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/raw/binance/futures_um/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip",
+      "local_receipt_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/raw/binance/futures_um/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip.receipt.json",
+      "extracted_payload_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/raw/binance/futures_um/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.csv",
+      "payload_byte_size": 2481,
+      "payload_sha256": "56722e25782b97b9130ad2971dd2cd052d937714f2ed466bcce5770ff18a0db6",
+      "payload_filename": "BTCUSDT-fundingRate-2024-11.csv",
+      "error_message": null,
+      "local_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/raw/binance/futures_um/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip",
+      "receipt_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/raw/binance/futures_um/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip.receipt.json",
+      "physical_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
       "content_length": 746,
       "etag": "\"485f8c0e395f480fb9a4a29afca75c41\"",
-      "last_modified": "Tue, 17 Dec 2024 12:45:32 GMT",
-      "retrieved_at_utc": "2026-09-20T19:49:41.332728+00:00"
+      "last_modified": "Tue, 17 Dec 2024 12:45:32 GMT"
     },
     "parsed_rows": 90,
     "silver_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/silver/funding-e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51.parquet",

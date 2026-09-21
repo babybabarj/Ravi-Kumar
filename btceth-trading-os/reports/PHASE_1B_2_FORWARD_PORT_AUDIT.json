@@ -1,0 +1,22 @@
+{
+  "audit_name": "PHASE_1B_2_FORWARD_PORT_AUDIT",
+  "branch": "btceth-phase1b-hardened",
+  "base_commit": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
+  "remediation_baseline": "6e18e19b8849646b856cff3d1c4476059e74d47d",
+  "generated_at_utc": "2026-09-21T07:54:00Z",
+  "status": "COMPATIBLE",
+  "compatibility_guarantees": {
+    "checksum_first": true,
+    "triple_reconciliation_oracle": true,
+    "safe_zip_extraction": true,
+    "funding_rate_semantic_safety": true,
+    "live_rest_parity": true,
+    "timestamp_policy_audit": true,
+    "archive_catalog_backward_compatible": true,
+    "archive_parser_backward_compatible": true,
+    "historical_silver_backward_compatible": true,
+    "research_builder_backward_compatible": true
+  },
+  "tests_passed": 181,
+  "tests_failed": 0
+}

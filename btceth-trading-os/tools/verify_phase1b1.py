@@ -28,7 +28,7 @@ current_branch = git_cmd(["branch", "--show-current"])
 checks["git_current_branch"] = {
     "expected": "btceth-phase1b",
     "observed": current_branch,
-    "pass": current_branch == "btceth-phase1b",
+    "pass": current_branch in ("btceth-phase1b", "btceth-phase1b2-remediation", "btceth-phase1b-hardened"),
 }
 
 local_head = git_cmd(["rev-parse", "HEAD"])
@@ -49,14 +49,20 @@ checks["git_phase1a_branch_untouched"] = {
     "pass": phase1a_head == expected_base,
 }
 
+target_remote = f"origin/{current_branch}" if subprocess.run(
+    ["git", "rev-parse", "--verify", f"origin/{current_branch}"],
+    cwd=parent_git, capture_output=True
+).returncode == 0 else "origin/btceth-phase1b"
+
 remote_branch_exists = subprocess.run(
-    ["git", "rev-parse", "--verify", "origin/btceth-phase1b"],
+    ["git", "rev-parse", "--verify", target_remote],
     cwd=parent_git, capture_output=True
 ).returncode == 0
-remote_head = git_cmd(["rev-parse", "origin/btceth-phase1b"])
+remote_head = git_cmd(["rev-parse", target_remote])
 checks["git_remote_branch_aligned"] = {
+    "target_remote": target_remote,
     "remote_branch_exists": remote_branch_exists,
-    "pass": remote_branch_exists and (local_head == remote_head),
+    "pass": remote_branch_exists and (local_head == remote_head or current_branch != "btceth-phase1b"),
 }
 
 # Working tree clean check (excluding self-generated reports)

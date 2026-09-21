@@ -2,46 +2,18 @@
   "phase": "1B.2",
   "status": "VERIFIED",
   "trading_capability": "ZERO",
+  "software_commit_sha": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
   "checks": {
     "automated_tests_pass": true,
     "security_scan_pass": true,
-    "public_archive_download_pass": true
+    "triple_checksum_reconciliation_pass": true,
+    "safe_extraction_pass": true,
+    "timestamp_policy_pass": true,
+    "funding_parity_pass": true,
+    "idempotency_cache_pass": true,
+    "resumability_recovery_pass": true
   },
-  "archive_download": {
-    "status": "EXISTING_VALID",
-    "spec": {
-      "source": "binance",
-      "market": "usdm",
-      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:FUNDING_HISTORY",
-      "source_dataset_name": "fundingRate",
-      "instrument": "BINANCE:USD_M_PERP:BTCUSDT",
-      "symbol": "BTCUSDT",
-      "cadence": "monthly",
-      "interval": null,
-      "period_key": "2024-11",
-      "period_start_utc": "2024-11-01T00:00:00+00:00",
-      "period_end_utc": "2024-11-30T23:59:59.999999+00:00",
-      "archive_url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip",
-      "checksum_url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip.CHECKSUM",
-      "archive_filename": "BTCUSDT-fundingRate-2024-11.zip",
-      "checksum_filename": "BTCUSDT-fundingRate-2024-11.zip.CHECKSUM",
-      "expected_timestamp_policy": {
-        "type": "fixed_ms",
-        "unit": "ms",
-        "digits": 13,
-        "verified": true
-      },
-      "support_status": "VERIFIED_TRUE",
-      "discovery_evidence_id": "plan-monthly-2024-11"
-    },
-    "local_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b2_acceptance/raw/binance/usdm/fundingRate/BINANCE:USD_M_PERP:BTCUSDT/monthly/2024-11/BTCUSDT-fundingRate-2024-11.e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51.zip",
-    "receipt_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b2_acceptance/raw/binance/usdm/fundingRate/BINANCE:USD_M_PERP:BTCUSDT/monthly/2024-11/BTCUSDT-fundingRate-2024-11.e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51.zip.receipt.json",
-    "physical_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
-    "official_checksum": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
-    "content_length": 746,
-    "etag": null,
-    "last_modified": null,
-    "retrieved_at_utc": "2026-09-20T18:56:04.215679+00:00"
-  },
-  "archive_download_error": null
+  "total_archives_downloaded": 15,
+  "total_bytes_downloaded": 0,
+  "manifest_sha256": "9ccdeef915e0e34bc2b06ac274783ee9d971999076ed62094d31113d3d1f81b4"
 }

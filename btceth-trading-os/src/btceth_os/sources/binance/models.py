@@ -34,6 +34,24 @@ class ArchiveObjectSpec:
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
+    def __getitem__(self, key: str) -> Any:
+        try:
+            return getattr(self, key)
+        except AttributeError as err:
+            raise KeyError(key) from err
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return getattr(self, key, default)
+
+    def keys(self):
+        return asdict(self).keys()
+
+    def values(self):
+        return asdict(self).values()
+
+    def items(self):
+        return asdict(self).items()
+
 
 @dataclass(frozen=True)
 class DiscoveryEvidence:

@@ -127,33 +127,33 @@
     {
       "market": "spot",
       "symbol": "BTCUSDT",
-      "last_update_id": 100221941385,
-      "best_bid": "75998.00000000",
-      "best_ask": "75998.01000000",
+      "last_update_id": 100406858348,
+      "best_bid": "81587.76000000",
+      "best_ask": "81587.77000000",
       "deltas_applied": 3
     },
     {
       "market": "spot",
       "symbol": "ETHUSDT",
-      "last_update_id": 81070725038,
-      "best_bid": "2407.34000000",
-      "best_ask": "2407.35000000",
+      "last_update_id": 81253560355,
+      "best_bid": "2655.00000000",
+      "best_ask": "2655.01000000",
       "deltas_applied": 3
     },
     {
       "market": "usdm",
       "symbol": "BTCUSDT",
-      "last_update_id": 11574755392217,
-      "best_bid": "75991.80",
-      "best_ask": "75991.90",
+      "last_update_id": 11613835647929,
+      "best_bid": "81595.20",
+      "best_ask": "81595.30",
       "deltas_applied": 3
     },
     {
       "market": "usdm",
       "symbol": "ETHUSDT",
-      "last_update_id": 11574756044726,
-      "best_bid": "2406.47",
-      "best_ask": "2406.48",
+      "last_update_id": 11613836179536,
+      "best_bid": "2653.66",
+      "best_ask": "2653.67",
       "deltas_applied": 3
     }
   ],

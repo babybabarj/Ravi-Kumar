@@ -1,0 +1,27 @@
+{
+  "report_name": "DOWNSTREAM_HISTORICAL_DATA_IMPACT",
+  "generated_at_utc": "2026-09-21T07:55:00Z",
+  "branch": "btceth-phase1b-hardened",
+  "status": "INPUTS_VERIFIED_IDENTICAL",
+  "revalidation_required": false,
+  "phases_evaluated": {
+    "phase_1b3": {
+      "status": "VERIFIED",
+      "revalidation_required": false
+    },
+    "phase_1b4": {
+      "status": "VERIFIED",
+      "revalidation_required": false
+    },
+    "phase_1b5": {
+      "status": "VERIFIED",
+      "revalidation_required": false
+    },
+    "research_round3a": {
+      "status": "VERIFIED",
+      "revalidation_required": false,
+      "dataset_v310_sha": "a085cf7f69d03357"
+    }
+  },
+  "summary": "All canonical raw archives and downstream representations are bit-for-bit identical and verified."
+}

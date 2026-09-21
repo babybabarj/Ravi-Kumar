@@ -1,0 +1,67 @@
+{
+  "comparison_timestamp_utc": "2026-09-21T07:45:00Z",
+  "historical_commit": "963bd6a5657c2ed4f924ade045fb703b73f5412e",
+  "hardened_commit": "c882c6ad41db0e5051e0f263ecf2b3443ebe48b3",
+  "capabilities": {
+    "checksum_first_validation": {
+      "classification": "PRESENT_BUT_WEAKER",
+      "historical_state": "Fetched .CHECKSUM before archive, verified Python SHA-256 against official checksum.",
+      "hardened_state": "Triple-reconciliation: official checksum == Python SHA-256 == independent OS `shasum -a 256` oracle. Reconciled across all 15 acceptance archives.",
+      "evidence": "tools/verify_phase1b2.py, reports/PHASE_1B_2_CHECKSUM_AUDIT.json"
+    },
+    "safe_zip_extraction": {
+      "classification": "MISSING",
+      "historical_state": "No safe ZIP extraction implemented in 963bd6a. Archives remained raw ZIP files without inspection.",
+      "hardened_state": "src/btceth_os/sources/binance/bronze.py with SafeZipExtractor enforcing directory traversal (../), absolute path, null byte, symlink rejection, single CSV member, and path containment.",
+      "evidence": "tests/test_bronze_extraction.py (8 test cases)"
+    },
+    "raw_schema_inspection": {
+      "classification": "MISSING",
+      "historical_state": "No CSV schema inspector or quality probe in 963bd6a.",
+      "hardened_state": "src/btceth_os/sources/binance/schema_inspector.py with dynamic header detection, column mapping (klines, trades, aggTrades, fundingRate), and quality probes.",
+      "evidence": "reports/PHASE_1B_2_SCHEMA_AUDIT.json, tests/test_schema_inspector.py"
+    },
+    "funding_rate_parser_safety": {
+      "classification": "MISSING",
+      "historical_state": "No dedicated funding rate parser. Vulnerable to column confusion between interval (8) and rate (-0.00012359).",
+      "hardened_state": "SchemaInspector.parse_funding_rate_csv with strict semantic header mapping and catastrophic regression traps asserting interval != rate and |rate| <= 0.1.",
+      "evidence": "tests/test_schema_inspector.py::test_funding_rate_parser_mandatory_specification, test_funding_rate_parser_catastrophic_mutation_trap"
+    },
+    "funding_archive_rest_parity": {
+      "classification": "MISSING",
+      "historical_state": "No archive/REST overlap verifier in 963bd6a.",
+      "hardened_state": "FundingParityAuditor matching calc_time (archive) to fundingTime (REST), asserting rate parity, and tolerating optional fields (markPrice, rateType).",
+      "evidence": "reports/PHASE_1B_2_FUNDING_PARITY.json, tests/test_funding_parity.py"
+    },
+    "timestamp_policy_audit": {
+      "classification": "MISSING",
+      "historical_state": "Timestamp policies were noted in planner config but never mechanically audited against extracted files.",
+      "hardened_state": "TimestampPolicyAuditor mechanically verifying Spot ms (pre-2025: 13 digits), Spot us (post-2025: 16 digits), and USD-M fixed ms across all 15 acceptance datasets.",
+      "evidence": "reports/PHASE_1B_2_TIMESTAMP_AUDIT.json, tests/test_timestamp_audit.py"
+    },
+    "acceptance_dataset_breadth": {
+      "classification": "PRESENT_BUT_WEAKER",
+      "historical_state": "Historical 963bd6a downloaded only 1 archive (BTCUSDT fundingRate 2024-11, 746 bytes).",
+      "hardened_state": "Hardened 1B.2 exercises all 10 dataset categories across BTCUSDT & ETHUSDT for Spot and USD-M (15 archives verified, 99.4 MB).",
+      "evidence": "reports/PHASE_1B_2_ACQUISITION_MANIFEST.json"
+    },
+    "acceptance_reporting": {
+      "classification": "PRESENT_BUT_WEAKER",
+      "historical_state": "Produced only a basic PHASE_1B_2_ACCEPTANCE.json/.md with 3 boolean flags.",
+      "hardened_state": "Produced all 6 mandatory reports: ACQUISITION_MANIFEST, CHECKSUM_AUDIT, SCHEMA_AUDIT, TIMESTAMP_AUDIT, FUNDING_PARITY, and ACCEPTANCE (.json and .md).",
+      "evidence": "reports/PHASE_1B_2_*.json"
+    },
+    "repeatability_and_resumability": {
+      "classification": "PRESENT_BUT_WEAKER",
+      "historical_state": "Checked idempotency cache hit in unit test only.",
+      "hardened_state": "Verify gate runs 3 consecutive acceptance cycles: Run 1 clean download, Run 2 cache hit, Run 3 restart/resume recovery from interrupted .part fixture.",
+      "evidence": "tools/verify_phase1b2.py"
+    },
+    "zero_trading_security": {
+      "classification": "ALREADY_PRESENT_AND_CORRECT",
+      "historical_state": "Enforced zero trading capability and 0 AST hits.",
+      "hardened_state": "Continues to enforce zero trading capability and 0 AST hits.",
+      "evidence": "reports/PHASE_1B_2_SECURITY_SCAN.txt"
+    }
+  }
+}

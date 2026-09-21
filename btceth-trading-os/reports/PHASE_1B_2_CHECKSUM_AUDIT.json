@@ -1,0 +1,112 @@
+{
+  "audit_timestamp_utc": "2026-09-21T07:53:02.401082+00:00",
+  "triple_reconciliation_passed": true,
+  "objects_audited": 15,
+  "checksum_records": [
+    {
+      "archive_filename": "BTCUSDT-1m-2024-12-31.zip",
+      "official_checksum": "756551b6eb4f0a0173af3333762e6c95d08c7503bb3b7b79807e10a02575a4af",
+      "python_sha256": "756551b6eb4f0a0173af3333762e6c95d08c7503bb3b7b79807e10a02575a4af",
+      "os_sha256": "756551b6eb4f0a0173af3333762e6c95d08c7503bb3b7b79807e10a02575a4af",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "BTCUSDT-1m-2025-01-01.zip",
+      "official_checksum": "10a12909f1b0e3fcc6b7f502e5ea9be5d1ba3455dd8ab16cc61c8650640ba7c0",
+      "python_sha256": "10a12909f1b0e3fcc6b7f502e5ea9be5d1ba3455dd8ab16cc61c8650640ba7c0",
+      "os_sha256": "10a12909f1b0e3fcc6b7f502e5ea9be5d1ba3455dd8ab16cc61c8650640ba7c0",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "ETHUSDT-1m-2024-12-31.zip",
+      "official_checksum": "70ae988d84bb7ad0692dccbb126dec26b8a388fbc8cdd11bda06cbfe40837cf6",
+      "python_sha256": "70ae988d84bb7ad0692dccbb126dec26b8a388fbc8cdd11bda06cbfe40837cf6",
+      "os_sha256": "70ae988d84bb7ad0692dccbb126dec26b8a388fbc8cdd11bda06cbfe40837cf6",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "ETHUSDT-1m-2025-01-01.zip",
+      "official_checksum": "26cc71cf7a2bd0232cf0e8aaaf529fc6674ba20059028023eb346232ee4dbf91",
+      "python_sha256": "26cc71cf7a2bd0232cf0e8aaaf529fc6674ba20059028023eb346232ee4dbf91",
+      "os_sha256": "26cc71cf7a2bd0232cf0e8aaaf529fc6674ba20059028023eb346232ee4dbf91",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "BTCUSDT-aggTrades-2024-12-31.zip",
+      "official_checksum": "31bf57b571f0bf58bdca38bcb4cb59fe0e6b96b7a683ee2f2391c66b130394cc",
+      "python_sha256": "31bf57b571f0bf58bdca38bcb4cb59fe0e6b96b7a683ee2f2391c66b130394cc",
+      "os_sha256": "31bf57b571f0bf58bdca38bcb4cb59fe0e6b96b7a683ee2f2391c66b130394cc",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "ETHUSDT-trades-2024-12-31.zip",
+      "official_checksum": "d344dbd740ce88f1da0f7e3680a0931976663c351a8e07e399821cc2542c3091",
+      "python_sha256": "d344dbd740ce88f1da0f7e3680a0931976663c351a8e07e399821cc2542c3091",
+      "os_sha256": "d344dbd740ce88f1da0f7e3680a0931976663c351a8e07e399821cc2542c3091",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "BTCUSDT-1m-2024-11-01.zip",
+      "official_checksum": "8fd920bd21fc71070b69c6a3a73ba264e90d44f96934bc0110519aa7b960ef41",
+      "python_sha256": "8fd920bd21fc71070b69c6a3a73ba264e90d44f96934bc0110519aa7b960ef41",
+      "os_sha256": "8fd920bd21fc71070b69c6a3a73ba264e90d44f96934bc0110519aa7b960ef41",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "ETHUSDT-1m-2024-11-01.zip",
+      "official_checksum": "3d1b23645bdaab804b797ae4080eba25bddc074fb8c1f1a8a70152650637e444",
+      "python_sha256": "3d1b23645bdaab804b797ae4080eba25bddc074fb8c1f1a8a70152650637e444",
+      "os_sha256": "3d1b23645bdaab804b797ae4080eba25bddc074fb8c1f1a8a70152650637e444",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "BTCUSDT-1m-2024-11-01.zip",
+      "official_checksum": "787558eacc52e25b3dae3857d8f602f61c720fd5608a43d2c6c0df8528f4c793",
+      "python_sha256": "787558eacc52e25b3dae3857d8f602f61c720fd5608a43d2c6c0df8528f4c793",
+      "os_sha256": "787558eacc52e25b3dae3857d8f602f61c720fd5608a43d2c6c0df8528f4c793",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "BTCUSDT-1m-2024-11-01.zip",
+      "official_checksum": "8337b5caeb47177270762b59e978a05b68be6f5d9c6c7f72605f40742c78db90",
+      "python_sha256": "8337b5caeb47177270762b59e978a05b68be6f5d9c6c7f72605f40742c78db90",
+      "os_sha256": "8337b5caeb47177270762b59e978a05b68be6f5d9c6c7f72605f40742c78db90",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "BTCUSDT-1m-2024-11-01.zip",
+      "official_checksum": "9c17708de0fdecd1ab2ed36697e2213c85aeecf8d614d3c5a91489689dc50109",
+      "python_sha256": "9c17708de0fdecd1ab2ed36697e2213c85aeecf8d614d3c5a91489689dc50109",
+      "os_sha256": "9c17708de0fdecd1ab2ed36697e2213c85aeecf8d614d3c5a91489689dc50109",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "BTCUSDT-aggTrades-2024-11-01.zip",
+      "official_checksum": "778e6eb0375edbf5c019a69e221992385a6051b06ecd52354a8c1e83a57e541d",
+      "python_sha256": "778e6eb0375edbf5c019a69e221992385a6051b06ecd52354a8c1e83a57e541d",
+      "os_sha256": "778e6eb0375edbf5c019a69e221992385a6051b06ecd52354a8c1e83a57e541d",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "ETHUSDT-trades-2024-11-01.zip",
+      "official_checksum": "c90874a4d0ff30d023e50c6e28a953d58c9b8982abb4c641fcf4fe42e4274cb0",
+      "python_sha256": "c90874a4d0ff30d023e50c6e28a953d58c9b8982abb4c641fcf4fe42e4274cb0",
+      "os_sha256": "c90874a4d0ff30d023e50c6e28a953d58c9b8982abb4c641fcf4fe42e4274cb0",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "BTCUSDT-fundingRate-2024-11.zip",
+      "official_checksum": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "python_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "os_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "reconciled": true
+    },
+    {
+      "archive_filename": "ETHUSDT-fundingRate-2024-11.zip",
+      "official_checksum": "636a4c7c86445c2774b4eae8598c480fcbc57de7dde5d40f6937c7fac510797c",
+      "python_sha256": "636a4c7c86445c2774b4eae8598c480fcbc57de7dde5d40f6937c7fac510797c",
+      "os_sha256": "636a4c7c86445c2774b4eae8598c480fcbc57de7dde5d40f6937c7fac510797c",
+      "reconciled": true
+    }
+  ]
+}
