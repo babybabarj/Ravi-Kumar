@@ -118,3 +118,26 @@ def test_reject_mismatched_payload_filename(tmp_path: Path):
 
     with pytest.raises(BronzeExtractionError, match=r"Payload filename mismatch"):
         SafeZipExtractor.inspect_and_extract(zip_file, dest, expected_payload_name="BTCUSDT-1m.csv")
+
+
+def test_reject_directory_traversal_backslash(tmp_path: Path):
+    dest = tmp_path / "extracted"
+    zip_file = create_zip(tmp_path, "evil_backslash.zip", "..\\..\\evil.csv", b"hacked")
+
+    with pytest.raises(ZipTraversalSecurityError, match=r"Directory traversal \(\.\.\) detected"):
+        SafeZipExtractor.inspect_and_extract(zip_file, dest)
+
+
+def test_reject_bad_crc(tmp_path: Path):
+    dest = tmp_path / "extracted"
+    zip_path = tmp_path / "crc_fail.zip"
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_STORED) as zf:
+        zf.writestr("data.csv", b"correct_data_payload_12345")
+    data = bytearray(zip_path.read_bytes())
+    idx = data.find(b"correct_data_payload_12345")
+    assert idx != -1
+    data[idx] = ord("X")
+    zip_path.write_bytes(bytes(data))
+
+    with pytest.raises(CorruptArchiveError, match=r"CRC check failed"):
+        SafeZipExtractor.inspect_and_extract(zip_path, dest)

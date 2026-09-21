@@ -253,9 +253,12 @@ class SchemaInspector:
                 expected_cols = len(first_row)
                 rows_iter = [first_row, *reader]
 
-            # Determine timestamp column index and price column index
             name_lower = dataset_name.lower().replace("-", "_")
-            if header_detected:
+            header_tokens = [h.strip().lower() for h in first_row] if header_detected else []
+            if "premium" in name_lower:
+                ts_idx = 0 if not header_detected else (header_tokens.index("open_time") if "open_time" in header_tokens else 0)
+                price_idx = None  # Premium index rates are signed spreads and legitimately can be negative
+            elif header_detected:
                 header_tokens = [h.strip().lower() for h in first_row]
                 if "calc_time" in header_tokens:
                     ts_idx = header_tokens.index("calc_time")

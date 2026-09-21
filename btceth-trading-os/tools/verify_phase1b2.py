@@ -70,9 +70,20 @@ def main() -> int:
     REPORTS.mkdir(exist_ok=True)
     BRONZE_ROOT.mkdir(parents=True, exist_ok=True)
 
+    verification_started = datetime.now(timezone.utc).isoformat()
+    status_proc = run_cmd(["git", "status", "--porcelain"])
+    working_tree_clean_before = (len(status_proc.stdout.strip()) == 0)
+    current_branch = run_cmd(["git", "branch", "--show-current"]).stdout.strip()
+
+    # Clean tested code commit identification
+    tested_code_commit_sha = get_git_commit()
+    tree_proc = run_cmd(["git", "rev-parse", f"{tested_code_commit_sha}^{{tree}}"])
+    tested_tree_sha = tree_proc.stdout.strip()
+
     print("=== Phase 1B.2 Acceptance Verification Gate ===")
-    commit_sha = get_git_commit()
-    print(f"Commit: {commit_sha}")
+    print(f"Branch: {current_branch}")
+    print(f"Tested Code Commit: {tested_code_commit_sha}")
+    print(f"Tested Tree SHA: {tested_tree_sha}")
 
     # 1. Pytest suite
     print("[1/8] Running full automated test suite...")
@@ -94,23 +105,39 @@ def main() -> int:
     downloader = ArchiveDownloader(bronze_root=BRONZE_ROOT)
 
     receipts: list[DownloadReceipt] = []
-    total_bytes_downloaded = 0
-    triple_reconciled = True
     safe_extraction_passed = True
 
     # RUN 1: Acquisition run
     for spec in specs:
         r = downloader.download(spec, extract=True)
         receipts.append(r)
-        if r.status == "DOWNLOADED" and r.archive_byte_size:
-            total_bytes_downloaded += r.archive_byte_size
-
-        if not r.checksum_verified:
-            triple_reconciled = False
         if not r.extracted_payload_path or not Path(r.extracted_payload_path).is_file():
             safe_extraction_passed = False
 
-    print(f"Run 1 completed: {len(receipts)} archives verified, {total_bytes_downloaded:,} bytes downloaded.")
+    # Distinct Byte Accounting (Section 9 & 10)
+    total_archives_verified = len(receipts)
+    total_archive_bytes_verified = sum(r.archive_byte_size or 0 for r in receipts)
+    total_archive_mib_verified = round(total_archive_bytes_verified / (1024 * 1024), 4)
+    total_archives_downloaded_this_run = sum(1 for r in receipts if r.status == "DOWNLOADED")
+    total_bytes_downloaded_this_run = sum(r.archive_byte_size or 0 for r in receipts if r.status == "DOWNLOADED")
+    total_cache_hits = sum(1 for r in receipts if r.status == "EXISTING_VALID")
+    total_bytes_reused_from_verified_cache = sum(r.archive_byte_size or 0 for r in receipts if r.status == "EXISTING_VALID")
+
+    # Triple-reconciliation oracle recomputed from evidence (Section 11)
+    triple_reconciled = all(
+        r.official_checksum is not None
+        and r.computed_archive_sha256 is not None
+        and r.os_computed_sha256 is not None
+        and (r.official_checksum == r.computed_archive_sha256 == r.os_computed_sha256)
+        for r in receipts
+    )
+
+    print(
+        f"Run 1 completed: {total_archives_verified} archives verified "
+        f"({total_archive_bytes_verified:,} bytes / {total_archive_mib_verified} MiB), "
+        f"{total_bytes_downloaded_this_run:,} bytes downloaded this run, "
+        f"{total_cache_hits} cache hits."
+    )
 
     # 4. Section 14: Repeatability & Idempotency Audit
     print("[4/8] Testing Repeatability & Idempotency (Run 2: Cache Hit)...")
@@ -161,7 +188,7 @@ def main() -> int:
         if not r.extracted_payload_path:
             continue
         p_path = Path(r.extracted_payload_path)
-        spec_dict = r.spec
+        spec_dict = r.spec if isinstance(r.spec, dict) else r.spec.to_dict()
         dataset_name = spec_dict["source_dataset_name"]
         symbol = spec_dict["symbol"]
         market = spec_dict["market"]
@@ -178,65 +205,106 @@ def main() -> int:
         q_probe = SchemaInspector.run_quality_probe(p_path, dataset_name, expected_unit=ts_res.declared_policy_unit)
         quality_records.append({
             "dataset_id": dataset_id,
-            "filename": r.payload_filename,
-            "probe": q_probe.to_dict(),
-        })
-
-        # Schema entry
-        schema_records.append({
-            "dataset_id": dataset_id,
-            "payload_filename": r.payload_filename,
-            "header_detected": q_probe.header_detected,
+            "dataset_name": dataset_name,
+            "symbol": symbol,
             "row_count": q_probe.row_count,
             "column_count_violations": q_probe.column_count_violations,
+            "malformed_row_count": q_probe.malformed_row_count,
+            "is_monotonic": q_probe.is_monotonic,
+            "duplicate_timestamp_count": q_probe.duplicate_timestamp_count,
             "price_violations": q_probe.price_violations,
         })
 
-    # 6. Funding Archive / REST Parity Audit
-    print("[7/8] Performing funding archive vs REST parity audit...")
+    # Schema Quality Gate (Section 15)
+    total_col_violations = sum(q["column_count_violations"] for q in quality_records)
+    total_malformed_rows = sum(q["malformed_row_count"] for q in quality_records)
+    total_ordering_violations = sum(1 for q in quality_records if not q["is_monotonic"])
+    total_price_violations = sum(q["price_violations"] for q in quality_records)
+    schema_quality_passed = (
+        total_col_violations == 0
+        and total_malformed_rows == 0
+        and total_ordering_violations == 0
+        and total_price_violations == 0
+    )
+
+    # 6. Funding Archive / Live REST Parity Audit (Sections 13 & 14)
+    print("[7/8] Performing funding archive vs live REST parity audit (BTC & ETH)...")
     funding_reports: list[FundingParityReport] = []
+    parity_modes: list[str] = []
     funding_parity_passed = False
+    funding_parity_symbols = ["BTCUSDT", "ETHUSDT"]
+
     try:
-        # Find BTCUSDT funding archive receipt
-        btc_funding_receipt = next(
-            r for r in receipts if r.spec["source_dataset_name"] == "fundingRate" and r.spec["symbol"] == "BTCUSDT"
+        for sym in funding_parity_symbols:
+            funding_receipt = next(
+                r for r in receipts
+                if r.spec["source_dataset_name"] == "fundingRate" and r.spec["symbol"] == sym
+            )
+            arch_records = SchemaInspector.parse_funding_rate_csv(Path(funding_receipt.extracted_payload_path))
+            start_ts = arch_records[-5].calc_time_raw
+            end_ts = arch_records[-1].calc_time_raw
+
+            try:
+                rest_items = FundingParityAuditor.fetch_live_rest_funding(
+                    sym, limit=100, start_time=start_ts, end_time=end_ts
+                )
+                parity_mode = "LIVE_REST"
+            except Exception as exc:
+                print(f"Warning: live REST funding query failed for {sym}: {exc}")
+                parity_mode = "SYNTHETIC_FALLBACK"
+                rest_items = [
+                    FundingParityAuditor.parse_rest_response([
+                        {
+                            "symbol": sym,
+                            "fundingTime": arch_records[-1].calc_time_raw,
+                            "fundingRate": str(arch_records[-1].last_funding_rate),
+                            "markPrice": "95000.0",
+                            "rateType": "Regular",
+                        }
+                    ])[0]
+                ]
+
+            parity_modes.append(parity_mode)
+            rep = FundingParityAuditor.audit_overlap(sym, arch_records, rest_items)
+            funding_reports.append(rep)
+
+        # Enforce Section 13 & 14: require LIVE_REST, matched > 0, 0 rate mismatches, 0 duplicate settlements
+        all_live = all(m == "LIVE_REST" for m in parity_modes)
+        all_clean = all(
+            rep.matched_count > 0 and rep.rate_mismatch_count == 0 and rep.duplicate_settlement_count == 0
+            for rep in funding_reports
         )
-        arch_records = SchemaInspector.parse_funding_rate_csv(Path(btc_funding_receipt.extracted_payload_path))
-
-        # Live REST fetch with fallback tolerance
-        try:
-            rest_items = FundingParityAuditor.fetch_live_rest_funding("BTCUSDT", limit=100)
-        except Exception:
-            # Synthetic offline fixture simulating recent REST response
-            rest_items = [
-                FundingParityAuditor.parse_rest_response([
-                    {"symbol": "BTCUSDT", "fundingTime": arch_records[-1].calc_time_raw, "fundingRate": str(arch_records[-1].last_funding_rate), "markPrice": "95000.0", "rateType": "standard"}
-                ])[0]
-            ]
-
-        parity_report = FundingParityAuditor.audit_overlap("BTCUSDT", arch_records, rest_items)
-        funding_reports.append(parity_report)
-        funding_parity_passed = (parity_report.rate_mismatch_count == 0 and parity_report.duplicate_settlement_count == 0)
+        funding_parity_passed = (all_live and all_clean)
+        active_funding_mode = "LIVE_REST" if all_live else "SYNTHETIC_FALLBACK"
     except Exception as e:
-        print(f"Funding parity error: {e}")
+        print(f"Funding parity audit error: {e}")
         funding_parity_passed = False
+        active_funding_mode = "FAILED"
 
-    print(f"Funding parity audit: {'PASS' if funding_parity_passed else 'FAIL'}")
+    print(f"Funding parity audit: {'PASS' if funding_parity_passed else 'FAIL'} (mode: {active_funding_mode})")
 
     # 7. Compile and save all required reports
     print("[8/8] Compiling required Phase 1B.2 reports...")
 
-    # Report 1: ACQUISITION MANIFEST
-    manifest_payload = {
+    # Report 1: ACQUISITION MANIFEST (Section 12: Deterministic SHA contract)
+    manifest_payload_pre = {
         "manifest_version": "1.0.0",
-        "created_at_utc": datetime.now(timezone.utc).isoformat(),
-        "software_commit_sha": commit_sha,
-        "total_archives_acquired": len(receipts),
-        "total_bytes_downloaded": total_bytes_downloaded,
+        "created_at_utc": verification_started,
+        "branch_name": current_branch,
+        "tested_code_commit_sha": tested_code_commit_sha,
+        "tested_tree_sha": tested_tree_sha,
+        "total_archives_verified": total_archives_verified,
+        "total_archive_bytes_verified": total_archive_bytes_verified,
+        "total_archive_mib_verified": total_archive_mib_verified,
+        "total_archives_downloaded_this_run": total_archives_downloaded_this_run,
+        "total_bytes_downloaded_this_run": total_bytes_downloaded_this_run,
+        "total_cache_hits": total_cache_hits,
+        "total_bytes_reused_from_verified_cache": total_bytes_reused_from_verified_cache,
         "objects": [r.to_dict() for r in receipts],
     }
-    manifest_json_str = json.dumps(manifest_payload, indent=2)
-    manifest_sha256 = hashlib.sha256(manifest_json_str.encode("utf-8")).hexdigest()
+    canonical_manifest_bytes = json.dumps(manifest_payload_pre, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    manifest_sha256 = hashlib.sha256(canonical_manifest_bytes).hexdigest()
+    manifest_payload = dict(manifest_payload_pre)
     manifest_payload["manifest_sha256"] = manifest_sha256
     (REPORTS / "PHASE_1B_2_ACQUISITION_MANIFEST.json").write_text(json.dumps(manifest_payload, indent=2) + "\n")
 
@@ -244,10 +312,14 @@ def main() -> int:
         "# Phase 1B.2 Historical Acquisition Manifest",
         "",
         f"- **Creation Timestamp (UTC)**: `{manifest_payload['created_at_utc']}`",
-        f"- **Software Commit SHA**: `{commit_sha}`",
+        f"- **Branch Name**: `{current_branch}`",
+        f"- **Tested Code Commit SHA**: `{tested_code_commit_sha}`",
+        f"- **Tested Tree SHA**: `{tested_tree_sha}`",
         f"- **Logical Manifest SHA-256**: `{manifest_sha256}`",
-        f"- **Total Objects Acquired**: `{len(receipts)}`",
-        f"- **Total Bytes Downloaded**: `{total_bytes_downloaded:,}` bytes",
+        f"- **Total Archives Verified**: `{total_archives_verified}`",
+        f"- **Total Archive Bytes Verified**: `{total_archive_bytes_verified:,}` bytes ({total_archive_mib_verified} MiB)",
+        f"- **Total Downloaded This Run**: `{total_bytes_downloaded_this_run:,}` bytes ({total_archives_downloaded_this_run} archives)",
+        f"- **Total Cache Hits**: `{total_cache_hits}` ({total_bytes_reused_from_verified_cache:,}` bytes reused)",
         "",
         "| Dataset ID | Market | Symbol | Filename | Status | Archive Size | Archive SHA-256 | Checksum Match |",
         "| :--- | :---: | :---: | :--- | :---: | :---: | :--- | :---: |",
@@ -259,9 +331,11 @@ def main() -> int:
         )
     (REPORTS / "PHASE_1B_2_ACQUISITION_MANIFEST.md").write_text("\n".join(manifest_md_lines) + "\n")
 
-    # Report 2: CHECKSUM AUDIT
+    # Report 2: CHECKSUM AUDIT (Section 11)
     checksum_audit_payload = {
         "audit_timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "branch_name": current_branch,
+        "tested_code_commit_sha": tested_code_commit_sha,
         "triple_reconciliation_passed": triple_reconciled,
         "objects_audited": len(receipts),
         "checksum_records": [
@@ -278,78 +352,92 @@ def main() -> int:
     (REPORTS / "PHASE_1B_2_CHECKSUM_AUDIT.json").write_text(json.dumps(checksum_audit_payload, indent=2) + "\n")
 
     checksum_md_lines = [
-        "# Phase 1B.2 Checksum Triple-Reconciliation Audit",
+        "# Phase 1B.2 Cryptographic Checksum Audit",
         "",
-        f"- **Audit Status**: `{'PASS' if triple_reconciled else 'FAIL'}`",
-        f"- **Objects Audited**: `{len(receipts)}`",
+        f"- **Audit Timestamp (UTC)**: `{checksum_audit_payload['audit_timestamp_utc']}`",
+        f"- **Tested Code Commit**: `{tested_code_commit_sha}`",
+        f"- **Triple-Reconciliation Oracle Status**: `{'PASS' if triple_reconciled else 'FAIL'}`",
+        f"- **Formula**: `official_checksum == python_sha256 == os_sha256`",
         "",
-        "| Archive Filename | Official Checksum | Python SHA-256 | OS `shasum` | Triple Reconciled |",
+        "| Archive Filename | Official Checksum | Python SHA-256 | OS sha256 (`shasum`) | Reconciled |",
         "| :--- | :--- | :--- | :--- | :---: |",
     ]
     for rec in checksum_audit_payload["checksum_records"]:
-        reconciled_str = "MATCH (PASS)" if rec["reconciled"] else "MISMATCH (FAIL)"
+        reconciled_str = "PASS" if rec["reconciled"] else "FAIL"
         checksum_md_lines.append(
-            f"| `{rec['archive_filename']}` | `{rec['official_checksum'][:16]}...` | `{rec['python_sha256'][:16]}...` | `{rec['os_sha256'][:16]}...` | `{reconciled_str}` |"
+            f"| `{rec['archive_filename']}` | `{rec['official_checksum'][:16]}...` | `{rec['python_sha256'][:16]}...` | `{rec['os_sha256'][:16]}...` | {reconciled_str} |"
         )
     (REPORTS / "PHASE_1B_2_CHECKSUM_AUDIT.md").write_text("\n".join(checksum_md_lines) + "\n")
 
-    # Report 3: SCHEMA AUDIT
-    schema_payload = {
+    # Report 3: SCHEMA AUDIT (Section 15)
+    schema_audit_payload = {
         "audit_timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "total_files_audited": len(schema_records),
-        "schemas": schema_records,
-        "quality_probes": quality_records,
+        "schema_quality_passed": schema_quality_passed,
+        "total_column_count_violations": total_col_violations,
+        "total_malformed_rows": total_malformed_rows,
+        "total_ordering_violations": total_ordering_violations,
+        "total_price_violations": total_price_violations,
+        "records": quality_records,
     }
-    (REPORTS / "PHASE_1B_2_SCHEMA_AUDIT.json").write_text(json.dumps(schema_payload, indent=2) + "\n")
+    (REPORTS / "PHASE_1B_2_SCHEMA_AUDIT.json").write_text(json.dumps(schema_audit_payload, indent=2) + "\n")
 
     schema_md_lines = [
         "# Phase 1B.2 Raw Schema & Quality Probe Audit",
         "",
-        f"- **Files Audited**: `{len(schema_records)}`",
+        f"- **Audit Timestamp (UTC)**: `{schema_audit_payload['audit_timestamp_utc']}`",
+        f"- **Schema Quality Gate**: `{'PASS' if schema_quality_passed else 'FAIL'}`",
+        f"- **Total Column Count Violations**: `{total_col_violations}`",
+        f"- **Total Malformed Rows**: `{total_malformed_rows}`",
+        f"- **Total Timestamp Ordering Violations**: `{total_ordering_violations}`",
         "",
-        "| Dataset ID | Filename | Header Detected | Rows | Col Violations | Price Violations |",
-        "| :--- | :--- | :---: | :---: | :---: | :---: |",
+        "| Dataset ID | Symbol | Rows | Header Detected | Monotonic | Duplicates | Col Violations | Price Violations |",
+        "| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
     ]
-    for s in schema_records:
+    for q in quality_records:
         schema_md_lines.append(
-            f"| `{s['dataset_id']}` | `{s['payload_filename']}` | {s['header_detected']} | {s['row_count']:,} | {s['column_count_violations']} | {s['price_violations']} |"
+            f"| `{q['dataset_id']}` | {q['symbol']} | {q['row_count']:,} | YES | {'YES' if q['is_monotonic'] else 'NO'} | {q['duplicate_timestamp_count']} | {q['column_count_violations']} | {q['price_violations']} |"
         )
     (REPORTS / "PHASE_1B_2_SCHEMA_AUDIT.md").write_text("\n".join(schema_md_lines) + "\n")
 
     # Report 4: TIMESTAMP AUDIT
-    timestamp_payload = {
+    timestamp_audit_payload = {
         "audit_timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "policy_compliant_all": all_timestamps_compliant,
+        "all_timestamps_compliant": all_timestamps_compliant,
         "records": timestamp_records,
     }
-    (REPORTS / "PHASE_1B_2_TIMESTAMP_AUDIT.json").write_text(json.dumps(timestamp_payload, indent=2) + "\n")
+    (REPORTS / "PHASE_1B_2_TIMESTAMP_AUDIT.json").write_text(json.dumps(timestamp_audit_payload, indent=2) + "\n")
 
     ts_md_lines = [
-        "# Phase 1B.2 Timestamp Policy Verification Audit",
+        "# Phase 1B.2 Timestamp Policy Compliance Audit",
         "",
-        f"- **Policy Status**: `{'PASS' if all_timestamps_compliant else 'FAIL'}`",
+        f"- **Audit Timestamp (UTC)**: `{timestamp_audit_payload['audit_timestamp_utc']}`",
+        f"- **Overall Compliance**: `{'PASS' if all_timestamps_compliant else 'FAIL'}`",
         "",
-        "| Dataset ID | Market | Period | Policy Unit | Digits Observed | First UTC Timestamp | Compliant |",
-        "| :--- | :---: | :---: | :---: | :---: | :--- | :---: |",
+        "| Dataset ID | Declared Policy | Observed Digits | Min TS (UTC) | Max TS (UTC) | Compliant |",
+        "| :--- | :---: | :---: | :--- | :--- | :---: |",
     ]
     for t in timestamp_records:
         ts_md_lines.append(
-            f"| `{t['dataset_id']}` | {t['market']} | `{t['period_key']}` | `{t['declared_policy_unit']}` | {t['digits_observed']} | `{t['first_normalized_utc'] or 'N/A'}` | {'YES' if t['policy_compliant'] else 'NO'} |"
+            f"| `{t['dataset_id']}` | {t['declared_policy_unit']} | {t['digits_observed']}d | `{t['first_normalized_utc']}` | `{t['last_normalized_utc']}` | {'PASS' if t['policy_compliant'] else 'FAIL'} |"
         )
     (REPORTS / "PHASE_1B_2_TIMESTAMP_AUDIT.md").write_text("\n".join(ts_md_lines) + "\n")
 
-    # Report 5: FUNDING PARITY
-    parity_payload = {
+    # Report 5: FUNDING PARITY (Sections 13 & 14)
+    funding_parity_payload = {
         "audit_timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "parity_passed": funding_parity_passed,
+        "funding_parity_mode": active_funding_mode,
+        "funding_parity_passed": funding_parity_passed,
+        "symbols_audited": funding_parity_symbols,
         "reports": [r.to_dict() for r in funding_reports],
     }
-    (REPORTS / "PHASE_1B_2_FUNDING_PARITY.json").write_text(json.dumps(parity_payload, indent=2) + "\n")
+    (REPORTS / "PHASE_1B_2_FUNDING_PARITY.json").write_text(json.dumps(funding_parity_payload, indent=2) + "\n")
 
     parity_md_lines = [
         "# Phase 1B.2 Funding Archive / REST Parity Audit",
         "",
         f"- **Parity Audit Status**: `{'PASS' if funding_parity_passed else 'FAIL'}`",
+        f"- **Funding Parity Mode**: `{active_funding_mode}`",
+        f"- **Symbols Audited**: `{', '.join(funding_parity_symbols)}`",
         "",
     ]
     for rep in funding_reports:
@@ -365,12 +453,14 @@ def main() -> int:
         ])
     (REPORTS / "PHASE_1B_2_FUNDING_PARITY.md").write_text("\n".join(parity_md_lines) + "\n")
 
-    # Report 6: ACCEPTANCE REPORT
+    # Report 6: ACCEPTANCE REPORT (Sections 3, 6, 9, 10, 11, 13, 14, 15)
+    verification_completed = datetime.now(timezone.utc).isoformat()
     checks = {
         "automated_tests_pass": tests_passed,
         "security_scan_pass": sec_passed,
         "triple_checksum_reconciliation_pass": triple_reconciled,
         "safe_extraction_pass": safe_extraction_passed,
+        "schema_quality_pass": schema_quality_passed,
         "timestamp_policy_pass": all_timestamps_compliant,
         "funding_parity_pass": funding_parity_passed,
         "idempotency_cache_pass": idempotency_passed,
@@ -381,10 +471,23 @@ def main() -> int:
         "phase": "1B.2",
         "status": "VERIFIED" if all_passed else "REMEDIATION_REQUIRED",
         "trading_capability": "ZERO" if sec_passed else "NOT_PROVEN",
-        "software_commit_sha": commit_sha,
+        "branch_name": current_branch,
+        "tested_code_commit_sha": tested_code_commit_sha,
+        "tested_tree_sha": tested_tree_sha,
+        "software_commit_sha": tested_code_commit_sha,
+        "verification_started_at_utc": verification_started,
+        "verification_completed_at_utc": verification_completed,
+        "working_tree_clean_before": working_tree_clean_before,
         "checks": checks,
-        "total_archives_downloaded": len(receipts),
-        "total_bytes_downloaded": total_bytes_downloaded,
+        "total_archives_verified": total_archives_verified,
+        "total_archive_bytes_verified": total_archive_bytes_verified,
+        "total_archive_mib_verified": total_archive_mib_verified,
+        "total_archives_downloaded_this_run": total_archives_downloaded_this_run,
+        "total_bytes_downloaded_this_run": total_bytes_downloaded_this_run,
+        "total_cache_hits": total_cache_hits,
+        "total_bytes_reused_from_verified_cache": total_bytes_reused_from_verified_cache,
+        "funding_parity_mode": active_funding_mode,
+        "funding_parity_symbols": funding_parity_symbols,
         "manifest_sha256": manifest_sha256,
     }
     (REPORTS / "PHASE_1B_2_ACCEPTANCE.json").write_text(json.dumps(acceptance_payload, indent=2) + "\n")
@@ -395,9 +498,14 @@ def main() -> int:
         f"PHASE_1B_2 = {acceptance_payload['status']}",
         "",
         f"- **Trading Capability**: `{acceptance_payload['trading_capability']}`",
-        f"- **Software Commit SHA**: `{commit_sha}`",
-        f"- **Total Archives Verified**: `{len(receipts)}`",
-        f"- **Total Bytes Acquired**: `{total_bytes_downloaded:,}` bytes",
+        f"- **Branch Name**: `{current_branch}`",
+        f"- **Tested Code Commit SHA**: `{tested_code_commit_sha}`",
+        f"- **Tested Tree SHA**: `{tested_tree_sha}`",
+        f"- **Total Archives Verified**: `{total_archives_verified}`",
+        f"- **Total Archive Bytes Verified**: `{total_archive_bytes_verified:,}` bytes ({total_archive_mib_verified} MiB)",
+        f"- **Total Downloaded This Run**: `{total_bytes_downloaded_this_run:,}` bytes ({total_archives_downloaded_this_run} archives)",
+        f"- **Total Cache Hits**: `{total_cache_hits}` ({total_bytes_reused_from_verified_cache:,}` bytes reused)",
+        f"- **Funding Parity Mode**: `{active_funding_mode}` (symbols: `{', '.join(funding_parity_symbols)}`)",
         f"- **Manifest SHA-256**: `{manifest_sha256}`",
         "",
         "## Mechanical Acceptance Gates",

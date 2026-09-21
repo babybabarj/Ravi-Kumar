@@ -2,7 +2,10 @@
 
 **Branch**: `btceth-phase1b-hardened`  
 **Base Commit**: `5873de692b8eb7d9b7775ef3c2a2e730f9fd8088` (Phase 1B.5 & Research Round 3A Baseline)  
-**Remediation Baseline**: `6e18e19b8849646b856cff3d1c4476059e74d47d` (Phase 1B.2 Hardened Remediation)  
+**Tested Code Commit**: `641bb5f8aae5c42ef6f774761ac44e8118c72627`  
+**Tested Tree SHA**: `0c2559a1deb5c41e0c63a409c0f7ec7ff0991cbc`  
+**Remediation Code Commit**: `c882c6ad41db0e5051e0f263ecf2b3443ebe48b3`  
+**Remediation Branch Head**: `6e18e19182c09066e1a0db8681cc07efa096289d`  
 **Verification Date**: 2026-09-21  
 
 ---
@@ -17,7 +20,7 @@ The forward-port successfully integrates all Phase 1B.2 cryptographic, semantic,
 
 ## 2. Comparison: Old vs Hardened Behavior
 
-| Architectural Dimension | Old Baseline (`963bd6a` / `5873de6`) | Hardened Implementation (`6e18e19` / Forward-Port) | Resolution & Impact |
+| Architectural Dimension | Old Baseline (`963bd6a` / `5873de6`) | Hardened Implementation (`c882c6a` / `641bb5f`) | Resolution & Impact |
 | :--- | :--- | :--- | :--- |
 | **Download Protocol** | Download archive stream before or concurrently with sidecar | **Strict Checksum-First**: Official `.CHECKSUM` sidecar fetched and parsed before streaming any archive bytes | Eliminates unvalidated downloads; fails closed immediately on missing or malformed sidecar. |
 | **Local Storage Layout** | Deep nested directories with checksum embedded in archive filename (`.../{filename.stem}.{checksum}.zip`) | **Canonical Bronze Archive Layout**: `bronze/binance/{market}/{source_dataset_name}/{symbol}/{archive_filename}` | Adheres to Phase 1B.2 specification while returning full resolved path via `local_path` / `local_archive_path`. |
@@ -25,7 +28,7 @@ The forward-port successfully integrates all Phase 1B.2 cryptographic, semantic,
 | **Archive Unpacking** | Direct zip extraction without security checks | **Safe Zip Extractor (`bronze.py`)**: Rejects path traversal (`../`, `..\\`), absolute paths, symlinks, null bytes, multi-member archives, and corrupt CRCs | Bronze extraction is completely quarantined and hardened against zip-slip vulnerabilities. |
 | **Schema & Quality Probes** | Naive comma-split parsing | **Raw Schema Inspector (`schema_inspector.py`)**: Dynamic header detection, strict numeric bounds, monotonic timestamp validation | Detects header vs headerless files; executes non-destructive quality probes on raw CSV payloads. |
 | **Funding Rate Semantics** | Vulnerable to index-based column offset traps | **Catastrophic Trap Enforced**: Explicitly parses `calc_time`, `funding_interval_hours` (8), `last_funding_rate` (-0.00012359). Hard crash if interval is parsed as rate | Completely eliminates catastrophic funding rate scale distortion. |
-| **Funding Parity Audit** | None | **Live REST Parity Auditor (`funding_parity.py`)**: Strict overlap comparison with tolerance for optional metadata fields | Proves historical archive matches live Binance USD-M exchange API. |
+| **Funding Parity Audit** | None | **Live REST Parity Auditor (`funding_parity.py`)**: Strict overlap comparison across both BTCUSDT and ETHUSDT against live Binance USD-M exchange API | Proves historical archive matches live Binance USD-M exchange API. |
 | **Timestamp Policy Audit** | Informal inspection | **Formal Timestamp Policy Auditor (`timestamp_audit.py`)**: Verifies 13-digit ms (USD-M and pre-2025 Spot) vs 16-digit us (post-2025 Spot) | Enforces temporal compliance across all acquisition datasets. |
 
 ---
@@ -55,10 +58,10 @@ Downstream components were audited for interface requirements:
 ## 4. Verification Evidence & Test Compatibility
 
 1. **Automated Unit & Integration Tests**:
-   - `pytest`: **181 passed** (0 failures, 0 errors).
+   - `pytest`: **182 passed** (0 failures, 0 errors).
    - Test suites covering all hardened and downstream components:
      - `test_archive_downloader.py` (7 hardened tests)
-     - `test_bronze_extraction.py` (8 tests)
+     - `test_bronze_extraction.py` (11 tests including backslash traversal and CRC failure)
      - `test_schema_inspector.py` (6 tests)
      - `test_timestamp_audit.py` (4 tests)
      - `test_funding_parity.py` (2 tests)
@@ -69,5 +72,5 @@ Downstream components were audited for interface requirements:
 2. **Verification Gates**:
    - `Phase 1A Gate`: **PASS** (`mac_phase1a_verify.sh`)
    - `Phase 1B.1 Gate`: **PASS** (`mac_phase1b1_verify.sh`)
-   - `Phase 1B.2 Gate`: **PASS** (`mac_phase1b2_verify.sh`, all 8 gate checks)
+   - `Phase 1B.2 Gate`: **PASS** (`mac_phase1b2_verify.sh`, all 9 gate checks)
    - `Security Scan`: **PASS** (`TRADING CAPABILITY = ZERO`, 0 hits)

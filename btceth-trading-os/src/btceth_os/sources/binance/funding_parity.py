@@ -76,10 +76,17 @@ class FundingParityAuditor:
     def fetch_live_rest_funding(
         symbol: str,
         limit: int = 100,
+        start_time: int | None = None,
+        end_time: int | None = None,
         opener: urllib.request.OpenerDirector | None = None,
     ) -> list[RestFundingRateItem]:
         """Fetch live funding rate records from Binance public REST endpoint."""
-        url = f"https://fapi.binance.com/fapi/v1/fundingRate?symbol={symbol}&limit={limit}"
+        params = [f"symbol={symbol}", f"limit={limit}"]
+        if start_time is not None:
+            params.append(f"startTime={start_time}")
+        if end_time is not None:
+            params.append(f"endTime={end_time}")
+        url = f"https://fapi.binance.com/fapi/v1/fundingRate?{'&'.join(params)}"
         req = urllib.request.Request(url, headers={"User-Agent": "BTCETH-Trading-OS/FundingParity"})
         op = opener or urllib.request.build_opener()
         with op.open(req, timeout=15) as resp:
