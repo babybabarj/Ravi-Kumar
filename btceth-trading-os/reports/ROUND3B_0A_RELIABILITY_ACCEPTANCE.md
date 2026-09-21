@@ -1,11 +1,11 @@
 # Research Round 3B.0A: Reliability Acceptance Report
 
 **Acceptance Status**: `ROUND3B_0A_RELIABILITY = VERIFIED`  
-**Timestamp**: `2026-09-21T17:46:13.576063+00:00`  
-**Tested Code Commit**: `4bd56107868a48de3afa3fb1f4166751a139d05a`  
-**Tested Tree**: `3e6e9969d204084a3092187f448c5204825479a3`  
+**Timestamp**: `2026-09-21T17:48:29.228813+00:00`  
+**Tested Code Commit**: `7b6a49232f57b2ba07dfc0c393bac54de4b3e6a4`  
+**Tested Tree**: `271d0b4318d05cc061363824138b3ad237f3642d`  
 **Canonical Baseline Commit**: `cfa80f3aabbb75a28969701d8013f6784c35a495`  
-**Acceptance Payload SHA-256**: `3388e7991ac4d72fbceaefac53fdf59c4b472edd05e16b7c3ba2c58d549c3f78`  
+**Acceptance Payload SHA-256**: `c0d3bde03c689ef0d2ceff8328ebc37395f93f4fba25a8103184205e64c5b620`  
 **Trading Capability**: `ZERO`  
 **2024 Holdout**: `LOCKED`  
 **Approved for Shadow**: `0`  
@@ -41,5 +41,5 @@
 ## 2. Non-Self-Referential Verification Signature
 
 ```text
-canonical_payload_sha256 = 3388e7991ac4d72fbceaefac53fdf59c4b472edd05e16b7c3ba2c58d549c3f78
+canonical_payload_sha256 = c0d3bde03c689ef0d2ceff8328ebc37395f93f4fba25a8103184205e64c5b620
 ```
