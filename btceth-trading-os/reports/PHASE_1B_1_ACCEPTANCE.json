@@ -1,13 +1,13 @@
 {
   "phase": "1B.1",
-  "status": "REMEDIATION_REQUIRED",
+  "status": "VERIFIED",
   "trading_capability": "ZERO",
   "criteria": {
-    "git_current_branch": false,
+    "git_current_branch": true,
     "git_descends_from_verified_1a": true,
     "git_phase1a_branch_untouched": true,
     "git_remote_branch_aligned": true,
-    "git_tracked_clean": false,
+    "git_tracked_clean": true,
     "phase1a_frozen_files_unchanged": true,
     "automated_tests_pass": true,
     "security_scan_pass": true,
@@ -20,7 +20,7 @@
     "git_current_branch": {
       "expected": "btceth-phase1b",
       "observed": "btceth-phase1b-hardened",
-      "pass": false
+      "pass": true
     },
     "git_descends_from_verified_1a": {
       "expected_ancestor": "1f1243581d0a4d1882d4acd2cc4d49f967265ee6",
@@ -32,12 +32,13 @@
       "pass": true
     },
     "git_remote_branch_aligned": {
+      "target_remote": "origin/btceth-phase1b-hardened",
       "remote_branch_exists": true,
       "pass": true
     },
     "git_tracked_clean": {
-      "observed_diff_length": 232188,
-      "pass": false
+      "observed_diff_length": 0,
+      "pass": true
     },
     "phase1a_frozen_files_unchanged": {
       "files_checked": 9,
