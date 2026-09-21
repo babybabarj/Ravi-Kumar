@@ -199,106 +199,116 @@ def main() -> int:
     all_ready = all(checks.values())
     verif_status = "VERIFIED" if all_ready else "REMEDIATION_REQUIRED"
 
-    # Compile Final Provenance Report V2 (Non-Self-Referential Model)
-    # verification_parent_head_sha: The Git HEAD existing when this report is generated
-    provenance_v2_payload: dict[str, Any] = {
-        "report_version": 2,
-        "supersedes": "PHASE_1B_HARDENED_FINAL_PROVENANCE.json",
-        "generated_at_utc": verif_started,
-        "readiness_status": verif_status,
-        "base_shared_commit_sha": expected_shared_sha,
-        "tested_code_commit_sha": expected_tested_code_sha,
-        "tested_tree_sha": expected_tested_tree_sha,
-        "verification_parent_head_sha": current_head,
-        "remediation_code_commit_sha": expected_remediation_code_sha,
-        "remediation_branch_head_sha": expected_remediation_head_sha,
-        "round3b_wip_safety_sha": expected_wip_safety_sha,
-        "pre_hardening_snapshot_sha": expected_snapshot_sha,
-        "working_tree_clean_before": phase_1b2_data.get("working_tree_clean_before"),
-        "dirty_paths_before": phase_1b2_data.get("dirty_paths_before"),
-        "milestone_statuses": {
-            "all_tests_status": "PASS" if pytest_pass else "FAIL",
-            "phase_1a_status": phase_1a_data.get("status"),
-            "phase_1b1_status": phase_1b1_data.get("status"),
-            "phase_1b2_status": phase_1b2_data.get("status"),
-            "phase_1b3_status": phase_1b3_data.get("status"),
-            "phase_1b4_status": phase_1b4_data.get("status"),
-            "phase_1b5_status": phase_1b5_data.get("status"),
-            "round3a_status": round3a_data.get("acceptance_status"),
-        },
-        "security_status": "ZERO" if sec_pass else "NOT_PROVEN",
-        "holdout_status": round3a_data.get("holdout_status"),
-        "funding_parity_mode": funding_rep.get("funding_parity_mode"),
-        "funding_parity_symbols": funding_rep.get("symbols_audited"),
-        "archive_count": phase_1b2_data.get("total_archives_verified"),
-        "archive_bytes": phase_1b2_data.get("total_archive_bytes_verified"),
-        "archive_mib": phase_1b2_data.get("total_archive_mib_verified"),
-        "cache_hits": phase_1b2_data.get("total_cache_hits"),
-        "silver_parquet_sha256": silver_sha,
-        "dataset_v3_1_full_logical_sha": obs_v310_sha,
-        "checks": checks,
-        "details": details,
-    }
+    v2_json_path = REPORTS / "PHASE_1B_HARDENED_FINAL_PROVENANCE_V2.json"
+    v2_md_path = REPORTS / "PHASE_1B_HARDENED_FINAL_PROVENANCE_V2.md"
 
-    # Compute deterministic canonical JSON SHA-256 for the evidence payload
-    payload_sha256 = compute_canonical_payload_sha256(provenance_v2_payload)
-    provenance_v2_payload["provenance_payload_sha256"] = payload_sha256
+    if v2_json_path.is_file() and "--force-generate" not in sys.argv:
+        existing_payload = json.loads(v2_json_path.read_text(encoding="utf-8"))
+        stored_sha = existing_payload.get("provenance_payload_sha256")
+        computed_sha = compute_canonical_payload_sha256(existing_payload)
+        payload_matches = (stored_sha == computed_sha and bool(stored_sha))
+        checks["provenance_payload_sha256_matches"] = payload_matches
+        payload_sha256 = stored_sha
+    else:
+        # Compile Final Provenance Report V2 (Non-Self-Referential Model)
+        # verification_parent_head_sha: The Git HEAD existing when this report is generated
+        provenance_v2_payload: dict[str, Any] = {
+            "report_version": 2,
+            "supersedes": "PHASE_1B_HARDENED_FINAL_PROVENANCE.json",
+            "generated_at_utc": verif_started,
+            "readiness_status": verif_status,
+            "base_shared_commit_sha": expected_shared_sha,
+            "tested_code_commit_sha": expected_tested_code_sha,
+            "tested_tree_sha": expected_tested_tree_sha,
+            "verification_parent_head_sha": current_head,
+            "remediation_code_commit_sha": expected_remediation_code_sha,
+            "remediation_branch_head_sha": expected_remediation_head_sha,
+            "round3b_wip_safety_sha": expected_wip_safety_sha,
+            "pre_hardening_snapshot_sha": expected_snapshot_sha,
+            "working_tree_clean_before": phase_1b2_data.get("working_tree_clean_before"),
+            "dirty_paths_before": phase_1b2_data.get("dirty_paths_before"),
+            "milestone_statuses": {
+                "all_tests_status": "PASS" if pytest_pass else "FAIL",
+                "phase_1a_status": phase_1a_data.get("status"),
+                "phase_1b1_status": phase_1b1_data.get("status"),
+                "phase_1b2_status": phase_1b2_data.get("status"),
+                "phase_1b3_status": phase_1b3_data.get("status"),
+                "phase_1b4_status": phase_1b4_data.get("status"),
+                "phase_1b5_status": phase_1b5_data.get("status"),
+                "round3a_status": round3a_data.get("acceptance_status"),
+            },
+            "security_status": "ZERO" if sec_pass else "NOT_PROVEN",
+            "holdout_status": round3a_data.get("holdout_status"),
+            "funding_parity_mode": funding_rep.get("funding_parity_mode"),
+            "funding_parity_symbols": funding_rep.get("symbols_audited"),
+            "archive_count": phase_1b2_data.get("total_archives_verified"),
+            "archive_bytes": phase_1b2_data.get("total_archive_bytes_verified"),
+            "archive_mib": phase_1b2_data.get("total_archive_mib_verified"),
+            "cache_hits": phase_1b2_data.get("total_cache_hits"),
+            "silver_parquet_sha256": silver_sha,
+            "dataset_v3_1_full_logical_sha": obs_v310_sha,
+            "checks": checks,
+            "details": details,
+        }
 
-    (REPORTS / "PHASE_1B_HARDENED_FINAL_PROVENANCE_V2.json").write_text(
-        json.dumps(provenance_v2_payload, indent=2) + "\n"
-    )
+        # Compute deterministic canonical JSON SHA-256 for the evidence payload
+        payload_sha256 = compute_canonical_payload_sha256(provenance_v2_payload)
+        provenance_v2_payload["provenance_payload_sha256"] = payload_sha256
+        checks["provenance_payload_sha256_matches"] = True
 
-    prov_v2_md_lines = [
-        "# Phase 1B Hardened Final Provenance & Merge Readiness Report V2",
-        "",
-        f"**HARDENED_MERGE_READINESS_V2 = {verif_status}**",
-        "",
-        f"- **Report Version**: `2` (supersedes `PHASE_1B_HARDENED_FINAL_PROVENANCE.json`)",
-        f"- **Verification Timestamp (UTC)**: `{verif_started}`",
-        f"- **Base Shared Commit**: `{expected_shared_sha}` (`btceth-phase1b`)",
-        f"- **Tested Code Commit**: `{expected_tested_code_sha}`",
-        f"- **Tested Tree SHA**: `{expected_tested_tree_sha}`",
-        f"- **Verification Parent HEAD**: `{current_head}`",
-        f"- **Remediation Code Commit**: `{expected_remediation_code_sha}`",
-        f"- **Remediation Branch Head**: `{expected_remediation_head_sha}`",
-        f"- **Round 3B WIP Safety SHA**: `{expected_wip_safety_sha}`",
-        f"- **Pre-Hardening Snapshot SHA**: `{expected_snapshot_sha}`",
-        f"- **Provenance Payload SHA-256**: `{payload_sha256}`",
-        "",
-        "## Clean Worktree & Environmental Proof",
-        "",
-        f"- **Working Tree Clean Before Phase 1B.2**: `{phase_1b2_data.get('working_tree_clean_before')}`",
-        f"- **Dirty Paths Before Phase 1B.2**: `{phase_1b2_data.get('dirty_paths_before')}`",
-        "",
-        "## Milestone Gate Statuses",
-        "",
-        f"- Full Test Suite: `{'PASS' if pytest_pass else 'FAIL'}`",
-        f"- Phase 1A: `{phase_1a_data.get('status')}`",
-        f"- Phase 1B.1: `{phase_1b1_data.get('status')}`",
-        f"- Phase 1B.2: `{phase_1b2_data.get('status')}`",
-        f"- Phase 1B.3: `{phase_1b3_data.get('status')}`",
-        f"- Phase 1B.4: `{phase_1b4_data.get('status')}`",
-        f"- Phase 1B.5: `{phase_1b5_data.get('status')}`",
-        f"- Research Round 3A: `{round3a_data.get('acceptance_status')}`",
-        f"- Security Boundary: `{provenance_v2_payload['security_status']}`",
-        f"- 2024 Holdout: `{provenance_v2_payload['holdout_status']}`",
-        "",
-        "## Acquisition & Parity Evidence",
-        "",
-        f"- Total Archives Verified: `{phase_1b2_data.get('total_archives_verified')}`",
-        f"- Total Archive Bytes Verified: `{phase_1b2_data.get('total_archive_bytes_verified'):,}` bytes ({phase_1b2_data.get('total_archive_mib_verified')} MiB)",
-        f"- Total Cache Hits: `{phase_1b2_data.get('total_cache_hits')}`",
-        f"- Live Funding Parity Mode: `{funding_rep.get('funding_parity_mode')}` (Symbols: `{', '.join(funding_rep.get('symbols_audited', []))}`)",
-        f"- Dataset v3.1.0 Full Logical SHA: `{obs_v310_sha}`",
-        f"- Silver Parquet SHA: `{silver_sha}`",
-        "",
-        "## Mechanical Verification Checks",
-        "",
-    ]
-    for k, v in checks.items():
-        prov_v2_md_lines.append(f"- [{'x' if v else ' '}] `{k}`")
+        v2_json_path.write_text(json.dumps(provenance_v2_payload, indent=2) + "\n")
 
-    (REPORTS / "PHASE_1B_HARDENED_FINAL_PROVENANCE_V2.md").write_text("\n".join(prov_v2_md_lines) + "\n")
+        prov_v2_md_lines = [
+            "# Phase 1B Hardened Final Provenance & Merge Readiness Report V2",
+            "",
+            f"**HARDENED_MERGE_READINESS_V2 = {verif_status}**",
+            "",
+            f"- **Report Version**: `2` (supersedes `PHASE_1B_HARDENED_FINAL_PROVENANCE.json`)",
+            f"- **Verification Timestamp (UTC)**: `{verif_started}`",
+            f"- **Base Shared Commit**: `{expected_shared_sha}` (`btceth-phase1b`)",
+            f"- **Tested Code Commit**: `{expected_tested_code_sha}`",
+            f"- **Tested Tree SHA**: `{expected_tested_tree_sha}`",
+            f"- **Verification Parent HEAD**: `{current_head}`",
+            f"- **Remediation Code Commit**: `{expected_remediation_code_sha}`",
+            f"- **Remediation Branch Head**: `{expected_remediation_head_sha}`",
+            f"- **Round 3B WIP Safety SHA**: `{expected_wip_safety_sha}`",
+            f"- **Pre-Hardening Snapshot SHA**: `{expected_snapshot_sha}`",
+            f"- **Provenance Payload SHA-256**: `{payload_sha256}`",
+            "",
+            "## Clean Worktree & Environmental Proof",
+            "",
+            f"- **Working Tree Clean Before Phase 1B.2**: `{phase_1b2_data.get('working_tree_clean_before')}`",
+            f"- **Dirty Paths Before Phase 1B.2**: `{phase_1b2_data.get('dirty_paths_before')}`",
+            "",
+            "## Milestone Gate Statuses",
+            "",
+            f"- Full Test Suite: `{'PASS' if pytest_pass else 'FAIL'}`",
+            f"- Phase 1A: `{phase_1a_data.get('status')}`",
+            f"- Phase 1B.1: `{phase_1b1_data.get('status')}`",
+            f"- Phase 1B.2: `{phase_1b2_data.get('status')}`",
+            f"- Phase 1B.3: `{phase_1b3_data.get('status')}`",
+            f"- Phase 1B.4: `{phase_1b4_data.get('status')}`",
+            f"- Phase 1B.5: `{phase_1b5_data.get('status')}`",
+            f"- Research Round 3A: `{round3a_data.get('acceptance_status')}`",
+            f"- Security Boundary: `{provenance_v2_payload['security_status']}`",
+            f"- 2024 Holdout: `{provenance_v2_payload['holdout_status']}`",
+            "",
+            "## Acquisition & Parity Evidence",
+            "",
+            f"- Total Archives Verified: `{phase_1b2_data.get('total_archives_verified')}`",
+            f"- Total Archive Bytes Verified: `{phase_1b2_data.get('total_archive_bytes_verified'):,}` bytes ({phase_1b2_data.get('total_archive_mib_verified')} MiB)",
+            f"- Total Cache Hits: `{phase_1b2_data.get('total_cache_hits')}`",
+            f"- Live Funding Parity Mode: `{funding_rep.get('funding_parity_mode')}` (Symbols: `{', '.join(funding_rep.get('symbols_audited', []))}`)",
+            f"- Dataset v3.1.0 Full Logical SHA: `{obs_v310_sha}`",
+            f"- Silver Parquet SHA: `{silver_sha}`",
+            "",
+            "## Mechanical Verification Checks",
+            "",
+        ]
+        for k, v in checks.items():
+            prov_v2_md_lines.append(f"- [{'x' if v else ' '}] `{k}`")
+
+        v2_md_path.write_text("\n".join(prov_v2_md_lines) + "\n")
 
     print("\n=======================================================")
     print(f"HARDENED_MERGE_READINESS_V2 = {verif_status}")
