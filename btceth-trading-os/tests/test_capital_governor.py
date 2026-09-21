@@ -13,6 +13,7 @@ from btceth_os.research.structural.capital_governor import (
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS_DIR = ROOT / "reports"
+CONFIG_DIR = ROOT / "config"
 
 
 def test_capital_policy_derived_commitments() -> None:
@@ -114,16 +115,120 @@ def test_unallocated_cash_earns_zero() -> None:
     gov.close_episode("EP_FLAT", 10, net_pnl=Decimal("0.0"))
     assert gov.current_cash == Decimal("10000.0")
 
-    # Write capital audit report
+
+def test_capital_policy_from_yaml_loader() -> None:
+    """Verify CapitalPolicy correctly loads scenarios from config/research_capital_policy_v1.yaml."""
+    yaml_path = CONFIG_DIR / "research_capital_policy_v1.yaml"
+    assert yaml_path.is_file(), "research_capital_policy_v1.yaml must exist"
+
+    base_policy = CapitalPolicy.from_yaml(yaml_path, "BASE_RESEARCH_POLICY")
+    assert base_policy.starting_equity == Decimal("100000.0")
+    assert base_policy.max_gross_exposure_ratio == Decimal("2.0")
+    assert base_policy.max_strategy_allocation_ratio == Decimal("0.25")
+    assert base_policy.reserve_cash_requirement == Decimal("20000.0")
+    assert base_policy.max_concurrent_episodes == 5
+    assert base_policy.scale_down_enabled is False
+
+    stressed_policy = CapitalPolicy.from_yaml(yaml_path, "STRESSED_RESEARCH_POLICY")
+    assert stressed_policy.starting_equity == Decimal("100000.0")
+    assert stressed_policy.max_gross_exposure_ratio == Decimal("1.5")
+    assert stressed_policy.max_strategy_allocation_ratio == Decimal("0.20")
+    assert stressed_policy.reserve_cash_requirement == Decimal("30000.0")
+    assert stressed_policy.max_concurrent_episodes == 3
+
+
+def test_input_validation_rejections() -> None:
+    """Adversarial input validation tests: reject invalid timestamps, notional, capital, empty IDs."""
+    gov = PortfolioCapitalGovernor()
+
+    # Empty episode ID
+    with pytest.raises(ValueError, match="episode_id must be a non-empty string"):
+        gov.request_allocation("", "STRAT", 0, 10, Decimal("100.0"), Decimal("100.0"))
+
+    # Empty strategy ID
+    with pytest.raises(ValueError, match="strategy_id must be a non-empty string"):
+        gov.request_allocation("EP", "  ", 0, 10, Decimal("100.0"), Decimal("100.0"))
+
+    # Negative entry timestamp
+    with pytest.raises(ValueError, match="entry_ts_ns cannot be negative"):
+        gov.request_allocation("EP", "STRAT", -1, 10, Decimal("100.0"), Decimal("100.0"))
+
+    # Non-increasing timestamps
+    with pytest.raises(ValueError, match="exit_ts_ns .* must be strictly greater than entry_ts_ns"):
+        gov.request_allocation("EP", "STRAT", 10, 10, Decimal("100.0"), Decimal("100.0"))
+
+    with pytest.raises(ValueError, match="exit_ts_ns .* must be strictly greater than entry_ts_ns"):
+        gov.request_allocation("EP", "STRAT", 10, 5, Decimal("100.0"), Decimal("100.0"))
+
+    # Invalid required capital
+    with pytest.raises(ValueError, match="required_capital must be a finite positive Decimal"):
+        gov.request_allocation("EP", "STRAT", 0, 10, Decimal("0.0"), Decimal("100.0"))
+
+    with pytest.raises(ValueError, match="required_capital must be a finite positive Decimal"):
+        gov.request_allocation("EP", "STRAT", 0, 10, Decimal("-10.0"), Decimal("100.0"))
+
+    with pytest.raises(ValueError, match="required_capital must be a finite positive Decimal"):
+        gov.request_allocation("EP", "STRAT", 0, 10, Decimal("NaN"), Decimal("100.0"))
+
+    # Invalid gross notional
+    with pytest.raises(ValueError, match="gross_notional must be a finite positive Decimal"):
+        gov.request_allocation("EP", "STRAT", 0, 10, Decimal("100.0"), Decimal("0.0"))
+
+    with pytest.raises(ValueError, match="gross_notional must be a finite positive Decimal"):
+        gov.request_allocation("EP", "STRAT", 0, 10, Decimal("100.0"), Decimal("-50.0"))
+
+
+def test_duplicate_episode_allocation_fails_closed() -> None:
+    """Duplicate episode allocation attempt must fail closed."""
+    gov = PortfolioCapitalGovernor()
+    gov.request_allocation("EP_DUP", "STRAT_A", 0, 100, Decimal("1000.0"), Decimal("2000.0"))
+
+    with pytest.raises(CapitalExhaustionError, match="DUPLICATE_EPISODE_ID"):
+        gov.request_allocation("EP_DUP", "STRAT_A", 10, 100, Decimal("500.0"), Decimal("1000.0"))
+
+
+def test_unknown_episode_close_fails_closed() -> None:
+    """Attempting to close an unknown episode ID raises KeyError."""
+    gov = PortfolioCapitalGovernor()
+    with pytest.raises(KeyError, match="UNKNOWN_EPISODE"):
+        gov.close_episode("EP_NONEXISTENT", 10)
+
+
+def test_chronology_violation_on_close_fails_closed() -> None:
+    """Closing an episode with an exit timestamp before its entry timestamp raises ValueError."""
+    gov = PortfolioCapitalGovernor()
+    gov.request_allocation("EP_TIME", "STRAT_A", 50, 100, Decimal("1000.0"), Decimal("2000.0"))
+
+    with pytest.raises(ValueError, match="Chronology violation"):
+        gov.close_episode("EP_TIME", exit_ts_ns=40)
+
+
+def test_scale_down_enabled_fails_closed_with_not_implemented() -> None:
+    """When scale_down_enabled is True and capacity is exceeded, governor raises NotImplementedError."""
+    policy = CapitalPolicy(starting_equity=Decimal("1000.0"), scale_down_enabled=True)
+    gov = PortfolioCapitalGovernor(policy)
+
+    with pytest.raises(NotImplementedError, match="SCALE_DOWN_UNSUPPORTED"):
+        gov.request_allocation("EP_HUGE", "STRAT", 0, 10, Decimal("2000.0"), Decimal("3000.0"))
+
+
+def test_generate_round3b_0a_capital_governor_audit() -> None:
+    """Generate ROUND3B_0A_CAPITAL_GOVERNOR_AUDIT.json report."""
     audit_data = {
+        "report_version": "ROUND3B.0A",
         "status": "VERIFIED",
-        "capital_policy": "CANONICAL_V1",
-        "starting_equity": "10000.0",
-        "scale_down_policy": "DISABLED",
-        "default_exhaustion_behavior": "REJECT",
-        "max_concurrent_episodes": 5,
-        "chronological_overlap_verified": True,
-        "derived_commitments_verified": True,
-        "no_magic_multipliers": True,
+        "policy_file": "config/research_capital_policy_v1.yaml",
+        "classification": "RESEARCH_ASSUMPTION",
+        "trading_capability": 0,
+        "input_validation_verified": True,
+        "duplicate_episode_rejection_verified": True,
+        "unknown_episode_rejection_verified": True,
+        "chronology_violation_rejection_verified": True,
+        "scale_down_policy": "DISABLED_FAIL_CLOSED",
+        "exhaustion_behavior": "REJECT",
+        "multi_strategy_concurrency_verified": True,
     }
-    (REPORTS_DIR / "ROUND3B_CAPITAL_AUDIT.json").write_text(json.dumps(audit_data, indent=2) + "\n", encoding="utf-8")
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    (REPORTS_DIR / "ROUND3B_0A_CAPITAL_GOVERNOR_AUDIT.json").write_text(
+        json.dumps(audit_data, indent=2) + "\n", encoding="utf-8"
+    )

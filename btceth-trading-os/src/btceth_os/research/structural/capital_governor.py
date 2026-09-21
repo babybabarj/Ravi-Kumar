@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Optional
+from pathlib import Path
+from typing import Optional, Union
 
 
 class CapitalExhaustionError(RuntimeError):
@@ -21,6 +22,24 @@ class CapitalPolicy:
     reserve_cash_requirement: Decimal = Decimal("0.0")        # Explicit cash reserve floor
     max_concurrent_episodes: int = 5
     scale_down_enabled: bool = False                          # Strict default: SCALE_DOWN = DISABLED
+
+    @classmethod
+    def from_yaml(cls, path: Union[str, Path], scenario: str = "BASE_RESEARCH_POLICY") -> CapitalPolicy:
+        """Load capital policy configuration from a YAML policy file."""
+        import yaml
+        data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+        scen = data.get(scenario, {})
+        return cls(
+            policy_name=scen.get("label", scenario),
+            starting_equity=Decimal(str(scen.get("starting_equity", "100000.0"))),
+            max_gross_exposure_ratio=Decimal(str(scen.get("max_gross_exposure_ratio", "2.0"))),
+            max_strategy_allocation_ratio=Decimal(str(scen.get("max_strategy_allocation_ratio", "0.25"))),
+            perp_leverage=Decimal(str(scen.get("perp_leverage", "10.0"))),
+            margin_buffer_ratio=Decimal(str(scen.get("margin_buffer_ratio", "0.05"))),
+            reserve_cash_requirement=Decimal(str(scen.get("reserve_cash_requirement", "20000.0"))),
+            max_concurrent_episodes=int(scen.get("max_concurrent_episodes", 5)),
+            scale_down_enabled=bool(scen.get("scale_down_enabled", False)),
+        )
 
     @property
     def perp_effective_margin_rate(self) -> Decimal:
@@ -114,19 +133,31 @@ class PortfolioCapitalGovernor:
         gross_notional: Decimal,
     ) -> Decimal:
         """Request capital allocation. Fails closed with CapitalExhaustionError if unavailable."""
+        if not episode_id or not isinstance(episode_id, str) or not episode_id.strip():
+            raise ValueError("episode_id must be a non-empty string")
+        if not strategy_id or not isinstance(strategy_id, str) or not strategy_id.strip():
+            raise ValueError("strategy_id must be a non-empty string")
+        if entry_ts_ns < 0:
+            raise ValueError("entry_ts_ns cannot be negative")
+        if exit_ts_ns <= entry_ts_ns:
+            raise ValueError(f"exit_ts_ns ({exit_ts_ns}) must be strictly greater than entry_ts_ns ({entry_ts_ns})")
+        if not isinstance(required_capital, Decimal) or required_capital.is_nan() or required_capital.is_infinite() or required_capital <= Decimal("0"):
+            raise ValueError("required_capital must be a finite positive Decimal")
+        if not isinstance(gross_notional, Decimal) or gross_notional.is_nan() or gross_notional.is_infinite() or gross_notional <= Decimal("0"):
+            raise ValueError("gross_notional must be a finite positive Decimal")
+
+        if episode_id in self.active_commitments:
+            raise CapitalExhaustionError(f"DUPLICATE_EPISODE_ID: Episode ID '{episode_id}' is already active in capital governor")
+
         if not self.can_allocate(required_capital, gross_notional, strategy_id):
-            if not self.policy.scale_down_enabled:
-                raise CapitalExhaustionError(
-                    f"CAPITAL_EXHAUSTION: Cannot allocate ${required_capital} to {episode_id} ({strategy_id}). "
-                    f"Available: ${self.available_capital}, Active Episodes: {len(self.active_commitments)}"
-                )
-            # If scale-down is authorized by policy, proportionally scale down
-            alloc = min(required_capital, self.available_capital)
-            if alloc <= Decimal("0"):
-                raise CapitalExhaustionError("CAPITAL_EXHAUSTION: Available capital is zero.")
-            actual_alloc = alloc
-        else:
-            actual_alloc = required_capital
+            if self.policy.scale_down_enabled:
+                raise NotImplementedError("SCALE_DOWN_UNSUPPORTED: Fractional scale-down is disabled in research mode; reject or accept fully")
+            raise CapitalExhaustionError(
+                f"CAPITAL_EXHAUSTION: Cannot allocate ${required_capital} to {episode_id} ({strategy_id}). "
+                f"Available: ${self.available_capital}, Active Episodes: {len(self.active_commitments)}"
+            )
+
+        actual_alloc = required_capital
 
         self.active_commitments[episode_id] = ActiveEpisodeCommitment(
             episode_id=episode_id,
@@ -149,15 +180,23 @@ class PortfolioCapitalGovernor:
 
     def close_episode(self, episode_id: str, exit_ts_ns: int, net_pnl: Decimal = Decimal("0")) -> None:
         """Explicitly close an episode, release its committed capital, and credit net P&L."""
-        if episode_id in self.active_commitments:
-            comm = self.active_commitments.pop(episode_id)
-            self.current_cash += net_pnl
-            self.timeline_log.append({
-                "event": "CLOSE",
-                "ts_ns": exit_ts_ns,
-                "episode_id": episode_id,
-                "released": str(comm.committed_capital),
-                "net_pnl": str(net_pnl),
-                "new_cash": str(self.current_cash),
-                "available": str(self.available_capital),
-            })
+        if not episode_id or not isinstance(episode_id, str) or not episode_id.strip():
+            raise ValueError("episode_id must be a non-empty string")
+        if episode_id not in self.active_commitments:
+            raise KeyError(f"UNKNOWN_EPISODE: Cannot release commitment for untracked episode ID '{episode_id}'")
+
+        comm = self.active_commitments[episode_id]
+        if exit_ts_ns < comm.entry_ts_ns:
+            raise ValueError(f"Chronology violation: exit_ts_ns ({exit_ts_ns}) must be >= entry_ts_ns ({comm.entry_ts_ns})")
+
+        comm = self.active_commitments.pop(episode_id)
+        self.current_cash += net_pnl
+        self.timeline_log.append({
+            "event": "CLOSE",
+            "ts_ns": exit_ts_ns,
+            "episode_id": episode_id,
+            "released": str(comm.committed_capital),
+            "net_pnl": str(net_pnl),
+            "new_cash": str(self.current_cash),
+            "available": str(self.available_capital),
+        })

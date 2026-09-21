@@ -1,0 +1,15 @@
+{
+  "report_version": "ROUND3B.0A",
+  "guard_class": "ResearchDataAccessGuard",
+  "status": "VERIFIED",
+  "holdout_precedence_invariant": "STRICT_OVERLAP_RESOLVES_TO_LOCKED_HOLDOUT",
+  "holdout_unlock_capability": 0,
+  "final_holdout_audit_permission": "DENIED",
+  "fail_closed_provenance": true,
+  "fail_closed_metadata": true,
+  "canonical_registry_sha_verified": true,
+  "prospective_forward_policy_enforced": true,
+  "cryptographic_ledger_hash_chain": "SHA256_SEQUENCE_LINKED",
+  "allowed_holdout_accesses": 0,
+  "trading_capability": 0
+}

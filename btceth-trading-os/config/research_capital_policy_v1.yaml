@@ -1,0 +1,36 @@
+# Research Portfolio Capital Policy Version 1
+# Note: These values are explicit RESEARCH ASSUMPTIONS for offline research simulation only.
+# NOT PRODUCTION. NOT LIVE CAPITAL.
+# TRADING CAPABILITY = ZERO.
+
+version: 1
+policy_id: "RESEARCH_CAPITAL_POLICY_V1"
+policy_class: "RESEARCH_ASSUMPTION"
+trading_capability: 0
+disclaimer: "RESEARCH ASSUMPTION ONLY. NOT FOR PRODUCTION ORDER PLACEMENT."
+
+# Scenario 1: Base Research Capital Policy
+BASE_RESEARCH_POLICY:
+  label: "BASE_RESEARCH_POLICY"
+  description: "Standard conservative multi-strategy research portfolio allocation assumption"
+  starting_equity: 100000.00
+  max_gross_exposure_ratio: 2.0
+  max_strategy_allocation_ratio: 0.25
+  perp_leverage: 10.0
+  margin_buffer_ratio: 0.05
+  reserve_cash_requirement: 20000.00
+  max_concurrent_episodes: 5
+  scale_down_enabled: false
+
+# Scenario 2: Stressed Conservative Capital Policy
+STRESSED_RESEARCH_POLICY:
+  label: "STRESSED_RESEARCH_POLICY"
+  description: "Stressed capital limits with lower gross leverage, higher margin buffer, and larger cash reserve"
+  starting_equity: 100000.00
+  max_gross_exposure_ratio: 1.5
+  max_strategy_allocation_ratio: 0.20
+  perp_leverage: 5.0
+  margin_buffer_ratio: 0.10
+  reserve_cash_requirement: 30000.00
+  max_concurrent_episodes: 3
+  scale_down_enabled: false

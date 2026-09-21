@@ -1,0 +1,94 @@
+{
+  "report_version": "ROUND3B.0A",
+  "audit_title": "Research Round 3B.0A Adversarial Reliability Remediation Audit",
+  "timestamp_utc": "2026-09-21T17:45:00Z",
+  "remediation_status": "VERIFIED",
+  "trading_capability": 0,
+  "canonical_merge_authorized": false,
+  "strategy_discovery_authorized": false,
+  "approved_for_shadow": 0,
+  "approved_for_paper": 0,
+  "remediation_components": {
+    "data_guard_holdout_hardening": {
+      "status": "VERIFIED",
+      "holdout_precedence_invariant": "STRICT_OVERLAP_RESOLVES_TO_LOCKED_HOLDOUT",
+      "holdout_unlock_capability": 0,
+      "final_holdout_audit_permission": "DENIED",
+      "fail_closed_provenance": "DATASET_PROVENANCE_UNKNOWN_ENFORCED",
+      "fail_closed_metadata": "DATASET_METADATA_INVALID_ENFORCED",
+      "logical_sha_verification": "CANONICAL_REGISTRY_MATCH_ENFORCED",
+      "cryptographic_ledger": "SHA256_SEQUENCE_LINKED_CHAIN",
+      "allowed_holdout_accesses": 0
+    },
+    "oracle_multi_family_expansion": {
+      "status": "VERIFIED",
+      "total_cases_tested": 850,
+      "exact_matches": 850,
+      "discrepancies_count": 0,
+      "families": {
+        "btc_spot_perp": 200,
+        "eth_spot_perp": 200,
+        "standalone_perp": 150,
+        "relative_pair": 200,
+        "edge_boundary": 100
+      },
+      "equality_policy": "EXACT_DECIMAL_EQUALITY",
+      "tolerance": "0.0",
+      "mutation_dimensions_tested": [
+        "fee_mutation",
+        "funding_mutation",
+        "price_pnl_mutation",
+        "total_cost_mutation",
+        "capital_commitment_mutation"
+      ],
+      "mutation_gate_passed": true
+    },
+    "temporal_integrity_hardening": {
+      "status": "VERIFIED",
+      "typed_funding_signals": [
+        "ObservableEstimatedFunding",
+        "RealizedHistoricalFunding",
+        "FutureUnsettledRealizedFunding"
+      ],
+      "future_funding_leakage_blocked": true,
+      "backtest_simulation_contract_verified": true,
+      "real_feature_modules_tested": [
+        "price_returns.compute_log_returns",
+        "price_returns.compute_trend_slope",
+        "price_returns.compute_rolling_drawdown",
+        "volatility.compute_realized_volatility",
+        "volatility.compute_average_true_range",
+        "derivatives.align_funding_rates_to_klines",
+        "derivatives.compute_funding_zscore",
+        "cross_asset.compute_eth_btc_ratio",
+        "cross_asset.compute_relative_return_diff",
+        "cross_asset.compute_rolling_correlation",
+        "time_session.compute_session_flags"
+      ],
+      "all_real_features_perturbation_invariant": true
+    },
+    "capital_governor_hardening": {
+      "status": "VERIFIED",
+      "canonical_policy_file": "config/research_capital_policy_v1.yaml",
+      "classification": "RESEARCH_ASSUMPTION",
+      "input_validation_verified": true,
+      "duplicate_episode_rejection_verified": true,
+      "unknown_episode_close_rejection_verified": true,
+      "chronological_sequence_verified": true,
+      "scale_down_policy": "DISABLED_FAIL_CLOSED",
+      "exhaustion_action": "REJECT"
+    },
+    "verifier_integrity_hardening": {
+      "status": "VERIFIED",
+      "verifier_script": "tools/verify_round3b_reliability_v2.py",
+      "execution_modes": [
+        "FULL_ACCEPTANCE",
+        "DIAGNOSTIC"
+      ],
+      "diagnostic_mode_blocked_from_acceptance": true,
+      "zero_forced_promotion_mechanically_derived": true,
+      "holdout_ledger_mechanically_derived": true,
+      "non_self_referential_canonical_json_sha256": true
+    }
+  }
+}

@@ -91,3 +91,57 @@ def compute_causal_rolling_basis_bps(
         ((p - s) / s) * 10000.0
         for s, p in zip(spot_series, perp_series)
     ]
+
+
+@dataclass(frozen=True)
+class ObservableEstimatedFunding:
+    """Observable estimated funding rate available at observation time."""
+    signal_ts_ns: int
+    estimated_rate: Decimal
+    as_of_ts_ns: int
+
+    def __post_init__(self) -> None:
+        if self.as_of_ts_ns > self.signal_ts_ns:
+            raise TemporalIntegrityViolationError(
+                f"Observable funding rate cannot be from future: as_of_ts_ns ({self.as_of_ts_ns}) > signal_ts_ns ({self.signal_ts_ns})"
+            )
+
+
+@dataclass(frozen=True)
+class RealizedHistoricalFunding:
+    """Historical funding rate that has realized and settled at or before observation time."""
+    settlement_ts_ns: int
+    realized_rate: Decimal
+    mark_price: Decimal = Decimal("0")
+
+
+@dataclass(frozen=True)
+class FutureUnsettledRealizedFunding:
+    """Future realized funding rate that has NOT yet settled. Access before settlement fails closed."""
+    settlement_ts_ns: int
+    _future_realized_rate: Decimal
+
+    def get_rate(self, current_ts_ns: int) -> Decimal:
+        if current_ts_ns < self.settlement_ts_ns:
+            raise TemporalIntegrityViolationError(
+                f"FUTURE_FUNDING_RATE_ACCESS_PROHIBITED: Cannot access unsettled funding rate prior to settlement timestamp "
+                f"(current_ts_ns: {current_ts_ns}, settlement_ts_ns: {self.settlement_ts_ns})"
+            )
+        return self._future_realized_rate
+
+    @property
+    def rate(self) -> Decimal:
+        raise TemporalIntegrityViolationError(
+            "FUTURE_FUNDING_RATE_ACCESS_PROHIBITED: Direct property access without timestamp verification is prohibited. "
+            "Use get_rate(current_ts_ns) to verify causal access."
+        )
+
+
+def assert_causal_funding_access(observed_ts_ns: int, settlement_ts_ns: int) -> None:
+    """Assert that funding settlement is causal with respect to observation timestamp."""
+    if settlement_ts_ns > observed_ts_ns:
+        raise TemporalIntegrityViolationError(
+            f"FUTURE_FUNDING_RATE_ACCESS_PROHIBITED: Settlement timestamp ({settlement_ts_ns}) > "
+            f"observed timestamp ({observed_ts_ns})"
+        )
+

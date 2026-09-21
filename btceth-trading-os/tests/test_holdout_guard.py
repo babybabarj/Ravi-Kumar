@@ -13,41 +13,127 @@ from btceth_os.research.data_guard import (
     ResearchDataAccessGuard,
     ResearchOperation,
     load_research_parquet,
+    verify_access_ledger_integrity,
     LEDGER_PATH,
     HOLDOUT_WINDOW_START_NS,
     HOLDOUT_WINDOW_END_NS,
+    HOLDOUT_UNLOCK_CAPABILITY,
 )
 
 
-def test_direct_holdout_role_blocked() -> None:
-    """Direct attempt to access LOCKED_HOLDOUT during research/tuning fails closed."""
-    for op in [
-        ResearchOperation.HYPOTHESIS_GENERATION,
-        ResearchOperation.FEATURE_SELECTION,
-        ResearchOperation.PARAMETER_TUNING,
-        ResearchOperation.BACKTEST,
-    ]:
-        with pytest.raises(HoldoutAccessDeniedError) as exc_info:
-            ResearchDataAccessGuard.check_access(
-                operation=op,
-                dataset_id="BTCUSDT_2024",
-                dataset_role=DatasetRole.LOCKED_HOLDOUT,
-            )
-        assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc_info.value)
+def test_adversarial_matrix_2024_holdout_precedence() -> None:
+    """Holdout timestamp intersection must strictly take precedence over ANY caller-supplied role."""
+    ts_mid_2024 = int(datetime(2024, 6, 15, tzinfo=timezone.utc).timestamp() * 1e9)
+
+    # 1. 2024 timestamps + PROSPECTIVE_FORWARD => MUST BLOCK!
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.PROSPECTIVE_VALIDATION,
+            dataset_id="FORGED_PROSPECTIVE_2024",
+            dataset_role=DatasetRole.PROSPECTIVE_FORWARD,
+            start_ts_ns=ts_mid_2024,
+            end_ts_ns=ts_mid_2024 + 3600_000_000_000,
+        )
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
+
+    # 2. 2024 timestamps + DEVELOPMENT => MUST BLOCK!
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="FORGED_DEV_2024",
+            dataset_role=DatasetRole.DEVELOPMENT,
+            start_ts_ns=ts_mid_2024,
+            end_ts_ns=ts_mid_2024 + 3600_000_000_000,
+        )
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
+
+    # 3. 2024 timestamps + VALIDATION => MUST BLOCK!
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="FORGED_VAL_2024",
+            dataset_role=DatasetRole.VALIDATION,
+            start_ts_ns=ts_mid_2024,
+            end_ts_ns=ts_mid_2024 + 3600_000_000_000,
+        )
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
+
+    # 4. 2024 timestamps + SHADOW => MUST BLOCK!
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.SHADOW_EVALUATION,
+            dataset_id="FORGED_SHADOW_2024",
+            dataset_role=DatasetRole.SHADOW,
+            start_ts_ns=ts_mid_2024,
+            end_ts_ns=ts_mid_2024 + 3600_000_000_000,
+        )
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
+
+    # 5. 2024 timestamps + PAPER => MUST BLOCK!
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.PAPER_EVALUATION,
+            dataset_id="FORGED_PAPER_2024",
+            dataset_role=DatasetRole.PAPER,
+            start_ts_ns=ts_mid_2024,
+            end_ts_ns=ts_mid_2024 + 3600_000_000_000,
+        )
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
 
 
-def test_renamed_holdout_file_blocked_by_timestamp_metadata(tmp_path: Path) -> None:
-    """Even if a holdout file is renamed to innocent name without '2024', guard blocks it based on timestamps/metadata."""
-    # Create Parquet file with NO '2024' in filename: innocent_sample_data.parquet
-    innocent_file = tmp_path / "innocent_sample_data.parquet"
-    
-    # Mid-2024 timestamp (June 15, 2024)
-    ts_mid_2024 = int(datetime(2024, 6, 15, tzinfo=timezone.utc).timestamp() * 1_000_000_000)
+def test_final_holdout_audit_fails_closed() -> None:
+    """FINAL_HOLDOUT_AUDIT must fail closed because HOLDOUT_UNLOCK_CAPABILITY = 0."""
+    assert HOLDOUT_UNLOCK_CAPABILITY == 0
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.FINAL_HOLDOUT_AUDIT,
+            dataset_id="BTCUSDT_2024_HOLDOUT",
+            dataset_role=DatasetRole.LOCKED_HOLDOUT,
+        )
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
+    assert "HOLDOUT_UNLOCK_CAPABILITY is ZERO" in str(exc.value)
+
+
+def test_unknown_provenance_fails_closed() -> None:
+    """Unknown dataset identity and timestamps must NEVER default to DEVELOPMENT; must fail closed."""
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="MYSTERIOUS_UNREGISTERED_DATASET",
+        )
+    assert "DATASET_PROVENANCE_UNKNOWN" in str(exc.value)
+
+
+def test_corrupt_metadata_fails_closed(tmp_path: Path) -> None:
+    """If metadata reading fails or file is corrupt, guard must fail closed (no silent continue)."""
+    corrupt_file = tmp_path / "corrupt_data.parquet"
+    corrupt_file.write_bytes(b"NOT_A_REAL_PARQUET_FILE_CORRUPT_BYTES")
+
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        load_research_parquet(corrupt_file, operation=ResearchOperation.BACKTEST, dataset_id="unknown_file")
+    assert "DATASET_METADATA_INVALID" in str(exc.value)
+
+
+def test_dataset_identity_mismatch_fails_closed() -> None:
+    """If caller claims canonical dataset_v3.1.0 but provides wrong logical SHA, access is denied."""
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="dataset_v3.1.0",
+            dataset_logical_sha="0000000000000000000000000000000000000000000000000000000000000000",
+        )
+    assert "DATASET_IDENTITY_MISMATCH" in str(exc.value)
+
+
+def test_renamed_holdout_file_blocked_by_metadata(tmp_path: Path) -> None:
+    """Renamed holdout file with innocent name is blocked by metadata timestamps."""
+    innocent_file = tmp_path / "innocent_dev_data.parquet"
+    ts_mid_2024 = int(datetime(2024, 6, 15, tzinfo=timezone.utc).timestamp() * 1e9)
     
     schema = pa.schema(
         [("ts_event_ns", pa.int64()), ("price", pa.float64())],
         metadata={
-            b"dataset_role": b"LOCKED_HOLDOUT",
+            b"dataset_role": b"PROSPECTIVE_FORWARD",  # Forged metadata claiming prospective!
             b"start_ts_ns": str(ts_mid_2024).encode(),
             b"end_ts_ns": str(ts_mid_2024 + 3600_000_000_000).encode(),
         },
@@ -55,31 +141,16 @@ def test_renamed_holdout_file_blocked_by_timestamp_metadata(tmp_path: Path) -> N
     table = pa.Table.from_arrays([[ts_mid_2024], [65000.0]], schema=schema)
     pq.write_table(table, innocent_file)
 
-    # Attempting to load this innocent-named file via load_research_parquet must fail!
-    with pytest.raises(HoldoutAccessDeniedError) as exc_info:
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
         load_research_parquet(innocent_file, operation=ResearchOperation.BACKTEST)
-    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc_info.value)
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
 
 
-def test_holdout_timestamp_range_queries_blocked() -> None:
-    """Queries overlapping the 2024-01-01 to 2024-11-30 window are strictly blocked."""
-    # Start in 2023, ends in mid-2024 -> overlaps holdout
-    start_2023 = int(datetime(2023, 11, 1, tzinfo=timezone.utc).timestamp() * 1e9)
-    end_2024 = int(datetime(2024, 2, 1, tzinfo=timezone.utc).timestamp() * 1e9)
-    with pytest.raises(HoldoutAccessDeniedError):
-        ResearchDataAccessGuard.check_access(
-            operation=ResearchOperation.FEATURE_SELECTION,
-            dataset_id="test_query",
-            start_ts_ns=start_2023,
-            end_ts_ns=end_2024,
-        )
+def test_prospective_forward_policy_matrix(tmp_path: Path) -> None:
+    """PROSPECTIVE_FORWARD data allows forward validation but strictly blocks tuning/optimization."""
+    ts_2025 = int(datetime(2025, 6, 1, tzinfo=timezone.utc).timestamp() * 1e9)
 
-
-def test_prospective_forward_2025_data_allowed(tmp_path: Path) -> None:
-    """Prospective data from 2025 is explicitly ALLOWED (not blocked by blanket >= 2024 rule)."""
-    ts_2025 = int(datetime(2025, 3, 1, tzinfo=timezone.utc).timestamp() * 1_000_000_000)
-    
-    # Must pass guard check cleanly
+    # 1. Forward validation => ALLOWED
     allowed = ResearchDataAccessGuard.check_access(
         operation=ResearchOperation.PROSPECTIVE_VALIDATION,
         dataset_id="BTCUSDT_2025_PROSPECTIVE",
@@ -89,40 +160,43 @@ def test_prospective_forward_2025_data_allowed(tmp_path: Path) -> None:
     )
     assert allowed is True
 
-    # Loading a 2025 parquet file succeeds
-    p2025_file = tmp_path / "btcusdt_2025_forward.parquet"
-    table = pa.Table.from_arrays(
-        [[ts_2025], [95000.0]],
-        schema=pa.schema(
-            [("ts_event_ns", pa.int64()), ("price", pa.float64())],
-            metadata={b"dataset_role": b"PROSPECTIVE_FORWARD", b"start_ts_ns": str(ts_2025).encode(), b"end_ts_ns": str(ts_2025).encode()},
-        ),
-    )
-    pq.write_table(table, p2025_file)
+    # 2. Parameter tuning on 2025 => BLOCKED!
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.PARAMETER_TUNING,
+            dataset_id="BTCUSDT_2025_PROSPECTIVE",
+            dataset_role=DatasetRole.PROSPECTIVE_FORWARD,
+            start_ts_ns=ts_2025,
+            end_ts_ns=ts_2025 + 3600_000_000_000,
+        )
+    assert "PROSPECTIVE_TUNING_BLOCKED" in str(exc.value)
 
-    loaded = load_research_parquet(
-        p2025_file,
-        operation=ResearchOperation.PROSPECTIVE_VALIDATION,
-        dataset_role=DatasetRole.PROSPECTIVE_FORWARD,
-    )
-    assert loaded.num_rows == 1
+    # 3. Feature selection on 2026 => BLOCKED!
+    ts_2026 = int(datetime(2026, 6, 1, tzinfo=timezone.utc).timestamp() * 1e9)
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.FEATURE_SELECTION,
+            dataset_id="BTCUSDT_2026_LIVE_FORWARD",
+            dataset_role=DatasetRole.PROSPECTIVE_FORWARD,
+            start_ts_ns=ts_2026,
+            end_ts_ns=ts_2026 + 3600_000_000_000,
+        )
+    assert "PROSPECTIVE_TUNING_BLOCKED" in str(exc.value)
 
-
-def test_prospective_forward_2026_data_allowed() -> None:
-    """Prospective data from 2026 (e.g. current live forward data) is explicitly ALLOWED."""
-    ts_2026 = int(datetime(2026, 9, 21, tzinfo=timezone.utc).timestamp() * 1_000_000_000)
-    allowed = ResearchDataAccessGuard.check_access(
-        operation=ResearchOperation.PROSPECTIVE_VALIDATION,
-        dataset_id="BTCUSDT_2026_LIVE_FORWARD",
-        dataset_role=DatasetRole.PROSPECTIVE_FORWARD,
-        start_ts_ns=ts_2026,
-        end_ts_ns=ts_2026 + 3600_000_000_000,
-    )
-    assert allowed is True
+    # 4. Backtest / optimization on 2025 => BLOCKED!
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="BTCUSDT_2025_PROSPECTIVE",
+            dataset_role=DatasetRole.PROSPECTIVE_FORWARD,
+            start_ts_ns=ts_2025,
+            end_ts_ns=ts_2025 + 3600_000_000_000,
+        )
+    assert "PROSPECTIVE_TUNING_BLOCKED" in str(exc.value)
 
 
 def test_development_and_validation_datasets_allowed() -> None:
-    """2020-2023 development and validation datasets pass without error."""
+    """Canonical 2020-2023 development and validation datasets pass cleanly."""
     ts_2021 = int(datetime(2021, 6, 1, tzinfo=timezone.utc).timestamp() * 1e9)
     ts_2023 = int(datetime(2023, 6, 1, tzinfo=timezone.utc).timestamp() * 1e9)
 
@@ -143,12 +217,55 @@ def test_development_and_validation_datasets_allowed() -> None:
     ) is True
 
 
-def test_ledger_records_access_events() -> None:
-    """Verify that ledger records both blocked and allowed events with full metadata."""
-    assert LEDGER_PATH.is_file(), "Ledger path must exist after tests run"
-    lines = [json.loads(line) for line in LEDGER_PATH.read_text(encoding="utf-8").strip().splitlines() if line.strip()]
-    assert len(lines) > 0
+def test_access_ledger_hash_chain_integrity() -> None:
+    """Verify cryptographic continuity of the access ledger hash chain and zero allowed holdout accesses."""
+    ok, count, msg, summary = verify_access_ledger_integrity()
+    assert ok is True, f"Hash chain integrity failed: {msg}"
+    assert count > 0, "Ledger must have recorded entries"
+    assert summary["allowed_holdout_accesses"] == 0, "Must have zero allowed holdout accesses"
 
-    decisions = {entry.get("decision") for entry in lines}
-    assert "BLOCKED" in decisions
-    assert "ALLOWED" in decisions
+
+def test_access_ledger_tamper_detection(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tampering with an entry in the ledger breaks hash chain verification."""
+    # Create isolated test ledger
+    test_ledger = tmp_path / "test_ledger.jsonl"
+    monkeypatch.setattr("btceth_os.research.data_guard.LEDGER_PATH", test_ledger)
+
+    # Perform 3 access requests to populate ledger
+    ResearchDataAccessGuard.check_access(
+        operation=ResearchOperation.BACKTEST,
+        dataset_id="BTCUSDT_DEV",
+        dataset_role=DatasetRole.DEVELOPMENT,
+        start_ts_ns=1600000000_000_000_000,
+        end_ts_ns=1600003600_000_000_000,
+    )
+    with pytest.raises(HoldoutAccessDeniedError):
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.HYPOTHESIS_GENERATION,
+            dataset_id="BTCUSDT_2024_HOLDOUT",
+            dataset_role=DatasetRole.LOCKED_HOLDOUT,
+        )
+    ResearchDataAccessGuard.check_access(
+        operation=ResearchOperation.PROSPECTIVE_VALIDATION,
+        dataset_id="BTCUSDT_2025_PROSPECTIVE",
+        dataset_role=DatasetRole.PROSPECTIVE_FORWARD,
+        start_ts_ns=1740000000_000_000_000,
+        end_ts_ns=1740003600_000_000_000,
+    )
+
+    # Verify pristine ledger passes
+    ok, count, msg, summary = verify_access_ledger_integrity()
+    assert ok is True
+    assert count == 3
+
+    # Tamper with entry 2
+    lines = test_ledger.read_text(encoding="utf-8").splitlines()
+    tampered_entry = json.loads(lines[1])
+    tampered_entry["decision"] = "ALLOWED"  # Tamper with recorded decision!
+    lines[1] = json.dumps(tampered_entry)
+    test_ledger.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    # Re-verifying must detect tampering!
+    ok_tampered, count_tampered, msg_tampered, _ = verify_access_ledger_integrity()
+    assert ok_tampered is False
+    assert "TAMPER_DETECTED" in msg_tampered

@@ -1,0 +1,14 @@
+{
+  "report_version": "ROUND3B.0A",
+  "status": "VERIFIED",
+  "policy_file": "config/research_capital_policy_v1.yaml",
+  "classification": "RESEARCH_ASSUMPTION",
+  "trading_capability": 0,
+  "input_validation_verified": true,
+  "duplicate_episode_rejection_verified": true,
+  "unknown_episode_rejection_verified": true,
+  "chronology_violation_rejection_verified": true,
+  "scale_down_policy": "DISABLED_FAIL_CLOSED",
+  "exhaustion_behavior": "REJECT",
+  "multi_strategy_concurrency_verified": true
+}

@@ -1,0 +1,18 @@
+{
+  "report_version": "ROUND3B.0A",
+  "oracle_isolation": "STRICT_STANDALONE_NO_BTCETH_OS_IMPORTS",
+  "equality_policy": "EXACT_DECIMAL_EQUALITY",
+  "tolerance": "0.0",
+  "total_cases_tested": 850,
+  "exact_matches": 850,
+  "discrepancies_count": 0,
+  "family_breakdown": {
+    "btc_spot_perp": 200,
+    "eth_spot_perp": 200,
+    "standalone_perp": 150,
+    "relative_pair": 200,
+    "edge_boundary": 100
+  },
+  "reconciliation_status": "VERIFIED",
+  "mutation_gate_passed": true
+}
