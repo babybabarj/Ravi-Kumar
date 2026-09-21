@@ -1,8 +1,8 @@
 # Research Round 3B.0: Reliability Acceptance Gate Report
 
 **Acceptance Status**: `VERIFIED`  
-**Timestamp**: `2026-09-21T17:21:10.260964+00:00`  
-**Code Commit**: `b4fcd1f6942f83117494959ca46256a93d7f2dcd`  
+**Timestamp**: `2026-09-21T17:21:49.015681+00:00`  
+**Code Commit**: `411cb52fd09031d696427fbdd6c2e82feeed11da`  
 **Canonical Baseline Commit**: `cfa80f3aabbb75a28969701d8013f6784c35a495`  
 **Trading Capability**: `ZERO`  
 **2024 Holdout**: `LOCKED`  
