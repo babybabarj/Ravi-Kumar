@@ -20,6 +20,11 @@ from typing import Any, Sequence
 from .multi_leg_accounting import MultiLegTradeEpisode
 
 
+class CapitalExhaustionError(RuntimeError):
+    """Raised when capital requested exceeds available portfolio equity or concurrency limits."""
+    pass
+
+
 @dataclass(frozen=True)
 class EquityPoint:
     """Snapshot of portfolio balance sheet at a discrete point in time."""
@@ -103,6 +108,15 @@ class PortfolioEquityEngine:
         """Allocate committed capital for a new episode."""
         self.current_committed_capital += committed_capital
         self.active_episodes.append(episode)
+
+    def allocate_episode(self, episode: MultiLegTradeEpisode, committed_capital: Decimal) -> None:
+        """Strictly allocate committed capital for a new episode or fail-closed."""
+        if not self.can_open_episode(committed_capital):
+            raise CapitalExhaustionError(
+                f"FAIL_CLOSED_CAPITAL_EXHAUSTION: requested {committed_capital} > available {self.available_capital} "
+                f"or concurrency limit {self.max_concurrency} reached"
+            )
+        self.open_episode(episode, committed_capital)
 
     def close_episode(
         self,
@@ -229,3 +243,29 @@ class PortfolioEquityEngine:
             "rejected_concurrency_count": self.rejected_concurrency_count,
             "sanity_flags": flags,
         }
+
+
+def allocate_multi_strategy_capital(
+    allocations: dict[str, Decimal],
+    total_capital: Decimal = Decimal("10000.0"),
+    policy: str = "REJECT",
+) -> dict[str, Decimal]:
+    """Validate or scale strategy-level capital allocations against total available capital pool.
+
+    If total requested > total_capital:
+    - policy == "REJECT": raises CapitalExhaustionError("FAIL_CLOSED_CAPITAL_EXHAUSTION: ...")
+    - policy == "SCALE_DOWN": scales each allocation proportionally so sum == total_capital.
+    """
+    total_requested = sum(allocations.values(), Decimal("0"))
+    if total_requested <= total_capital:
+        return dict(allocations)
+
+    if policy == "REJECT":
+        raise CapitalExhaustionError(
+            f"FAIL_CLOSED_CAPITAL_EXHAUSTION: Total requested capital {total_requested} exceeds pool {total_capital}"
+        )
+    elif policy == "SCALE_DOWN":
+        scale_factor = total_capital / total_requested
+        return {k: v * scale_factor for k, v in allocations.items()}
+    else:
+        raise ValueError(f"Unknown policy: {policy}")

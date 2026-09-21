@@ -1,0 +1,93 @@
+{
+  "audit_timestamp_utc": "2026-09-21T07:31:00Z",
+  "classification": "MILESTONE_HISTORY_DIVERGENCE",
+  "classification_rationale": "The repository on origin/btceth-phase1b is 15 commits ahead of accepted Phase 1B.1 (7213a01) and includes Phase 1B.2 through Research Round 3A. The working tree additionally contains interrupted Research Round 3B WIP files. This is not upstream data mutation, but milestone timeline divergence.",
+  "branch": "btceth-phase1b",
+  "local_head": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
+  "remote_head": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
+  "accepted_phase1b1_baseline": "7213a01dde9a8bdc0b5620743558ea84968372f1",
+  "is_descendant_of_1b1": true,
+  "commits_ahead_of_1b1": 15,
+  "intermediate_commits": [
+    {"sha": "5873de6", "message": "feat(research): Research Round 3A - Structural accounting, source alignment, and portfolio equity remediation"},
+    {"sha": "8d4fbef", "message": "chore(research): record final verification commit in acceptance report"},
+    {"sha": "e4d16c5", "message": "feat(research): Research Round 3 - Structural and market-neutral edge discovery across cash-and-carry, funding, and basis"},
+    {"sha": "beaa1b4", "message": "feat(research): Research Round 2 - Multi-year edge discovery, Market Brain semantic remediation, and validation hardening"},
+    {"sha": "e0a94eb", "message": "feat(research): implement market brain, strategy research, and independent validation engine"},
+    {"sha": "37d2040", "message": "feat(autopilot): add autonomous demo and paper trading orchestrator"},
+    {"sha": "dfa75b2", "message": "feat(binance): add read-only spot and usdm account sync"},
+    {"sha": "f70e0ad", "message": "feat(dashboard): add labeled paper demo publisher"},
+    {"sha": "10b65a2", "message": "feat(dashboard): add read-only localhost monitor"},
+    {"sha": "e05d318", "message": "feat(safety): add fail-closed shadow and paper controls"},
+    {"sha": "80e4f01", "message": "feat(research): add deterministic walk-forward evaluation"},
+    {"sha": "34238fb", "message": "feat(phase1b.5): add immutable historical silver gates"},
+    {"sha": "6d5f991", "message": "feat(phase1b.4): add strict streaming bronze parsers"},
+    {"sha": "1076580", "message": "feat(phase1b.3): catalog immutable raw archive objects"},
+    {"sha": "963bd6a", "message": "feat(phase1b.2): add verified streaming archive downloader"}
+  ],
+  "working_tree_state": "DIRTY",
+  "wip_files": {
+    "src/btceth_os/research/structural/portfolio_equity.py": {
+      "bytes": 11545,
+      "sha256": "db54e11387ee45216fffa83eba8c1388c4ea10f68224647fe613d4b7cd915221",
+      "status": "modified"
+    },
+    "reports/RESEARCH_ROUND3B_GAP_FORENSICS.md": {
+      "bytes": 3556,
+      "sha256": "9d689c4e7ee379fc43c950f691a2147212675f475597c9ee308723831a88c83c",
+      "status": "untracked"
+    },
+    "reports/ROUND3B_ACCOUNTING_RECONCILIATION.json": {
+      "bytes": 134,
+      "sha256": "d6cbc6aa8170f795d49635687c8ab63b7ff23e98fa2e1fb1c21c451cfd17fb61",
+      "status": "untracked"
+    },
+    "reports/ROUND3B_ACCOUNTING_RECONCILIATION.md": {
+      "bytes": 831,
+      "sha256": "2ced0665be62fbc293f49307e89e3b7af13cb3856da9538353fb29e702a36665",
+      "status": "untracked"
+    },
+    "src/btceth_os/research/holdout_firewall.py": {
+      "bytes": 2497,
+      "sha256": "68071b0b0a51b6c29089468339b6c695e998d21aaa773748a60b985db3b1b04b",
+      "status": "untracked"
+    },
+    "src/btceth_os/research/structural/adversarial_cost.py": {
+      "bytes": 8766,
+      "sha256": "cbb9037df06a4e71c2d8889830cc95175d0ef727e13e350ea4971e0d5ebc5249",
+      "status": "untracked"
+    },
+    "tests/test_holdout_firewall.py": {
+      "bytes": 2394,
+      "sha256": "b24d5f567221dbd2b0c004a12c427d5f496e4374eb9954d500928997f6bf795d",
+      "status": "untracked"
+    },
+    "tests/test_round3b_concurrency_adversary.py": {
+      "bytes": 6819,
+      "sha256": "900fb79998754c27fea8db7209699d90c4e81569f9d6d0bca13fa9bdf5aeb527",
+      "status": "untracked"
+    },
+    "tests/test_round3b_temporal_causality.py": {
+      "bytes": 6352,
+      "sha256": "39fca5e4ddcd9edc1ebe0cc883c459e9355ff7bd133b76c5ff32e3daed94c3cb",
+      "status": "untracked"
+    },
+    "tools/accounting_oracle.py": {
+      "bytes": 13156,
+      "sha256": "5dfdd7b6fcc24aca249525f46ee97d10474f19e0445bb0afb0694a7d661a5d33",
+      "status": "untracked"
+    },
+    "tools/analyze_source_gaps.py": {
+      "bytes": 9621,
+      "sha256": "9d9dab5ec24d15ac33f4f3b7a3fae3e67b2ae1b7484e58996bdbb01c2dbe019a",
+      "status": "untracked"
+    }
+  },
+  "precheck_verifications": {
+    "phase1a_verifier": "PASS",
+    "phase1b1_verifier": "FAIL_CLEANLINESS_GATE",
+    "full_pytest_pass": true,
+    "pytest_passed_count": 177,
+    "trading_capability": "ZERO"
+  }
+}
