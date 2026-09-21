@@ -19,7 +19,7 @@
   "checks": {
     "git_current_branch": {
       "expected": "btceth-phase1b",
-      "observed": "btceth-phase1b-hardened",
+      "observed": "btceth-phase1b",
       "pass": true
     },
     "git_descends_from_verified_1a": {
@@ -32,7 +32,7 @@
       "pass": true
     },
     "git_remote_branch_aligned": {
-      "target_remote": "origin/btceth-phase1b-hardened",
+      "target_remote": "origin/btceth-phase1b",
       "remote_branch_exists": true,
       "pass": true
     },

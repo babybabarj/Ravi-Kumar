@@ -1,8 +1,8 @@
 # Research Round 3A: Mechanical Acceptance Gate Report
 
 **Acceptance Status**: `✅ ALL GATES PASSED`  
-**Timestamp**: `2026-09-21T08:35:32.494256+00:00`  
-**Code Commit**: `a2eebbafe34cc8ca6a3044f118e1e4231f79b8e1`  
+**Timestamp**: `2026-09-21T16:48:27.370074+00:00`  
+**Code Commit**: `f2b7988d54d222ec4c36535c58c8c17e3daa45d9`  
 **Dataset Version**: `3.1.0`  
 **2024 Holdout**: `LOCKED`  
 
@@ -20,4 +20,4 @@
 | **Zero Forced Promotion** | PASS | APPROVED_FOR_PAPER = 0, APPROVED_FOR_SHADOW = 0 |
 | **2024 Holdout Lock** | PASS | HOLDOUT_LOCKED = TRUE; 2024 dataset completely unopened |
 | **Security Invariant** | PASS | TRADING CAPABILITY = ZERO, 0 forbidden mutation hits |
-| **Automated Tests** | PASS | 183 passed cleanly |
+| **Automated Tests** | PASS | 189 passed cleanly |

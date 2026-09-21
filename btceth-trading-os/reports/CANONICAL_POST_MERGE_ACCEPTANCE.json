@@ -1,0 +1,45 @@
+{
+  "report_version": 1,
+  "generated_at_utc": "2026-09-21T16:49:00.000000+00:00",
+  "canonical_post_merge_acceptance": "VERIFIED",
+  "canonical_branch": "btceth-phase1b",
+  "old_canonical_head": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
+  "canonical_merge_point_sha": "5f59383d765d7682be8ce25e5043145b4a43e692",
+  "post_merge_tooling_commit_sha": "f2b7988d54d222ec4c36535c58c8c17e3daa45d9",
+  "tested_tree_sha": "9020745821e843c9d1fcc525c8ee6b4e147648ec",
+  "working_tree_clean_before": true,
+  "dirty_paths_before": [],
+  "fast_forward_only": true,
+  "merge_commit_created": false,
+  "force_push_used": false,
+  "milestone_statuses": {
+    "phase_1a": "VERIFIED",
+    "phase_1b_1": "VERIFIED",
+    "phase_1b_2": "VERIFIED",
+    "phase_1b_3": "VERIFIED",
+    "phase_1b_4": "VERIFIED",
+    "phase_1b_5": "VERIFIED",
+    "research_round3a": "VERIFIED",
+    "demo_autopilot": "VERIFIED"
+  },
+  "pytest_result": "PASS (189 passed, 0 failures, 0 errors)",
+  "security_result": "PASS (TRADING CAPABILITY = ZERO)",
+  "trading_capability": "ZERO",
+  "holdout_status": "LOCKED",
+  "data_hashes": {
+    "silver_parquet_sha256": "b4b77ca9497759ac8ee831a7c12ac963a6c5a2309a65d19f58c2da8e8d774513",
+    "dataset_v3_1_full_logical_sha": "a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930"
+  },
+  "pre_merge_v2_provenance_sha256": "2efaa600d09116339cc23aa633ef5e5bdb2c3acaf7904f279f8a35ae48590664",
+  "preserved_branches": {
+    "hardened_branch_sha": "5f59383d765d7682be8ce25e5043145b4a43e692",
+    "round3b_wip_safety_sha": "11d6e370db0d27cd635528a3c530286b28c60416",
+    "pre_hardening_snapshot_sha": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088"
+  },
+  "strategy_policy": {
+    "approved_for_shadow": 0,
+    "approved_for_paper": 0
+  },
+  "failed_gates": [],
+  "next_step": "ROUND 3B WIP INDEPENDENT AUDIT"
+}

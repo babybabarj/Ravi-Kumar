@@ -2,7 +2,7 @@
 
 PHASE_1B_1 = VERIFIED
 
-- Current Branch: `btceth-phase1b-hardened`
+- Current Branch: `btceth-phase1b`
 - Verified Phase 1A Base: `1f1243581d0a4d1882d4acd2cc4d49f967265ee6`
 - Remote Branch Aligned: `PASS`
 - Trading Capability: `ZERO`
