@@ -1,0 +1,160 @@
+{
+  "audit_version": 1,
+  "audit_status": "VERIFIED",
+  "audit_timestamp_utc": "2026-09-21T17:15:00.000000+00:00",
+  "audited_branch": "btceth-round3b-wip-safety",
+  "audited_commit_sha": "11d6e370db0d27cd635528a3c530286b28c60416",
+  "canonical_base_sha": "cfa80f3aabbb75a28969701d8013f6784c35a495",
+  "total_files_audited": 13,
+  "classifications_summary": {
+    "REUSE_CONCEPT_ONLY": 1,
+    "REIMPLEMENT": 7,
+    "ARCHIVE_ONLY": 4,
+    "REJECT": 1
+  },
+  "files": [
+    {
+      "path": "reports/REPOSITORY_STATE_REMEDIATION_PRECHECK.json",
+      "original_purpose": "Audit of repository state and divergence diagnostics prior to Phase 1B.2 remediation",
+      "useful_concepts": "Schema for pre-remediation branch divergence tracking",
+      "correctness_concerns": "Reflected superseded divergence state prior to Phase 1B.2 hardening",
+      "security_concerns": "None",
+      "statistical_concerns": "None",
+      "semantic_concerns": "Divergence has since been resolved by canonical fast-forward merge",
+      "reuse_classification": "ARCHIVE_ONLY",
+      "replacement_design": "Preserved in git history for provenance; superseded by CANONICAL_POST_MERGE_ACCEPTANCE.json"
+    },
+    {
+      "path": "reports/REPOSITORY_STATE_REMEDIATION_PRECHECK.md",
+      "original_purpose": "Human-readable narrative of repository state remediation precheck",
+      "useful_concepts": "Explains timeline divergence context",
+      "correctness_concerns": "Superseded historical report",
+      "security_concerns": "None",
+      "statistical_concerns": "None",
+      "semantic_concerns": "Superseded by canonical merge",
+      "reuse_classification": "ARCHIVE_ONLY",
+      "replacement_design": "Preserved in git history for provenance; superseded by CANONICAL_POST_MERGE_ACCEPTANCE.md"
+    },
+    {
+      "path": "reports/RESEARCH_ROUND3B_GAP_FORENSICS.md",
+      "original_purpose": "Forensic breakdown of 440 invalid hours in Dataset v3.1.0",
+      "useful_concepts": "Clustering analysis by series, calendar year, and consecutive gap run duration",
+      "correctness_concerns": "Claims causality without evidence (e.g. attributed gaps to server load and FTX collapse)",
+      "security_concerns": "None",
+      "statistical_concerns": "Correlations presented as causal mechanisms",
+      "semantic_concerns": "Contains speculative external assertions",
+      "reuse_classification": "REUSE_CONCEPT_ONLY",
+      "replacement_design": "Replaced by reports/ROUND3B_GAP_FORENSICS.md with strictly descriptive language and dynamic derivation"
+    },
+    {
+      "path": "reports/ROUND3B_ACCOUNTING_RECONCILIATION.json",
+      "original_purpose": "Recorded 50/50 exact accounting reconciliation results",
+      "useful_concepts": "Exact Decimal equality reconciliation format",
+      "correctness_concerns": "Small sample size (50 episodes); only tested long-spot/short-perp; oracle was coupled to production classes",
+      "security_concerns": "False confidence from coupled test oracle",
+      "statistical_concerns": "Insufficient coverage of parameter state space",
+      "semantic_concerns": "Tautological verification due to imported production code",
+      "reuse_classification": "ARCHIVE_ONLY",
+      "replacement_design": "Superseded by ROUND3B_ACCOUNTING_ORACLE_V2.json with 500+ randomized property cases across 5 asset/structure variants"
+    },
+    {
+      "path": "reports/ROUND3B_ACCOUNTING_RECONCILIATION.md",
+      "original_purpose": "Human-readable reconciliation report",
+      "useful_concepts": "Metric comparison matrix format",
+      "correctness_concerns": "Reports on flawed 50-episode run",
+      "security_concerns": "None",
+      "statistical_concerns": "None",
+      "semantic_concerns": "None",
+      "reuse_classification": "ARCHIVE_ONLY",
+      "replacement_design": "Superseded by ROUND3B_ACCOUNTING_ORACLE_V2.md"
+    },
+    {
+      "path": "src/btceth_os/research/holdout_firewall.py",
+      "original_purpose": "Mechanical holdout firewall to prevent access to 2024 market data",
+      "useful_concepts": "Fail-closed boundary and access logging",
+      "correctness_concerns": "Blocks all timestamps >= 2024-01-01, incorrectly prohibiting future 2025/2026 prospective data",
+      "security_concerns": "Relies entirely on regex path matching ('2024'); renaming a holdout file bypasses firewall completely",
+      "statistical_concerns": "None",
+      "semantic_concerns": "Conflates the specific historical holdout (2024-01-01 to 2024-11-30) with all future time",
+      "reuse_classification": "REJECT",
+      "replacement_design": "Replaced by ResearchDataAccessGuard with dataset roles, manifests, logical SHAs, and bounded holdout window"
+    },
+    {
+      "path": "src/btceth_os/research/structural/adversarial_cost.py",
+      "original_purpose": "Execution cost tiers and volatility-scaled slippage evaluation",
+      "useful_concepts": "Three-tier cost architecture (Base, Stressed, Adversarial)",
+      "correctness_concerns": "Hardcoded magic multipliers (1.75 for spot/perp, 0.75 for relative pair); hardcoded fee numbers",
+      "security_concerns": "None",
+      "statistical_concerns": "Heuristic slippage scaling presented without empirical calibration parameters",
+      "semantic_concerns": "Cost profiles embedded in code rather than versioned policy",
+      "reuse_classification": "REIMPLEMENT",
+      "replacement_design": "Replaced by config/research_execution_cost_policy_v1.yaml and parameterized SCENARIO_SLIPPAGE_MODEL"
+    },
+    {
+      "path": "src/btceth_os/research/structural/portfolio_equity.py",
+      "original_purpose": "Portfolio equity accounting and capital allocation",
+      "useful_concepts": "Change in portfolio equity / starting equity invariant",
+      "correctness_concerns": "Ad-hoc allocate_multi_strategy_capital function without explicit capital policy object",
+      "security_concerns": "Risk of silent capital resizing under scale-down",
+      "statistical_concerns": "Approximates episode capital rather than deriving capital-time timeline",
+      "semantic_concerns": "Lacks formal multi-strategy governor",
+      "reuse_classification": "REIMPLEMENT",
+      "replacement_design": "Replaced by PortfolioCapitalGovernor and versioned CapitalPolicy with default REJECT on exhaustion"
+    },
+    {
+      "path": "tests/test_holdout_firewall.py",
+      "original_purpose": "Test suite for holdout firewall",
+      "useful_concepts": "Testing path and timestamp interception",
+      "correctness_concerns": "Asserts flawed behavior: asserts that 2025/2026 timestamps and renamed files are improperly handled",
+      "security_concerns": "Validates an insecure regex boundary",
+      "statistical_concerns": "None",
+      "semantic_concerns": "None",
+      "reuse_classification": "REIMPLEMENT",
+      "replacement_design": "Replaced by tests/test_holdout_guard.py testing renamed files, manifest protection, and 2025/2026 allowance"
+    },
+    {
+      "path": "tests/test_round3b_concurrency_adversary.py",
+      "original_purpose": "Tests capital exhaustion across concurrent strategies",
+      "useful_concepts": "Testing fixed capital pool exhaustion ($10,000) and unallocated cash earning zero",
+      "correctness_concerns": "Episodes lack chronological time semantics; relies on ad-hoc sizing",
+      "security_concerns": "None",
+      "statistical_concerns": "None",
+      "semantic_concerns": "Does not test overlapping chronological timelines",
+      "reuse_classification": "REIMPLEMENT",
+      "replacement_design": "Replaced by tests/test_capital_governor.py with chronological overlap, capital release, and strict REJECT on exhaustion"
+    },
+    {
+      "path": "tests/test_round3b_temporal_causality.py",
+      "original_purpose": "Tests for temporal ordering, funding settlement, and anti-leakage",
+      "useful_concepts": "Bar-close causality, future row perturbation, anti-leakage concepts",
+      "correctness_concerns": "Assumes ambiguous exact-timestamp funding settlement (T <= settlement <= T); tests toy mock classes instead of production code",
+      "security_concerns": "Toy tests give illusion of verification without testing real production feature computation",
+      "statistical_concerns": "Mock lists used instead of production Parquet series",
+      "semantic_concerns": "Unrealistic settlement boundary assumption",
+      "reuse_classification": "REIMPLEMENT",
+      "replacement_design": "Replaced by tests/test_round3b_temporal_causality.py using production feature code and conservative settlement boundary"
+    },
+    {
+      "path": "tools/accounting_oracle.py",
+      "original_purpose": "Independent accounting oracle and comparison tool",
+      "useful_concepts": "Dual-engine first-principles cross-check",
+      "correctness_concerns": "CRITICAL: Imports production classes (MultiLegTradeEpisode, DetailedCostPolicy, PortfolioEquityEngine)",
+      "security_concerns": "High risk of shared blind spots and tautological verification",
+      "statistical_concerns": "Only 50 cases evaluated",
+      "semantic_concerns": "Violates oracle independence requirement",
+      "reuse_classification": "REIMPLEMENT",
+      "replacement_design": "Replaced by tests/oracles/structural_accounting_oracle.py with ZERO btceth_os imports (stdlib + Decimal only)"
+    },
+    {
+      "path": "tools/analyze_source_gaps.py",
+      "original_purpose": "Script to parse Dataset v3.1.0 and identify missing hours",
+      "useful_concepts": "Extraction of missing observations by series, year, month, and discrete gap runs",
+      "correctness_concerns": "Hardcoded title '440 INVALID HOURS'; emitted speculative causal assertions; mixed float/Decimal types",
+      "security_concerns": "None",
+      "statistical_concerns": "Type mixing in variance calculation",
+      "semantic_concerns": "Causal claims masquerading as data findings",
+      "reuse_classification": "REIMPLEMENT",
+      "replacement_design": "Replaced by tools/analyze_source_gaps.py with dynamic derivation, strict type discipline, and descriptive language"
+    }
+  ]
+}

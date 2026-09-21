@@ -1,0 +1,41 @@
+{
+  "acceptance_status": "VERIFIED",
+  "timestamp_utc": "2026-09-21T17:20:50.955306+00:00",
+  "code_commit": "cfa80f3aabbb75a28969701d8013f6784c35a495",
+  "canonical_baseline_commit": "cfa80f3aabbb75a28969701d8013f6784c35a495",
+  "invariants": {
+    "trading_capability": "ZERO",
+    "holdout_2024": "LOCKED",
+    "approved_for_shadow": 0,
+    "approved_for_paper": 0
+  },
+  "checks": {
+    "WIP_AUDIT_COMPLETE": true,
+    "CANONICAL_BASELINE_ANCESTRY_VALID": true,
+    "WIP_SAFETY_BRANCH_UNTOUCHED": true,
+    "CANONICAL_SNAPSHOT_UNTOUCHED": true,
+    "CANONICAL_REMOTE_UNTOUCHED": true,
+    "INDEPENDENT_ORACLE_ISOLATED": true,
+    "ORACLE_RECONCILIATION_PASS": true,
+    "CAPITAL_GOVERNOR_PASS": true,
+    "DATA_GUARD_IMPLEMENTED": true,
+    "TEMPORAL_ANTI_LEAKAGE_PASS": true,
+    "COST_POLICY_VERSIONED": true,
+    "GAP_FORENSICS_DESCRIPTIVE_ONLY": true,
+    "HOLDOUT_2024_LOCKED": true,
+    "ZERO_FORCED_PROMOTION": true,
+    "SECURITY_SCAN_ZERO": true,
+    "FULL_PYTEST_PASS": true
+  },
+  "details": {
+    "wip_safety_branch": "11d6e370db0d27cd635528a3c530286b28c60416",
+    "canonical_snapshot": "cfa80f3aabbb75a28969701d8013f6784c35a495",
+    "oracle_cases_tested": 520,
+    "oracle_discrepancies": 0,
+    "oracle_mutation_caught": true,
+    "capital_governor_scale_down": "DISABLED",
+    "capital_exhaustion_action": "REJECT",
+    "cost_policy_version": "v1",
+    "gap_forensics_style": "DESCRIPTIVE_ONLY"
+  }
+}

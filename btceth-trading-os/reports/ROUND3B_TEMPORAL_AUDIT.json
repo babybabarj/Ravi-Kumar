@@ -1,0 +1,13 @@
+{
+  "status": "VERIFIED",
+  "clock_hierarchy_verified": true,
+  "bar_close_causality_verified": true,
+  "conservative_funding_boundary_verified": true,
+  "anti_leakage_guard_verified": true,
+  "future_row_perturbation_verified": true,
+  "features_tested": [
+    "spot_rolling_ma",
+    "perp_basis_bps",
+    "btc_eth_ratio"
+  ]
+}

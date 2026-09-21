@@ -17,6 +17,7 @@ from tools.verify_hardened_merge_readiness import (
     check_tree_exists,
     check_commit_exists,
 )
+import pytest
 from tools.verify_canonical_post_merge import evaluate_canonical_post_merge
 
 
@@ -96,6 +97,9 @@ def test_v2_provenance_sha_references() -> None:
 
 def test_canonical_post_merge_readiness_positive() -> None:
     """Positive test: canonical post-merge verification passes on canonical branch."""
+    proc = subprocess.run(["git", "branch", "--show-current"], cwd=ROOT, text=True, capture_output=True, check=False)
+    if proc.stdout.strip() != "btceth-phase1b":
+        pytest.skip("Test requires active branch to be canonical 'btceth-phase1b'")
     all_passed, checks, status, details = evaluate_canonical_post_merge(skip_sub_tests=True)
     assert status == "VERIFIED", f"Expected VERIFIED, got {status} with checks: {checks}"
     assert all_passed is True

@@ -1,0 +1,56 @@
+# Research Execution Cost Policy Version 1 (Canonical)
+# Note: These tiers are explicit research scenario assumptions, not proven immutable Binance truth.
+
+version: 1
+policy_id: "RESEARCH_COST_V1"
+
+# Scenario 1: Base Research Assumption
+# Standard retail VIP0 taker assumptions with normal liquidity
+BASE_RESEARCH_ASSUMPTION:
+  label: "BASE_RESEARCH_ASSUMPTION"
+  description: "Standard retail fee schedule with tight spread and baseline execution latency"
+  spot_taker_fee_bps: 10.0   # 0.10%
+  spot_maker_fee_bps: 10.0
+  spot_spread_bps: 1.0       # 0.01%
+  spot_base_slippage_bps: 2.0  # 0.02%
+  perp_taker_fee_bps: 5.0    # 0.05%
+  perp_maker_fee_bps: 2.0    # 0.02%
+  perp_spread_bps: 1.0       # 0.01%
+  perp_base_slippage_bps: 2.0  # 0.02%
+  default_legging_bps: 0.0
+
+# Scenario 2: Stressed Research Assumption
+# Moderate liquidity degradation, wider spreads, elevated slippage
+STRESSED_RESEARCH_ASSUMPTION:
+  label: "STRESSED_RESEARCH_ASSUMPTION"
+  description: "Market stress scenario with widened spreads and 2.5x slippage"
+  spot_taker_fee_bps: 15.0
+  spot_maker_fee_bps: 15.0
+  spot_spread_bps: 2.0
+  spot_base_slippage_bps: 5.0
+  perp_taker_fee_bps: 7.5
+  perp_maker_fee_bps: 4.0
+  perp_spread_bps: 2.0
+  perp_base_slippage_bps: 5.0
+  default_legging_bps: 1.0
+
+# Scenario 3: Adversarial Research Assumption
+# Extreme cascade scenario with 5x slippage, adverse order fills, and high legging friction
+ADVERSARIAL_RESEARCH_ASSUMPTION:
+  label: "ADVERSARIAL_RESEARCH_ASSUMPTION"
+  description: "Extreme liquidity vacuum and toxic flow stress test"
+  spot_taker_fee_bps: 20.0
+  spot_maker_fee_bps: 20.0
+  spot_spread_bps: 3.0
+  spot_base_slippage_bps: 10.0
+  perp_taker_fee_bps: 10.0
+  perp_maker_fee_bps: 5.0
+  perp_spread_bps: 3.0
+  perp_base_slippage_bps: 10.0
+  default_legging_bps: 2.0
+
+# Parameterized Volatility-Scaled Slippage Model
+SCENARIO_SLIPPAGE_MODEL:
+  description: "Dynamic scenario-based slippage scaling as a function of realized hourly volatility"
+  vol_threshold_pct: 0.01   # 1.0% hourly volatility reference benchmark
+  vol_multiplier: 1.0       # Linear scaling parameter

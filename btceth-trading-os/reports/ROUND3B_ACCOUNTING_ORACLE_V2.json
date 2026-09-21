@@ -1,0 +1,173 @@
+{
+  "report_version": 2,
+  "oracle_isolation": "STRICT_STANDALONE_NO_BTCETH_OS_IMPORTS",
+  "random_seed": 42,
+  "total_cases_tested": 520,
+  "exact_matches": 520,
+  "discrepancies_count": 0,
+  "reconciliation_status": "VERIFIED",
+  "mutation_test_detected": true,
+  "status": "EXACT_DECIMAL_RECONCILED",
+  "sampled_cases": [
+    {
+      "case_idx": 1,
+      "asset": "BTC",
+      "net_pnl": "283.02038760600",
+      "total_costs": "152.21307590280",
+      "funding_pnl": "-8.9534004912",
+      "reconciled": true
+    },
+    {
+      "case_idx": 2,
+      "asset": "ETH",
+      "net_pnl": "-1968.32899406775",
+      "total_costs": "1311.86230058475",
+      "funding_pnl": "-39.1651444830",
+      "reconciled": true
+    },
+    {
+      "case_idx": 3,
+      "asset": "BTC",
+      "net_pnl": "-7.7749245948",
+      "total_costs": "199.1110381980",
+      "funding_pnl": "-7.3935863968",
+      "reconciled": true
+    },
+    {
+      "case_idx": 4,
+      "asset": "ETH",
+      "net_pnl": "684.88841384720",
+      "total_costs": "592.30793604000",
+      "funding_pnl": "177.3060778872",
+      "reconciled": true
+    },
+    {
+      "case_idx": 5,
+      "asset": "BTC",
+      "net_pnl": "-1780.26573007500",
+      "total_costs": "903.01830195500",
+      "funding_pnl": "299.8929138800",
+      "reconciled": true
+    },
+    {
+      "case_idx": 6,
+      "asset": "ETH",
+      "net_pnl": "-283.57776265000",
+      "total_costs": "105.57960725000",
+      "funding_pnl": "33.5599446000",
+      "reconciled": true
+    },
+    {
+      "case_idx": 7,
+      "asset": "BTC",
+      "net_pnl": "226.16850719440",
+      "total_costs": "480.69644595760",
+      "funding_pnl": "-15.7209868480",
+      "reconciled": true
+    },
+    {
+      "case_idx": 8,
+      "asset": "ETH",
+      "net_pnl": "-385.82790798000",
+      "total_costs": "310.90297142300",
+      "funding_pnl": "30.0200984430",
+      "reconciled": true
+    },
+    {
+      "case_idx": 9,
+      "asset": "BTC",
+      "net_pnl": "-94.36706704000",
+      "total_costs": "1104.52124741600",
+      "funding_pnl": "18.1260203760",
+      "reconciled": true
+    },
+    {
+      "case_idx": 10,
+      "asset": "ETH",
+      "net_pnl": "1166.98894613370",
+      "total_costs": "738.19301013630",
+      "funding_pnl": "-184.8198147300",
+      "reconciled": true
+    },
+    {
+      "case_idx": 50,
+      "asset": "ETH",
+      "net_pnl": "-541.67355442805",
+      "total_costs": "196.17746942805",
+      "funding_pnl": "0",
+      "reconciled": true
+    },
+    {
+      "case_idx": 100,
+      "asset": "ETH",
+      "net_pnl": "-986.54719201125",
+      "total_costs": "748.02638394175",
+      "funding_pnl": "38.5765669305",
+      "reconciled": true
+    },
+    {
+      "case_idx": 150,
+      "asset": "ETH",
+      "net_pnl": "500.65297569540",
+      "total_costs": "1075.25646711540",
+      "funding_pnl": "36.4033968108",
+      "reconciled": true
+    },
+    {
+      "case_idx": 200,
+      "asset": "ETH",
+      "net_pnl": "-1426.79277646490",
+      "total_costs": "1003.27710046490",
+      "funding_pnl": "0",
+      "reconciled": true
+    },
+    {
+      "case_idx": 250,
+      "asset": "ETH",
+      "net_pnl": "-85.2214149546",
+      "total_costs": "48.0371911086",
+      "funding_pnl": "4.6580841540",
+      "reconciled": true
+    },
+    {
+      "case_idx": 300,
+      "asset": "ETH",
+      "net_pnl": "-291.67236481820",
+      "total_costs": "861.36915244540",
+      "funding_pnl": "50.7265216272",
+      "reconciled": true
+    },
+    {
+      "case_idx": 350,
+      "asset": "ETH",
+      "net_pnl": "1144.9145967927",
+      "total_costs": "1344.0986592073",
+      "funding_pnl": "0",
+      "reconciled": true
+    },
+    {
+      "case_idx": 400,
+      "asset": "ETH",
+      "net_pnl": "-809.3972904336",
+      "total_costs": "644.1138771888",
+      "funding_pnl": "26.3673867552",
+      "reconciled": true
+    },
+    {
+      "case_idx": 450,
+      "asset": "ETH",
+      "net_pnl": "-1115.35464129900",
+      "total_costs": "294.20012229900",
+      "funding_pnl": "0E-7",
+      "reconciled": true
+    },
+    {
+      "case_idx": 500,
+      "asset": "ETH",
+      "net_pnl": "-1886.8318215024",
+      "total_costs": "961.7627374704",
+      "funding_pnl": "57.6503239680",
+      "reconciled": true
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "status": "VERIFIED",
+  "capital_policy": "CANONICAL_V1",
+  "starting_equity": "10000.0",
+  "scale_down_policy": "DISABLED",
+  "default_exhaustion_behavior": "REJECT",
+  "max_concurrent_episodes": 5,
+  "chronological_overlap_verified": true,
+  "derived_commitments_verified": true,
+  "no_magic_multipliers": true
+}
