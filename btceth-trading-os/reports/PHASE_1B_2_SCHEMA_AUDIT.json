@@ -1,383 +1,175 @@
 {
-  "audit_timestamp_utc": "2026-09-21T07:53:02.401627+00:00",
-  "total_files_audited": 15,
-  "schemas": [
+  "audit_timestamp_utc": "2026-09-21T08:22:46.781569+00:00",
+  "schema_quality_passed": true,
+  "total_column_count_violations": 0,
+  "total_malformed_rows": 0,
+  "total_ordering_violations": 0,
+  "total_price_violations": 0,
+  "records": [
     {
       "dataset_id": "BINANCE:SPOT:BTCUSDT:KLINES_1M",
-      "payload_filename": "BTCUSDT-1m-2024-12-31.csv",
-      "header_detected": false,
+      "dataset_name": "klines",
+      "symbol": "BTCUSDT",
       "row_count": 1440,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:SPOT:BTCUSDT:KLINES_1M",
-      "payload_filename": "BTCUSDT-1m-2025-01-01.csv",
-      "header_detected": false,
+      "dataset_name": "klines",
+      "symbol": "BTCUSDT",
       "row_count": 1440,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:SPOT:ETHUSDT:KLINES_1M",
-      "payload_filename": "ETHUSDT-1m-2024-12-31.csv",
-      "header_detected": false,
+      "dataset_name": "klines",
+      "symbol": "ETHUSDT",
       "row_count": 1440,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:SPOT:ETHUSDT:KLINES_1M",
-      "payload_filename": "ETHUSDT-1m-2025-01-01.csv",
-      "header_detected": false,
+      "dataset_name": "klines",
+      "symbol": "ETHUSDT",
       "row_count": 1440,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:SPOT:BTCUSDT:AGG_TRADES",
-      "payload_filename": "BTCUSDT-aggTrades-2024-12-31.csv",
-      "header_detected": false,
+      "dataset_name": "aggTrades",
+      "symbol": "BTCUSDT",
       "row_count": 1218370,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 748105,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:SPOT:ETHUSDT:TRADES",
-      "payload_filename": "ETHUSDT-trades-2024-12-31.csv",
-      "header_detected": false,
+      "dataset_name": "trades",
+      "symbol": "ETHUSDT",
       "row_count": 2021786,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 1650010,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:KLINES_1M",
-      "payload_filename": "BTCUSDT-1m-2024-11-01.csv",
-      "header_detected": true,
+      "dataset_name": "klines",
+      "symbol": "BTCUSDT",
       "row_count": 1440,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:USD_M_PERP:ETHUSDT:KLINES_1M",
-      "payload_filename": "ETHUSDT-1m-2024-11-01.csv",
-      "header_detected": true,
+      "dataset_name": "klines",
+      "symbol": "ETHUSDT",
       "row_count": 1440,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:MARK_PRICE_KLINES_1M",
-      "payload_filename": "BTCUSDT-1m-2024-11-01.csv",
-      "header_detected": true,
+      "dataset_name": "markPriceKlines",
+      "symbol": "BTCUSDT",
       "row_count": 1440,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:INDEX_PRICE_KLINES_1M",
-      "payload_filename": "BTCUSDT-1m-2024-11-01.csv",
-      "header_detected": true,
+      "dataset_name": "indexPriceKlines",
+      "symbol": "BTCUSDT",
       "row_count": 1440,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:PREMIUM_PRICE_KLINES_1M",
-      "payload_filename": "BTCUSDT-1m-2024-11-01.csv",
-      "header_detected": true,
+      "dataset_name": "premiumIndexKlines",
+      "symbol": "BTCUSDT",
       "row_count": 1440,
       "column_count_violations": 0,
-      "price_violations": 149
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
+      "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:AGG_TRADES",
-      "payload_filename": "BTCUSDT-aggTrades-2024-11-01.csv",
-      "header_detected": true,
+      "dataset_name": "aggTrades",
+      "symbol": "BTCUSDT",
       "row_count": 1798155,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 950299,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:USD_M_PERP:ETHUSDT:TRADES",
-      "payload_filename": "ETHUSDT-trades-2024-11-01.csv",
-      "header_detected": true,
+      "dataset_name": "trades",
+      "symbol": "ETHUSDT",
       "row_count": 4542784,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 3633387,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:FUNDING_HISTORY",
-      "payload_filename": "BTCUSDT-fundingRate-2024-11.csv",
-      "header_detected": true,
+      "dataset_name": "fundingRate",
+      "symbol": "BTCUSDT",
       "row_count": 90,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
     },
     {
       "dataset_id": "BINANCE:USD_M_PERP:ETHUSDT:FUNDING_HISTORY",
-      "payload_filename": "ETHUSDT-fundingRate-2024-11.csv",
-      "header_detected": true,
+      "dataset_name": "fundingRate",
+      "symbol": "ETHUSDT",
       "row_count": 90,
       "column_count_violations": 0,
+      "malformed_row_count": 0,
+      "is_monotonic": true,
+      "duplicate_timestamp_count": 0,
       "price_violations": 0
-    }
-  ],
-  "quality_probes": [
-    {
-      "dataset_id": "BINANCE:SPOT:BTCUSDT:KLINES_1M",
-      "filename": "BTCUSDT-1m-2024-12-31.csv",
-      "probe": {
-        "row_count": 1440,
-        "header_detected": false,
-        "first_timestamp_raw": 1735603200000,
-        "first_timestamp_utc": "2024-12-31T00:00:00+00:00",
-        "last_timestamp_raw": 1735689540000,
-        "last_timestamp_utc": "2024-12-31T23:59:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:SPOT:BTCUSDT:KLINES_1M",
-      "filename": "BTCUSDT-1m-2025-01-01.csv",
-      "probe": {
-        "row_count": 1440,
-        "header_detected": false,
-        "first_timestamp_raw": 1735689600000000,
-        "first_timestamp_utc": "2025-01-01T00:00:00+00:00",
-        "last_timestamp_raw": 1735775940000000,
-        "last_timestamp_utc": "2025-01-01T23:59:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:SPOT:ETHUSDT:KLINES_1M",
-      "filename": "ETHUSDT-1m-2024-12-31.csv",
-      "probe": {
-        "row_count": 1440,
-        "header_detected": false,
-        "first_timestamp_raw": 1735603200000,
-        "first_timestamp_utc": "2024-12-31T00:00:00+00:00",
-        "last_timestamp_raw": 1735689540000,
-        "last_timestamp_utc": "2024-12-31T23:59:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:SPOT:ETHUSDT:KLINES_1M",
-      "filename": "ETHUSDT-1m-2025-01-01.csv",
-      "probe": {
-        "row_count": 1440,
-        "header_detected": false,
-        "first_timestamp_raw": 1735689600000000,
-        "first_timestamp_utc": "2025-01-01T00:00:00+00:00",
-        "last_timestamp_raw": 1735775940000000,
-        "last_timestamp_utc": "2025-01-01T23:59:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:SPOT:BTCUSDT:AGG_TRADES",
-      "filename": "BTCUSDT-aggTrades-2024-12-31.csv",
-      "probe": {
-        "row_count": 1218370,
-        "header_detected": false,
-        "first_timestamp_raw": 1735603200213,
-        "first_timestamp_utc": "2024-12-31T00:00:00.213000+00:00",
-        "last_timestamp_raw": 1735689599951,
-        "last_timestamp_utc": "2024-12-31T23:59:59.951000+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 748105,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:SPOT:ETHUSDT:TRADES",
-      "filename": "ETHUSDT-trades-2024-12-31.csv",
-      "probe": {
-        "row_count": 2021786,
-        "header_detected": false,
-        "first_timestamp_raw": 1735603200041,
-        "first_timestamp_utc": "2024-12-31T00:00:00.041000+00:00",
-        "last_timestamp_raw": 1735689597163,
-        "last_timestamp_utc": "2024-12-31T23:59:57.163000+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 1650010,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:KLINES_1M",
-      "filename": "BTCUSDT-1m-2024-11-01.csv",
-      "probe": {
-        "row_count": 1440,
-        "header_detected": true,
-        "first_timestamp_raw": 1730419200000,
-        "first_timestamp_utc": "2024-11-01T00:00:00+00:00",
-        "last_timestamp_raw": 1730505540000,
-        "last_timestamp_utc": "2024-11-01T23:59:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:USD_M_PERP:ETHUSDT:KLINES_1M",
-      "filename": "ETHUSDT-1m-2024-11-01.csv",
-      "probe": {
-        "row_count": 1440,
-        "header_detected": true,
-        "first_timestamp_raw": 1730419200000,
-        "first_timestamp_utc": "2024-11-01T00:00:00+00:00",
-        "last_timestamp_raw": 1730505540000,
-        "last_timestamp_utc": "2024-11-01T23:59:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:MARK_PRICE_KLINES_1M",
-      "filename": "BTCUSDT-1m-2024-11-01.csv",
-      "probe": {
-        "row_count": 1440,
-        "header_detected": true,
-        "first_timestamp_raw": 1730419200000,
-        "first_timestamp_utc": "2024-11-01T00:00:00+00:00",
-        "last_timestamp_raw": 1730505540000,
-        "last_timestamp_utc": "2024-11-01T23:59:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:INDEX_PRICE_KLINES_1M",
-      "filename": "BTCUSDT-1m-2024-11-01.csv",
-      "probe": {
-        "row_count": 1440,
-        "header_detected": true,
-        "first_timestamp_raw": 1730419200000,
-        "first_timestamp_utc": "2024-11-01T00:00:00+00:00",
-        "last_timestamp_raw": 1730505540000,
-        "last_timestamp_utc": "2024-11-01T23:59:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:PREMIUM_PRICE_KLINES_1M",
-      "filename": "BTCUSDT-1m-2024-11-01.csv",
-      "probe": {
-        "row_count": 1440,
-        "header_detected": true,
-        "first_timestamp_raw": 1730419200000,
-        "first_timestamp_utc": "2024-11-01T00:00:00+00:00",
-        "last_timestamp_raw": 1730505540000,
-        "last_timestamp_utc": "2024-11-01T23:59:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 149
-      }
-    },
-    {
-      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:AGG_TRADES",
-      "filename": "BTCUSDT-aggTrades-2024-11-01.csv",
-      "probe": {
-        "row_count": 1798155,
-        "header_detected": true,
-        "first_timestamp_raw": 1730419200039,
-        "first_timestamp_utc": "2024-11-01T00:00:00.039000+00:00",
-        "last_timestamp_raw": 1730505599734,
-        "last_timestamp_utc": "2024-11-01T23:59:59.734000+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 950299,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:USD_M_PERP:ETHUSDT:TRADES",
-      "filename": "ETHUSDT-trades-2024-11-01.csv",
-      "probe": {
-        "row_count": 4542784,
-        "header_detected": true,
-        "first_timestamp_raw": 1730419200036,
-        "first_timestamp_utc": "2024-11-01T00:00:00.036000+00:00",
-        "last_timestamp_raw": 1730505599612,
-        "last_timestamp_utc": "2024-11-01T23:59:59.612000+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 3633387,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:USD_M_PERP:BTCUSDT:FUNDING_HISTORY",
-      "filename": "BTCUSDT-fundingRate-2024-11.csv",
-      "probe": {
-        "row_count": 90,
-        "header_detected": true,
-        "first_timestamp_raw": 1730419200000,
-        "first_timestamp_utc": "2024-11-01T00:00:00+00:00",
-        "last_timestamp_raw": 1732982400000,
-        "last_timestamp_utc": "2024-11-30T16:00:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
-    },
-    {
-      "dataset_id": "BINANCE:USD_M_PERP:ETHUSDT:FUNDING_HISTORY",
-      "filename": "ETHUSDT-fundingRate-2024-11.csv",
-      "probe": {
-        "row_count": 90,
-        "header_detected": true,
-        "first_timestamp_raw": 1730419200000,
-        "first_timestamp_utc": "2024-11-01T00:00:00+00:00",
-        "last_timestamp_raw": 1732982400000,
-        "last_timestamp_utc": "2024-11-30T16:00:00+00:00",
-        "is_monotonic": true,
-        "duplicate_timestamp_count": 0,
-        "malformed_row_count": 0,
-        "column_count_violations": 0,
-        "price_violations": 0
-      }
     }
   ]
 }

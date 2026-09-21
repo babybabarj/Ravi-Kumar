@@ -3,7 +3,7 @@
   "generated_at_utc": "2026-09-21T08:15:00Z",
   "branch": "btceth-phase1b-hardened",
   "base_commit": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
-  "tested_code_commit_sha": "641bb5f8aae5c42ef6f774761ac44e8118c72627",
+  "tested_code_commit_sha": "c316a0814f651aece0e4be248e0eee10ce0c18e3",
   "status": "INPUTS_VERIFIED_IDENTICAL",
   "revalidation_required": false,
   "comparisons": {

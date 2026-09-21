@@ -1,10 +1,14 @@
 # Phase 1B.2 Historical Acquisition Manifest
 
-- **Creation Timestamp (UTC)**: `2026-09-21T07:53:02.397148+00:00`
-- **Software Commit SHA**: `5873de692b8eb7d9b7775ef3c2a2e730f9fd8088`
-- **Logical Manifest SHA-256**: `9ccdeef915e0e34bc2b06ac274783ee9d971999076ed62094d31113d3d1f81b4`
-- **Total Objects Acquired**: `15`
-- **Total Bytes Downloaded**: `0` bytes
+- **Creation Timestamp (UTC)**: `2026-09-21T08:21:57.031104+00:00`
+- **Branch Name**: `btceth-phase1b-hardened`
+- **Tested Code Commit SHA**: `c316a0814f651aece0e4be248e0eee10ce0c18e3`
+- **Tested Tree SHA**: `252d9574d9c28e9835d280a7eeade3b2528dfd5d`
+- **Logical Manifest SHA-256**: `2f786f8380573d888c6c46ec6773c75daa780da9b7d8f2ed65230b071a011885`
+- **Total Archives Verified**: `15`
+- **Total Archive Bytes Verified**: `99,437,318` bytes (94.8308 MiB)
+- **Total Downloaded This Run**: `0` bytes (0 archives)
+- **Total Cache Hits**: `15` (99,437,318` bytes reused)
 
 | Dataset ID | Market | Symbol | Filename | Status | Archive Size | Archive SHA-256 | Checksum Match |
 | :--- | :---: | :---: | :--- | :---: | :---: | :--- | :---: |

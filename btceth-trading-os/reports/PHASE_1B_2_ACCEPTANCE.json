@@ -2,18 +2,35 @@
   "phase": "1B.2",
   "status": "VERIFIED",
   "trading_capability": "ZERO",
-  "software_commit_sha": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
+  "branch_name": "btceth-phase1b-hardened",
+  "tested_code_commit_sha": "c316a0814f651aece0e4be248e0eee10ce0c18e3",
+  "tested_tree_sha": "252d9574d9c28e9835d280a7eeade3b2528dfd5d",
+  "software_commit_sha": "c316a0814f651aece0e4be248e0eee10ce0c18e3",
+  "verification_started_at_utc": "2026-09-21T08:21:57.031104+00:00",
+  "verification_completed_at_utc": "2026-09-21T08:22:46.784782+00:00",
+  "working_tree_clean_before": false,
   "checks": {
     "automated_tests_pass": true,
     "security_scan_pass": true,
     "triple_checksum_reconciliation_pass": true,
     "safe_extraction_pass": true,
+    "schema_quality_pass": true,
     "timestamp_policy_pass": true,
     "funding_parity_pass": true,
     "idempotency_cache_pass": true,
     "resumability_recovery_pass": true
   },
-  "total_archives_downloaded": 15,
-  "total_bytes_downloaded": 0,
-  "manifest_sha256": "9ccdeef915e0e34bc2b06ac274783ee9d971999076ed62094d31113d3d1f81b4"
+  "total_archives_verified": 15,
+  "total_archive_bytes_verified": 99437318,
+  "total_archive_mib_verified": 94.8308,
+  "total_archives_downloaded_this_run": 0,
+  "total_bytes_downloaded_this_run": 0,
+  "total_cache_hits": 15,
+  "total_bytes_reused_from_verified_cache": 99437318,
+  "funding_parity_mode": "LIVE_REST",
+  "funding_parity_symbols": [
+    "BTCUSDT",
+    "ETHUSDT"
+  ],
+  "manifest_sha256": "2f786f8380573d888c6c46ec6773c75daa780da9b7d8f2ed65230b071a011885"
 }

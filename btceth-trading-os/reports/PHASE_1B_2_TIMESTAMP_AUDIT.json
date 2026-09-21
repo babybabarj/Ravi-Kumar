@@ -1,6 +1,6 @@
 {
-  "audit_timestamp_utc": "2026-09-21T07:53:02.403228+00:00",
-  "policy_compliant_all": true,
+  "audit_timestamp_utc": "2026-09-21T08:22:46.782724+00:00",
+  "all_timestamps_compliant": true,
   "records": [
     {
       "dataset_id": "BINANCE:SPOT:BTCUSDT:KLINES_1M",

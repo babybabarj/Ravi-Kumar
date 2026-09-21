@@ -1,5 +1,7 @@
 {
-  "audit_timestamp_utc": "2026-09-21T07:53:02.401082+00:00",
+  "audit_timestamp_utc": "2026-09-21T08:22:46.780281+00:00",
+  "branch_name": "btceth-phase1b-hardened",
+  "tested_code_commit_sha": "c316a0814f651aece0e4be248e0eee10ce0c18e3",
   "triple_reconciliation_passed": true,
   "objects_audited": 15,
   "checksum_records": [
