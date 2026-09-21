@@ -2,8 +2,8 @@
 
 **Branch**: `btceth-phase1b-hardened`  
 **Base Commit**: `5873de692b8eb7d9b7775ef3c2a2e730f9fd8088` (Phase 1B.5 & Research Round 3A Baseline)  
-**Tested Code Commit**: `c316a0814f651aece0e4be248e0eee10ce0c18e3`  
-**Tested Tree SHA**: `252d9574d9c28e9835d280a7eeade3b2528dfd5d`  
+**Tested Code Commit**: `641bb5f8aae5c42ef6f774761ac44e8118c72627`  
+**Tested Tree SHA**: `0c2559a1deb5c41e0c63a409c0f7ec7ff0991cbc`  
 **Remediation Code Commit**: `c882c6ad41db0e5051e0f263ecf2b3443ebe48b3`  
 **Remediation Branch Head**: `6e18e19182c09066e1a0db8681cc07efa096289d`  
 **Verification Date**: 2026-09-21  

@@ -6,9 +6,11 @@
   "tested_code_commit_sha": "c316a0814f651aece0e4be248e0eee10ce0c18e3",
   "tested_tree_sha": "252d9574d9c28e9835d280a7eeade3b2528dfd5d",
   "software_commit_sha": "c316a0814f651aece0e4be248e0eee10ce0c18e3",
-  "verification_started_at_utc": "2026-09-21T08:21:57.031104+00:00",
-  "verification_completed_at_utc": "2026-09-21T08:22:46.784782+00:00",
-  "working_tree_clean_before": false,
+  "verification_started_at_utc": "2026-09-21T08:33:10.418929+00:00",
+  "verification_completed_at_utc": "2026-09-21T08:33:56.699541+00:00",
+  "working_tree_clean_before": true,
+  "dirty_paths_before": [],
+  "working_tree_dirty_after_due_to_generated_evidence": true,
   "checks": {
     "automated_tests_pass": true,
     "security_scan_pass": true,
@@ -32,5 +34,5 @@
     "BTCUSDT",
     "ETHUSDT"
   ],
-  "manifest_sha256": "2f786f8380573d888c6c46ec6773c75daa780da9b7d8f2ed65230b071a011885"
+  "manifest_sha256": "cecd473aca7e4d0fdc11d892a90399a5f6c3ca30d623621db74139d647c6bcc5"
 }

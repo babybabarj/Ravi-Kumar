@@ -34,10 +34,10 @@
         "support_status": "VERIFIED_TRUE",
         "discovery_evidence_id": "plan-monthly-2024-11"
       },
-      "status": "DOWNLOADED",
+      "status": "EXISTING_VALID",
       "http_archive_status": 200,
       "http_checksum_status": 200,
-      "retrieved_at_utc": "2026-09-21T07:54:54.035553+00:00",
+      "retrieved_at_utc": "2026-09-21T08:35:28.923757+00:00",
       "archive_byte_size": 746,
       "official_checksum": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
       "computed_archive_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
@@ -54,8 +54,8 @@
       "receipt_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/raw/binance/futures_um/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip.receipt.json",
       "physical_sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
       "content_length": 746,
-      "etag": "\"485f8c0e395f480fb9a4a29afca75c41\"",
-      "last_modified": "Tue, 17 Dec 2024 12:45:32 GMT"
+      "etag": null,
+      "last_modified": null
     },
     "parsed_rows": 90,
     "silver_path": "/Users/ravi/btceth-phase1a-mac/btceth-trading-os/artifacts/phase1b5_acceptance/silver/funding-e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51.parquet",

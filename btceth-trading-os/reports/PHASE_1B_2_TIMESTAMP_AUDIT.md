@@ -1,6 +1,6 @@
 # Phase 1B.2 Timestamp Policy Compliance Audit
 
-- **Audit Timestamp (UTC)**: `2026-09-21T08:22:46.782724+00:00`
+- **Audit Timestamp (UTC)**: `2026-09-21T08:33:56.697380+00:00`
 - **Overall Compliance**: `PASS`
 
 | Dataset ID | Declared Policy | Observed Digits | Min TS (UTC) | Max TS (UTC) | Compliant |

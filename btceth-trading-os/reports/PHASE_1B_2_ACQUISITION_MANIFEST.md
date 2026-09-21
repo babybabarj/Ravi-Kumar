@@ -1,10 +1,10 @@
 # Phase 1B.2 Historical Acquisition Manifest
 
-- **Creation Timestamp (UTC)**: `2026-09-21T08:21:57.031104+00:00`
-- **Branch Name**: `btceth-phase1b-hardened`
+- **Creation Timestamp (UTC)**: `2026-09-21T08:33:10.418929+00:00`
+- **Branch Name**: ``
 - **Tested Code Commit SHA**: `c316a0814f651aece0e4be248e0eee10ce0c18e3`
 - **Tested Tree SHA**: `252d9574d9c28e9835d280a7eeade3b2528dfd5d`
-- **Logical Manifest SHA-256**: `2f786f8380573d888c6c46ec6773c75daa780da9b7d8f2ed65230b071a011885`
+- **Logical Manifest SHA-256**: `cecd473aca7e4d0fdc11d892a90399a5f6c3ca30d623621db74139d647c6bcc5`
 - **Total Archives Verified**: `15`
 - **Total Archive Bytes Verified**: `99,437,318` bytes (94.8308 MiB)
 - **Total Downloaded This Run**: `0` bytes (0 archives)

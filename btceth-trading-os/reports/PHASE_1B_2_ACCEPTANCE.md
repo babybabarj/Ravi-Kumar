@@ -6,12 +6,14 @@ PHASE_1B_2 = VERIFIED
 - **Branch Name**: `btceth-phase1b-hardened`
 - **Tested Code Commit SHA**: `c316a0814f651aece0e4be248e0eee10ce0c18e3`
 - **Tested Tree SHA**: `252d9574d9c28e9835d280a7eeade3b2528dfd5d`
+- **Working Tree Clean Before**: `True`
+- **Dirty Paths Before**: `None ([])`
 - **Total Archives Verified**: `15`
 - **Total Archive Bytes Verified**: `99,437,318` bytes (94.8308 MiB)
 - **Total Downloaded This Run**: `0` bytes (0 archives)
 - **Total Cache Hits**: `15` (99,437,318` bytes reused)
 - **Funding Parity Mode**: `LIVE_REST` (symbols: `BTCUSDT, ETHUSDT`)
-- **Manifest SHA-256**: `2f786f8380573d888c6c46ec6773c75daa780da9b7d8f2ed65230b071a011885`
+- **Manifest SHA-256**: `cecd473aca7e4d0fdc11d892a90399a5f6c3ca30d623621db74139d647c6bcc5`
 
 ## Mechanical Acceptance Gates
 

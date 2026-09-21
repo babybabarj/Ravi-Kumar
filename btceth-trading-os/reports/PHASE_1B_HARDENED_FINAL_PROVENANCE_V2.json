@@ -1,0 +1,103 @@
+{
+  "report_version": 2,
+  "supersedes": "PHASE_1B_HARDENED_FINAL_PROVENANCE.json",
+  "generated_at_utc": "2026-09-21T08:37:45.346396+00:00",
+  "readiness_status": "VERIFIED",
+  "base_shared_commit_sha": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
+  "tested_code_commit_sha": "c316a0814f651aece0e4be248e0eee10ce0c18e3",
+  "tested_tree_sha": "252d9574d9c28e9835d280a7eeade3b2528dfd5d",
+  "verification_parent_head_sha": "a2eebbafe34cc8ca6a3044f118e1e4231f79b8e1",
+  "remediation_code_commit_sha": "c882c6ad41db0e5051e0f263ecf2b3443ebe48b3",
+  "remediation_branch_head_sha": "6e18e19182c09066e1a0db8681cc07efa096289d",
+  "round3b_wip_safety_sha": "11d6e370db0d27cd635528a3c530286b28c60416",
+  "pre_hardening_snapshot_sha": "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
+  "working_tree_clean_before": true,
+  "dirty_paths_before": [],
+  "milestone_statuses": {
+    "all_tests_status": "PASS",
+    "phase_1a_status": "VERIFIED",
+    "phase_1b1_status": "VERIFIED",
+    "phase_1b2_status": "VERIFIED",
+    "phase_1b3_status": "VERIFIED",
+    "phase_1b4_status": "VERIFIED",
+    "phase_1b5_status": "VERIFIED",
+    "round3a_status": "VERIFIED"
+  },
+  "security_status": "ZERO",
+  "holdout_status": "LOCKED",
+  "funding_parity_mode": "LIVE_REST",
+  "funding_parity_symbols": [
+    "BTCUSDT",
+    "ETHUSDT"
+  ],
+  "archive_count": 15,
+  "archive_bytes": 99437318,
+  "archive_mib": 94.8308,
+  "cache_hits": 15,
+  "silver_parquet_sha256": "b4b77ca9497759ac8ee831a7c12ac963a6c5a2309a65d19f58c2da8e8d774513",
+  "dataset_v3_1_full_logical_sha": "a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+  "checks": {
+    "shared_branch_untouched": true,
+    "snapshot_branch_preserved": true,
+    "round3b_wip_safety_preserved": true,
+    "remediation_branch_head_aligned": true,
+    "base_shared_commit_resolves": true,
+    "remediation_code_commit_resolves": true,
+    "remediation_branch_head_resolves": true,
+    "snapshot_sha_resolves": true,
+    "round3b_safety_sha_resolves": true,
+    "tested_code_commit_resolves": true,
+    "tested_tree_sha_matches": true,
+    "hardened_descends_from_shared": true,
+    "zero_unverified_src_modifications": true,
+    "all_report_git_shas_resolve": true,
+    "automated_tests_pass": true,
+    "security_capability_zero": true,
+    "phase_1a_verified": true,
+    "phase_1b1_verified": true,
+    "phase_1b2_verified": true,
+    "phase_1b3_verified": true,
+    "phase_1b4_verified": true,
+    "phase_1b5_verified": true,
+    "round3a_verified": true,
+    "holdout_locked": true,
+    "phase1b2_working_tree_clean_before": true,
+    "phase1b2_dirty_paths_before_empty": true,
+    "phase1b2_tested_code_commit_matches": true,
+    "phase1b2_tested_tree_matches": true,
+    "funding_parity_mode_live_rest": true,
+    "funding_parity_passed": true,
+    "funding_parity_symbols_btc_and_eth": true,
+    "downstream_inputs_identical": true,
+    "downstream_no_revalidation_required": true,
+    "dataset_v310_full_sha_matches": true,
+    "silver_parquet_sha_matches": true
+  },
+  "details": {
+    "report_shas": {
+      "PHASE_1B_2_FORWARD_PORT_AUDIT.json": [
+        "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
+        "641bb5f8aae5c42ef6f774761ac44e8118c72627",
+        "c882c6ad41db0e5051e0f263ecf2b3443ebe48b3",
+        "6e18e19182c09066e1a0db8681cc07efa096289d"
+      ],
+      "PHASE_1B_2_HISTORICAL_GAP_ANALYSIS.json": [
+        "963bd6a5657c2ed4f924ade045fb703b73f5412e",
+        "c882c6ad41db0e5051e0f263ecf2b3443ebe48b3"
+      ],
+      "DOWNSTREAM_HISTORICAL_DATA_IMPACT.json": [
+        "5873de692b8eb7d9b7775ef3c2a2e730f9fd8088",
+        "c316a0814f651aece0e4be248e0eee10ce0c18e3"
+      ],
+      "RESEARCH_ROUND3A_ACCEPTANCE.json": [
+        "a2eebbafe34cc8ca6a3044f118e1e4231f79b8e1"
+      ],
+      "PHASE_1B_2_ACCEPTANCE.json": [
+        "c316a0814f651aece0e4be248e0eee10ce0c18e3",
+        "c316a0814f651aece0e4be248e0eee10ce0c18e3"
+      ]
+    },
+    "missing_shas": []
+  },
+  "provenance_payload_sha256": "2efaa600d09116339cc23aa633ef5e5bdb2c3acaf7904f279f8a35ae48590664"
+}
