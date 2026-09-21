@@ -12,7 +12,7 @@ REPORTS_DIR = ROOT / "reports"
 
 def test_gap_forensics_dynamic_metrics() -> None:
     """Verify gap forensics derives metrics mechanically without hardcoded values."""
-    rep = generate_forensics_reports()
+    rep = generate_forensics_reports(write_reports=False)
     assert rep["dataset_version"] == "v3.1.0"
     assert rep["unsupported_causal_claims"] == 0
 

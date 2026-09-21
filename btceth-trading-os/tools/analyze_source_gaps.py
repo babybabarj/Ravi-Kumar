@@ -146,7 +146,7 @@ def analyze_symbol_gaps(symbol: str) -> dict[str, Any]:
     }
 
 
-def generate_forensics_reports() -> dict[str, Any]:
+def generate_forensics_reports(write_reports: bool = True) -> dict[str, Any]:
     btc_stats = analyze_symbol_gaps("BTCUSDT")
     eth_stats = analyze_symbol_gaps("ETHUSDT")
 
@@ -164,10 +164,11 @@ def generate_forensics_reports() -> dict[str, Any]:
         "unsupported_causal_claims": 0,
     }
 
-    # Write canonical JSON
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    json_path = REPORTS_DIR / "ROUND3B_GAP_FORENSICS.json"
-    json_path.write_text(json.dumps(report_payload, indent=2) + "\n", encoding="utf-8")
+    if write_reports:
+        # Write canonical JSON
+        REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+        json_path = REPORTS_DIR / "ROUND3B_GAP_FORENSICS.json"
+        json_path.write_text(json.dumps(report_payload, indent=2) + "\n", encoding="utf-8")
 
     # Write explanatory Markdown with strictly descriptive terminology
     md_content = f"""# Research Round 3B — Descriptive Source Gap Forensics Report
@@ -227,8 +228,9 @@ Observations temporally associated with elevated market stress:
 - **Gaps Temporally Near Volatility Spikes (> 1.5% hourly return vol)**: `{btc_stats['gaps_temporally_near_volatility_spikes']} / {btc_stats['invalid_hours_count']}` ({btc_stats['gaps_temporally_near_volatility_spikes'] / btc_stats['invalid_hours_count'] * 100:.1f}%)
 - **Gaps Temporally Near Extreme Funding (|rate| >= 5 bps)**: `{btc_stats['gaps_temporally_near_funding_extremes']} / {btc_stats['invalid_hours_count']}` ({btc_stats['gaps_temporally_near_funding_extremes'] / btc_stats['invalid_hours_count'] * 100:.1f}%)
 """
-    md_path = REPORTS_DIR / "ROUND3B_GAP_FORENSICS.md"
-    md_path.write_text(md_content, encoding="utf-8")
+    if write_reports:
+        md_path = REPORTS_DIR / "ROUND3B_GAP_FORENSICS.md"
+        md_path.write_text(md_content, encoding="utf-8")
 
     return report_payload
 
