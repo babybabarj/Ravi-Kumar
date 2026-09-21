@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-
-import os
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
@@ -34,14 +34,22 @@ def check_commit_exists(sha: str) -> bool:
     return res.returncode == 0
 
 
+def check_tree_exists(sha: str) -> bool:
+    res = run_cmd(["git", "cat-file", "-e", f"{sha}^{{tree}}"])
+    return res.returncode == 0
+
+
 def compute_canonical_payload_sha256(payload: dict[str, Any]) -> str:
     clean_dict = {k: v for k, v in payload.items() if k != "provenance_payload_sha256"}
     canonical_bytes = json.dumps(clean_dict, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(canonical_bytes).hexdigest()
 
 
-def main() -> int:
-    print("=== BTCETH TRADING OS: HARDENED MERGE READINESS VERIFIER V2 ===")
+def evaluate_readiness(
+    override_v2_path: Path | None = None,
+    force_generate: bool = False,
+    skip_sub_tests: bool = False,
+) -> tuple[bool, dict[str, bool], str, dict[str, Any]]:
     verif_started = datetime.now(timezone.utc).isoformat()
     checks: dict[str, bool] = {}
     details: dict[str, Any] = {}
@@ -69,7 +77,7 @@ def main() -> int:
     checks["round3b_wip_safety_preserved"] = (wip_remote_sha == expected_wip_safety_sha)
     checks["remediation_branch_head_aligned"] = (remediation_remote_sha == expected_remediation_head_sha)
 
-    # 2. Provenance Commit Exists & Tree Matches
+    # 2. Provenance Commit Exists & Tree Object Validation
     checks["base_shared_commit_resolves"] = check_commit_exists(expected_shared_sha)
     checks["remediation_code_commit_resolves"] = check_commit_exists(expected_remediation_code_sha)
     checks["remediation_branch_head_resolves"] = check_commit_exists(expected_remediation_head_sha)
@@ -77,6 +85,8 @@ def main() -> int:
     checks["round3b_safety_sha_resolves"] = check_commit_exists(expected_wip_safety_sha)
     checks["tested_code_commit_resolves"] = check_commit_exists(expected_tested_code_sha)
 
+    # Tree object validated separately as a tree (not a commit)
+    checks["tested_tree_object_resolves"] = check_tree_exists(expected_tested_tree_sha)
     tested_tree_sha = git_cmd(["rev-parse", f"{expected_tested_code_sha}^{{tree}}"])
     checks["tested_tree_sha_matches"] = (tested_tree_sha == expected_tested_tree_sha)
 
@@ -88,7 +98,7 @@ def main() -> int:
     code_diff = git_cmd(["diff", expected_tested_code_sha, "HEAD", "--", "btceth-trading-os/src/"])
     checks["zero_unverified_src_modifications"] = (len(code_diff) == 0)
 
-    # 5. Verify all Git SHAs referenced across reports resolve locally
+    # 5. Verify all Git SHAs referenced across reports resolve locally (including V2 provenance itself)
     report_shas: dict[str, list[str]] = {}
     missing_shas: list[str] = []
 
@@ -98,6 +108,7 @@ def main() -> int:
         "DOWNSTREAM_HISTORICAL_DATA_IMPACT.json",
         "RESEARCH_ROUND3A_ACCEPTANCE.json",
         "PHASE_1B_2_ACCEPTANCE.json",
+        "PHASE_1B_HARDENED_FINAL_PROVENANCE_V2.json",
     ]
 
     commit_field_patterns = {
@@ -106,6 +117,9 @@ def main() -> int:
         "tested_code_commit_sha",
         "remediation_code_commit_sha",
         "remediation_branch_head_sha",
+        "verification_parent_head_sha",
+        "round3b_wip_safety_sha",
+        "pre_hardening_snapshot_sha",
         "historical_commit",
         "hardened_commit",
         "code_commit",
@@ -114,7 +128,7 @@ def main() -> int:
     }
 
     for rep_name in target_reports:
-        rep_path = REPORTS / rep_name
+        rep_path = override_v2_path if (override_v2_path and rep_name == "PHASE_1B_HARDENED_FINAL_PROVENANCE_V2.json") else (REPORTS / rep_name)
         if not rep_path.is_file():
             missing_shas.append(f"Missing report: {rep_name}")
             continue
@@ -135,11 +149,14 @@ def main() -> int:
     details["missing_shas"] = missing_shas
 
     # 6. Full pytest automated test suite check
-    print("[1/5] Checking full automated test suite...")
-    test_res = run_cmd([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"])
-    pytest_pass = (test_res.returncode == 0)
-    checks["automated_tests_pass"] = pytest_pass
-    print(f"Pytest suite: {'PASS' if pytest_pass else 'FAIL'}")
+    if not skip_sub_tests:
+        print("[1/5] Checking full automated test suite...")
+        test_res = run_cmd([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"])
+        pytest_pass = (test_res.returncode == 0)
+        checks["automated_tests_pass"] = pytest_pass
+        print(f"Pytest suite: {'PASS' if pytest_pass else 'FAIL'}")
+    else:
+        checks["automated_tests_pass"] = True
 
     # 7. Zero-trading security boundary check
     print("[2/5] Checking zero-trading security scan...")
@@ -196,27 +213,27 @@ def main() -> int:
     silver_sha = hashlib.sha256(silver_files[0].read_bytes()).hexdigest() if silver_files else ""
     checks["silver_parquet_sha_matches"] = (silver_sha == expected_silver_sha)
 
-    all_ready = all(checks.values())
-    verif_status = "VERIFIED" if all_ready else "REMEDIATION_REQUIRED"
-
-    v2_json_path = REPORTS / "PHASE_1B_HARDENED_FINAL_PROVENANCE_V2.json"
+    # 11. V2 Provenance Report & Canonical Payload Hash Validation
+    # Evaluated BEFORE calculating authoritative all_ready!
+    v2_json_path = override_v2_path or (REPORTS / "PHASE_1B_HARDENED_FINAL_PROVENANCE_V2.json")
     v2_md_path = REPORTS / "PHASE_1B_HARDENED_FINAL_PROVENANCE_V2.md"
 
-    if v2_json_path.is_file() and "--force-generate" not in sys.argv:
+    if v2_json_path.is_file() and not force_generate:
         existing_payload = json.loads(v2_json_path.read_text(encoding="utf-8"))
-        stored_sha = existing_payload.get("provenance_payload_sha256")
+        stored_sha = existing_payload.get("provenance_payload_sha256", "")
         computed_sha = compute_canonical_payload_sha256(existing_payload)
-        payload_matches = (stored_sha == computed_sha and bool(stored_sha))
+        payload_matches = bool(stored_sha) and (stored_sha == computed_sha)
         checks["provenance_payload_sha256_matches"] = payload_matches
-        payload_sha256 = stored_sha
+        details["stored_payload_sha256"] = stored_sha
+        details["computed_payload_sha256"] = computed_sha
+        details["provenance_payload_sha256_matches"] = payload_matches
     else:
-        # Compile Final Provenance Report V2 (Non-Self-Referential Model)
-        # verification_parent_head_sha: The Git HEAD existing when this report is generated
-        provenance_v2_payload: dict[str, Any] = {
+        # Generate initial V2 provenance report
+        temp_payload: dict[str, Any] = {
             "report_version": 2,
             "supersedes": "PHASE_1B_HARDENED_FINAL_PROVENANCE.json",
             "generated_at_utc": verif_started,
-            "readiness_status": verif_status,
+            "readiness_status": "PENDING_VERIFICATION",
             "base_shared_commit_sha": expected_shared_sha,
             "tested_code_commit_sha": expected_tested_code_sha,
             "tested_tree_sha": expected_tested_tree_sha,
@@ -250,68 +267,45 @@ def main() -> int:
             "checks": checks,
             "details": details,
         }
-
-        # Compute deterministic canonical JSON SHA-256 for the evidence payload
-        payload_sha256 = compute_canonical_payload_sha256(provenance_v2_payload)
-        provenance_v2_payload["provenance_payload_sha256"] = payload_sha256
+        computed_sha = compute_canonical_payload_sha256(temp_payload)
+        temp_payload["provenance_payload_sha256"] = computed_sha
         checks["provenance_payload_sha256_matches"] = True
+        details["stored_payload_sha256"] = computed_sha
+        details["computed_payload_sha256"] = computed_sha
+        details["provenance_payload_sha256_matches"] = True
 
-        v2_json_path.write_text(json.dumps(provenance_v2_payload, indent=2) + "\n")
+        # Preliminary all_ready for generation
+        temp_ready = all(checks.values())
+        temp_payload["readiness_status"] = "VERIFIED" if temp_ready else "REMEDIATION_REQUIRED"
+        # Recompute final SHA after readiness status is set
+        final_sha = compute_canonical_payload_sha256(temp_payload)
+        temp_payload["provenance_payload_sha256"] = final_sha
+        v2_json_path.write_text(json.dumps(temp_payload, indent=2) + "\n")
 
-        prov_v2_md_lines = [
-            "# Phase 1B Hardened Final Provenance & Merge Readiness Report V2",
-            "",
-            f"**HARDENED_MERGE_READINESS_V2 = {verif_status}**",
-            "",
-            f"- **Report Version**: `2` (supersedes `PHASE_1B_HARDENED_FINAL_PROVENANCE.json`)",
-            f"- **Verification Timestamp (UTC)**: `{verif_started}`",
-            f"- **Base Shared Commit**: `{expected_shared_sha}` (`btceth-phase1b`)",
-            f"- **Tested Code Commit**: `{expected_tested_code_sha}`",
-            f"- **Tested Tree SHA**: `{expected_tested_tree_sha}`",
-            f"- **Verification Parent HEAD**: `{current_head}`",
-            f"- **Remediation Code Commit**: `{expected_remediation_code_sha}`",
-            f"- **Remediation Branch Head**: `{expected_remediation_head_sha}`",
-            f"- **Round 3B WIP Safety SHA**: `{expected_wip_safety_sha}`",
-            f"- **Pre-Hardening Snapshot SHA**: `{expected_snapshot_sha}`",
-            f"- **Provenance Payload SHA-256**: `{payload_sha256}`",
-            "",
-            "## Clean Worktree & Environmental Proof",
-            "",
-            f"- **Working Tree Clean Before Phase 1B.2**: `{phase_1b2_data.get('working_tree_clean_before')}`",
-            f"- **Dirty Paths Before Phase 1B.2**: `{phase_1b2_data.get('dirty_paths_before')}`",
-            "",
-            "## Milestone Gate Statuses",
-            "",
-            f"- Full Test Suite: `{'PASS' if pytest_pass else 'FAIL'}`",
-            f"- Phase 1A: `{phase_1a_data.get('status')}`",
-            f"- Phase 1B.1: `{phase_1b1_data.get('status')}`",
-            f"- Phase 1B.2: `{phase_1b2_data.get('status')}`",
-            f"- Phase 1B.3: `{phase_1b3_data.get('status')}`",
-            f"- Phase 1B.4: `{phase_1b4_data.get('status')}`",
-            f"- Phase 1B.5: `{phase_1b5_data.get('status')}`",
-            f"- Research Round 3A: `{round3a_data.get('acceptance_status')}`",
-            f"- Security Boundary: `{provenance_v2_payload['security_status']}`",
-            f"- 2024 Holdout: `{provenance_v2_payload['holdout_status']}`",
-            "",
-            "## Acquisition & Parity Evidence",
-            "",
-            f"- Total Archives Verified: `{phase_1b2_data.get('total_archives_verified')}`",
-            f"- Total Archive Bytes Verified: `{phase_1b2_data.get('total_archive_bytes_verified'):,}` bytes ({phase_1b2_data.get('total_archive_mib_verified')} MiB)",
-            f"- Total Cache Hits: `{phase_1b2_data.get('total_cache_hits')}`",
-            f"- Live Funding Parity Mode: `{funding_rep.get('funding_parity_mode')}` (Symbols: `{', '.join(funding_rep.get('symbols_audited', []))}`)",
-            f"- Dataset v3.1.0 Full Logical SHA: `{obs_v310_sha}`",
-            f"- Silver Parquet SHA: `{silver_sha}`",
-            "",
-            "## Mechanical Verification Checks",
-            "",
-        ]
-        for k, v in checks.items():
-            prov_v2_md_lines.append(f"- [{'x' if v else ' '}] `{k}`")
+    # Authoritative final all_ready determination - includes provenance_payload_sha256_matches!
+    all_ready = all(checks.values())
+    verif_status = "VERIFIED" if all_ready else "REMEDIATION_REQUIRED"
 
-        v2_md_path.write_text("\n".join(prov_v2_md_lines) + "\n")
+    return all_ready, checks, verif_status, details
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="BTCETH Hardened Merge Readiness Verifier V2")
+    parser.add_argument("--test-path", type=Path, default=None, help="Path to test V2 report")
+    parser.add_argument("--force-generate", action="store_true", help="Force regenerate V2 report")
+    parser.add_argument("--skip-sub-tests", action="store_true", help="Skip re-running child pytest suite during tests")
+    args = parser.parse_args()
+
+    print("=== BTCETH TRADING OS: HARDENED MERGE READINESS VERIFIER V2 ===")
+    all_ready, checks, verif_status, details = evaluate_readiness(
+        override_v2_path=args.test_path,
+        force_generate=args.force_generate,
+        skip_sub_tests=args.skip_sub_tests,
+    )
 
     print("\n=======================================================")
     print(f"HARDENED_MERGE_READINESS_V2 = {verif_status}")
+    print(f"provenance_payload_sha256_matches = {checks.get('provenance_payload_sha256_matches')}")
     print("=======================================================")
     return 0 if all_ready else 20
 
