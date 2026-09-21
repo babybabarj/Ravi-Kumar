@@ -17,5 +17,5 @@ where = ["src"]
 [tool.pytest.ini_options]
 addopts = "-q"
 asyncio_mode = "auto"
-pythonpath = ["src"]
+pythonpath = [".", "src"]
 testpaths = ["tests"]
