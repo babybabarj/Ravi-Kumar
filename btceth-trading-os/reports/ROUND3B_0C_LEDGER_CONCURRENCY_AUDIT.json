@@ -1,0 +1,16 @@
+{
+  "report_version": "ROUND3B.0C",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-21T19:36:36.919242+00:00",
+  "process_locking_primitive": "fcntl.flock(LOCK_EX)",
+  "lock_file_path": "artifacts/research/holdout_access_ledger.lock",
+  "multiprocess_test_workers": 4,
+  "multiprocess_test_records_total": 20,
+  "multiprocess_test_status": "HASH_CHAIN_VERIFIED",
+  "multiprocess_test_verified": true,
+  "live_ledger_verified": true,
+  "live_ledger_entries": 508,
+  "live_allowed_holdout_accesses": 0,
+  "live_blocked_holdout_accesses": 170,
+  "zero_holdout_accesses_verified": true
+}

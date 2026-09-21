@@ -10,6 +10,7 @@ import pyarrow.parquet as pq
 from btceth_os.research.data_guard import (
     DatasetRole,
     HoldoutAccessDeniedError,
+    RoleBoundaryViolationError,
     ResearchDataAccessGuard,
     ResearchOperation,
     load_research_parquet,
@@ -318,7 +319,7 @@ def test_wrong_file_right_id_physical_mismatch(tmp_path: Path) -> None:
     pq.write_table(table, wrong_file)
 
     with pytest.raises(HoldoutAccessDeniedError) as exc:
-        load_research_parquet(wrong_file, dataset_id="BTCUSDT-resampled-1h-v3.1.0", operation=ResearchOperation.BACKTEST)
+        load_research_parquet(wrong_file, dataset_id="BTCUSDT_DEV", operation=ResearchOperation.BACKTEST)
     assert "DATASET_PHYSICAL_IDENTITY_MISMATCH" in str(exc.value)
 
 
@@ -421,3 +422,153 @@ def test_missing_dataset_id_fails_closed(tmp_path: Path) -> None:
     with pytest.raises(HoldoutAccessDeniedError) as exc:
         load_research_parquet(dummy_file, dataset_id="")
     assert "DATASET_IDENTITY_REQUIRED" in str(exc.value)
+
+
+def _ledger_concurrency_worker(
+    ledger_path_str: str,
+    lock_path_str: str,
+    worker_id: int,
+    num_records: int,
+) -> None:
+    from pathlib import Path
+    import btceth_os.research.data_guard as dg
+    dg.LEDGER_PATH = Path(ledger_path_str)
+    dg.LEDGER_LOCK_PATH = Path(lock_path_str)
+
+    for i in range(num_records):
+        ts = 1600000000_000_000_000 + worker_id * 1_000_000 + i * 1_000
+        dg.ResearchDataAccessGuard.check_access(
+            operation=dg.ResearchOperation.BACKTEST,
+            dataset_id="BTCUSDT_DEV",
+            dataset_role=dg.DatasetRole.DEVELOPMENT,
+            start_ts_ns=ts,
+            end_ts_ns=ts + 3600_000_000_000,
+        )
+
+
+def test_composite_dataset_direct_read_blocked(tmp_path: Path) -> None:
+    """Composite aggregate datasets cannot be loaded directly as physical parquets."""
+    dummy_file = tmp_path / "dummy.parquet"
+    table = pa.Table.from_arrays([pa.array([1600000000_000_000_000], type=pa.int64())], names=["ts_event_ns"])
+    pq.write_table(table, dummy_file)
+
+    for composite_id in ("BTCUSDT_AGGREGATE_DEV_VAL", "ETHUSDT_AGGREGATE_DEV_VAL", "BTCUSDT-resampled-1h-v3.1.0", "dataset_v3.1.0"):
+        with pytest.raises(HoldoutAccessDeniedError) as exc:
+            load_research_parquet(dummy_file, dataset_id=composite_id)
+        assert "DATASET_NOT_REGISTERED_FOR_PHYSICAL_READ" in str(exc.value)
+
+    # Also test check_access directly
+    with pytest.raises(HoldoutAccessDeniedError) as exc_check:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="BTCUSDT_AGGREGATE_DEV_VAL",
+        )
+    assert ("DATASET_NOT_REGISTERED_FOR_PHYSICAL_READ" in str(exc_check.value) or
+            "COMPOSITE_RESEARCH_DATASET" in str(exc_check.value))
+
+
+def test_dev_role_boundary_violation(tmp_path: Path) -> None:
+    """DEV role accessing post-2022 data fails closed with ROLE_BOUNDARY_VIOLATION."""
+    # 1. Via check_access with requested timestamp in 2023
+    ts_2023 = 1672531200_000_000_000
+    with pytest.raises(RoleBoundaryViolationError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="BTCUSDT_DEV",
+            start_ts_ns=ts_2023,
+            end_ts_ns=ts_2023 + 3600_000_000_000,
+        )
+    assert "ROLE_BOUNDARY_VIOLATION" in str(exc.value)
+
+    # 2. Via parquet file containing 2023 rows
+    forged_file = tmp_path / "forged_dev_2023.parquet"
+    table = pa.Table.from_arrays([pa.array([ts_2023], type=pa.int64()), pa.array([16000.0], type=pa.float64())], names=["ts_event_ns", "close"])
+    pq.write_table(table, forged_file)
+
+    with pytest.raises(RoleBoundaryViolationError) as exc_file:
+        load_research_parquet(forged_file, dataset_id="BTCUSDT_DEV")
+    assert "ROLE_BOUNDARY_VIOLATION" in str(exc_file.value)
+
+
+def test_val_role_boundary_violation(tmp_path: Path) -> None:
+    """VAL role accessing pre-2023 data fails closed with ROLE_BOUNDARY_VIOLATION."""
+    # 1. Via check_access with requested timestamp in 2022
+    ts_2022 = 1672527600_000_000_000
+    with pytest.raises(RoleBoundaryViolationError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="BTCUSDT_VAL",
+            start_ts_ns=ts_2022,
+            end_ts_ns=ts_2022 + 3600_000_000_000,
+        )
+    assert "ROLE_BOUNDARY_VIOLATION" in str(exc.value)
+
+    # 2. Via parquet file containing 2022 rows
+    forged_file = tmp_path / "forged_val_2022.parquet"
+    table = pa.Table.from_arrays([pa.array([ts_2022], type=pa.int64()), pa.array([16000.0], type=pa.float64())], names=["ts_event_ns", "close"])
+    pq.write_table(table, forged_file)
+
+    with pytest.raises(RoleBoundaryViolationError) as exc_file:
+        load_research_parquet(forged_file, dataset_id="BTCUSDT_VAL")
+    assert "ROLE_BOUNDARY_VIOLATION" in str(exc_file.value)
+
+
+def test_val_holdout_boundary_violation(tmp_path: Path) -> None:
+    """VAL role accessing 2024 holdout data fails closed with HOLDOUT_FIREWALL_VIOLATION."""
+    ts_2024 = 1704067200_000_000_000
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        ResearchDataAccessGuard.check_access(
+            operation=ResearchOperation.BACKTEST,
+            dataset_id="BTCUSDT_VAL",
+            start_ts_ns=ts_2024,
+            end_ts_ns=ts_2024 + 3600_000_000_000,
+        )
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc.value)
+
+    forged_file = tmp_path / "forged_val_2024.parquet"
+    table = pa.Table.from_arrays([pa.array([ts_2024], type=pa.int64()), pa.array([45000.0], type=pa.float64())], names=["ts_event_ns", "close"])
+    pq.write_table(table, forged_file)
+
+    with pytest.raises(HoldoutAccessDeniedError) as exc_file:
+        load_research_parquet(forged_file, dataset_id="BTCUSDT_VAL")
+    assert "HOLDOUT_FIREWALL_VIOLATION" in str(exc_file.value)
+
+
+def test_prospective_unmaterialized_blocked(tmp_path: Path) -> None:
+    """Unmaterialized prospective datasets fail closed with PROSPECTIVE_DATASET_NOT_REGISTERED."""
+    dummy_file = tmp_path / "prospective_dummy.parquet"
+    table = pa.Table.from_arrays([pa.array([1767225600_000_000_000], type=pa.int64())], names=["ts_event_ns"])
+    pq.write_table(table, dummy_file)
+
+    with pytest.raises(HoldoutAccessDeniedError) as exc:
+        load_research_parquet(dummy_file, dataset_id="BTCUSDT_PROSPECTIVE_2025")
+    assert "PROSPECTIVE_DATASET_NOT_REGISTERED" in str(exc.value)
+
+
+def test_multiprocess_ledger_concurrency(tmp_path: Path) -> None:
+    """Multi-process concurrent access logging maintains strict hash-chain integrity without corruption."""
+    import multiprocessing
+    ledger_path = tmp_path / "concurrent_ledger.jsonl"
+    lock_path = tmp_path / "concurrent_ledger.lock"
+
+    num_workers = 4
+    num_records_per_worker = 5
+    processes = []
+    for w_id in range(num_workers):
+        p = multiprocessing.Process(
+            target=_ledger_concurrency_worker,
+            args=(str(ledger_path), str(lock_path), w_id, num_records_per_worker),
+        )
+        processes.append(p)
+        p.start()
+
+    for p in processes:
+        p.join(timeout=15)
+        assert p.exitcode == 0
+
+    verified, count, status, summary = verify_access_ledger_integrity(ledger_path=ledger_path, lock_path=lock_path)
+    assert verified is True
+    assert status == "HASH_CHAIN_VERIFIED"
+    assert count == num_workers * num_records_per_worker
+    assert summary["total_entries"] == num_workers * num_records_per_worker
+

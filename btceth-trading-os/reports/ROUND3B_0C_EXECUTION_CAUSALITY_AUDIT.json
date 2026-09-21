@@ -1,0 +1,14 @@
+{
+  "report_version": "ROUND3B.0C",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-21T19:36:36.547623+00:00",
+  "execution_delay_bars": 1,
+  "execution_price_source": "NEXT_BAR_OPEN",
+  "fill_price_observation_type": "NEXT_BAR_OPEN",
+  "fill_price": "30050.0",
+  "causality_temporal_ordering_verified": true,
+  "no_pre_execution_gap_credit_verified": true,
+  "terminal_exit_executable_price_verified": true,
+  "walk_forward_causal_routed": true,
+  "legacy_engine_frozen": true
+}

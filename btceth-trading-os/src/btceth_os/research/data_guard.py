@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import fcntl
 import hashlib
 import json
 import re
@@ -15,6 +16,7 @@ import pyarrow.parquet as pq
 
 ROOT = Path(__file__).resolve().parents[3]
 LEDGER_PATH = ROOT / "artifacts" / "research" / "holdout_access_ledger.jsonl"
+LEDGER_LOCK_PATH = ROOT / "artifacts" / "research" / "holdout_access_ledger.lock"
 _LEDGER_LOCK = threading.Lock()
 
 # The Locked Historical Holdout is strictly:
@@ -32,6 +34,7 @@ class DatasetRole(str, Enum):
     PROSPECTIVE_FORWARD = "PROSPECTIVE_FORWARD"  # 2025 onwards / prospective
     SHADOW = "SHADOW"                            # Live shadow execution
     PAPER = "PAPER"                              # Live paper execution
+    COMPOSITE_RESEARCH_DATASET = "COMPOSITE_RESEARCH_DATASET"  # Composite aggregate (not directly readable)
 
 
 class ResearchOperation(str, Enum):
@@ -49,6 +52,11 @@ class ResearchOperation(str, Enum):
 
 class HoldoutAccessDeniedError(PermissionError):
     """Raised when an unauthorized or unverified research operation attempts data access."""
+    pass
+
+
+class RoleBoundaryViolationError(HoldoutAccessDeniedError):
+    """Raised when an operation attempts to access rows crossing partition role boundaries."""
     pass
 
 
@@ -81,6 +89,169 @@ CanonicalDatasetEntry = CanonicalPartitionEntry
 
 # Authoritative Dataset Registry
 _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
+    # 1. Materialized Physical Development Partitions (2020-01-01 through 2022-12-31)
+    "BTCUSDT_DEV_2020_2022": CanonicalPartitionEntry(
+        dataset_id="BTCUSDT_DEV_2020_2022",
+        dataset_version="v3.1.0",
+        partition_id="BTCUSDT_DEV_2020_2022",
+        canonical_relative_path="artifacts/research/partitions/BTCUSDT_DEV_2020_2022.parquet",
+        physical_sha256="4daa270f04c5e5305b7033b745253e862fc72f17a9ff16a9d0e1c6bca5847b47",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        start_ts_ns=1577836800_000_000_000,
+        end_ts_ns=1672527600_000_000_000,
+        role=DatasetRole.DEVELOPMENT,
+        parent_dataset="BTCUSDT-resampled-1h-v3.1.0",
+        status="CANONICAL",
+    ),
+    "ETHUSDT_DEV_2020_2022": CanonicalPartitionEntry(
+        dataset_id="ETHUSDT_DEV_2020_2022",
+        dataset_version="v3.1.0",
+        partition_id="ETHUSDT_DEV_2020_2022",
+        canonical_relative_path="artifacts/research/partitions/ETHUSDT_DEV_2020_2022.parquet",
+        physical_sha256="007cdce2eca501924935090eba141889b8d26d60b941e3fcf37501aa14b50f23",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        start_ts_ns=1577836800_000_000_000,
+        end_ts_ns=1672527600_000_000_000,
+        role=DatasetRole.DEVELOPMENT,
+        parent_dataset="ETHUSDT-resampled-1h-v3.1.0",
+        status="CANONICAL",
+    ),
+    "BTCUSDT_FUNDING_DEV_2020_2022": CanonicalPartitionEntry(
+        dataset_id="BTCUSDT_FUNDING_DEV_2020_2022",
+        dataset_version="v3.1.0",
+        partition_id="BTCUSDT_FUNDING_DEV_2020_2022",
+        canonical_relative_path="artifacts/research/partitions/BTCUSDT_FUNDING_DEV_2020_2022.parquet",
+        physical_sha256="2991e597d8c80a4b11181364e95168a46a6bc1cbd0f7a7f44fbf6341c0fcad3d",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        start_ts_ns=1577836800_000_000_000,
+        end_ts_ns=1672502400_000_000_000,
+        role=DatasetRole.DEVELOPMENT,
+        parent_dataset="BTCUSDT-funding-2020-01-2023-12-v3.1",
+        status="CANONICAL",
+    ),
+    "ETHUSDT_FUNDING_DEV_2020_2022": CanonicalPartitionEntry(
+        dataset_id="ETHUSDT_FUNDING_DEV_2020_2022",
+        dataset_version="v3.1.0",
+        partition_id="ETHUSDT_FUNDING_DEV_2020_2022",
+        canonical_relative_path="artifacts/research/partitions/ETHUSDT_FUNDING_DEV_2020_2022.parquet",
+        physical_sha256="97ab50866782c4c2b99eff0caafbba23cb8522180bf460f23b73f8bd368042f8",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        start_ts_ns=1577836800_000_000_000,
+        end_ts_ns=1672502400_000_000_000,
+        role=DatasetRole.DEVELOPMENT,
+        parent_dataset="ETHUSDT-funding-2020-01-2023-12-v3.1",
+        status="CANONICAL",
+    ),
+
+    # 2. Materialized Physical Validation Partitions (2023-01-01 through 2023-12-31)
+    "BTCUSDT_VAL_2023": CanonicalPartitionEntry(
+        dataset_id="BTCUSDT_VAL_2023",
+        dataset_version="v3.1.0",
+        partition_id="BTCUSDT_VAL_2023",
+        canonical_relative_path="artifacts/research/partitions/BTCUSDT_VAL_2023.parquet",
+        physical_sha256="2db5dd7bdd758f3ae07420f443feb42b4319f59462b4697d7d72e524e0027c85",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        start_ts_ns=1672531200_000_000_000,
+        end_ts_ns=1704063600_000_000_000,
+        role=DatasetRole.VALIDATION,
+        parent_dataset="BTCUSDT-resampled-1h-v3.1.0",
+        status="CANONICAL",
+    ),
+    "ETHUSDT_VAL_2023": CanonicalPartitionEntry(
+        dataset_id="ETHUSDT_VAL_2023",
+        dataset_version="v3.1.0",
+        partition_id="ETHUSDT_VAL_2023",
+        canonical_relative_path="artifacts/research/partitions/ETHUSDT_VAL_2023.parquet",
+        physical_sha256="2ce4e724e3e082dac0976e2192304780cc1c0ea4ad977e12da1497e4b0f52ff7",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        start_ts_ns=1672531200_000_000_000,
+        end_ts_ns=1704063600_000_000_000,
+        role=DatasetRole.VALIDATION,
+        parent_dataset="ETHUSDT-resampled-1h-v3.1.0",
+        status="CANONICAL",
+    ),
+    "BTCUSDT_FUNDING_VAL_2023": CanonicalPartitionEntry(
+        dataset_id="BTCUSDT_FUNDING_VAL_2023",
+        dataset_version="v3.1.0",
+        partition_id="BTCUSDT_FUNDING_VAL_2023",
+        canonical_relative_path="artifacts/research/partitions/BTCUSDT_FUNDING_VAL_2023.parquet",
+        physical_sha256="5f24907c3cd87c0465cd81356f192143c9f831c671f9a1aeeb9f6a39740614d3",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        start_ts_ns=1672531200_000_000_000,
+        end_ts_ns=1704038400_000_000_000,
+        role=DatasetRole.VALIDATION,
+        parent_dataset="BTCUSDT-funding-2020-01-2023-12-v3.1",
+        status="CANONICAL",
+    ),
+    "ETHUSDT_FUNDING_VAL_2023": CanonicalPartitionEntry(
+        dataset_id="ETHUSDT_FUNDING_VAL_2023",
+        dataset_version="v3.1.0",
+        partition_id="ETHUSDT_FUNDING_VAL_2023",
+        canonical_relative_path="artifacts/research/partitions/ETHUSDT_FUNDING_VAL_2023.parquet",
+        physical_sha256="16d3edbb7b031847bcf0dfb9c75c88dd643683f9d555b0bee4bd1fb6f1977462",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        start_ts_ns=1672531200_000_000_000,
+        end_ts_ns=1704038400_000_000_000,
+        role=DatasetRole.VALIDATION,
+        parent_dataset="ETHUSDT-funding-2020-01-2023-12-v3.1",
+        status="CANONICAL",
+    ),
+
+    # 3. Canonical Aliases (repointed strictly to true physical partitions)
+    "BTCUSDT_DEV": CanonicalPartitionEntry(
+        dataset_id="BTCUSDT_DEV",
+        dataset_version="v3.1.0",
+        partition_id="BTCUSDT_DEV_2020_2022",
+        canonical_relative_path="artifacts/research/partitions/BTCUSDT_DEV_2020_2022.parquet",
+        physical_sha256="4daa270f04c5e5305b7033b745253e862fc72f17a9ff16a9d0e1c6bca5847b47",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        role=DatasetRole.DEVELOPMENT,
+        start_ts_ns=1577836800_000_000_000,
+        end_ts_ns=1672527600_000_000_000,
+        parent_dataset="BTCUSDT_DEV_2020_2022",
+        status="CANONICAL",
+    ),
+    "BTCUSDT_VAL": CanonicalPartitionEntry(
+        dataset_id="BTCUSDT_VAL",
+        dataset_version="v3.1.0",
+        partition_id="BTCUSDT_VAL_2023",
+        canonical_relative_path="artifacts/research/partitions/BTCUSDT_VAL_2023.parquet",
+        physical_sha256="2db5dd7bdd758f3ae07420f443feb42b4319f59462b4697d7d72e524e0027c85",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        role=DatasetRole.VALIDATION,
+        start_ts_ns=1672531200_000_000_000,
+        end_ts_ns=1704063600_000_000_000,
+        parent_dataset="BTCUSDT_VAL_2023",
+        status="CANONICAL",
+    ),
+    "ETHUSDT_DEV": CanonicalPartitionEntry(
+        dataset_id="ETHUSDT_DEV",
+        dataset_version="v3.1.0",
+        partition_id="ETHUSDT_DEV_2020_2022",
+        canonical_relative_path="artifacts/research/partitions/ETHUSDT_DEV_2020_2022.parquet",
+        physical_sha256="007cdce2eca501924935090eba141889b8d26d60b941e3fcf37501aa14b50f23",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        role=DatasetRole.DEVELOPMENT,
+        start_ts_ns=1577836800_000_000_000,
+        end_ts_ns=1672527600_000_000_000,
+        parent_dataset="ETHUSDT_DEV_2020_2022",
+        status="CANONICAL",
+    ),
+    "ETHUSDT_VAL": CanonicalPartitionEntry(
+        dataset_id="ETHUSDT_VAL",
+        dataset_version="v3.1.0",
+        partition_id="ETHUSDT_VAL_2023",
+        canonical_relative_path="artifacts/research/partitions/ETHUSDT_VAL_2023.parquet",
+        physical_sha256="2ce4e724e3e082dac0976e2192304780cc1c0ea4ad977e12da1497e4b0f52ff7",
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        role=DatasetRole.VALIDATION,
+        start_ts_ns=1672531200_000_000_000,
+        end_ts_ns=1704063600_000_000_000,
+        parent_dataset="ETHUSDT_VAL_2023",
+        status="CANONICAL",
+    ),
+
+    # 4. Composite Datasets (Spanning Dev + Val; NOT directly readable)
     "BTCUSDT-resampled-1h-v3.1.0": CanonicalPartitionEntry(
         dataset_id="BTCUSDT-resampled-1h-v3.1.0",
         dataset_version="v3.1.0",
@@ -90,9 +261,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
         start_ts_ns=1577836800_000_000_000,
         end_ts_ns=1704063600_000_000_000,
-        role=DatasetRole.DEVELOPMENT,
+        role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
         parent_dataset="dataset_v3.0.0",
-        status="CANONICAL",
+        status="NOT_DIRECTLY_READABLE",
     ),
     "ETHUSDT-resampled-1h-v3.1.0": CanonicalPartitionEntry(
         dataset_id="ETHUSDT-resampled-1h-v3.1.0",
@@ -103,9 +274,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
         start_ts_ns=1577836800_000_000_000,
         end_ts_ns=1704063600_000_000_000,
-        role=DatasetRole.DEVELOPMENT,
+        role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
         parent_dataset="dataset_v3.0.0",
-        status="CANONICAL",
+        status="NOT_DIRECTLY_READABLE",
     ),
     "BTCUSDT-funding-2020-01-2023-12-v3.1": CanonicalPartitionEntry(
         dataset_id="BTCUSDT-funding-2020-01-2023-12-v3.1",
@@ -116,9 +287,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
         start_ts_ns=1577836800_000_000_000,
         end_ts_ns=1704038400_000_000_000,
-        role=DatasetRole.DEVELOPMENT,
+        role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
         parent_dataset="dataset_v3.0.0",
-        status="CANONICAL",
+        status="NOT_DIRECTLY_READABLE",
     ),
     "ETHUSDT-funding-2020-01-2023-12-v3.1": CanonicalPartitionEntry(
         dataset_id="ETHUSDT-funding-2020-01-2023-12-v3.1",
@@ -129,9 +300,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
         start_ts_ns=1577836800_000_000_000,
         end_ts_ns=1704038400_000_000_000,
-        role=DatasetRole.DEVELOPMENT,
+        role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
         parent_dataset="dataset_v3.0.0",
-        status="CANONICAL",
+        status="NOT_DIRECTLY_READABLE",
     ),
     "dataset_v3.1.0": CanonicalPartitionEntry(
         dataset_id="dataset_v3.1.0",
@@ -140,38 +311,40 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         canonical_relative_path=None,
         physical_sha256=None,
         dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
-        role=DatasetRole.DEVELOPMENT,
-        start_ts_ns=1577836800_000_000_000,  # 2020-01-01T00:00:00Z
-        end_ts_ns=1704067199_000_000_000,    # 2023-12-31T23:59:59Z
-        parent_dataset="dataset_v3.0.0",
-        status="CANONICAL",
-    ),
-    "BTCUSDT_DEV": CanonicalPartitionEntry(
-        dataset_id="BTCUSDT_DEV",
-        dataset_version="v3.1.0",
-        partition_id="BTCUSDT_DEV_2020_2022",
-        canonical_relative_path="artifacts/research/silver_v3/BTCUSDT-resampled-1h-v3.1.0.parquet",
-        physical_sha256="f706dfa1fc637e46fa6604b19fd8dea15edfebaa3478cc859ed1d23111eff70e",
-        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
-        role=DatasetRole.DEVELOPMENT,
+        role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
         start_ts_ns=1577836800_000_000_000,
-        end_ts_ns=1704063600_000_000_000,
-        parent_dataset="dataset_v3.1.0",
-        status="CANONICAL",
+        end_ts_ns=1704067199_000_000_000,
+        parent_dataset="dataset_v3.0.0",
+        status="NOT_DIRECTLY_READABLE",
     ),
-    "BTCUSDT_VAL": CanonicalPartitionEntry(
-        dataset_id="BTCUSDT_VAL",
+    "BTCUSDT_AGGREGATE_DEV_VAL": CanonicalPartitionEntry(
+        dataset_id="BTCUSDT_AGGREGATE_DEV_VAL",
         dataset_version="v3.1.0",
-        partition_id="BTCUSDT_VAL_2023",
-        canonical_relative_path="artifacts/research/silver_v3/BTCUSDT-resampled-1h-v3.1.0.parquet",
-        physical_sha256="f706dfa1fc637e46fa6604b19fd8dea15edfebaa3478cc859ed1d23111eff70e",
+        partition_id="BTCUSDT_AGGREGATE_DEV_VAL",
+        canonical_relative_path=None,
+        physical_sha256=None,
         dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
-        role=DatasetRole.VALIDATION,
-        start_ts_ns=1672531200_000_000_000,  # 2023-01-01T00:00:00Z
-        end_ts_ns=1704063600_000_000_000,    # 2023-12-31T23:59:59Z
+        role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
+        start_ts_ns=1577836800_000_000_000,
+        end_ts_ns=1704067199_000_000_000,
         parent_dataset="dataset_v3.1.0",
-        status="CANONICAL",
+        status="NOT_DIRECTLY_READABLE",
     ),
+    "ETHUSDT_AGGREGATE_DEV_VAL": CanonicalPartitionEntry(
+        dataset_id="ETHUSDT_AGGREGATE_DEV_VAL",
+        dataset_version="v3.1.0",
+        partition_id="ETHUSDT_AGGREGATE_DEV_VAL",
+        canonical_relative_path=None,
+        physical_sha256=None,
+        dataset_logical_sha256="a085cf7f69d03357277e7ae6c5a3d82fbb6b684a936576c536b53060b758f930",
+        role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
+        start_ts_ns=1577836800_000_000_000,
+        end_ts_ns=1704067199_000_000_000,
+        parent_dataset="dataset_v3.1.0",
+        status="NOT_DIRECTLY_READABLE",
+    ),
+
+    # 5. Locked 2024 Holdout
     "BTCUSDT_2024_HOLDOUT": CanonicalPartitionEntry(
         dataset_id="BTCUSDT_2024_HOLDOUT",
         dataset_version="v3.1.0",
@@ -185,6 +358,8 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="dataset_v3.1.0",
         status="LOCKED_UNREGISTERED_FOR_READ",
     ),
+
+    # 6. Prospective (Unmaterialized Snapshot Required)
     "BTCUSDT_2025_PROSPECTIVE": CanonicalPartitionEntry(
         dataset_id="BTCUSDT_2025_PROSPECTIVE",
         dataset_version="v3.2.0_prospective",
@@ -193,10 +368,10 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         physical_sha256=None,
         dataset_logical_sha256=None,
         role=DatasetRole.PROSPECTIVE_FORWARD,
-        start_ts_ns=1735689600_000_000_000,  # 2025-01-01T00:00:00Z
-        end_ts_ns=1767225599_000_000_000,    # 2025-12-31T23:59:59Z
+        start_ts_ns=1735689600_000_000_000,
+        end_ts_ns=1767225599_000_000_000,
         parent_dataset=None,
-        status="PROSPECTIVE_PRISTINE",
+        status="PROSPECTIVE_UNMATERIALIZED",
     ),
     "BTCUSDT_2026_LIVE_FORWARD": CanonicalPartitionEntry(
         dataset_id="BTCUSDT_2026_LIVE_FORWARD",
@@ -206,10 +381,23 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         physical_sha256=None,
         dataset_logical_sha256=None,
         role=DatasetRole.PROSPECTIVE_FORWARD,
-        start_ts_ns=1767225600_000_000_000,  # 2026-01-01T00:00:00Z
-        end_ts_ns=1798761599_000_000_000,    # 2026-12-31T23:59:59Z
+        start_ts_ns=1767225600_000_000_000,
+        end_ts_ns=1798761599_000_000_000,
         parent_dataset=None,
-        status="PROSPECTIVE_PRISTINE",
+        status="PROSPECTIVE_UNMATERIALIZED",
+    ),
+    "BTCUSDT_PROSPECTIVE_2025": CanonicalPartitionEntry(
+        dataset_id="BTCUSDT_PROSPECTIVE_2025",
+        dataset_version="v3.2.0_prospective",
+        partition_id="PROSPECTIVE_2025",
+        canonical_relative_path=None,
+        physical_sha256=None,
+        dataset_logical_sha256=None,
+        role=DatasetRole.PROSPECTIVE_FORWARD,
+        start_ts_ns=1735689600_000_000_000,
+        end_ts_ns=1767225599_000_000_000,
+        parent_dataset=None,
+        status="PROSPECTIVE_UNMATERIALIZED",
     ),
 }
 
@@ -303,12 +491,13 @@ def compute_canonical_json_sha256(payload: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_bytes).hexdigest()
 
 
-def _get_last_ledger_chain_state() -> tuple[int, str]:
+def _get_last_ledger_chain_state(ledger_path: Optional[Path] = None) -> tuple[int, str]:
     """Read the last sequence number and entry_sha256 from the ledger file."""
-    if not LEDGER_PATH.is_file():
+    target = ledger_path or LEDGER_PATH
+    if not target.is_file():
         return 0, "0" * 64
     
-    lines = [line.strip() for line in LEDGER_PATH.read_text(encoding="utf-8").splitlines() if line.strip()]
+    lines = [line.strip() for line in target.read_text(encoding="utf-8").splitlines() if line.strip()]
     if not lines:
         return 0, "0" * 64
     
@@ -321,74 +510,13 @@ def _get_last_ledger_chain_state() -> tuple[int, str]:
         return 0, "0" * 64
 
 
-def log_guard_event(
-    operation: str,
-    dataset_id: str,
-    dataset_version: str,
-    role: str,
-    start_ns: Optional[int],
-    end_ns: Optional[int],
-    decision: str,  # "ALLOWED" or "BLOCKED"
-    reason: str,
-    research_generation: str = "ROUND3B.0B",
-) -> dict[str, Any]:
-    """Record an append-only, tamper-evident cryptographic hash-chain entry in the access ledger."""
-    with _LEDGER_LOCK:
-        LEDGER_PATH.parent.mkdir(parents=True, exist_ok=True)
-        
-        # Pre-append integrity check: fail closed if chain is corrupt
-        is_valid, err_idx, err_msg, _ = verify_access_ledger_integrity()
-        if not is_valid:
-            raise LedgerIntegrityFailureError(
-                f"LEDGER_INTEGRITY_FAILURE: Access ledger hash chain is corrupted at line {err_idx}: {err_msg}. Append refused."
-            )
-        
-        last_seq, prev_sha = _get_last_ledger_chain_state()
-        current_seq = last_seq + 1
-        
-        payload = {
-            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-            "operation": str(operation),
-            "dataset_id": str(dataset_id),
-            "dataset_version": str(dataset_version),
-            "dataset_role": str(role),
-            "requested_start_ns": start_ns,
-            "requested_end_ns": end_ns,
-            "requested_start_utc": datetime.fromtimestamp(start_ns / 1e9, tz=timezone.utc).isoformat() if start_ns else None,
-            "requested_end_utc": datetime.fromtimestamp(end_ns / 1e9, tz=timezone.utc).isoformat() if end_ns else None,
-            "decision": str(decision),
-            "reason": str(reason),
-            "research_generation": str(research_generation),
-        }
-        sanitized_payload = sanitize_payload_for_logging(payload)
-        payload_sha = compute_canonical_json_sha256(sanitized_payload)
-        
-        entry_commit_str = f"{current_seq}:{prev_sha}:{payload_sha}".encode("utf-8")
-        entry_sha = hashlib.sha256(entry_commit_str).hexdigest()
-        
-        full_entry = {
-            "sequence": current_seq,
-            "previous_entry_sha256": prev_sha,
-            "entry_payload_sha256": payload_sha,
-            "entry_sha256": entry_sha,
-            **sanitized_payload,
-        }
-        
-        with open(LEDGER_PATH, "a", encoding="utf-8") as f:
-            f.write(json.dumps(full_entry) + "\n")
-            
-        return full_entry
-
-
-def verify_access_ledger_integrity() -> tuple[bool, int, str, dict[str, Any]]:
-    """Cryptographically verify the research access ledger hash chain.
-    
-    Returns (is_valid, total_entries, status_message, audit_summary).
-    """
-    if not LEDGER_PATH.is_file():
+def _verify_access_ledger_integrity_unlocked(ledger_path: Optional[Path] = None) -> tuple[bool, int, str, dict[str, Any]]:
+    """Cryptographically verify the research access ledger hash chain without locking."""
+    target = ledger_path or LEDGER_PATH
+    if not target.is_file():
         return True, 0, "LEDGER_EMPTY", {"total_entries": 0, "allowed_holdout_accesses": 0}
     
-    lines = [line.strip() for line in LEDGER_PATH.read_text(encoding="utf-8").splitlines() if line.strip()]
+    lines = [line.strip() for line in target.read_text(encoding="utf-8").splitlines() if line.strip()]
     if not lines:
         return True, 0, "LEDGER_EMPTY", {"total_entries": 0, "allowed_holdout_accesses": 0}
     
@@ -449,6 +577,91 @@ def verify_access_ledger_integrity() -> tuple[bool, int, str, dict[str, Any]]:
     return True, len(lines), "HASH_CHAIN_VERIFIED", summary
 
 
+def verify_access_ledger_integrity(
+    ledger_path: Optional[Path] = None,
+    lock_path: Optional[Path] = None,
+) -> tuple[bool, int, str, dict[str, Any]]:
+    """Cryptographically verify the research access ledger hash chain with process safety.
+    
+    Returns (is_valid, total_entries, status_message, audit_summary).
+    """
+    target_ledger = ledger_path or LEDGER_PATH
+    target_lock = lock_path or LEDGER_LOCK_PATH
+    with _LEDGER_LOCK:
+        if target_lock.parent.exists():
+            with open(target_lock, "a") as lock_file:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_SH)
+                try:
+                    return _verify_access_ledger_integrity_unlocked(target_ledger)
+                finally:
+                    fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+        return _verify_access_ledger_integrity_unlocked(target_ledger)
+
+
+def log_guard_event(
+    operation: str,
+    dataset_id: str,
+    dataset_version: str,
+    role: str,
+    start_ns: Optional[int],
+    end_ns: Optional[int],
+    decision: str,  # "ALLOWED" or "BLOCKED"
+    reason: str,
+    research_generation: str = "ROUND3B.0C",
+) -> dict[str, Any]:
+    """Record an append-only, tamper-evident cryptographic hash-chain entry in the access ledger with process safety."""
+    with _LEDGER_LOCK:
+        LEDGER_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with open(LEDGER_LOCK_PATH, "a") as lock_file:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+            try:
+                # Pre-append integrity check: fail closed if chain is corrupt
+                is_valid, err_idx, err_msg, _ = _verify_access_ledger_integrity_unlocked()
+                if not is_valid:
+                    raise LedgerIntegrityFailureError(
+                        f"LEDGER_INTEGRITY_FAILURE: Access ledger hash chain is corrupted at line {err_idx}: {err_msg}. Append refused."
+                    )
+                
+                last_seq, prev_sha = _get_last_ledger_chain_state()
+                current_seq = last_seq + 1
+                
+                payload = {
+                    "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+                    "operation": str(operation),
+                    "dataset_id": str(dataset_id),
+                    "dataset_version": str(dataset_version),
+                    "dataset_role": str(role),
+                    "requested_start_ns": start_ns,
+                    "requested_end_ns": end_ns,
+                    "requested_start_utc": datetime.fromtimestamp(start_ns / 1e9, tz=timezone.utc).isoformat() if start_ns else None,
+                    "requested_end_utc": datetime.fromtimestamp(end_ns / 1e9, tz=timezone.utc).isoformat() if end_ns else None,
+                    "decision": str(decision),
+                    "reason": str(reason),
+                    "research_generation": str(research_generation),
+                }
+                sanitized_payload = sanitize_payload_for_logging(payload)
+                payload_sha = compute_canonical_json_sha256(sanitized_payload)
+                
+                entry_commit_str = f"{current_seq}:{prev_sha}:{payload_sha}".encode("utf-8")
+                entry_sha = hashlib.sha256(entry_commit_str).hexdigest()
+                
+                full_entry = {
+                    "sequence": current_seq,
+                    "previous_entry_sha256": prev_sha,
+                    "entry_payload_sha256": payload_sha,
+                    "entry_sha256": entry_sha,
+                    **sanitized_payload,
+                }
+                
+                with open(LEDGER_PATH, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(full_entry) + "\n")
+                    f.flush()
+                    
+                return full_entry
+            finally:
+                fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+
 class ResearchDataAccessGuard:
     """Hardened research data access guard enforcing trust hierarchy, dataset identity,
     authoritative holdout boundary precedence, and restricted prospective forward operations."""
@@ -480,10 +693,37 @@ class ResearchDataAccessGuard:
         end_ts_ns: Optional[int] = None,
         file_path: Optional[Path | str] = None,
         dataset_logical_sha: Optional[str] = None,
-        research_generation: str = "ROUND3B.0B",
-        registry: Optional[Mapping[str, CanonicalPartitionEntry]] = None,
+        research_generation: str = "ROUND3B.0C",
     ) -> bool:
         """Evaluate data access request under the strict adversarial trust hierarchy."""
+        return cls._check_access_internal(
+            operation=operation,
+            dataset_id=dataset_id,
+            dataset_version=dataset_version,
+            dataset_role=dataset_role,
+            start_ts_ns=start_ts_ns,
+            end_ts_ns=end_ts_ns,
+            file_path=file_path,
+            dataset_logical_sha=dataset_logical_sha,
+            research_generation=research_generation,
+            registry=CANONICAL_DATASET_REGISTRY,
+        )
+
+    @classmethod
+    def _check_access_internal(
+        cls,
+        operation: ResearchOperation | str,
+        dataset_id: str,
+        dataset_version: str = "v3.1.0",
+        dataset_role: Optional[DatasetRole | str] = None,
+        start_ts_ns: Optional[int] = None,
+        end_ts_ns: Optional[int] = None,
+        file_path: Optional[Path | str] = None,
+        dataset_logical_sha: Optional[str] = None,
+        research_generation: str = "ROUND3B.0C",
+        registry: Optional[Mapping[str, CanonicalPartitionEntry]] = None,
+    ) -> bool:
+        """Internal evaluator supporting explicit test dependency injection."""
         if not dataset_id:
             raise HoldoutAccessDeniedError("DATASET_IDENTITY_REQUIRED: An explicit dataset_id must be provided.")
 
@@ -519,25 +759,6 @@ class ResearchDataAccessGuard:
         # -------------------------------------------------------------
         registry_entry = active_registry.get(dataset_id)
         if registry_entry:
-            # Check for locked holdout entries in registry
-            if registry_entry.status == "LOCKED_UNREGISTERED_FOR_READ" or registry_entry.role == DatasetRole.LOCKED_HOLDOUT:
-                reason = (
-                    f"HOLDOUT_FIREWALL_VIOLATION: Locked holdout dataset '{dataset_id}' is inaccessible. "
-                    f"Operation '{op_enum.value}' denied. HOLDOUT_UNLOCK_CAPABILITY is ZERO."
-                )
-                log_guard_event(
-                    operation=op_enum.value,
-                    dataset_id=dataset_id,
-                    dataset_version=dataset_version,
-                    role=registry_entry.role.value,
-                    start_ns=start_ts_ns or registry_entry.start_ts_ns,
-                    end_ns=end_ts_ns or registry_entry.end_ts_ns,
-                    decision="BLOCKED",
-                    reason=reason,
-                    research_generation=research_generation,
-                )
-                raise HoldoutAccessDeniedError(reason)
-
             # Enforce logical SHA match if caller provided one
             if dataset_logical_sha is not None and registry_entry.dataset_logical_sha256 is not None:
                 if dataset_logical_sha != registry_entry.dataset_logical_sha256:
@@ -558,12 +779,89 @@ class ResearchDataAccessGuard:
                     )
                     raise HoldoutAccessDeniedError(reason)
 
+            # Check for locked holdout entries in registry
+            if registry_entry.status == "LOCKED_UNREGISTERED_FOR_READ" or registry_entry.role == DatasetRole.LOCKED_HOLDOUT:
+                reason = (
+                    f"HOLDOUT_FIREWALL_VIOLATION: Locked holdout dataset '{dataset_id}' is inaccessible. "
+                    f"Operation '{op_enum.value}' denied. HOLDOUT_UNLOCK_CAPABILITY is ZERO."
+                )
+                log_guard_event(
+                    operation=op_enum.value,
+                    dataset_id=dataset_id,
+                    dataset_version=dataset_version,
+                    role=registry_entry.role.value,
+                    start_ns=start_ts_ns or registry_entry.start_ts_ns,
+                    end_ns=end_ts_ns or registry_entry.end_ts_ns,
+                    decision="BLOCKED",
+                    reason=reason,
+                    research_generation=research_generation,
+                )
+                raise HoldoutAccessDeniedError(reason)
+
+            # Check for aggregate composite datasets (must not be read directly for research)
+            if registry_entry.role == DatasetRole.COMPOSITE_RESEARCH_DATASET or registry_entry.status == "NOT_DIRECTLY_READABLE":
+                reason = (
+                    f"DATASET_NOT_REGISTERED_FOR_PHYSICAL_READ: Aggregate composite dataset '{dataset_id}' "
+                    f"cannot be directly read for research. Must use discrete physical research partitions (DEV / VAL)."
+                )
+                log_guard_event(
+                    operation=op_enum.value,
+                    dataset_id=dataset_id,
+                    dataset_version=dataset_version,
+                    role=registry_entry.role.value,
+                    start_ns=start_ts_ns or registry_entry.start_ts_ns,
+                    end_ns=end_ts_ns or registry_entry.end_ts_ns,
+                    decision="BLOCKED",
+                    reason=reason,
+                    research_generation=research_generation,
+                )
+                raise HoldoutAccessDeniedError(reason)
+
+            # Prospective forward files cannot be read unless they physically exist and have a registered immutable snapshot digest
+            if registry_entry.role == DatasetRole.PROSPECTIVE_FORWARD:
+                if registry_entry.status == "PROSPECTIVE_UNMATERIALIZED" or registry_entry.canonical_relative_path is None or registry_entry.physical_sha256 is None:
+                    if p_obj is not None or op_enum in cls.PROSPECTIVE_ALLOWED_OPERATIONS:
+                        if registry_entry.status == "PROSPECTIVE_UNMATERIALIZED" and p_obj is not None:
+                            reason = (
+                                f"PROSPECTIVE_DATASET_NOT_REGISTERED: Prospective forward dataset '{dataset_id}' "
+                                f"has not been physically materialized or registered with an immutable snapshot digest."
+                            )
+                            log_guard_event(
+                                operation=op_enum.value,
+                                dataset_id=dataset_id,
+                                dataset_version=dataset_version,
+                                role=registry_entry.role.value,
+                                start_ns=start_ts_ns,
+                                end_ns=end_ts_ns,
+                                decision="BLOCKED",
+                                reason=reason,
+                                research_generation=research_generation,
+                            )
+                            raise HoldoutAccessDeniedError(reason)
+
             # Adopt registry timestamps and role
             if start_ts_ns is None:
                 start_ts_ns = registry_entry.start_ts_ns
             if end_ts_ns is None:
                 end_ts_ns = registry_entry.end_ts_ns
             detected_role = registry_entry.role
+
+        # Prospective forward file existence check
+        if (detected_role == DatasetRole.PROSPECTIVE_FORWARD or (registry_entry and registry_entry.role == DatasetRole.PROSPECTIVE_FORWARD)):
+            if p_obj and not p_obj.is_file():
+                reason = f"PROSPECTIVE_DATASET_NOT_REGISTERED: Prospective forward file '{p_obj}' does not exist on disk."
+                log_guard_event(
+                    operation=op_enum.value,
+                    dataset_id=dataset_id,
+                    dataset_version=dataset_version,
+                    role="PROSPECTIVE_FORWARD",
+                    start_ns=start_ts_ns,
+                    end_ns=end_ts_ns,
+                    decision="BLOCKED",
+                    reason=reason,
+                    research_generation=research_generation,
+                )
+                raise HoldoutAccessDeniedError(reason)
 
         # -------------------------------------------------------------
         # TRUST LEVEL 2: Physical / Metadata Verification (Parquet)
@@ -572,6 +870,64 @@ class ResearchDataAccessGuard:
             if p_obj.suffix == ".parquet":
                 # 1. Row-level timestamp corroboration (catches stripped/forged metadata and holdout rows)
                 actual_min_ts, actual_max_ts = corroborate_parquet_timestamps(p_obj)
+
+                # Role boundary checks on actual row timestamps
+                check_role = detected_role or (registry_entry.role if registry_entry else None)
+                if check_role == DatasetRole.DEVELOPMENT:
+                    if actual_max_ts >= 1672531200_000_000_000:
+                        reason = (
+                            f"ROLE_BOUNDARY_VIOLATION: File '{p_obj.name}' assigned role DEVELOPMENT contains "
+                            f"post-2022 rows (max ts {actual_max_ts} >= 1672531200000000000 [2023-01-01T00:00:00Z])."
+                        )
+                        log_guard_event(
+                            operation=op_enum.value,
+                            dataset_id=dataset_id,
+                            dataset_version=dataset_version,
+                            role=check_role.value,
+                            start_ns=actual_min_ts,
+                            end_ns=actual_max_ts,
+                            decision="BLOCKED",
+                            reason=reason,
+                            research_generation=research_generation,
+                        )
+                        raise RoleBoundaryViolationError(reason)
+
+                if check_role == DatasetRole.VALIDATION:
+                    if actual_min_ts < 1672531200_000_000_000:
+                        reason = (
+                            f"ROLE_BOUNDARY_VIOLATION: File '{p_obj.name}' assigned role VALIDATION contains "
+                            f"pre-2023 rows (min ts {actual_min_ts} < 1672531200000000000 [2023-01-01T00:00:00Z])."
+                        )
+                        log_guard_event(
+                            operation=op_enum.value,
+                            dataset_id=dataset_id,
+                            dataset_version=dataset_version,
+                            role=check_role.value,
+                            start_ns=actual_min_ts,
+                            end_ns=actual_max_ts,
+                            decision="BLOCKED",
+                            reason=reason,
+                            research_generation=research_generation,
+                        )
+                        raise RoleBoundaryViolationError(reason)
+
+                    if actual_max_ts >= HOLDOUT_WINDOW_START_NS:
+                        reason = (
+                            f"HOLDOUT_FIREWALL_VIOLATION: File '{p_obj.name}' assigned role VALIDATION contains "
+                            f"2024 holdout rows (max ts {actual_max_ts} >= {HOLDOUT_WINDOW_START_NS})."
+                        )
+                        log_guard_event(
+                            operation=op_enum.value,
+                            dataset_id=dataset_id,
+                            dataset_version=dataset_version,
+                            role=check_role.value,
+                            start_ns=actual_min_ts,
+                            end_ns=actual_max_ts,
+                            decision="BLOCKED",
+                            reason=reason,
+                            research_generation=research_generation,
+                        )
+                        raise HoldoutAccessDeniedError(reason)
 
                 # 2. Physical SHA-256 verification
                 actual_physical_sha = hashlib.sha256(p_obj.read_bytes()).hexdigest()
@@ -755,6 +1111,63 @@ class ResearchDataAccessGuard:
             )
             raise HoldoutAccessDeniedError(reason)
 
+        # Role boundary checks on effective role and requested timestamps
+        if effective_role == DatasetRole.DEVELOPMENT:
+            if (start_ts_ns is not None and start_ts_ns >= 1672531200_000_000_000) or (end_ts_ns is not None and end_ts_ns >= 1672531200_000_000_000):
+                reason = (
+                    f"ROLE_BOUNDARY_VIOLATION: DEVELOPMENT dataset '{dataset_id}' requested range "
+                    f"[{start_ts_ns}, {end_ts_ns}] violates 2022 cutoff (1672531200000000000 [2023-01-01T00:00:00Z])."
+                )
+                log_guard_event(
+                    operation=op_enum.value,
+                    dataset_id=dataset_id,
+                    dataset_version=dataset_version,
+                    role=effective_role.value,
+                    start_ns=start_ts_ns,
+                    end_ns=end_ts_ns,
+                    decision="BLOCKED",
+                    reason=reason,
+                    research_generation=research_generation,
+                )
+                raise RoleBoundaryViolationError(reason)
+
+        if effective_role == DatasetRole.VALIDATION:
+            if start_ts_ns is not None and start_ts_ns < 1672531200_000_000_000:
+                reason = (
+                    f"ROLE_BOUNDARY_VIOLATION: VALIDATION dataset '{dataset_id}' requested start "
+                    f"{start_ts_ns} violates 2023 start boundary (1672531200000000000 [2023-01-01T00:00:00Z])."
+                )
+                log_guard_event(
+                    operation=op_enum.value,
+                    dataset_id=dataset_id,
+                    dataset_version=dataset_version,
+                    role=effective_role.value,
+                    start_ns=start_ts_ns,
+                    end_ns=end_ts_ns,
+                    decision="BLOCKED",
+                    reason=reason,
+                    research_generation=research_generation,
+                )
+                raise RoleBoundaryViolationError(reason)
+
+            if end_ts_ns is not None and end_ts_ns >= HOLDOUT_WINDOW_START_NS:
+                reason = (
+                    f"HOLDOUT_FIREWALL_VIOLATION: VALIDATION dataset '{dataset_id}' requested end "
+                    f"{end_ts_ns} intersects locked 2024 holdout ({HOLDOUT_WINDOW_START_NS})."
+                )
+                log_guard_event(
+                    operation=op_enum.value,
+                    dataset_id=dataset_id,
+                    dataset_version=dataset_version,
+                    role=effective_role.value,
+                    start_ns=start_ts_ns,
+                    end_ns=end_ts_ns,
+                    decision="BLOCKED",
+                    reason=reason,
+                    research_generation=research_generation,
+                )
+                raise HoldoutAccessDeniedError(reason)
+
         # -------------------------------------------------------------
         # TRUST LEVEL 4: Policy Enforcement
         # -------------------------------------------------------------
@@ -850,11 +1263,26 @@ def load_research_parquet(
     start_ts_ns: Optional[int] = None,
     end_ts_ns: Optional[int] = None,
     dataset_logical_sha: Optional[str] = None,
-    registry: Optional[Mapping[str, CanonicalPartitionEntry]] = None,
 ) -> Any:
     """Safe Parquet loader enforcing the ResearchDataAccessGuard before disk read."""
     if not dataset_id:
         raise HoldoutAccessDeniedError("DATASET_IDENTITY_REQUIRED: Explicit dataset_id must be provided to load research parquet.")
+    
+    entry = CANONICAL_DATASET_REGISTRY.get(dataset_id)
+    if entry:
+        if entry.status in ("NOT_DIRECTLY_READABLE", "LOCKED_UNREGISTERED_FOR_READ") or entry.canonical_relative_path is None or entry.physical_sha256 is None:
+            if entry.role == DatasetRole.LOCKED_HOLDOUT or entry.status == "LOCKED_UNREGISTERED_FOR_READ":
+                raise HoldoutAccessDeniedError(
+                    f"HOLDOUT_FIREWALL_VIOLATION: Dataset '{dataset_id}' is locked holdout and cannot be loaded directly."
+                )
+            if entry.role == DatasetRole.PROSPECTIVE_FORWARD or entry.status == "PROSPECTIVE_UNMATERIALIZED":
+                raise HoldoutAccessDeniedError(
+                    f"PROSPECTIVE_DATASET_NOT_REGISTERED: Prospective forward dataset '{dataset_id}' is not materialized for physical read."
+                )
+            raise HoldoutAccessDeniedError(
+                f"DATASET_NOT_REGISTERED_FOR_PHYSICAL_READ: Dataset '{dataset_id}' is not registered for physical read (status={entry.status})."
+            )
+
     p = Path(file_path)
     ResearchDataAccessGuard.check_access(
         operation=operation,
@@ -864,6 +1292,5 @@ def load_research_parquet(
         end_ts_ns=end_ts_ns,
         file_path=p,
         dataset_logical_sha=dataset_logical_sha,
-        registry=registry,
     )
     return pq.read_table(p)

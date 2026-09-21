@@ -398,11 +398,11 @@ def test_real_feature_modules_future_row_perturbation_invariance() -> None:
 def test_real_causal_backtest_execution() -> None:
     """Run real backtest simulation through run_causal_backtest and verify TemporalEventContract on each fill."""
     candles = [
-        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0")),  # 00:00
-        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0")),  # 01:00
-        Candle(ts_event_ns=1609466400_000_000_000, close=Decimal("31000.0")),  # 02:00
-        Candle(ts_event_ns=1609470000_000_000_000, close=Decimal("30800.0")),  # 03:00
-        Candle(ts_event_ns=1609473600_000_000_000, close=Decimal("31200.0")),  # 04:00
+        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0"), open=Decimal("30000.0")),  # 00:00
+        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0"), open=Decimal("30000.0")),  # 01:00
+        Candle(ts_event_ns=1609466400_000_000_000, close=Decimal("31000.0"), open=Decimal("30500.0")),  # 02:00
+        Candle(ts_event_ns=1609470000_000_000_000, close=Decimal("30800.0"), open=Decimal("31000.0")),  # 03:00
+        Candle(ts_event_ns=1609473600_000_000_000, close=Decimal("31200.0"), open=Decimal("30800.0")),  # 04:00
     ]
     positions = [1, 1, 0, -1, 0]
     costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
@@ -410,16 +410,16 @@ def test_real_causal_backtest_execution() -> None:
     causal_res = run_causal_backtest(candles, positions, costs)
     legacy_res = run_backtest(candles, positions, costs)
 
-    # Result equivalence with legacy run_backtest
+    # Result equivalence with legacy run_backtest when open == previous close
     assert causal_res.result.bars == legacy_res.bars
     assert causal_res.result.trades == legacy_res.trades
     assert causal_res.result.net_return == legacy_res.net_return
     assert causal_res.result.total_cost == legacy_res.total_cost
 
-    # Contract verification: every bar execution has a valid contract
-    assert len(causal_res.contracts) == len(candles)  # 4 bar contracts + 1 terminal flat contract
+    # Contract verification: every bar execution has a valid contract and observation
+    assert len(causal_res.contracts) == len(candles)
     for c in causal_res.contracts:
-        c.validate()  # Strictly enforces source <= available <= decision <= execution <= fill
+        c.validate()
         assert c.source_ts_ns <= c.available_ts_ns
         assert c.available_ts_ns <= c.decision_ts_ns
         assert c.decision_ts_ns <= c.execution_ts_ns
@@ -428,13 +428,14 @@ def test_real_causal_backtest_execution() -> None:
     # Bar availability: decision cannot occur before bar close timestamp
     for exec_record in causal_res.executions:
         assert exec_record.contract.decision_ts_ns >= exec_record.contract.source_ts_ns
+        assert exec_record.observation.fill_price_observation_ts_ns >= exec_record.observation.decision_ts_ns
 
 
 def test_real_causal_backtest_clock_inversion_fails_closed() -> None:
     """Deliberate clock inversion in real runner fails closed immediately."""
     candles = [
-        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0")),
-        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0")),
+        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0"), open=Decimal("30000.0")),
+        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0"), open=Decimal("30000.0")),
     ]
     positions = [1, 0]
     costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
@@ -453,13 +454,12 @@ def test_real_causal_backtest_clock_inversion_fails_closed() -> None:
 def test_real_causal_backtest_funding_boundary() -> None:
     """Strategy funding boundary accepts only causal typed funding signals and blocks unsettled funding."""
     candles = [
-        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0")),
-        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0")),
+        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0"), open=Decimal("30000.0")),
+        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0"), open=Decimal("30000.0")),
     ]
     positions = [1, 0]
     costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
 
-    # 1. Valid typed funding signals pass
     valid_signals = [
         ObservableEstimatedFunding(
             signal_ts_ns=1609459200_000_000_000,
@@ -474,7 +474,6 @@ def test_real_causal_backtest_funding_boundary() -> None:
     res = run_causal_backtest(candles, positions, costs, funding_signals=valid_signals)
     assert res.result.trades > 0
 
-    # 2. Future unsettled funding fails closed
     future_unsettled = FutureUnsettledRealizedFunding(
         settlement_ts_ns=1609462800_000_000_000,
         _future_realized_rate=Decimal("0.0002"),
@@ -483,8 +482,83 @@ def test_real_causal_backtest_funding_boundary() -> None:
         run_causal_backtest(candles, positions, costs, funding_signals=[future_unsettled])
     assert "STRATEGY_FUNDING_BOUNDARY_VIOLATION" in str(exc1.value)
 
-    # 3. Untyped / raw funding input fails closed
     with pytest.raises(TemporalIntegrityViolationError) as exc2:
         run_causal_backtest(candles, positions, costs, funding_signals=[0.0001])
     assert "STRATEGY_FUNDING_BOUNDARY_VIOLATION" in str(exc2.value)
+
+
+def test_same_close_cheating_blocked_by_next_bar_open_fill() -> None:
+    """Same-close cheating: Signal observed at C_N (100) enters at O_{N+1} (120).
+    Gap from 100 to 120 must NOT be credited to new position."""
+    candles = [
+        Candle(ts_event_ns=1000, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=2000, close=Decimal("120.0"), open=Decimal("120.0")),  # Gap up 20%
+        Candle(ts_event_ns=3000, close=Decimal("120.0"), open=Decimal("120.0")),
+    ]
+    positions = [1, 0, 0]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # Legacy cheating engine credits the gap to the trade
+    legacy_res = run_backtest(candles, positions, costs)
+    assert legacy_res.gross_return == Decimal("0.20")  # CHEATING
+
+    # Causal engine enters at O_{N+1} = 120, so return from 100 to 120 earns 0
+    causal_res = run_causal_backtest(candles, positions, costs)
+    assert causal_res.result.gross_return == Decimal("0")
+    assert causal_res.executions[0].fill_price == Decimal("120.0")
+    assert causal_res.executions[0].position_before == 0
+    assert causal_res.executions[0].position_after == 1
+
+
+def test_gap_down_exit_penalized_causally() -> None:
+    """Gap-down exit: Position held long decides to exit at C_N (100).
+    Exit fills at O_{N+1} (80). Long position must take the -20% gap loss before exiting."""
+    candles = [
+        Candle(ts_event_ns=1000, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=2000, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=3000, close=Decimal("80.0"), open=Decimal("80.0")),  # Gap down 20%
+    ]
+    # At bar 0, stay long (1). At bar 1, exit to flat (0).
+    positions = [1, 0, 0]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # In legacy backtest, position is 0 from bar 1 to bar 2, so it escapes the gap!
+    legacy_res = run_backtest(candles, positions, costs)
+    assert legacy_res.gross_return == Decimal("0")  # ESCAPED GAP
+
+    # In causal engine, position held is 1 during gap from 100 to 80; exit fills at 80
+    causal_res = run_causal_backtest(candles, positions, costs)
+    assert causal_res.result.gross_return == Decimal("-0.20")
+    assert causal_res.executions[1].fill_price == Decimal("80.0")
+    assert causal_res.executions[1].position_before == 1
+    assert causal_res.executions[1].position_after == 0
+
+
+def test_walk_forward_causal_routing() -> None:
+    """Verify walk_forward_causal and walk_forward_momentum route to causal engine with open fallback."""
+    from btceth_os.research.backtest import walk_forward_causal, walk_forward_momentum
+    candles = [
+        Candle(ts_event_ns=1000 * i, close=Decimal(str(10 + i % 5)), open=Decimal(str(10 + i % 5)))
+        for i in range(20)
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("1"), slippage_bps=Decimal("1"))
+    wf_res = walk_forward_causal(
+        candles,
+        train_bars=6,
+        test_bars=4,
+        candidate_lookbacks=[1, 2],
+        costs=costs,
+    )
+    assert len(wf_res.folds) > 0
+    assert wf_res.trades >= 0
+
+    # walk_forward_momentum also works
+    wf_mom_res = walk_forward_momentum(
+        candles,
+        train_bars=6,
+        test_bars=4,
+        candidate_lookbacks=[1, 2],
+        costs=costs,
+    )
+    assert len(wf_mom_res.folds) == len(wf_res.folds)
 

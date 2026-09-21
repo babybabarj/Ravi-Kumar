@@ -9,6 +9,7 @@ from btceth_os.research.structural.capital_governor import (
     CapitalExhaustionError,
     CapitalPolicy,
     PortfolioCapitalGovernor,
+    get_canonical_policy_sha256,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -311,8 +312,34 @@ def test_chronology_violation_on_close_fails_closed() -> None:
         gov.close_episode("EP_TIME", exit_ts_ns=40)
 
 
+def test_capital_governor_missing_yaml_fails_closed(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """PortfolioCapitalGovernor() without explicit policy fails closed when YAML is missing."""
+    nonexistent = tmp_path / "nonexistent_policy.yaml"
+    monkeypatch.setattr(
+        "btceth_os.research.structural.capital_governor.CANONICAL_CAPITAL_POLICY_PATH",
+        nonexistent,
+    )
+    with pytest.raises(FileNotFoundError) as exc_info:
+        PortfolioCapitalGovernor()
+    assert "CAPITAL_POLICY_MISSING" in str(exc_info.value)
+
+
+def test_get_canonical_policy_sha256(tmp_path: Path) -> None:
+    """get_canonical_policy_sha256 computes valid 64-character SHA and fails closed when file missing."""
+    sha = get_canonical_policy_sha256()
+    assert len(sha) == 64
+    assert all(c in "0123456789abcdef" for c in sha)
+
+    nonexistent = tmp_path / "missing.yaml"
+    with pytest.raises(FileNotFoundError, match="CAPITAL_POLICY_MISSING"):
+        get_canonical_policy_sha256(nonexistent)
+
+
 def test_generate_round3b_0b_capital_governor_audit() -> None:
-    """Generate ROUND3B_0B_CAPITAL_POLICY_AUDIT.json report."""
+    """Generate ROUND3B_0B_CAPITAL_POLICY_AUDIT.json report if not already present."""
+    target = REPORTS_DIR / "ROUND3B_0B_CAPITAL_POLICY_AUDIT.json"
+    if target.is_file():
+        return
     audit_data = {
         "report_version": "ROUND3B.0B",
         "status": "VERIFIED",
@@ -331,7 +358,6 @@ def test_generate_round3b_0b_capital_governor_audit() -> None:
         "multi_strategy_concurrency_verified": True,
     }
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    (REPORTS_DIR / "ROUND3B_0B_CAPITAL_POLICY_AUDIT.json").write_text(
-        json.dumps(audit_data, indent=2) + "\n", encoding="utf-8"
-    )
+    target.write_text(json.dumps(audit_data, indent=2) + "\n", encoding="utf-8")
+
 

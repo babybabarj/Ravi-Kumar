@@ -1,0 +1,181 @@
+{
+  "report_version": "ROUND3B.0C",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-21T19:36:36.546135+00:00",
+  "total_physical_partitions": 8,
+  "all_physical_hashes_match": true,
+  "all_dev_pre_2023_verified": true,
+  "all_val_in_2023_verified": true,
+  "composite_datasets_not_directly_readable": true,
+  "no_public_registry_trust_override": true,
+  "physical_partitions": [
+    {
+      "file_name": "BTCUSDT_DEV_2020_2022.parquet",
+      "partition_id": "BTCUSDT_DEV_2020_2022",
+      "role": "DEVELOPMENT",
+      "status": "CANONICAL",
+      "file_exists": true,
+      "registered_physical_sha256": "4daa270f04c5e5305b7033b745253e862fc72f17a9ff16a9d0e1c6bca5847b47",
+      "actual_physical_sha256": "4daa270f04c5e5305b7033b745253e862fc72f17a9ff16a9d0e1c6bca5847b47",
+      "physical_sha_matches": true,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1672527600000000000,
+      "row_count": 26304,
+      "row_groups": 1,
+      "max_ts_pre_2023_verified": true
+    },
+    {
+      "file_name": "BTCUSDT_VAL_2023.parquet",
+      "partition_id": "BTCUSDT_VAL_2023",
+      "role": "VALIDATION",
+      "status": "CANONICAL",
+      "file_exists": true,
+      "registered_physical_sha256": "2db5dd7bdd758f3ae07420f443feb42b4319f59462b4697d7d72e524e0027c85",
+      "actual_physical_sha256": "2db5dd7bdd758f3ae07420f443feb42b4319f59462b4697d7d72e524e0027c85",
+      "physical_sha_matches": true,
+      "start_ts_ns": 1672531200000000000,
+      "end_ts_ns": 1704063600000000000,
+      "row_count": 8760,
+      "row_groups": 1,
+      "min_ts_2023_verified": true,
+      "max_ts_pre_2024_verified": true
+    },
+    {
+      "file_name": "ETHUSDT_DEV_2020_2022.parquet",
+      "partition_id": "ETHUSDT_DEV_2020_2022",
+      "role": "DEVELOPMENT",
+      "status": "CANONICAL",
+      "file_exists": true,
+      "registered_physical_sha256": "007cdce2eca501924935090eba141889b8d26d60b941e3fcf37501aa14b50f23",
+      "actual_physical_sha256": "007cdce2eca501924935090eba141889b8d26d60b941e3fcf37501aa14b50f23",
+      "physical_sha_matches": true,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1672527600000000000,
+      "row_count": 26304,
+      "row_groups": 1,
+      "max_ts_pre_2023_verified": true
+    },
+    {
+      "file_name": "ETHUSDT_VAL_2023.parquet",
+      "partition_id": "ETHUSDT_VAL_2023",
+      "role": "VALIDATION",
+      "status": "CANONICAL",
+      "file_exists": true,
+      "registered_physical_sha256": "2ce4e724e3e082dac0976e2192304780cc1c0ea4ad977e12da1497e4b0f52ff7",
+      "actual_physical_sha256": "2ce4e724e3e082dac0976e2192304780cc1c0ea4ad977e12da1497e4b0f52ff7",
+      "physical_sha_matches": true,
+      "start_ts_ns": 1672531200000000000,
+      "end_ts_ns": 1704063600000000000,
+      "row_count": 8760,
+      "row_groups": 1,
+      "min_ts_2023_verified": true,
+      "max_ts_pre_2024_verified": true
+    },
+    {
+      "file_name": "BTCUSDT_FUNDING_DEV_2020_2022.parquet",
+      "partition_id": "BTCUSDT_FUNDING_DEV_2020_2022",
+      "role": "DEVELOPMENT",
+      "status": "CANONICAL",
+      "file_exists": true,
+      "registered_physical_sha256": "2991e597d8c80a4b11181364e95168a46a6bc1cbd0f7a7f44fbf6341c0fcad3d",
+      "actual_physical_sha256": "2991e597d8c80a4b11181364e95168a46a6bc1cbd0f7a7f44fbf6341c0fcad3d",
+      "physical_sha_matches": true,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1672502400000000000,
+      "row_count": 3288,
+      "row_groups": 1,
+      "max_ts_pre_2023_verified": true
+    },
+    {
+      "file_name": "BTCUSDT_FUNDING_VAL_2023.parquet",
+      "partition_id": "BTCUSDT_FUNDING_VAL_2023",
+      "role": "VALIDATION",
+      "status": "CANONICAL",
+      "file_exists": true,
+      "registered_physical_sha256": "5f24907c3cd87c0465cd81356f192143c9f831c671f9a1aeeb9f6a39740614d3",
+      "actual_physical_sha256": "5f24907c3cd87c0465cd81356f192143c9f831c671f9a1aeeb9f6a39740614d3",
+      "physical_sha_matches": true,
+      "start_ts_ns": 1672531200000000000,
+      "end_ts_ns": 1704038400000000000,
+      "row_count": 1095,
+      "row_groups": 1,
+      "min_ts_2023_verified": true,
+      "max_ts_pre_2024_verified": true
+    },
+    {
+      "file_name": "ETHUSDT_FUNDING_DEV_2020_2022.parquet",
+      "partition_id": "ETHUSDT_FUNDING_DEV_2020_2022",
+      "role": "DEVELOPMENT",
+      "status": "CANONICAL",
+      "file_exists": true,
+      "registered_physical_sha256": "97ab50866782c4c2b99eff0caafbba23cb8522180bf460f23b73f8bd368042f8",
+      "actual_physical_sha256": "97ab50866782c4c2b99eff0caafbba23cb8522180bf460f23b73f8bd368042f8",
+      "physical_sha_matches": true,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1672502400000000000,
+      "row_count": 3288,
+      "row_groups": 1,
+      "max_ts_pre_2023_verified": true
+    },
+    {
+      "file_name": "ETHUSDT_FUNDING_VAL_2023.parquet",
+      "partition_id": "ETHUSDT_FUNDING_VAL_2023",
+      "role": "VALIDATION",
+      "status": "CANONICAL",
+      "file_exists": true,
+      "registered_physical_sha256": "16d3edbb7b031847bcf0dfb9c75c88dd643683f9d555b0bee4bd1fb6f1977462",
+      "actual_physical_sha256": "16d3edbb7b031847bcf0dfb9c75c88dd643683f9d555b0bee4bd1fb6f1977462",
+      "physical_sha_matches": true,
+      "start_ts_ns": 1672531200000000000,
+      "end_ts_ns": 1704038400000000000,
+      "row_count": 1095,
+      "row_groups": 1,
+      "min_ts_2023_verified": true,
+      "max_ts_pre_2024_verified": true
+    }
+  ],
+  "composite_datasets": [
+    {
+      "dataset_id": "BTCUSDT_AGGREGATE_DEV_VAL",
+      "role": "COMPOSITE_RESEARCH_DATASET",
+      "status": "NOT_DIRECTLY_READABLE",
+      "not_directly_readable": true
+    },
+    {
+      "dataset_id": "ETHUSDT_AGGREGATE_DEV_VAL",
+      "role": "COMPOSITE_RESEARCH_DATASET",
+      "status": "NOT_DIRECTLY_READABLE",
+      "not_directly_readable": true
+    },
+    {
+      "dataset_id": "BTCUSDT-resampled-1h-v3.1.0",
+      "role": "COMPOSITE_RESEARCH_DATASET",
+      "status": "NOT_DIRECTLY_READABLE",
+      "not_directly_readable": true
+    },
+    {
+      "dataset_id": "ETHUSDT-resampled-1h-v3.1.0",
+      "role": "COMPOSITE_RESEARCH_DATASET",
+      "status": "NOT_DIRECTLY_READABLE",
+      "not_directly_readable": true
+    },
+    {
+      "dataset_id": "BTCUSDT-funding-2020-01-2023-12-v3.1",
+      "role": "COMPOSITE_RESEARCH_DATASET",
+      "status": "NOT_DIRECTLY_READABLE",
+      "not_directly_readable": true
+    },
+    {
+      "dataset_id": "ETHUSDT-funding-2020-01-2023-12-v3.1",
+      "role": "COMPOSITE_RESEARCH_DATASET",
+      "status": "NOT_DIRECTLY_READABLE",
+      "not_directly_readable": true
+    },
+    {
+      "dataset_id": "dataset_v3.1.0",
+      "role": "COMPOSITE_RESEARCH_DATASET",
+      "status": "NOT_DIRECTLY_READABLE",
+      "not_directly_readable": true
+    }
+  ]
+}

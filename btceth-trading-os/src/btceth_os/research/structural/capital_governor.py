@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
@@ -8,6 +9,15 @@ from typing import Optional, Union
 
 ROOT = Path(__file__).resolve().parents[4]
 DEFAULT_POLICY_PATH = ROOT / "config" / "research_capital_policy_v1.yaml"
+CANONICAL_CAPITAL_POLICY_PATH = DEFAULT_POLICY_PATH
+
+
+def get_canonical_policy_sha256(path: Union[str, Path, None] = None) -> str:
+    """Compute and return the SHA-256 digest of the canonical capital policy YAML."""
+    p = Path(path) if path is not None else CANONICAL_CAPITAL_POLICY_PATH
+    if not p.is_file():
+        raise FileNotFoundError(f"CAPITAL_POLICY_MISSING: Canonical policy file not found at {p}")
+    return hashlib.sha256(p.read_bytes()).hexdigest()
 
 MANDATORY_POLICY_FIELDS = (
     "starting_equity",
@@ -141,12 +151,13 @@ class PortfolioCapitalGovernor:
     Defaults to loading config/research_capital_policy_v1.yaml (BASE_RESEARCH_POLICY).
     """
 
+    get_canonical_policy_sha256 = staticmethod(get_canonical_policy_sha256)
+
     def __init__(self, policy: Optional[CapitalPolicy] = None) -> None:
         if policy is None:
-            if DEFAULT_POLICY_PATH.is_file():
-                self.policy = CapitalPolicy.from_yaml(DEFAULT_POLICY_PATH, scenario="BASE_RESEARCH_POLICY")
-            else:
-                self.policy = CapitalPolicy()
+            if not CANONICAL_CAPITAL_POLICY_PATH.is_file():
+                raise FileNotFoundError(f"CAPITAL_POLICY_MISSING: Canonical capital policy not found at {CANONICAL_CAPITAL_POLICY_PATH}")
+            self.policy = CapitalPolicy.from_yaml(CANONICAL_CAPITAL_POLICY_PATH, scenario="BASE_RESEARCH_POLICY")
         else:
             self.policy = policy
         self.starting_equity: Decimal = self.policy.starting_equity

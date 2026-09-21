@@ -24,6 +24,7 @@ class PromotionStateReport:
     runtime_total_registered: int
     runtime_approved_shadow: int
     runtime_approved_paper: int
+    runtime_promotion_loading: str
     trading_capability: int
     all_zero_promotions_verified: bool
 
@@ -43,7 +44,10 @@ def inspect_promotion_state(
     approved_shadow_db = 0
     approved_paper_db = 0
 
-    if db_exists:
+    if not db_exists:
+        status = "PROMOTION_STATE_UNKNOWN"
+        all_zero = False
+    else:
         conn = sqlite3.connect(str(actual_db))
         try:
             cursor = conn.cursor()
@@ -63,20 +67,25 @@ def inspect_promotion_state(
         finally:
             conn.close()
 
+        if approved_shadow_db > 0 or approved_paper_db > 0:
+            status = "PROMOTION_VIOLATION"
+            all_zero = False
+        elif total_experiments < 26:
+            status = "EXPERIMENT_REGISTRY_CONTINUITY_FAILURE"
+            all_zero = False
+        else:
+            all_zero = True
+            status = "VERIFIED"
+
     active_reg = registry if registry is not None else StrategyRegistry()
     all_metas = active_reg.all_metadata()
     runtime_total = len(all_metas)
     runtime_shadow = len(active_reg.get_approved_for_shadow())
     runtime_paper = len(active_reg.get_approved_for_paper())
 
-    all_zero = (
-        approved_shadow_db == 0
-        and approved_paper_db == 0
-        and runtime_shadow == 0
-        and runtime_paper == 0
-    )
-
-    status = "VERIFIED" if all_zero else "PROMOTION_VIOLATION"
+    if runtime_shadow != 0 or runtime_paper != 0:
+        all_zero = False
+        status = "PROMOTION_VIOLATION"
 
     try:
         rel_path = str(actual_db.relative_to(ROOT))
@@ -84,7 +93,7 @@ def inspect_promotion_state(
         rel_path = str(actual_db)
 
     return PromotionStateReport(
-        report_version="ROUND3B.0B",
+        report_version="ROUND3B.0C",
         status=status,
         persistent_db_path=rel_path,
         persistent_db_exists=db_exists,
@@ -95,6 +104,7 @@ def inspect_promotion_state(
         runtime_total_registered=runtime_total,
         runtime_approved_shadow=runtime_shadow,
         runtime_approved_paper=runtime_paper,
+        runtime_promotion_loading="NOT_IMPLEMENTED",
         trading_capability=0,
         all_zero_promotions_verified=all_zero,
     )

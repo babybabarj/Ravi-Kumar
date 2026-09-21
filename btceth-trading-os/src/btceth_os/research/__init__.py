@@ -1,3 +1,39 @@
-from .backtest import Candle, CostModel, BacktestResult, WalkForwardResult, load_kline_candles, run_backtest, walk_forward_momentum, write_walk_forward_report
+from .backtest import (
+    Candle,
+    CostModel,
+    BacktestResult,
+    WalkForwardResult,
+    WalkForwardFold,
+    load_kline_candles,
+    load_guarded_kline_candles,
+    run_backtest,
+    run_causal_backtest,
+    walk_forward_momentum,
+    walk_forward_causal,
+    write_walk_forward_report,
+    PriceSource,
+    ExecutionAssumptions,
+    ExecutionObservation,
+    CausalExecutionRecord,
+    CausalBacktestResult,
+)
 
-__all__ = ["Candle", "CostModel", "BacktestResult", "WalkForwardResult", "load_kline_candles", "run_backtest", "walk_forward_momentum", "write_walk_forward_report"]
+__all__ = [
+    "Candle",
+    "CostModel",
+    "BacktestResult",
+    "WalkForwardResult",
+    "WalkForwardFold",
+    "load_kline_candles",
+    "load_guarded_kline_candles",
+    "run_backtest",
+    "run_causal_backtest",
+    "walk_forward_momentum",
+    "walk_forward_causal",
+    "write_walk_forward_report",
+    "PriceSource",
+    "ExecutionAssumptions",
+    "ExecutionObservation",
+    "CausalExecutionRecord",
+    "CausalBacktestResult",
+]
