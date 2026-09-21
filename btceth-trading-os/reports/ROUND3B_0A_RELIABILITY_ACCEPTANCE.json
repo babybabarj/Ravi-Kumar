@@ -1,0 +1,50 @@
+{
+  "report_version": "ROUND3B.0A",
+  "acceptance_status": "ROUND3B_0A_RELIABILITY = VERIFIED",
+  "timestamp_utc": "2026-09-21T17:46:13.576063+00:00",
+  "tested_code_commit_sha": "4bd56107868a48de3afa3fb1f4166751a139d05a",
+  "tested_tree_sha": "3e6e9969d204084a3092187f448c5204825479a3",
+  "canonical_baseline_commit": "cfa80f3aabbb75a28969701d8013f6784c35a495",
+  "invariants": {
+    "trading_capability": "ZERO",
+    "holdout_2024": "LOCKED",
+    "approved_for_shadow": 0,
+    "approved_for_paper": 0,
+    "canonical_merge": "NOT_AUTHORIZED",
+    "strategy_discovery": "NOT_AUTHORIZED"
+  },
+  "checks": {
+    "WIP_AUDIT_COMPLETE": true,
+    "CANONICAL_BASELINE_ANCESTRY_VALID": true,
+    "WIP_SAFETY_BRANCH_UNTOUCHED": true,
+    "CANONICAL_REMOTE_UNTOUCHED": true,
+    "INDEPENDENT_ORACLE_ISOLATED": true,
+    "ORACLE_MULTI_FAMILY_CAMPAIGN_PASS": true,
+    "TEMPORAL_INTEGRATION_PASS": true,
+    "CAPITAL_GOVERNOR_PASS": true,
+    "DATA_GUARD_AND_LEDGER_PASS": true,
+    "COST_POLICY_VERSIONED": true,
+    "GAP_FORENSICS_DESCRIPTIVE_ONLY": true,
+    "HOLDOUT_2024_LOCKED": true,
+    "ZERO_FORCED_PROMOTION_DERIVED": true,
+    "SECURITY_SCAN_ZERO": true,
+    "FULL_PYTEST_PASS": true,
+    "CLEAN_WORKTREE_PROOF": true
+  },
+  "remediation_summary": {
+    "oracle_total_cases": 850,
+    "oracle_tolerance": "0.0",
+    "oracle_discrepancies": 0,
+    "oracle_mutation_dimensions": 5,
+    "temporal_features_tested_count": 11,
+    "temporal_perturbation_invariant": true,
+    "capital_policy_file": "config/research_capital_policy_v1.yaml",
+    "capital_scale_down": "DISABLED_FAIL_CLOSED",
+    "capital_exhaustion_action": "REJECT",
+    "data_guard_holdout_precedence": "ENFORCED",
+    "data_guard_unlock_capability": 0,
+    "holdout_allowed_accesses": 0,
+    "verifier_integrity_mode": "FULL_ACCEPTANCE"
+  },
+  "acceptance_payload_sha256": "3388e7991ac4d72fbceaefac53fdf59c4b472edd05e16b7c3ba2c58d549c3f78"
+}
