@@ -18,8 +18,12 @@ from btceth_os.research.temporal import (
     assert_causal_funding_access,
 )
 from btceth_os.research.backtest import (
+    BarObservation,
     Candle,
     CostModel,
+    ExecutionAssumptions,
+    ExecutionPriceObservation,
+    PriceSource,
     run_causal_backtest,
     run_backtest,
 )
@@ -561,4 +565,154 @@ def test_walk_forward_causal_routing() -> None:
         costs=costs,
     )
     assert len(wf_mom_res.folds) == len(wf_res.folds)
+
+
+def test_next_bar_open_blocked_when_decision_latency_positive() -> None:
+    """When decision latency > 0, next-bar open occurred before decision finished; must fail closed."""
+    candles = [
+        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0"), open=Decimal("30000.0")),  # 00:00:00 -> close 01:00:00
+        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0"), open=Decimal("30000.0")),  # 01:00:00 -> open 01:00:00
+    ]
+    positions = [1, 0]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # When decision latency is 10ms (10,000,000 ns), decision is at 01:00:00.010, which is after 01:00:00.000 open
+    assumptions = ExecutionAssumptions(
+        price_source=PriceSource.NEXT_BAR_OPEN,
+        decision_latency_ns=10_000_000,
+    )
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        run_causal_backtest(candles, positions, costs, assumptions=assumptions)
+    assert "PRICE_CAUSALITY_VIOLATION" in str(exc_info.value)
+    assert "Next-bar open" in str(exc_info.value)
+
+
+def test_first_post_decision_observation_selection() -> None:
+    """When execution_stream is provided, query first observation with ts_event_ns >= decision_ts_ns."""
+    candles = [
+        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0"), open=Decimal("30000.0")),  # 00:00:00
+        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0"), open=Decimal("30000.0")),  # 01:00:00
+    ]
+    positions = [1, 0]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # Decision finishes at 01:00:00 + 50ms = 1609462800_050_000_000
+    decision_lat = 50_000_000
+    assumptions = ExecutionAssumptions(
+        price_source=PriceSource.NEXT_BAR_OPEN,
+        decision_latency_ns=decision_lat,
+    )
+
+    # Execution stream with quotes:
+    # 1. Before decision: 01:00:00 + 10ms (price 30010) -> ineligible
+    # 2. At or after decision: 01:00:00 + 60ms (price 30025) -> MUST BE SELECTED
+    # 3. Later: 01:00:00 + 120ms (price 30050) -> too late
+    bar_close_ts = 1609462800_000_000_000
+    exec_stream = [
+        ExecutionPriceObservation(
+            ts_event_ns=bar_close_ts + 10_000_000,
+            price=Decimal("30010.0"),
+            source_instrument="BTCUSDT_QUOTE_10MS",
+        ),
+        ExecutionPriceObservation(
+            ts_event_ns=bar_close_ts + 60_000_000,
+            price=Decimal("30025.0"),
+            source_instrument="BTCUSDT_QUOTE_60MS",
+        ),
+        ExecutionPriceObservation(
+            ts_event_ns=bar_close_ts + 120_000_000,
+            price=Decimal("30050.0"),
+            source_instrument="BTCUSDT_QUOTE_120MS",
+        ),
+    ]
+
+    res = run_causal_backtest(
+        candles,
+        positions,
+        costs,
+        assumptions=assumptions,
+        execution_stream=exec_stream,
+    )
+
+    assert len(res.executions) > 0
+    first_exec = res.executions[0]
+    assert first_exec.fill_price == Decimal("30025.0")
+    assert first_exec.observation.fill_price_observation_ts_ns == bar_close_ts + 60_000_000
+    assert first_exec.observation.fill_price_observation_ts_ns >= first_exec.observation.decision_ts_ns
+    assert first_exec.observation.source_instrument == "BTCUSDT_QUOTE_60MS"
+
+
+def test_current_bar_close_execution_blocked_for_close_signal() -> None:
+    """CURRENT_BAR_CLOSE cannot be used for execution after consuming that close as signal."""
+    candles = [
+        Candle(ts_event_ns=1000, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=2000, close=Decimal("110.0"), open=Decimal("100.0")),
+    ]
+    positions = [1, 0]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    assumptions = ExecutionAssumptions(price_source=PriceSource.CURRENT_BAR_CLOSE)
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        run_causal_backtest(candles, positions, costs, assumptions=assumptions)
+    assert "PRICE_CAUSALITY_VIOLATION" in str(exc_info.value)
+    assert "CURRENT_BAR_CLOSE cannot be used as execution price" in str(exc_info.value)
+
+
+def test_no_unsafe_open_fallback() -> None:
+    """Missing open price raises NO_VALID_EXECUTION_OBSERVATION without falling back to close."""
+    candles = [
+        Candle(ts_event_ns=1000, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=2000, close=Decimal("110.0"), open=None),  # Missing open
+    ]
+    positions = [1, 0]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        run_causal_backtest(candles, positions, costs)
+    assert "NO_VALID_EXECUTION_OBSERVATION" in str(exc_info.value)
+    assert "no open price" in str(exc_info.value)
+
+
+def test_functional_execution_delay_bars() -> None:
+    """execution_delay_bars = 2 shifts signal application by 2 bars."""
+    candles = [
+        Candle(ts_event_ns=1000, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=2000, close=Decimal("110.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=3000, close=Decimal("120.0"), open=Decimal("110.0")),
+        Candle(ts_event_ns=4000, close=Decimal("130.0"), open=Decimal("120.0")),
+    ]
+    # Signal says go long at bar 0
+    positions = [1, 1, 1, 0]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # With delay = 1 (standard): signal on bar 0 executes at bar 1 (index 0 transition)
+    res_delay1 = run_causal_backtest(candles, positions, costs, assumptions=ExecutionAssumptions(execution_delay_bars=1))
+    assert res_delay1.executions[0].bar_index == 0
+    assert res_delay1.executions[0].position_after == 1
+
+    # With delay = 2: signal on bar 0 is NOT executed at bar 1; it executes at bar 2 (index 1 transition)
+    res_delay2 = run_causal_backtest(candles, positions, costs, assumptions=ExecutionAssumptions(execution_delay_bars=2))
+    assert res_delay2.executions[0].bar_index == 0
+    assert res_delay2.executions[0].position_after == 0  # Still 0 at bar 1!
+    assert res_delay2.executions[1].bar_index == 1
+    assert res_delay2.executions[1].position_after == 1  # Becomes 1 at bar 2!
+
+
+def test_terminal_exit_uses_authentic_market_observation() -> None:
+    """Terminal exit uses authentic post-decision observation timestamp."""
+    candles = [
+        Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0"), open=Decimal("30000.0")),
+        Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("31000.0"), open=Decimal("30000.0")),
+    ]
+    # Remains long at end of simulation
+    positions = [1, 1]
+    costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
+
+    res = run_causal_backtest(candles, positions, costs)
+    assert len(res.executions) == 2  # Entry at bar 1 open + terminal exit at end
+    exit_exec = res.executions[-1]
+    assert exit_exec.position_after == 0
+    assert exit_exec.observation.fill_price_observation_ts_ns >= exit_exec.observation.decision_ts_ns
+    assert exit_exec.turnover == 1
+
 

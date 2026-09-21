@@ -1,0 +1,18 @@
+{
+  "report_version": "ROUND3B.0D",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-21T20:20:10.901528+00:00",
+  "canonical_yaml_path": "config/research_capital_policy_v1.yaml",
+  "canonical_yaml_sha256": "a651c73b348a67f1aa6528f5f81b561a88572b60e0c3d6ce463b46a2d846577f",
+  "policy_name": "BASE_RESEARCH_POLICY",
+  "starting_equity": "100000.0",
+  "reserve_cash_requirement": "20000.0",
+  "max_gross_exposure_ratio": "2.0",
+  "max_strategy_allocation_ratio": "0.25",
+  "perp_leverage": "10.0",
+  "margin_buffer_ratio": "0.05",
+  "max_concurrent_episodes": 5,
+  "scale_down_enabled": false,
+  "fail_closed_on_missing_yaml_verified": true,
+  "decimal_validation_enforced": true
+}

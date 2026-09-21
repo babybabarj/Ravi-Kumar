@@ -1,0 +1,18 @@
+{
+  "report_version": "ROUND3B.0D",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-21T20:20:10.875971+00:00",
+  "execution_model_version": "ROUND3B_0D_TRUE_MARKET_TIME",
+  "execution_delay_bars": 1,
+  "execution_price_source": "NEXT_BAR_OPEN",
+  "fill_price_observation_type": "NEXT_BAR_OPEN",
+  "fill_price": "30050.0",
+  "causality_temporal_ordering_verified": true,
+  "positive_latency_blocks_next_open_verified": true,
+  "execution_stream_selection_verified": true,
+  "current_close_rejected_verified": true,
+  "no_unsafe_open_fallback_verified": true,
+  "no_pre_execution_gap_credit_verified": true,
+  "terminal_exit_authentic_observation_verified": true,
+  "walk_forward_causal_routed": true
+}

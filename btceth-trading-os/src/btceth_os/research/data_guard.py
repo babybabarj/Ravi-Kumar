@@ -78,6 +78,7 @@ class CanonicalPartitionEntry:
     role: DatasetRole
     parent_dataset: Optional[str] = None
     status: str = "CANONICAL"
+    partition_logical_sha256: Optional[str] = None
 
     @property
     def dataset_logical_sha(self) -> Optional[str]:
@@ -102,6 +103,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.DEVELOPMENT,
         parent_dataset="BTCUSDT-resampled-1h-v3.1.0",
         status="CANONICAL",
+        partition_logical_sha256="28c52f2fadd47354fb95dedfbd8fad3e61f70f8bb27c0c02171cbeacd51878ff",
     ),
     "ETHUSDT_DEV_2020_2022": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_DEV_2020_2022",
@@ -115,6 +117,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.DEVELOPMENT,
         parent_dataset="ETHUSDT-resampled-1h-v3.1.0",
         status="CANONICAL",
+        partition_logical_sha256="08a2b29a11bca8fe718a0932bd65f9a6fa4f3b2d7c300f408cd38cd9ee8b586f",
     ),
     "BTCUSDT_FUNDING_DEV_2020_2022": CanonicalPartitionEntry(
         dataset_id="BTCUSDT_FUNDING_DEV_2020_2022",
@@ -128,6 +131,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.DEVELOPMENT,
         parent_dataset="BTCUSDT-funding-2020-01-2023-12-v3.1",
         status="CANONICAL",
+        partition_logical_sha256="373724fcffbcb89b3b886f0622e3deac1c7de3e0cf0a06d4a76dc798827d490b",
     ),
     "ETHUSDT_FUNDING_DEV_2020_2022": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_FUNDING_DEV_2020_2022",
@@ -141,6 +145,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.DEVELOPMENT,
         parent_dataset="ETHUSDT-funding-2020-01-2023-12-v3.1",
         status="CANONICAL",
+        partition_logical_sha256="e558a7c6c45f56d10c5dc970afe66f1b2797d965bef2b6ba2bf875564fbe966f",
     ),
 
     # 2. Materialized Physical Validation Partitions (2023-01-01 through 2023-12-31)
@@ -156,6 +161,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.VALIDATION,
         parent_dataset="BTCUSDT-resampled-1h-v3.1.0",
         status="CANONICAL",
+        partition_logical_sha256="3f7974f454d102bc2903161029994f6008a33b1c55238f5bbf382b5045a07220",
     ),
     "ETHUSDT_VAL_2023": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_VAL_2023",
@@ -169,6 +175,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.VALIDATION,
         parent_dataset="ETHUSDT-resampled-1h-v3.1.0",
         status="CANONICAL",
+        partition_logical_sha256="6fb52c9877b80f28dcbb03a9599982e93d5ed72c8b8040ef7c26b3b514caef4a",
     ),
     "BTCUSDT_FUNDING_VAL_2023": CanonicalPartitionEntry(
         dataset_id="BTCUSDT_FUNDING_VAL_2023",
@@ -182,6 +189,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.VALIDATION,
         parent_dataset="BTCUSDT-funding-2020-01-2023-12-v3.1",
         status="CANONICAL",
+        partition_logical_sha256="390a90930d92f2e1e1b92fd7301d12f5f38d46dd33eed512dc6291d8d9a8cc82",
     ),
     "ETHUSDT_FUNDING_VAL_2023": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_FUNDING_VAL_2023",
@@ -195,6 +203,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.VALIDATION,
         parent_dataset="ETHUSDT-funding-2020-01-2023-12-v3.1",
         status="CANONICAL",
+        partition_logical_sha256="aba4f0b276662f6c79a5643aa8e8a42c64a69493f8f66f63c4deb67095b1cbd8",
     ),
 
     # 3. Canonical Aliases (repointed strictly to true physical partitions)
@@ -210,6 +219,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         end_ts_ns=1672527600_000_000_000,
         parent_dataset="BTCUSDT_DEV_2020_2022",
         status="CANONICAL",
+        partition_logical_sha256="28c52f2fadd47354fb95dedfbd8fad3e61f70f8bb27c0c02171cbeacd51878ff",
     ),
     "BTCUSDT_VAL": CanonicalPartitionEntry(
         dataset_id="BTCUSDT_VAL",
@@ -223,6 +233,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         end_ts_ns=1704063600_000_000_000,
         parent_dataset="BTCUSDT_VAL_2023",
         status="CANONICAL",
+        partition_logical_sha256="3f7974f454d102bc2903161029994f6008a33b1c55238f5bbf382b5045a07220",
     ),
     "ETHUSDT_DEV": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_DEV",
@@ -236,6 +247,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         end_ts_ns=1672527600_000_000_000,
         parent_dataset="ETHUSDT_DEV_2020_2022",
         status="CANONICAL",
+        partition_logical_sha256="08a2b29a11bca8fe718a0932bd65f9a6fa4f3b2d7c300f408cd38cd9ee8b586f",
     ),
     "ETHUSDT_VAL": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_VAL",
@@ -249,6 +261,7 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         end_ts_ns=1704063600_000_000_000,
         parent_dataset="ETHUSDT_VAL_2023",
         status="CANONICAL",
+        partition_logical_sha256="6fb52c9877b80f28dcbb03a9599982e93d5ed72c8b8040ef7c26b3b514caef4a",
     ),
 
     # 4. Composite Datasets (Spanning Dev + Val; NOT directly readable)
@@ -759,12 +772,13 @@ class ResearchDataAccessGuard:
         # -------------------------------------------------------------
         registry_entry = active_registry.get(dataset_id)
         if registry_entry:
-            # Enforce logical SHA match if caller provided one
-            if dataset_logical_sha is not None and registry_entry.dataset_logical_sha256 is not None:
-                if dataset_logical_sha != registry_entry.dataset_logical_sha256:
+            # Enforce logical SHA match if caller provided one (supports both parent aggregate and partition logical SHA)
+            if dataset_logical_sha is not None:
+                valid_shas = {s for s in (registry_entry.dataset_logical_sha256, registry_entry.partition_logical_sha256) if s is not None}
+                if valid_shas and dataset_logical_sha not in valid_shas:
                     reason = (
                         f"DATASET_IDENTITY_MISMATCH: Caller provided logical SHA {dataset_logical_sha} "
-                        f"does not match canonical registry SHA {registry_entry.dataset_logical_sha256} for {dataset_id}"
+                        f"does not match canonical registry SHA(s) {valid_shas} for {dataset_id}"
                     )
                     log_guard_event(
                         operation=op_enum.value,

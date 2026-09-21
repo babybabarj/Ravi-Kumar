@@ -7,7 +7,7 @@ from btceth_os.sources.binance.historical_silver import write_historical_silver
 
 
 def candles(*closes: str) -> list[Candle]:
-    return [Candle(index, Decimal(close)) for index, close in enumerate(closes)]
+    return [Candle(index, Decimal(close), open=Decimal(close)) for index, close in enumerate(closes)]
 
 
 def test_cost_model_charges_entry_and_forced_exit():

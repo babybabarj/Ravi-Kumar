@@ -14,6 +14,8 @@ from .backtest import (
     PriceSource,
     ExecutionAssumptions,
     ExecutionObservation,
+    ExecutionPriceObservation,
+    BarObservation,
     CausalExecutionRecord,
     CausalBacktestResult,
 )
@@ -34,6 +36,8 @@ __all__ = [
     "PriceSource",
     "ExecutionAssumptions",
     "ExecutionObservation",
+    "ExecutionPriceObservation",
+    "BarObservation",
     "CausalExecutionRecord",
     "CausalBacktestResult",
 ]

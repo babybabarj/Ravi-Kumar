@@ -1,0 +1,13 @@
+{
+  "report_version": "ROUND3B.0D",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-21T20:20:11.074003+00:00",
+  "database_path": "artifacts/research/experiments.sqlite",
+  "persistent_total_experiments": 26,
+  "persistent_approved_for_shadow_count": 0,
+  "persistent_approved_for_paper_count": 0,
+  "runtime_registered_strategies_count": 0,
+  "runtime_promotion_loading": "NOT_IMPLEMENTED",
+  "all_zero_promotions_verified": true,
+  "db_continuity_verified": true
+}

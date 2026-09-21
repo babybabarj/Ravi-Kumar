@@ -1,0 +1,157 @@
+{
+  "manifest_version": "1.0.0",
+  "created_at_utc": "2026-09-22T01:30:00Z",
+  "environment": {
+    "pyarrow_version": "25.0.1",
+    "parquet_format_version": "2.6",
+    "compression": "snappy"
+  },
+  "parent_artifacts": {
+    "BTCUSDT-resampled-1h-v3.1.0.parquet": {
+      "file_name": "BTCUSDT-resampled-1h-v3.1.0.parquet",
+      "relative_path": "artifacts/research/silver_v3/BTCUSDT-resampled-1h-v3.1.0.parquet",
+      "physical_sha256": "f706dfa1fc637e46fa6604b19fd8dea15edfebaa3478cc859ed1d23111eff70e",
+      "rows": 35064,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704063600000000000
+    },
+    "ETHUSDT-resampled-1h-v3.1.0.parquet": {
+      "file_name": "ETHUSDT-resampled-1h-v3.1.0.parquet",
+      "relative_path": "artifacts/research/silver_v3/ETHUSDT-resampled-1h-v3.1.0.parquet",
+      "physical_sha256": "64cd9f71654fe6e9791fb379b2fdf7891d3d27fd8f7456b97c0d31e892b8e510",
+      "rows": 35064,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704063600000000000
+    },
+    "BTCUSDT-funding-2020-01-2023-12-v3.1.parquet": {
+      "file_name": "BTCUSDT-funding-2020-01-2023-12-v3.1.parquet",
+      "relative_path": "artifacts/research/silver_v3/BTCUSDT-funding-2020-01-2023-12-v3.1.parquet",
+      "physical_sha256": "a966c54a24d6ab8558221b329c8ba2f024fa981738ca9b368bf6ae1d6668bdf6",
+      "rows": 4383,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704038400000000000
+    },
+    "ETHUSDT-funding-2020-01-2023-12-v3.1.parquet": {
+      "file_name": "ETHUSDT-funding-2020-01-2023-12-v3.1.parquet",
+      "relative_path": "artifacts/research/silver_v3/ETHUSDT-funding-2020-01-2023-12-v3.1.parquet",
+      "physical_sha256": "89a22768444ebb06b618fd2e30699dc020c46ccb38ae804a8cf164874eb6462b",
+      "rows": 4383,
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1704038400000000000
+    }
+  },
+  "partitions": {
+    "BTCUSDT_DEV_2020_2022": {
+      "dataset_id": "BTCUSDT_DEV_2020_2022",
+      "file_name": "BTCUSDT_DEV_2020_2022.parquet",
+      "relative_path": "artifacts/research/partitions/BTCUSDT_DEV_2020_2022.parquet",
+      "role": "DEVELOPMENT",
+      "parent_artifact": "BTCUSDT-resampled-1h-v3.1.0.parquet",
+      "parent_physical_sha256": "f706dfa1fc637e46fa6604b19fd8dea15edfebaa3478cc859ed1d23111eff70e",
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1672527600000000000,
+      "expected_rows": 26304,
+      "partition_logical_sha256": "28c52f2fadd47354fb95dedfbd8fad3e61f70f8bb27c0c02171cbeacd51878ff",
+      "expected_physical_sha256": "4daa270f04c5e5305b7033b745253e862fc72f17a9ff16a9d0e1c6bca5847b47",
+      "compression": "snappy"
+    },
+    "BTCUSDT_VAL_2023": {
+      "dataset_id": "BTCUSDT_VAL_2023",
+      "file_name": "BTCUSDT_VAL_2023.parquet",
+      "relative_path": "artifacts/research/partitions/BTCUSDT_VAL_2023.parquet",
+      "role": "VALIDATION",
+      "parent_artifact": "BTCUSDT-resampled-1h-v3.1.0.parquet",
+      "parent_physical_sha256": "f706dfa1fc637e46fa6604b19fd8dea15edfebaa3478cc859ed1d23111eff70e",
+      "start_ts_ns": 1672531200000000000,
+      "end_ts_ns": 1704063600000000000,
+      "expected_rows": 8760,
+      "partition_logical_sha256": "3f7974f454d102bc2903161029994f6008a33b1c55238f5bbf382b5045a07220",
+      "expected_physical_sha256": "2db5dd7bdd758f3ae07420f443feb42b4319f59462b4697d7d72e524e0027c85",
+      "compression": "snappy"
+    },
+    "ETHUSDT_DEV_2020_2022": {
+      "dataset_id": "ETHUSDT_DEV_2020_2022",
+      "file_name": "ETHUSDT_DEV_2020_2022.parquet",
+      "relative_path": "artifacts/research/partitions/ETHUSDT_DEV_2020_2022.parquet",
+      "role": "DEVELOPMENT",
+      "parent_artifact": "ETHUSDT-resampled-1h-v3.1.0.parquet",
+      "parent_physical_sha256": "64cd9f71654fe6e9791fb379b2fdf7891d3d27fd8f7456b97c0d31e892b8e510",
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1672527600000000000,
+      "expected_rows": 26304,
+      "partition_logical_sha256": "08a2b29a11bca8fe718a0932bd65f9a6fa4f3b2d7c300f408cd38cd9ee8b586f",
+      "expected_physical_sha256": "007cdce2eca501924935090eba141889b8d26d60b941e3fcf37501aa14b50f23",
+      "compression": "snappy"
+    },
+    "ETHUSDT_VAL_2023": {
+      "dataset_id": "ETHUSDT_VAL_2023",
+      "file_name": "ETHUSDT_VAL_2023.parquet",
+      "relative_path": "artifacts/research/partitions/ETHUSDT_VAL_2023.parquet",
+      "role": "VALIDATION",
+      "parent_artifact": "ETHUSDT-resampled-1h-v3.1.0.parquet",
+      "parent_physical_sha256": "64cd9f71654fe6e9791fb379b2fdf7891d3d27fd8f7456b97c0d31e892b8e510",
+      "start_ts_ns": 1672531200000000000,
+      "end_ts_ns": 1704063600000000000,
+      "expected_rows": 8760,
+      "partition_logical_sha256": "6fb52c9877b80f28dcbb03a9599982e93d5ed72c8b8040ef7c26b3b514caef4a",
+      "expected_physical_sha256": "2ce4e724e3e082dac0976e2192304780cc1c0ea4ad977e12da1497e4b0f52ff7",
+      "compression": "snappy"
+    },
+    "BTCUSDT_FUNDING_DEV_2020_2022": {
+      "dataset_id": "BTCUSDT_FUNDING_DEV_2020_2022",
+      "file_name": "BTCUSDT_FUNDING_DEV_2020_2022.parquet",
+      "relative_path": "artifacts/research/partitions/BTCUSDT_FUNDING_DEV_2020_2022.parquet",
+      "role": "DEVELOPMENT",
+      "parent_artifact": "BTCUSDT-funding-2020-01-2023-12-v3.1.parquet",
+      "parent_physical_sha256": "a966c54a24d6ab8558221b329c8ba2f024fa981738ca9b368bf6ae1d6668bdf6",
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1672502400000000000,
+      "expected_rows": 3288,
+      "partition_logical_sha256": "373724fcffbcb89b3b886f0622e3deac1c7de3e0cf0a06d4a76dc798827d490b",
+      "expected_physical_sha256": "2991e597d8c80a4b11181364e95168a46a6bc1cbd0f7a7f44fbf6341c0fcad3d",
+      "compression": "snappy"
+    },
+    "BTCUSDT_FUNDING_VAL_2023": {
+      "dataset_id": "BTCUSDT_FUNDING_VAL_2023",
+      "file_name": "BTCUSDT_FUNDING_VAL_2023.parquet",
+      "relative_path": "artifacts/research/partitions/BTCUSDT_FUNDING_VAL_2023.parquet",
+      "role": "VALIDATION",
+      "parent_artifact": "BTCUSDT-funding-2020-01-2023-12-v3.1.parquet",
+      "parent_physical_sha256": "a966c54a24d6ab8558221b329c8ba2f024fa981738ca9b368bf6ae1d6668bdf6",
+      "start_ts_ns": 1672531200000000000,
+      "end_ts_ns": 1704038400000000000,
+      "expected_rows": 1095,
+      "partition_logical_sha256": "390a90930d92f2e1e1b92fd7301d12f5f38d46dd33eed512dc6291d8d9a8cc82",
+      "expected_physical_sha256": "5f24907c3cd87c0465cd81356f192143c9f831c671f9a1aeeb9f6a39740614d3",
+      "compression": "snappy"
+    },
+    "ETHUSDT_FUNDING_DEV_2020_2022": {
+      "dataset_id": "ETHUSDT_FUNDING_DEV_2020_2022",
+      "file_name": "ETHUSDT_FUNDING_DEV_2020_2022.parquet",
+      "relative_path": "artifacts/research/partitions/ETHUSDT_FUNDING_DEV_2020_2022.parquet",
+      "role": "DEVELOPMENT",
+      "parent_artifact": "ETHUSDT-funding-2020-01-2023-12-v3.1.parquet",
+      "parent_physical_sha256": "89a22768444ebb06b618fd2e30699dc020c46ccb38ae804a8cf164874eb6462b",
+      "start_ts_ns": 1577836800000000000,
+      "end_ts_ns": 1672502400000000000,
+      "expected_rows": 3288,
+      "partition_logical_sha256": "e558a7c6c45f56d10c5dc970afe66f1b2797d965bef2b6ba2bf875564fbe966f",
+      "expected_physical_sha256": "97ab50866782c4c2b99eff0caafbba23cb8522180bf460f23b73f8bd368042f8",
+      "compression": "snappy"
+    },
+    "ETHUSDT_FUNDING_VAL_2023": {
+      "dataset_id": "ETHUSDT_FUNDING_VAL_2023",
+      "file_name": "ETHUSDT_FUNDING_VAL_2023.parquet",
+      "relative_path": "artifacts/research/partitions/ETHUSDT_FUNDING_VAL_2023.parquet",
+      "role": "VALIDATION",
+      "parent_artifact": "ETHUSDT-funding-2020-01-2023-12-v3.1.parquet",
+      "parent_physical_sha256": "89a22768444ebb06b618fd2e30699dc020c46ccb38ae804a8cf164874eb6462b",
+      "start_ts_ns": 1672531200000000000,
+      "end_ts_ns": 1704038400000000000,
+      "expected_rows": 1095,
+      "partition_logical_sha256": "aba4f0b276662f6c79a5643aa8e8a42c64a69493f8f66f63c4deb67095b1cbd8",
+      "expected_physical_sha256": "16d3edbb7b031847bcf0dfb9c75c88dd643683f9d555b0bee4bd1fb6f1977462",
+      "compression": "snappy"
+    }
+  }
+}
