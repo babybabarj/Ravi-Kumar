@@ -22,8 +22,12 @@ from btceth_os.research.backtest import (
     Candle,
     CostModel,
     ExecutionAssumptions,
+    ExecutionObservation,
     ExecutionPriceObservation,
     PriceSource,
+    OrderSide,
+    ExecutionMode,
+    select_first_executable_observation,
     run_causal_backtest,
     run_backtest,
 )
@@ -407,8 +411,9 @@ def test_real_causal_backtest_execution() -> None:
         Candle(ts_event_ns=1609466400_000_000_000, close=Decimal("31000.0"), open=Decimal("30500.0")),  # 02:00
         Candle(ts_event_ns=1609470000_000_000_000, close=Decimal("30800.0"), open=Decimal("31000.0")),  # 03:00
         Candle(ts_event_ns=1609473600_000_000_000, close=Decimal("31200.0"), open=Decimal("30800.0")),  # 04:00
+        Candle(ts_event_ns=1609477200_000_000_000, close=Decimal("31200.0"), open=Decimal("31200.0")),  # 05:00
     ]
-    positions = [1, 1, 0, -1, 0]
+    positions = [1, 1, 0, -1, 0, 0]
     costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
 
     causal_res = run_causal_backtest(candles, positions, costs)
@@ -421,7 +426,7 @@ def test_real_causal_backtest_execution() -> None:
     assert causal_res.result.total_cost == legacy_res.total_cost
 
     # Contract verification: every bar execution has a valid contract and observation
-    assert len(causal_res.contracts) == len(candles)
+    assert len(causal_res.contracts) == len(candles) - 1
     for c in causal_res.contracts:
         c.validate()
         assert c.source_ts_ns <= c.available_ts_ns
@@ -460,8 +465,9 @@ def test_real_causal_backtest_funding_boundary() -> None:
     candles = [
         Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0"), open=Decimal("30000.0")),
         Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0"), open=Decimal("30000.0")),
+        Candle(ts_event_ns=1609466400_000_000_000, close=Decimal("30500.0"), open=Decimal("30500.0")),
     ]
-    positions = [1, 0]
+    positions = [1, 0, 0]
     costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
 
     valid_signals = [
@@ -588,7 +594,7 @@ def test_next_bar_open_blocked_when_decision_latency_positive() -> None:
 
 
 def test_first_post_decision_observation_selection() -> None:
-    """When execution_stream is provided, query first observation with ts_event_ns >= decision_ts_ns."""
+    """When execution_stream is provided, query first observation with ts_event_ns >= execution_eligible_ts_ns."""
     candles = [
         Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0"), open=Decimal("30000.0")),  # 00:00:00
         Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("30500.0"), open=Decimal("30000.0")),  # 01:00:00
@@ -603,11 +609,8 @@ def test_first_post_decision_observation_selection() -> None:
         decision_latency_ns=decision_lat,
     )
 
-    # Execution stream with quotes:
-    # 1. Before decision: 01:00:00 + 10ms (price 30010) -> ineligible
-    # 2. At or after decision: 01:00:00 + 60ms (price 30025) -> MUST BE SELECTED
-    # 3. Later: 01:00:00 + 120ms (price 30050) -> too late
     bar_close_ts = 1609462800_000_000_000
+    term_close_ts = bar_close_ts + 3_600_000_000_000
     exec_stream = [
         ExecutionPriceObservation(
             ts_event_ns=bar_close_ts + 10_000_000,
@@ -624,6 +627,11 @@ def test_first_post_decision_observation_selection() -> None:
             price=Decimal("30050.0"),
             source_instrument="BTCUSDT_QUOTE_120MS",
         ),
+        ExecutionPriceObservation(
+            ts_event_ns=term_close_ts + 60_000_000,
+            price=Decimal("30500.0"),
+            source_instrument="BTCUSDT_QUOTE_TERM",
+        ),
     ]
 
     res = run_causal_backtest(
@@ -638,7 +646,7 @@ def test_first_post_decision_observation_selection() -> None:
     first_exec = res.executions[0]
     assert first_exec.fill_price == Decimal("30025.0")
     assert first_exec.observation.fill_price_observation_ts_ns == bar_close_ts + 60_000_000
-    assert first_exec.observation.fill_price_observation_ts_ns >= first_exec.observation.decision_ts_ns
+    assert first_exec.observation.fill_price_observation_ts_ns >= first_exec.observation.execution_eligible_ts_ns
     assert first_exec.observation.source_instrument == "BTCUSDT_QUOTE_60MS"
 
 
@@ -680,9 +688,11 @@ def test_functional_execution_delay_bars() -> None:
         Candle(ts_event_ns=2000, close=Decimal("110.0"), open=Decimal("100.0")),
         Candle(ts_event_ns=3000, close=Decimal("120.0"), open=Decimal("110.0")),
         Candle(ts_event_ns=4000, close=Decimal("130.0"), open=Decimal("120.0")),
+        Candle(ts_event_ns=5000, close=Decimal("140.0"), open=Decimal("130.0")),
+        Candle(ts_event_ns=6000, close=Decimal("150.0"), open=Decimal("140.0")),
     ]
-    # Signal says go long at bar 0
-    positions = [1, 1, 1, 0]
+    # Signal says go long at bar 0, exit to flat at bar 3
+    positions = [1, 1, 1, 0, 0, 0]
     costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
 
     # With delay = 1 (standard): signal on bar 0 executes at bar 1 (index 0 transition)
@@ -699,7 +709,7 @@ def test_functional_execution_delay_bars() -> None:
 
 
 def test_terminal_exit_uses_authentic_market_observation() -> None:
-    """Terminal exit uses authentic post-decision observation timestamp."""
+    """Terminal exit uses authentic post-arrival observation timestamp from execution stream."""
     candles = [
         Candle(ts_event_ns=1609459200_000_000_000, close=Decimal("30000.0"), open=Decimal("30000.0")),
         Candle(ts_event_ns=1609462800_000_000_000, close=Decimal("31000.0"), open=Decimal("30000.0")),
@@ -708,11 +718,416 @@ def test_terminal_exit_uses_authentic_market_observation() -> None:
     positions = [1, 1]
     costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("2"))
 
-    res = run_causal_backtest(candles, positions, costs)
+    # Without an authentic execution observation stream, missing observation fails closed
+    with pytest.raises(TemporalIntegrityViolationError) as exc_missing:
+        run_causal_backtest(candles, positions, costs)
+    assert "INVALID_TERMINAL_EXECUTION: TERMINAL_EXECUTION_OBSERVATION_MISSING" in str(exc_missing.value)
+
+    # With an authentic post-arrival observation stream, terminal exit succeeds authentically
+    terminal_arrival_ts = 1609462800_000_000_000 + 3_600_000_000_000
+    exec_stream = [
+        ExecutionPriceObservation(
+            ts_event_ns=terminal_arrival_ts + 100_000_000,
+            price=Decimal("31000.0"),
+            bid=Decimal("30990.0"),
+            ask=Decimal("31010.0"),
+            trade_price=Decimal("31000.0"),
+            source_instrument="BTCUSDT",
+        ),
+    ]
+    res = run_causal_backtest(candles, positions, costs, execution_stream=exec_stream)
     assert len(res.executions) == 2  # Entry at bar 1 open + terminal exit at end
     exit_exec = res.executions[-1]
     assert exit_exec.position_after == 0
-    assert exit_exec.observation.fill_price_observation_ts_ns >= exit_exec.observation.decision_ts_ns
+    assert exit_exec.observation.fill_price_observation_ts_ns >= exit_exec.observation.execution_eligible_ts_ns
     assert exit_exec.turnover == 1
+    assert exit_exec.observation.terminal is True
+
+
+# ==============================================================================
+# MANDATORY ROUND 3B.0E ADVERSARIAL CAUSALITY & TERMINAL SETTLEMENT TESTS
+# ==============================================================================
+
+def test_adversarial_3b0d_regression_pre_arrival_rejected() -> None:
+    """[3B.0E SECTION 7 & 40] Pre-arrival market observations are strictly rejected.
+
+    Fixture:
+    Signal available:      T0 (01:00:00.000)
+    Decision latency:      50 ms -> Decision / Submit: T0 + 50ms
+    Execution latency:     100 ms -> Exchange arrival / eligible: T0 + 150ms
+    Obs A:                 T0 + 60ms, price 100 (ineligible, occurred before exchange arrival)
+    Obs B:                 T0 + 170ms, price 120 (eligible, first post-arrival observation)
+    Terminal Obs:          T0 + 3600s + 200ms, price 120 (for terminal exit)
+
+    Expected: Obs B (price 120) selected; Obs A (price 100) strictly rejected.
+    """
+    t0 = 1609459200_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3_600_000_000_000, close=Decimal("110.0"), open=Decimal("100.0")),
+    ]
+    positions = [1, 0]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    assumptions = ExecutionAssumptions(
+        decision_latency_ns=50_000_000,     # +50ms
+        execution_latency_ns=100_000_000,   # +100ms -> Arrival = +150ms
+    )
+
+    t_signal = t0 + 3_600_000_000_000  # Bar 0 close is at t0 + 1 hour
+    t_arrival = t_signal + 150_000_000
+
+    exec_stream = [
+        ExecutionPriceObservation(
+            ts_event_ns=t_signal + 60_000_000,   # +60ms (before arrival at +150ms)
+            price=Decimal("100.0"),
+            source_instrument="BTCUSDT",
+        ),
+        ExecutionPriceObservation(
+            ts_event_ns=t_signal + 170_000_000,  # +170ms (after arrival at +150ms)
+            price=Decimal("120.0"),
+            source_instrument="BTCUSDT",
+        ),
+        ExecutionPriceObservation(
+            ts_event_ns=t_signal + 3_600_000_000_000 + 200_000_000,  # Terminal
+            price=Decimal("120.0"),
+            source_instrument="BTCUSDT",
+        ),
+    ]
+
+    res = run_causal_backtest(candles, positions, costs, assumptions=assumptions, execution_stream=exec_stream)
+
+    assert len(res.executions) >= 1
+    first_exec = res.executions[0]
+    # Under defective 3B.0D engine, Obs A (+60ms, price 100) was chosen because 60ms >= 50ms decision_ts.
+    # Under hardened 3B.0E engine, Obs A is rejected (60ms < 150ms arrival); Obs B (170ms, price 120) MUST be chosen.
+    assert first_exec.fill_price == Decimal("120.0")
+    assert first_exec.observation.fill_price_observation_ts_ns == t_signal + 170_000_000
+    assert first_exec.observation.execution_eligible_ts_ns == t_arrival
+    assert first_exec.observation.fill_price_observation_ts_ns >= first_exec.observation.execution_eligible_ts_ns
+
+
+def test_fill_latency_semantics() -> None:
+    """[3B.0E SECTION 8 & 41] A later fill timestamp cannot validate an earlier unavailable observation.
+
+    price_observation_ts >= execution_eligible_ts is validated independently from fill_ts.
+    """
+    t0 = 1609459200_000_000_000
+    # Attempt to construct an ExecutionObservation where price observation happened before exchange arrival
+    # even though fill_ts is later (attempting to launder an early observation through fill latency)
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        ExecutionObservation(
+            bar_index=0,
+            signal_available_ts_ns=t0,
+            decision_ts_ns=t0 + 50_000_000,
+            order_submit_ts_ns=t0 + 50_000_000,
+            exchange_arrival_ts_ns=t0 + 150_000_000,
+            execution_eligible_ts_ns=t0 + 150_000_000,
+            price_observation_ts_ns=t0 + 60_000_000,   # Ineligible! (60ms < 150ms)
+            fill_ts_ns=t0 + 200_000_000,              # Laundering attempt (+200ms)
+            price_source=PriceSource.BID_ASK_TOUCH,
+            fill_price=Decimal("100.0"),
+        )
+    assert "PRICE_CAUSALITY_VIOLATION" in str(exc_info.value)
+    assert "price_observation_ts_ns" in str(exc_info.value)
+
+
+def test_cross_instrument_rejected() -> None:
+    """[3B.0E SECTION 22 & 42] BTC order must never fill from ETH market data."""
+    t0 = 1609459200_000_000_000
+
+    # Case 1: Stream contains ETH observation earlier, BTC observation later -> BTC selected
+    mixed_stream = [
+        ExecutionPriceObservation(
+            ts_event_ns=t0 + 100_000_000,
+            price=Decimal("2000.0"),
+            instrument_id="ETHUSDT",
+        ),
+        ExecutionPriceObservation(
+            ts_event_ns=t0 + 200_000_000,
+            price=Decimal("30000.0"),
+            instrument_id="BTCUSDT",
+        ),
+    ]
+    obs, fill_p, _ = select_first_executable_observation(
+        mixed_stream,
+        execution_eligible_ts_ns=t0 + 50_000_000,
+        order_side=OrderSide.BUY,
+        instrument_id="BTCUSDT",
+    )
+    assert obs.instrument_id == "BTCUSDT"
+    assert fill_p == Decimal("30000.0")
+
+    # Case 2: Stream contains only ETH observations -> fails closed with NO_VALID_EXECUTION_OBSERVATION
+    eth_only_stream = [
+        ExecutionPriceObservation(
+            ts_event_ns=t0 + 100_000_000,
+            price=Decimal("2000.0"),
+            instrument_id="ETHUSDT",
+        ),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        select_first_executable_observation(
+            eth_only_stream,
+            execution_eligible_ts_ns=t0 + 50_000_000,
+            order_side=OrderSide.BUY,
+            instrument_id="BTCUSDT",
+        )
+    assert "NO_VALID_EXECUTION_OBSERVATION" in str(exc_info.value)
+
+
+def test_cross_market_type_rejected() -> None:
+    """[3B.0E SECTION 23 & 43] USD-M Perp order must not silently execute against SPOT data."""
+    t0 = 1609459200_000_000_000
+    spot_stream = [
+        ExecutionPriceObservation(
+            ts_event_ns=t0 + 100_000_000,
+            price=Decimal("30000.0"),
+            instrument_id="BTCUSDT",
+            market_type="SPOT",
+        ),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        select_first_executable_observation(
+            spot_stream,
+            execution_eligible_ts_ns=t0 + 50_000_000,
+            order_side=OrderSide.BUY,
+            instrument_id="BTCUSDT",
+            market_type="USD_M_PERP",
+        )
+    assert "NO_VALID_EXECUTION_OBSERVATION" in str(exc_info.value)
+
+
+def test_unsorted_stream_rejected() -> None:
+    """[3B.0E SECTION 24 & 44] Non-monotonic execution streams must fail closed."""
+    t0 = 1609459200_000_000_000
+    unsorted_stream = [
+        ExecutionPriceObservation(ts_event_ns=t0 + 200_000_000, price=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t0 + 100_000_000, price=Decimal("101.0")),
+        ExecutionPriceObservation(ts_event_ns=t0 + 150_000_000, price=Decimal("102.0")),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        select_first_executable_observation(
+            unsorted_stream,
+            execution_eligible_ts_ns=t0,
+            order_side=OrderSide.BUY,
+        )
+    assert "EXECUTION_STREAM_NOT_MONOTONIC" in str(exc_info.value)
+
+
+def test_duplicate_timestamp_ambiguity_rejected() -> None:
+    """[3B.0E SECTION 25 & 45] Identical timestamps without sequence ID raise AMBIGUOUS_EXECUTION_OBSERVATION."""
+    t0 = 1609459200_000_000_000
+    duplicate_stream = [
+        ExecutionPriceObservation(ts_event_ns=t0 + 100_000_000, price=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t0 + 100_000_000, price=Decimal("101.0")),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        select_first_executable_observation(
+            duplicate_stream,
+            execution_eligible_ts_ns=t0,
+            order_side=OrderSide.BUY,
+        )
+    assert "AMBIGUOUS_EXECUTION_OBSERVATION" in str(exc_info.value)
+
+
+def test_terminal_missing_observation_fails_closed() -> None:
+    """[3B.0E SECTION 11 & 46] Long remains open with no authentic post-arrival observation -> fails closed."""
+    t0 = 1609459200_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3_600_000_000_000, close=Decimal("100.0"), open=Decimal("100.0")),
+    ]
+    positions = [1, 1]  # Remains long (+1) at end of simulation
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # Case A: No execution stream provided
+    with pytest.raises(TemporalIntegrityViolationError) as exc_no_stream:
+        run_causal_backtest(candles, positions, costs)
+    assert "INVALID_TERMINAL_EXECUTION: TERMINAL_EXECUTION_OBSERVATION_MISSING" in str(exc_no_stream.value)
+
+    # Case B: Execution stream has observations, but NONE at or after terminal arrival
+    terminal_arrival_ts = t0 + 2 * 3_600_000_000_000
+    stale_stream = [
+        ExecutionPriceObservation(
+            ts_event_ns=terminal_arrival_ts - 100_000_000,  # 100ms before terminal arrival
+            price=Decimal("99.0"),
+        ),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_stale:
+        run_causal_backtest(candles, positions, costs, execution_stream=stale_stream)
+    assert "INVALID_TERMINAL_EXECUTION: TERMINAL_EXECUTION_OBSERVATION_MISSING" in str(exc_stale.value)
+
+
+def test_terminal_authentic_observation_selected() -> None:
+    """[3B.0E SECTION 12 & 47] Positive terminal execution observation selection."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), source_instrument="BTCUSDT"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0"), source_instrument="BTCUSDT"),
+    ]
+    positions = [1, 1]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    assumptions = ExecutionAssumptions(
+        decision_latency_ns=50_000_000,     # +50ms
+        execution_latency_ns=100_000_000,   # +100ms -> Arrival = +150ms after close
+    )
+
+    t_term_close = t0 + 2 * bar_dur
+    t_term_arrival = t_term_close + 150_000_000
+
+    stream = [
+        ExecutionPriceObservation(ts_event_ns=t_term_close + 100_000_000, price=Decimal("100.0"), source_instrument="BTCUSDT"), # +100ms (pre-arrival, ineligible)
+        ExecutionPriceObservation(ts_event_ns=t_term_close + 160_000_000, price=Decimal("98.0"), source_instrument="BTCUSDT"),  # +160ms (first post-arrival, SELECTED)
+        ExecutionPriceObservation(ts_event_ns=t_term_close + 300_000_000, price=Decimal("97.0"), source_instrument="BTCUSDT"),  # +300ms (too late)
+    ]
+
+    res = run_causal_backtest(candles, positions, costs, assumptions=assumptions, execution_stream=stream)
+
+    assert len(res.executions) == 2
+    term_exec = res.executions[-1]
+    assert term_exec.fill_price == Decimal("98.0")
+    assert term_exec.observation.fill_price_observation_ts_ns == t_term_close + 160_000_000
+    assert term_exec.observation.execution_eligible_ts_ns == t_term_arrival
+    assert term_exec.observation.side == OrderSide.SELL  # Flattening a long requires a SELL
+    assert term_exec.observation.terminal is True
+    assert term_exec.position_after == 0
+
+
+def test_terminal_pnl_exact_decimal_hand_fixtures() -> None:
+    """[3B.0E SECTIONS 14, 15, 16, 48] Terminal mark-to-fill return exact Decimal fixtures:
+    - Long Loss:   100 -> 90   (-10%)
+    - Long Gain:   100 -> 110  (+10%)
+    - Short Gain:  100 -> 90   (+10%)
+    - Short Loss:  100 -> 110  (-10%)
+    """
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    t_entry = t0 + bar_dur + 1_000_000
+    t_exit = t0 + 2 * bar_dur + 1_000_000
+
+    c_long = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+    ]
+
+    # Fixture 1: Long Loss (position = +1, entry = 100, mark = 100, fill = 90) -> return = -0.10
+    s_long_loss = [
+        ExecutionPriceObservation(ts_event_ns=t_entry, price=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t_exit, price=Decimal("90.0")),
+    ]
+    res1 = run_causal_backtest(c_long, [1, 1], zero_costs, execution_stream=s_long_loss)
+    assert res1.result.gross_return == Decimal("-0.10")
+    assert res1.result.net_return == Decimal("-0.10")
+
+    # Fixture 2: Long Gain (position = +1, entry = 100, mark = 100, fill = 110) -> return = +0.10
+    s_long_gain = [
+        ExecutionPriceObservation(ts_event_ns=t_entry, price=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t_exit, price=Decimal("110.0")),
+    ]
+    res2 = run_causal_backtest(c_long, [1, 1], zero_costs, execution_stream=s_long_gain)
+    assert res2.result.gross_return == Decimal("0.10")
+    assert res2.result.net_return == Decimal("0.10")
+
+    # Fixture 3: Short Gain (position = -1, entry = 100, mark = 100, fill = 90) -> return = +0.10
+    s_short_gain = [
+        ExecutionPriceObservation(ts_event_ns=t_entry, price=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t_exit, price=Decimal("90.0")),
+    ]
+    res3 = run_causal_backtest(c_long, [-1, -1], zero_costs, execution_stream=s_short_gain)
+    assert res3.result.gross_return == Decimal("0.10")
+    assert res3.result.net_return == Decimal("0.10")
+
+    # Fixture 4: Short Loss (position = -1, entry = 100, mark = 100, fill = 110) -> return = -0.10
+    s_short_loss = [
+        ExecutionPriceObservation(ts_event_ns=t_entry, price=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t_exit, price=Decimal("110.0")),
+    ]
+    res4 = run_causal_backtest(c_long, [-1, -1], zero_costs, execution_stream=s_short_loss)
+    assert res4.result.gross_return == Decimal("-0.10")
+    assert res4.result.net_return == Decimal("-0.10")
+
+
+def test_terminal_cost_applied_once() -> None:
+    """[3B.0E SECTION 17 & 49] Terminal exit fee is applied exactly once to net equity."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    t_entry = t0 + bar_dur + 1_000_000
+    t_exit = t0 + 2 * bar_dur + 1_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+    ]
+    # Turnover rate = 5 bps taker + 5 bps slippage = 10 bps = 0.001
+    costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("5"))
+    # Terminal fill price equals last mark (0 market movement return)
+    stream = [
+        ExecutionPriceObservation(ts_event_ns=t_entry, price=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t_exit, price=Decimal("100.0")),
+    ]
+
+    res = run_causal_backtest(candles, [1, 1], costs, execution_stream=stream)
+    # Entry fee was 0.001, Terminal exit fee was 0.001 -> Total cost = 0.002
+    assert res.result.total_cost == Decimal("0.002")
+    # Equity after entry fee = 1 - 0.001 = 0.999
+    # Equity after terminal exit fee = 0.999 * (1 - 0.001) = 0.998001
+    expected_net = Decimal("0.998001") - Decimal("1.0")
+    assert res.result.net_return == expected_net
+    assert res.result.gross_return == Decimal("0")
+
+
+def test_terminal_drawdown_updates_max_drawdown() -> None:
+    """[3B.0E SECTION 18 & 50] Terminal gap loss correctly forms strategy peak max_drawdown."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    t_entry = t0 + bar_dur + 1_000_000
+    t_exit = t0 + 2 * bar_dur + 1_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+    ]
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    # Severe gap down at terminal exit: 100 -> 75 (-25%)
+    stream = [
+        ExecutionPriceObservation(ts_event_ns=t_entry, price=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t_exit, price=Decimal("75.0")),
+    ]
+
+    res = run_causal_backtest(candles, [1, 1], zero_costs, execution_stream=stream)
+    assert res.result.max_drawdown == Decimal("0.25")
+
+
+def test_side_aware_bid_ask_touch_execution() -> None:
+    """[3B.0E SECTION 19] BID_ASK_TOUCH execution mode: BUY executes at ASK, SELL executes at BID."""
+    t0 = 1609459200_000_000_000
+    obs = ExecutionPriceObservation(
+        ts_event_ns=t0 + 100_000_000,
+        price=Decimal("100.0"),       # Midpoint
+        bid=Decimal("99.5"),         # Bid
+        ask=Decimal("100.5"),        # Ask
+        trade_price=Decimal("100.0"),
+    )
+
+    # BUY marketable order must execute at ASK
+    _, buy_fill, _ = select_first_executable_observation(
+        [obs],
+        execution_eligible_ts_ns=t0,
+        order_side=OrderSide.BUY,
+        execution_mode=ExecutionMode.BID_ASK_TOUCH,
+    )
+    assert buy_fill == Decimal("100.5")
+
+    # SELL marketable order must execute at BID
+    _, sell_fill, _ = select_first_executable_observation(
+        [obs],
+        execution_eligible_ts_ns=t0,
+        order_side=OrderSide.SELL,
+        execution_mode=ExecutionMode.BID_ASK_TOUCH,
+    )
+    assert sell_fill == Decimal("99.5")
+
 
 

@@ -12,12 +12,17 @@ from .backtest import (
     walk_forward_causal,
     write_walk_forward_report,
     PriceSource,
+    OrderSide,
+    ExecutionMode,
     ExecutionAssumptions,
     ExecutionObservation,
     ExecutionPriceObservation,
     BarObservation,
     CausalExecutionRecord,
     CausalBacktestResult,
+    select_first_executable_observation,
+    NAMED_LATENCY_PROFILES,
+    LATENCY_VALUES_SOURCE,
 )
 
 __all__ = [
@@ -34,10 +39,15 @@ __all__ = [
     "walk_forward_causal",
     "write_walk_forward_report",
     "PriceSource",
+    "OrderSide",
+    "ExecutionMode",
     "ExecutionAssumptions",
     "ExecutionObservation",
     "ExecutionPriceObservation",
     "BarObservation",
     "CausalExecutionRecord",
     "CausalBacktestResult",
+    "select_first_executable_observation",
+    "NAMED_LATENCY_PROFILES",
+    "LATENCY_VALUES_SOURCE",
 ]

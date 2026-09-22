@@ -675,8 +675,9 @@ def evaluate_round3b_0c_reliability(
     )
     c1 = Candle(ts_event_ns=1609459200_000_000_000, open=Decimal("100.0"), high=Decimal("105.0"), low=Decimal("95.0"), close=Decimal("100.0"))
     c2 = Candle(ts_event_ns=1609462800_000_000_000, open=Decimal("102.0"), high=Decimal("110.0"), low=Decimal("101.0"), close=Decimal("105.0"))
+    c3 = Candle(ts_event_ns=1609466400_000_000_000, open=Decimal("105.0"), high=Decimal("108.0"), low=Decimal("104.0"), close=Decimal("105.0"))
     costs_zero = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
-    res_causal = run_causal_backtest([c1, c2], [1, 0], costs_zero)
+    res_causal = run_causal_backtest([c1, c2, c3], [1, 0, 0], costs_zero)
 
     causal_enforced = False
     next_obs_fill = False

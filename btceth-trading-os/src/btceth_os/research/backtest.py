@@ -31,6 +31,43 @@ class PriceSource(str, Enum):
     NEXT_BAR_TWAP = "NEXT_BAR_TWAP"
     NEXT_BAR_CLOSE = "NEXT_BAR_CLOSE"
     CURRENT_BAR_CLOSE = "CURRENT_BAR_CLOSE"
+    BID_ASK_TOUCH = "BID_ASK_TOUCH"
+    TRADE_PRINT = "TRADE_PRINT"
+    BAR_OPEN_IDEALIZED = "BAR_OPEN_IDEALIZED"
+    BAR_CLOSE_CONSERVATIVE = "BAR_CLOSE_CONSERVATIVE"
+
+
+class OrderSide(str, Enum):
+    BUY = "BUY"
+    SELL = "SELL"
+
+
+class ExecutionMode(str, Enum):
+    BID_ASK_TOUCH = "BID_ASK_TOUCH"
+    TRADE_PRINT = "TRADE_PRINT"
+    BAR_OPEN_IDEALIZED = "BAR_OPEN_IDEALIZED"
+    BAR_CLOSE_CONSERVATIVE = "BAR_CLOSE_CONSERVATIVE"
+
+
+LATENCY_VALUES_SOURCE = "ASSUMPTION"
+
+NAMED_LATENCY_PROFILES: dict[str, dict[str, int]] = {
+    "IDEALIZED": {
+        "decision_latency_ns": 0,
+        "execution_latency_ns": 0,
+        "fill_latency_ns": 0,
+    },
+    "BASE_CONSERVATIVE": {
+        "decision_latency_ns": 50_000_000,   # 50 ms
+        "execution_latency_ns": 100_000_000, # 100 ms
+        "fill_latency_ns": 10_000_000,       # 10 ms
+    },
+    "STRESSED": {
+        "decision_latency_ns": 200_000_000,  # 200 ms
+        "execution_latency_ns": 500_000_000, # 500 ms
+        "fill_latency_ns": 50_000_000,       # 50 ms
+    },
+}
 
 
 @dataclass(frozen=True)
@@ -54,29 +91,62 @@ class BarObservation:
 @dataclass(frozen=True)
 class ExecutionPriceObservation:
     ts_event_ns: int
-    price: Decimal
-    price_source: PriceSource = PriceSource.NEXT_BAR_OPEN
+    price: Optional[Decimal] = None
+    price_source: PriceSource = PriceSource.BID_ASK_TOUCH
     bid: Optional[Decimal] = None
     ask: Optional[Decimal] = None
+    trade_price: Optional[Decimal] = None
     source_instrument: Optional[str] = None
     source_dataset_id: Optional[str] = None
+    instrument_id: Optional[str] = None
+    dataset_id: Optional[str] = None
+    market_type: Optional[str] = "USD_M_PERP"
+    venue: Optional[str] = "BINANCE"
+    sequence_id: Optional[int] = None
 
     def __post_init__(self) -> None:
-        if self.price <= 0:
+        if self.price is not None and self.price <= 0:
             raise ValueError("price must be positive")
+        if self.bid is not None and self.bid <= 0:
+            raise ValueError("bid must be positive")
+        if self.ask is not None and self.ask <= 0:
+            raise ValueError("ask must be positive")
+        if self.trade_price is not None and self.trade_price <= 0:
+            raise ValueError("trade_price must be positive")
+        if self.price is None and self.bid is None and self.ask is None and self.trade_price is None:
+            raise ValueError("At least one price field must be provided")
+
+    @property
+    def resolved_instrument_id(self) -> Optional[str]:
+        return self.instrument_id or self.source_instrument
+
+    @property
+    def resolved_dataset_id(self) -> Optional[str]:
+        return self.dataset_id or self.source_dataset_id
 
 
 @dataclass(frozen=True)
 class ExecutionAssumptions:
     price_source: PriceSource = PriceSource.NEXT_BAR_OPEN
+    execution_mode: ExecutionMode = ExecutionMode.BID_ASK_TOUCH
     execution_delay_bars: int = 1
     decision_latency_ns: int = 0
     execution_latency_ns: int = 0
     fill_latency_ns: int = 0
+    latency_profile: Optional[str] = None
     allow_open_fallback: bool = False
     signal_timeframe: str = "1h"
     execution_timeframe: str = "1h"
-    execution_model_version: str = "ROUND3B_0D_TRUE_MARKET_TIME"
+    execution_model_version: str = "ROUND3B_0E_EXECUTION_ARRIVAL_CAUSAL"
+    latency_values_source: str = LATENCY_VALUES_SOURCE
+
+    def __post_init__(self) -> None:
+        if self.latency_profile is not None and self.latency_profile in NAMED_LATENCY_PROFILES:
+            profile = NAMED_LATENCY_PROFILES[self.latency_profile]
+            if self.decision_latency_ns == 0 and self.execution_latency_ns == 0 and self.fill_latency_ns == 0:
+                object.__setattr__(self, "decision_latency_ns", profile["decision_latency_ns"])
+                object.__setattr__(self, "execution_latency_ns", profile["execution_latency_ns"])
+                object.__setattr__(self, "fill_latency_ns", profile["fill_latency_ns"])
 
 
 @dataclass(frozen=True)
@@ -86,18 +156,165 @@ class ExecutionObservation:
     fill_ts_ns: int
     price_source: PriceSource
     fill_price: Decimal
-    fill_price_observation_ts_ns: int
+    fill_price_observation_ts_ns: int = 0
     source_instrument: Optional[str] = None
     source_dataset_id: Optional[str] = None
+    signal_available_ts_ns: Optional[int] = None
+    order_submit_ts_ns: Optional[int] = None
+    exchange_arrival_ts_ns: Optional[int] = None
+    execution_eligible_ts_ns: Optional[int] = None
+    raw_observed_price: Optional[Decimal] = None
+    bid: Optional[Decimal] = None
+    ask: Optional[Decimal] = None
+    side: Optional[OrderSide] = None
+    market_type: Optional[str] = "USD_M_PERP"
+    venue: Optional[str] = "BINANCE"
+    terminal: bool = False
+    price_observation_ts_ns: Optional[int] = None
 
     def __post_init__(self) -> None:
-        if self.fill_price_observation_ts_ns < self.decision_ts_ns:
-            raise TemporalIntegrityViolationError(
-                f"PRICE_CAUSALITY_VIOLATION: fill_price_observation_ts_ns ({self.fill_price_observation_ts_ns}) "
-                f"< decision_ts_ns ({self.decision_ts_ns})"
-            )
+        if self.price_observation_ts_ns is not None and not self.fill_price_observation_ts_ns:
+            object.__setattr__(self, "fill_price_observation_ts_ns", self.price_observation_ts_ns)
+        elif self.fill_price_observation_ts_ns and self.price_observation_ts_ns is None:
+            object.__setattr__(self, "price_observation_ts_ns", self.fill_price_observation_ts_ns)
+
         if self.fill_price <= 0:
             raise ValueError("fill_price must be positive")
+
+        sig_avail = self.signal_available_ts_ns if self.signal_available_ts_ns is not None else self.decision_ts_ns
+        ord_sub = self.order_submit_ts_ns if self.order_submit_ts_ns is not None else self.decision_ts_ns
+        arr_ts = self.exchange_arrival_ts_ns if self.exchange_arrival_ts_ns is not None else self.decision_ts_ns
+        elig_ts = self.execution_eligible_ts_ns if self.execution_eligible_ts_ns is not None else arr_ts
+        obs_ts = self.fill_price_observation_ts_ns
+
+        # Strict temporal order validation:
+        # signal_available_ts_ns <= decision_ts_ns <= order_submit_ts_ns <= exchange_arrival_ts_ns <= execution_eligible_ts_ns <= price_observation_ts_ns <= fill_ts_ns
+        if self.decision_ts_ns < sig_avail:
+            raise TemporalIntegrityViolationError(
+                f"PRICE_CAUSALITY_VIOLATION: decision_ts_ns ({self.decision_ts_ns}) < signal_available_ts_ns ({sig_avail})"
+            )
+        if ord_sub < self.decision_ts_ns:
+            raise TemporalIntegrityViolationError(
+                f"PRICE_CAUSALITY_VIOLATION: order_submit_ts_ns ({ord_sub}) < decision_ts_ns ({self.decision_ts_ns})"
+            )
+        if arr_ts < ord_sub:
+            raise TemporalIntegrityViolationError(
+                f"PRICE_CAUSALITY_VIOLATION: exchange_arrival_ts_ns ({arr_ts}) < order_submit_ts_ns ({ord_sub})"
+            )
+        if elig_ts < arr_ts:
+            raise TemporalIntegrityViolationError(
+                f"PRICE_CAUSALITY_VIOLATION: execution_eligible_ts_ns ({elig_ts}) < exchange_arrival_ts_ns ({arr_ts})"
+            )
+        if obs_ts < elig_ts:
+            raise TemporalIntegrityViolationError(
+                f"PRICE_CAUSALITY_VIOLATION: price_observation_ts_ns ({obs_ts}) < execution_eligible_ts_ns ({elig_ts})"
+            )
+        if self.fill_ts_ns < obs_ts:
+            raise TemporalIntegrityViolationError(
+                f"PRICE_CAUSALITY_VIOLATION: fill_ts_ns ({self.fill_ts_ns}) < price_observation_ts_ns ({obs_ts})"
+            )
+
+
+def select_first_executable_observation(
+    execution_stream: Sequence[ExecutionPriceObservation],
+    *,
+    execution_eligible_ts_ns: int,
+    order_side: OrderSide,
+    instrument_id: Optional[str] = None,
+    market_type: Optional[str] = "USD_M_PERP",
+    venue: Optional[str] = "BINANCE",
+    execution_mode: ExecutionMode = ExecutionMode.BID_ASK_TOUCH,
+) -> tuple[ExecutionPriceObservation, Decimal, Decimal]:
+    """Centralized auditable helper to select first eligible observation.
+
+    Returns: (matching_obs, fill_price, raw_observed_price)
+    Fails closed with TemporalIntegrityViolationError if:
+    - Stream is empty: NO_VALID_EXECUTION_OBSERVATION
+    - Stream is not monotonic: EXECUTION_STREAM_NOT_MONOTONIC
+    - Stream has ambiguous duplicate timestamps: AMBIGUOUS_EXECUTION_OBSERVATION
+    - No eligible observation found >= execution_eligible_ts_ns matching criteria: NO_VALID_EXECUTION_OBSERVATION
+    """
+    if not execution_stream:
+        raise TemporalIntegrityViolationError("NO_VALID_EXECUTION_OBSERVATION: Execution stream is empty")
+
+    # 1. Monotonicity & Duplicate Timestamp Validation
+    for i in range(len(execution_stream) - 1):
+        curr_obs = execution_stream[i]
+        next_obs = execution_stream[i + 1]
+        if next_obs.ts_event_ns < curr_obs.ts_event_ns:
+            raise TemporalIntegrityViolationError(
+                f"EXECUTION_STREAM_NOT_MONOTONIC: Observation at index {i + 1} ({next_obs.ts_event_ns}) "
+                f"< observation at index {i} ({curr_obs.ts_event_ns})"
+            )
+        if next_obs.ts_event_ns == curr_obs.ts_event_ns:
+            curr_seq = curr_obs.sequence_id
+            next_seq = next_obs.sequence_id
+            if curr_seq is None or next_seq is None or next_seq <= curr_seq:
+                if (curr_obs.price != next_obs.price or curr_obs.bid != next_obs.bid or curr_obs.ask != next_obs.ask or curr_obs.trade_price != next_obs.trade_price):
+                    raise TemporalIntegrityViolationError(
+                        f"AMBIGUOUS_EXECUTION_OBSERVATION: Duplicate timestamp ({curr_obs.ts_event_ns}) "
+                        f"with differing prices and no strictly increasing sequence_id"
+                    )
+
+    # 2. Candidate Filtering
+    for s_obs in execution_stream:
+        # Pre-arrival observations are strictly rejected
+        if s_obs.ts_event_ns < execution_eligible_ts_ns:
+            continue
+
+        # Same-instrument check
+        obs_inst = s_obs.instrument_id or s_obs.source_instrument
+        if instrument_id is not None and obs_inst is not None:
+            if obs_inst != instrument_id:
+                continue
+
+        # Market-type check
+        if market_type is not None and s_obs.market_type is not None:
+            if s_obs.market_type != market_type:
+                continue
+
+        # Venue check
+        if venue is not None and s_obs.venue is not None:
+            if s_obs.venue != venue:
+                continue
+
+        # Side-aware executable touch derivation
+        raw_price = s_obs.price or s_obs.trade_price
+        fill_price: Optional[Decimal] = None
+
+        if order_side == OrderSide.BUY:
+            if execution_mode == ExecutionMode.BID_ASK_TOUCH:
+                if s_obs.ask is not None:
+                    fill_price = s_obs.ask
+                    raw_price = s_obs.ask
+                elif s_obs.price is not None:
+                    fill_price = s_obs.price
+                    raw_price = s_obs.price
+            else:
+                fill_price = s_obs.trade_price or s_obs.price
+                raw_price = fill_price
+        elif order_side == OrderSide.SELL:
+            if execution_mode == ExecutionMode.BID_ASK_TOUCH:
+                if s_obs.bid is not None:
+                    fill_price = s_obs.bid
+                    raw_price = s_obs.bid
+                elif s_obs.price is not None:
+                    fill_price = s_obs.price
+                    raw_price = s_obs.price
+            else:
+                fill_price = s_obs.trade_price or s_obs.price
+                raw_price = fill_price
+        else:
+            fill_price = s_obs.price or s_obs.trade_price
+            raw_price = fill_price
+
+        if fill_price is not None and fill_price > 0:
+            return s_obs, fill_price, raw_price
+
+    raise TemporalIntegrityViolationError(
+        f"NO_VALID_EXECUTION_OBSERVATION: No matching observation found >= {execution_eligible_ts_ns} "
+        f"for instrument={instrument_id}, side={order_side}"
+    )
 
 
 @dataclass(frozen=True)
@@ -129,11 +346,17 @@ class Candle:
         return self.resolved_bar_open_ts_ns + 3_600_000_000_000
 
 
-def resolve_candle_close_ts(candle: Candle, next_candle: Optional[Candle] = None) -> int:
+def resolve_candle_close_ts(
+    candle: Candle,
+    next_candle: Optional[Candle] = None,
+    bar_duration_ns: Optional[int] = None,
+) -> int:
     if candle.bar_close_ts_ns is not None:
         return candle.bar_close_ts_ns
     if next_candle is not None and next_candle.ts_event_ns > candle.ts_event_ns:
         return next_candle.resolved_bar_open_ts_ns
+    if bar_duration_ns is not None and bar_duration_ns > 0:
+        return candle.resolved_bar_open_ts_ns + bar_duration_ns
     return candle.resolved_bar_open_ts_ns + 3_600_000_000_000
 
 
@@ -342,19 +565,6 @@ def walk_forward_causal(
     candidates = tuple(sorted(set(candidate_lookbacks)))
     if not candidates or min(candidates) < 1 or train_bars <= max(candidates) or test_bars < 2:
         raise ValueError("need positive lookbacks, train_bars above them, and at least two test bars")
-def walk_forward_causal(
-    candles: Sequence[Candle],
-    *,
-    train_bars: int,
-    test_bars: int,
-    candidate_lookbacks: Iterable[int],
-    costs: CostModel,
-    assumptions: Optional[ExecutionAssumptions] = None,
-) -> WalkForwardResult:
-    """Select one momentum lookback on each train block and evaluate on following test block strictly using run_causal_backtest."""
-    candidates = tuple(sorted(set(candidate_lookbacks)))
-    if not candidates or min(candidates) < 1 or train_bars <= max(candidates) or test_bars < 2:
-        raise ValueError("need positive lookbacks, train_bars above them, and at least two test bars")
     exec_assumptions = assumptions or ExecutionAssumptions(
         price_source=PriceSource.NEXT_BAR_OPEN,
         decision_latency_ns=0,
@@ -366,12 +576,44 @@ def walk_forward_causal(
         scored = []
         for lookback in candidates:
             pos = _momentum_positions(candles[start:train_end], lookback)
-            c_res = run_causal_backtest(candles[start:train_end], pos, costs, assumptions=exec_assumptions)
+            pos_train = list(pos)
+            for k in range(1, exec_assumptions.execution_delay_bars + 2):
+                if k <= len(pos_train):
+                    pos_train[-k] = 0
+            c_res = run_causal_backtest(candles[start:train_end], pos_train, costs, assumptions=exec_assumptions)
             scored.append((c_res.result.net_return, -lookback, lookback))
         selected = max(scored)[2]
 
         positions = _momentum_positions(candles[:test_end], selected)
-        c_test_res = run_causal_backtest(candles[train_end:test_end], positions[train_end:test_end], costs, assumptions=exec_assumptions)
+        pos_test = list(positions[train_end:test_end])
+        exec_stream = None
+        if test_end < len(candles):
+            fol_c = candles[test_end]
+            exec_stream = [
+                ExecutionPriceObservation(
+                    ts_event_ns=fol_c.resolved_bar_open_ts_ns,
+                    price=fol_c.open or fol_c.close,
+                    bid=fol_c.open or fol_c.close,
+                    ask=fol_c.open or fol_c.close,
+                    trade_price=fol_c.open or fol_c.close,
+                    price_source=PriceSource.NEXT_BAR_OPEN,
+                    instrument_id=fol_c.source_instrument,
+                    market_type="USD_M_PERP",
+                    venue="BINANCE",
+                )
+            ]
+        else:
+            for k in range(1, exec_assumptions.execution_delay_bars + 2):
+                if k <= len(pos_test):
+                    pos_test[-k] = 0
+
+        c_test_res = run_causal_backtest(
+            candles[train_end:test_end],
+            pos_test,
+            costs,
+            assumptions=exec_assumptions,
+            execution_stream=exec_stream,
+        )
         folds.append(WalkForwardFold(start, train_end, train_end, test_end, selected, c_test_res.result))
     if not folds:
         raise ValueError("not enough candles for one walk-forward fold")
@@ -409,8 +651,12 @@ def _select_lookback(candles: Sequence[Candle], start: int, end: int, candidates
     scored = []
     exec_assumptions = ExecutionAssumptions(price_source=PriceSource.NEXT_BAR_OPEN, decision_latency_ns=0, allow_open_fallback=False)
     for lookback in candidates:
-        positions = _momentum_positions(candles[:end], lookback)
-        scored.append((run_causal_backtest(candles[start:end], positions[start:end], costs, assumptions=exec_assumptions).result.net_return, -lookback, lookback))
+        positions = list(_momentum_positions(candles[:end], lookback))
+        pos_slice = list(positions[start:end])
+        for k in range(1, 3):
+            if k <= len(pos_slice):
+                pos_slice[-k] = 0
+        scored.append((run_causal_backtest(candles[start:end], pos_slice, costs, assumptions=exec_assumptions).result.net_return, -lookback, lookback))
     return max(scored)[2]
 
 
@@ -428,6 +674,23 @@ class CausalExecutionRecord:
     fill_price: Decimal
     turnover: int
     charge: Decimal
+    signal_available_ts_ns: int = 0
+    decision_ts_ns: int = 0
+    order_submit_ts_ns: int = 0
+    exchange_arrival_ts_ns: int = 0
+    execution_eligible_ts_ns: int = 0
+    price_observation_ts_ns: int = 0
+    fill_ts_ns: int = 0
+    instrument_id: Optional[str] = None
+    dataset_id: Optional[str] = None
+    side: Optional[str] = None
+    raw_observed_price: Optional[Decimal] = None
+    bid: Optional[Decimal] = None
+    ask: Optional[Decimal] = None
+    simulated_fill_price: Optional[Decimal] = None
+    slippage: Decimal = Decimal("0")
+    fee: Decimal = Decimal("0")
+    terminal: bool = False
 
 
 @dataclass(frozen=True)
@@ -436,7 +699,7 @@ class CausalBacktestResult:
     contracts: tuple[TemporalEventContract, ...]
     executions: tuple[CausalExecutionRecord, ...]
     assumptions: ExecutionAssumptions = ExecutionAssumptions()
-    execution_model_version: str = "ROUND3B_0D_TRUE_MARKET_TIME"
+    execution_model_version: str = "ROUND3B_0E_EXECUTION_ARRIVAL_CAUSAL"
     signal_timeframe: str = "1h"
     execution_timeframe: str = "1h"
     signal_availability_rule: str = "BAR_CLOSE_TIMESTAMP"
@@ -463,20 +726,22 @@ def run_causal_backtest(
     funding_signals: Optional[Sequence[Any]] = None,
     override_contracts: Optional[Sequence[TemporalEventContract]] = None,
 ) -> CausalBacktestResult:
-    """Run an offline research backtest enforcing true market-time causality and executable-price verification.
+    """Run an offline research backtest enforcing true market-time causality, order-arrival timing, and authentic terminal settlement.
 
     Invariants enforced:
-    1. Clock hierarchy: source_ts <= available_ts <= decision_ts <= execution_ts <= fill_ts.
+    1. Clock hierarchy: source_ts <= signal_available_ts <= decision_ts <= order_submit_ts <= exchange_arrival_ts <= execution_eligible_ts <= price_observation_ts <= fill_ts.
     2. Explicit bar timing: Signal from bar N close is available strictly at bar_close_ts_ns (never bar_open_ts_ns).
-    3. Price observation authenticity: fill_price_observation_ts_ns originates from authentic market data observation.
-    4. Next-bar open causality: If decision_latency_ns > 0, next-bar open occurred before decision completed -> fails closed.
-    5. Execution stream query: When execution_stream provided, queries first post-decision observation with ts_event_ns >= decision_ts_ns.
-    6. No unsafe fallback: Missing open price raises NO_VALID_EXECUTION_OBSERVATION.
-    7. Reject current bar close: CURRENT_BAR_CLOSE cannot be used as execution price for close-derived signals.
-    8. Functional execution delay: execution_delay_bars = k delays signal execution by k bars.
-    9. Return accrual: Return from candle.close to fill_price accrues to previous; fill_price to next_close accrues to target.
-    10. Terminal exit: Positions held at end exit at authentic post-decision market observation.
-    11. Causal funding boundary: Strategies receive only ObservableEstimatedFunding or RealizedHistoricalFunding.
+    3. Price observation authenticity: Execution prices originate from authentic market observations >= execution_eligible_ts_ns.
+    4. Execution stream eligibility: Observations prior to exchange arrival are strictly rejected.
+    5. Side-aware execution: BUY executes against ask; SELL executes against bid (or trade print).
+    6. Monotonic stream and duplicate timestamp policy enforced.
+    7. Same-instrument and same-market-type execution enforced.
+    8. No unsafe fallback: Missing execution observations fail closed with NO_VALID_EXECUTION_OBSERVATION.
+    9. Reject current bar close: CURRENT_BAR_CLOSE cannot be used as execution price for close-derived signals.
+    10. Functional execution delay: execution_delay_bars = k delays signal execution by k bars.
+    11. Return accrual: Return from candle.close to fill_price accrues to previous; fill_price to next_close accrues to target.
+    12. Terminal settlement: Positions held at simulation end exit at authentic post-arrival observation; mark-to-fill return updates equity; exit cost charged once; terminal drawdown included.
+    13. Causal funding boundary: Strategies receive only ObservableEstimatedFunding or RealizedHistoricalFunding.
     """
     if len(candles) != len(positions):
         raise ValueError("candles and positions must have equal length")
@@ -518,10 +783,12 @@ def run_causal_backtest(
         f_lat = fill_latency_ns if fill_latency_ns is not None else assumptions.fill_latency_ns
         exec_assumptions = ExecutionAssumptions(
             price_source=assumptions.price_source,
+            execution_mode=assumptions.execution_mode,
             execution_delay_bars=assumptions.execution_delay_bars,
             decision_latency_ns=d_lat,
             execution_latency_ns=e_lat,
             fill_latency_ns=f_lat,
+            latency_profile=assumptions.latency_profile,
             allow_open_fallback=False,
             signal_timeframe=assumptions.signal_timeframe,
             execution_timeframe=assumptions.execution_timeframe,
@@ -557,70 +824,85 @@ def run_causal_backtest(
         sig_idx = index - delay + 1
         target_position = positions[sig_idx] if sig_idx >= 0 else 0
 
+        turnover = abs(target_position - previous)
+        if turnover:
+            trades += 1
+            order_side = OrderSide.BUY if target_position > previous else OrderSide.SELL
+        else:
+            order_side = OrderSide.BUY
+
         # Explicit bar timing: signal available strictly at bar close
         source_ts_ns = candle.resolved_bar_open_ts_ns
         available_ts_ns = resolve_candle_close_ts(candle, next_candle)
         decision_ts_ns = available_ts_ns + exec_assumptions.decision_latency_ns
-        execution_ts_ns = decision_ts_ns + exec_assumptions.execution_latency_ns
-        fill_ts_ns = execution_ts_ns + exec_assumptions.fill_latency_ns
-
-        contract = TemporalEventContract(
-            source_ts_ns=source_ts_ns,
-            available_ts_ns=available_ts_ns,
-            decision_ts_ns=decision_ts_ns,
-            execution_ts_ns=execution_ts_ns,
-            fill_ts_ns=fill_ts_ns,
-        )
-        contract.validate()
-        contracts.append(contract)
+        order_submit_ts_ns = decision_ts_ns
+        exchange_arrival_ts_ns = order_submit_ts_ns + exec_assumptions.execution_latency_ns
+        execution_eligible_ts_ns = exchange_arrival_ts_ns
 
         # Resolve executable fill price and authentic observation timestamp
         source_inst = candle.source_instrument
         source_ds_id = candle.source_dataset_id
+        obs_bid = None
+        obs_ask = None
+        raw_observed_price = None
 
         if execution_stream is not None:
-            matching_obs = None
-            for s_obs in execution_stream:
-                if s_obs.ts_event_ns >= decision_ts_ns:
-                    matching_obs = s_obs
-                    break
-            if matching_obs is None:
-                raise TemporalIntegrityViolationError(
-                    f"NO_VALID_EXECUTION_OBSERVATION: No stream observation found >= decision_ts_ns ({decision_ts_ns})"
-                )
-            fill_price = matching_obs.price
-            fill_obs_ts = matching_obs.ts_event_ns
-            fill_ts_ns = max(fill_ts_ns, matching_obs.ts_event_ns)
-            source_inst = matching_obs.source_instrument or source_inst
-            source_ds_id = matching_obs.source_dataset_id or source_ds_id
+            s_obs, fill_price, raw_observed_price = select_first_executable_observation(
+                execution_stream,
+                execution_eligible_ts_ns=execution_eligible_ts_ns,
+                order_side=order_side,
+                instrument_id=source_inst,
+                market_type="USD_M_PERP",
+                venue="BINANCE",
+                execution_mode=exec_assumptions.execution_mode,
+            )
+            fill_obs_ts = s_obs.ts_event_ns
+            fill_ts_ns = max(fill_obs_ts, exchange_arrival_ts_ns) + exec_assumptions.fill_latency_ns
+            source_inst = s_obs.instrument_id or s_obs.source_instrument or source_inst
+            source_ds_id = s_obs.dataset_id or s_obs.source_dataset_id or source_ds_id
+            obs_bid = s_obs.bid
+            obs_ask = s_obs.ask
 
-        elif exec_assumptions.price_source == PriceSource.NEXT_BAR_OPEN:
-            if next_candle.resolved_bar_open_ts_ns < decision_ts_ns:
+        elif exec_assumptions.price_source in (PriceSource.NEXT_BAR_OPEN, PriceSource.BAR_OPEN_IDEALIZED):
+            if next_candle.resolved_bar_open_ts_ns < execution_eligible_ts_ns:
                 raise TemporalIntegrityViolationError(
                     f"PRICE_CAUSALITY_VIOLATION: Next-bar open ({next_candle.resolved_bar_open_ts_ns}) "
-                    f"occurred before decision completed ({decision_ts_ns})"
+                    f"occurred before execution eligibility ({execution_eligible_ts_ns})"
                 )
             if next_candle.open is not None:
                 fill_price = next_candle.open
+                raw_observed_price = next_candle.open
             else:
                 raise TemporalIntegrityViolationError(
                     f"NO_VALID_EXECUTION_OBSERVATION: Candle at index {index + 1} has no open price"
                 )
             fill_obs_ts = next_candle.resolved_bar_open_ts_ns
+            fill_ts_ns = max(fill_obs_ts, exchange_arrival_ts_ns) + exec_assumptions.fill_latency_ns
 
-        elif exec_assumptions.price_source == PriceSource.NEXT_BAR_CLOSE:
+        elif exec_assumptions.price_source in (PriceSource.NEXT_BAR_CLOSE, PriceSource.BAR_CLOSE_CONSERVATIVE):
             next_close_ts = resolve_candle_close_ts(next_candle, candles[index + 2] if index + 2 < len(candles) else None)
-            if next_close_ts < decision_ts_ns:
+            if next_close_ts < execution_eligible_ts_ns:
                 raise TemporalIntegrityViolationError(
                     f"PRICE_CAUSALITY_VIOLATION: Next-bar close ({next_close_ts}) "
-                    f"occurred before decision completed ({decision_ts_ns})"
+                    f"occurred before execution eligibility ({execution_eligible_ts_ns})"
                 )
             fill_price = next_candle.close
+            raw_observed_price = next_candle.close
             fill_obs_ts = next_close_ts
-            fill_ts_ns = max(fill_ts_ns, next_close_ts)
+            fill_ts_ns = max(fill_obs_ts, exchange_arrival_ts_ns) + exec_assumptions.fill_latency_ns
 
         else:
             raise ValueError(f"Unsupported price source: {exec_assumptions.price_source}")
+
+        contract = TemporalEventContract(
+            source_ts_ns=source_ts_ns,
+            available_ts_ns=available_ts_ns,
+            decision_ts_ns=decision_ts_ns,
+            execution_ts_ns=exchange_arrival_ts_ns,
+            fill_ts_ns=fill_ts_ns,
+        )
+        contract.validate()
+        contracts.append(contract)
 
         obs = ExecutionObservation(
             bar_index=index,
@@ -631,11 +913,18 @@ def run_causal_backtest(
             fill_price_observation_ts_ns=fill_obs_ts,
             source_instrument=source_inst,
             source_dataset_id=source_ds_id,
+            signal_available_ts_ns=available_ts_ns,
+            order_submit_ts_ns=order_submit_ts_ns,
+            exchange_arrival_ts_ns=exchange_arrival_ts_ns,
+            execution_eligible_ts_ns=execution_eligible_ts_ns,
+            raw_observed_price=raw_observed_price if raw_observed_price is not None else fill_price,
+            bid=obs_bid,
+            ask=obs_ask,
+            side=order_side if turnover else None,
+            market_type="USD_M_PERP",
+            venue="BINANCE",
+            terminal=False,
         )
-
-        turnover = abs(target_position - previous)
-        if turnover:
-            trades += 1
 
         charge = Decimal(turnover) * costs.turnover_rate + abs(Decimal(target_position)) * costs.carry_bps_per_bar / BPS
 
@@ -671,6 +960,23 @@ def run_causal_backtest(
                 fill_price=fill_price,
                 turnover=turnover,
                 charge=charge,
+                signal_available_ts_ns=available_ts_ns,
+                decision_ts_ns=decision_ts_ns,
+                order_submit_ts_ns=order_submit_ts_ns,
+                exchange_arrival_ts_ns=exchange_arrival_ts_ns,
+                execution_eligible_ts_ns=execution_eligible_ts_ns,
+                price_observation_ts_ns=fill_obs_ts,
+                fill_ts_ns=fill_ts_ns,
+                instrument_id=source_inst,
+                dataset_id=source_ds_id,
+                side=order_side.value if turnover else None,
+                raw_observed_price=raw_observed_price if raw_observed_price is not None else fill_price,
+                bid=obs_bid,
+                ask=obs_ask,
+                simulated_fill_price=fill_price,
+                slippage=Decimal(turnover) * costs.slippage_bps / BPS,
+                fee=Decimal(turnover) * costs.taker_fee_bps / BPS,
+                terminal=False,
             )
         )
         previous = target_position
@@ -679,51 +985,95 @@ def run_causal_backtest(
     if previous:
         trades += 1
         last_candle = candles[-1]
-        exit_cost = Decimal(abs(previous)) * costs.turnover_rate
-        net_equity *= (ONE - exit_cost)
-        total_cost += exit_cost
-        max_drawdown = max(max_drawdown, ONE - net_equity / peak)
 
-        exit_available_ts = resolve_candle_close_ts(last_candle)
-        exit_decision_ts = exit_available_ts + exec_assumptions.decision_latency_ns
-        exit_exec_ts = exit_decision_ts + exec_assumptions.execution_latency_ns
-        exit_fill_ts = exit_exec_ts + exec_assumptions.fill_latency_ns
+        bar_dur = (candles[-1].ts_event_ns - candles[-2].ts_event_ns) if len(candles) >= 2 else None
+        terminal_signal_available_ts = resolve_candle_close_ts(last_candle, bar_duration_ns=bar_dur)
+        terminal_decision_ts = terminal_signal_available_ts + exec_assumptions.decision_latency_ns
+        terminal_order_submit_ts = terminal_decision_ts
+        terminal_exchange_arrival_ts = terminal_order_submit_ts + exec_assumptions.execution_latency_ns
+        terminal_execution_eligible_ts = terminal_exchange_arrival_ts
+
+        terminal_side = OrderSide.SELL if previous > 0 else OrderSide.BUY
+
+        if execution_stream is not None:
+            try:
+                term_obs, exit_price, raw_observed_price = select_first_executable_observation(
+                    execution_stream,
+                    execution_eligible_ts_ns=terminal_execution_eligible_ts,
+                    order_side=terminal_side,
+                    instrument_id=last_candle.source_instrument,
+                    market_type="USD_M_PERP",
+                    venue="BINANCE",
+                    execution_mode=exec_assumptions.execution_mode,
+                )
+                exit_obs_ts = term_obs.ts_event_ns
+                term_bid = term_obs.bid
+                term_ask = term_obs.ask
+                term_inst = term_obs.instrument_id or term_obs.source_instrument
+                term_ds_id = term_obs.dataset_id or term_obs.source_dataset_id
+                exit_fill_ts = max(exit_obs_ts, terminal_exchange_arrival_ts) + exec_assumptions.fill_latency_ns
+            except TemporalIntegrityViolationError as exc:
+                raise TemporalIntegrityViolationError(
+                    f"INVALID_TERMINAL_EXECUTION: TERMINAL_EXECUTION_OBSERVATION_MISSING: {exc}"
+                ) from exc
+        else:
+            raise TemporalIntegrityViolationError(
+                "INVALID_TERMINAL_EXECUTION: TERMINAL_EXECUTION_OBSERVATION_MISSING: "
+                "No authentic execution observation stream provided for terminal position settlement"
+            )
 
         exit_contract = TemporalEventContract(
             source_ts_ns=last_candle.resolved_bar_open_ts_ns,
-            available_ts_ns=exit_available_ts,
-            decision_ts_ns=exit_decision_ts,
-            execution_ts_ns=exit_exec_ts,
+            available_ts_ns=terminal_signal_available_ts,
+            decision_ts_ns=terminal_decision_ts,
+            execution_ts_ns=terminal_exchange_arrival_ts,
             fill_ts_ns=exit_fill_ts,
         )
         exit_contract.validate()
         contracts.append(exit_contract)
 
-        if execution_stream is not None:
-            matching_exit = None
-            for s_obs in execution_stream:
-                if s_obs.ts_event_ns >= exit_decision_ts:
-                    matching_exit = s_obs
-                    break
-            if matching_exit is not None:
-                exit_obs_ts = matching_exit.ts_event_ns
-                exit_price = matching_exit.price
-            else:
-                exit_obs_ts = max(exit_decision_ts, exit_available_ts)
-                exit_price = last_candle.close
+        # Terminal mark-to-fill market movement:
+        # For long (previous > 0): (exit_price - last_candle.close) / last_candle.close
+        # For short (previous < 0): -((exit_price - last_candle.close) / last_candle.close)
+        last_mark = last_candle.close
+        if previous > 0:
+            terminal_return = (exit_price - last_mark) / last_mark
         else:
-            exit_obs_ts = max(exit_decision_ts, exit_available_ts)
-            exit_price = last_candle.close
+            terminal_return = -((exit_price - last_mark) / last_mark)
+
+        # Update both gross and net equity
+        gross_equity *= (ONE + terminal_return)
+        net_equity *= (ONE + terminal_return)
+
+        # Apply terminal exit fee to net equity once
+        exit_cost = Decimal(abs(previous)) * costs.turnover_rate
+        net_equity *= (ONE - exit_cost)
+        total_cost += exit_cost
+
+        # Recompute peak and max drawdown after market movement and exit cost
+        peak = max(peak, net_equity)
+        max_drawdown = max(max_drawdown, ONE - net_equity / peak)
 
         exit_obs = ExecutionObservation(
             bar_index=len(candles) - 1,
-            decision_ts_ns=exit_decision_ts,
+            signal_available_ts_ns=terminal_signal_available_ts,
+            decision_ts_ns=terminal_decision_ts,
+            order_submit_ts_ns=terminal_order_submit_ts,
+            exchange_arrival_ts_ns=terminal_exchange_arrival_ts,
+            execution_eligible_ts_ns=terminal_execution_eligible_ts,
+            price_observation_ts_ns=exit_obs_ts,
             fill_ts_ns=exit_fill_ts,
-            price_source=exec_assumptions.price_source,
+            price_source=PriceSource.BID_ASK_TOUCH,
             fill_price=exit_price,
-            fill_price_observation_ts_ns=exit_obs_ts,
-            source_instrument=last_candle.source_instrument,
-            source_dataset_id=last_candle.source_dataset_id,
+            raw_observed_price=raw_observed_price,
+            bid=term_bid,
+            ask=term_ask,
+            source_instrument=term_inst or last_candle.source_instrument,
+            source_dataset_id=term_ds_id or last_candle.source_dataset_id,
+            side=terminal_side,
+            market_type="USD_M_PERP",
+            venue="BINANCE",
+            terminal=True,
         )
         executions.append(
             CausalExecutionRecord(
@@ -735,6 +1085,23 @@ def run_causal_backtest(
                 fill_price=exit_price,
                 turnover=abs(previous),
                 charge=exit_cost,
+                signal_available_ts_ns=terminal_signal_available_ts,
+                decision_ts_ns=terminal_decision_ts,
+                order_submit_ts_ns=terminal_order_submit_ts,
+                exchange_arrival_ts_ns=terminal_exchange_arrival_ts,
+                execution_eligible_ts_ns=terminal_execution_eligible_ts,
+                price_observation_ts_ns=exit_obs_ts,
+                fill_ts_ns=exit_fill_ts,
+                instrument_id=term_inst or last_candle.source_instrument,
+                dataset_id=term_ds_id or last_candle.source_dataset_id,
+                side=terminal_side.value,
+                raw_observed_price=raw_observed_price,
+                bid=term_bid,
+                ask=term_ask,
+                simulated_fill_price=exit_price,
+                slippage=Decimal(abs(previous)) * costs.slippage_bps / BPS,
+                fee=Decimal(abs(previous)) * costs.taker_fee_bps / BPS,
+                terminal=True,
             )
         )
 
