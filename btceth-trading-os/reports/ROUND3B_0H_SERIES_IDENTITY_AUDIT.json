@@ -1,0 +1,14 @@
+{
+  "report_version": "ROUND3B.0H",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T21:42:29.551637+00:00",
+  "series_instrument_homogeneity": true,
+  "series_dataset_homogeneity": true,
+  "series_market_type_homogeneity": true,
+  "series_venue_homogeneity": true,
+  "series_missing_identity_blocked": true,
+  "btc_eth_valuation_contamination_blocked": true,
+  "dev_val_sequence_contamination_blocked": true,
+  "homogeneous_btc_sequence_allowed": true,
+  "homogeneous_eth_sequence_allowed": true
+}

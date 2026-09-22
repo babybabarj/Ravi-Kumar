@@ -1,0 +1,9 @@
+{
+  "report_version": "ROUND3B.0H",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T21:42:29.548690+00:00",
+  "primary_causal_api_strict_by_default": true,
+  "anonymous_candles_blocked_in_primary_api": true,
+  "synthetic_helper_explicit_opt_in": true,
+  "anonymous_error_detail": "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE: RESEARCH_SERIES_IDENTITY_INCOMPLETE: Candle at index 0 has incomplete identity (instrument_id=None, dataset_id=None, market_type=None, venue=None)"
+}

@@ -1,0 +1,14 @@
+{
+  "report_version": "ROUND3B.0H",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T21:42:30.097575+00:00",
+  "round3b_0g_hold_state_accounting_regression": true,
+  "round3b_0f_execution_window_regression": true,
+  "round3b_0f_touch_pricing_regression": true,
+  "round3b_0e_terminal_regression": true,
+  "round3b_0d_partition_regression": true,
+  "physical_partitions_matched": 8,
+  "logical_partitions_matched": 8,
+  "all_8_physical_partitions_unchanged": true,
+  "all_8_logical_partitions_unchanged": true
+}

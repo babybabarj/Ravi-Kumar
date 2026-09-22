@@ -1,0 +1,9 @@
+{
+  "report_version": "ROUND3B.0H",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T21:42:29.553762+00:00",
+  "anonymous_walk_forward_blocked": true,
+  "guarded_walk_forward_allowed": true,
+  "select_lookback_strict_context": true,
+  "strict_walk_forward_context_mechanically_verified": true
+}
