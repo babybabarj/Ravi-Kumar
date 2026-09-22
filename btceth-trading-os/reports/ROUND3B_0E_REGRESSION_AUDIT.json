@@ -1,0 +1,13 @@
+{
+  "report_version": "ROUND3B.0E",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T17:18:02.779213+00:00",
+  "round3b_0d_data_integrity": "VERIFIED",
+  "round3b_0d_research_split": "VERIFIED",
+  "round3b_0d_bar_time_causality": "VERIFIED",
+  "round3b_0d_execution_causality": "SUPERSEDED_BY_3B_0E",
+  "round3b_0d_overall": "SUPERSEDED_FOR_EXECUTION_REMEDIATION",
+  "all_8_physical_partitions_unchanged": true,
+  "all_8_logical_partitions_unchanged": true,
+  "expected_round3b_0d_evidence_sha": "a1ee55b9c11b9172795d70b0b534d66afad98c48"
+}

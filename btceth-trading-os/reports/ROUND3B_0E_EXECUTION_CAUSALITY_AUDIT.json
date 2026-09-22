@@ -1,0 +1,11 @@
+{
+  "report_version": "ROUND3B.0E",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T17:18:02.766866+00:00",
+  "order_arrival_time_explicit": true,
+  "pre_arrival_observation_rejected": true,
+  "fill_latency_semantics_verified": true,
+  "same_instrument_execution_enforced": true,
+  "same_market_type_execution_enforced": true,
+  "side_aware_executable_price_verified": true
+}

@@ -1,0 +1,13 @@
+{
+  "report_version": "ROUND3B.0E",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T17:18:02.767887+00:00",
+  "missing_stream_fails_closed": true,
+  "synthetic_terminal_fallback_blocked": true,
+  "terminal_long_loss_fixture_ok": true,
+  "terminal_long_gain_fixture_ok": true,
+  "terminal_short_gain_fixture_ok": true,
+  "terminal_short_loss_fixture_ok": true,
+  "terminal_exit_cost_applied_once": true,
+  "terminal_drawdown_included": true
+}
