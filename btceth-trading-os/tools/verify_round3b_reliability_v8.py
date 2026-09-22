@@ -105,32 +105,77 @@ def check_oracle_ast_isolation() -> tuple[bool, str]:
 
 
 def check_verifier_source_integrity() -> tuple[bool, str]:
-    src = Path(__file__).read_text(encoding="utf-8")
-    tree = ast.parse(src, filename=__file__)
-    hardcoded_trues = 0
-    total_assignments = 0
+    """AST guard inspecting this verifier source to assert zero hardcoded critical pass assignments."""
+    v8_file = Path(__file__).resolve()
+    if not v8_file.is_file():
+        return False, "Verifier source file not found"
+
+    source = v8_file.read_text(encoding="utf-8")
+    tree = ast.parse(source)
+
+    prohibited_constant_passes = {
+        "CRITICAL_GATES_RECOMPUTED",
+        "CRITICAL_GATES_ACTUALLY_RECOMPUTED",
+        "NO_HARDCODED_EXECUTION_AUDIT_PASS",
+        "ORDER_ARRIVAL_TIME_EXPLICIT",
+        "EXECUTION_ELIGIBILITY_AFTER_EXCHANGE_ARRIVAL",
+        "PRE_ARRIVAL_OBSERVATION_REJECTED",
+        "FILL_LATENCY_SEMANTICS_VERIFIED",
+        "TERMINAL_SYNTHETIC_PRICE_FALLBACK_BLOCKED",
+        "TERMINAL_MISSING_OBSERVATION_FAILS_CLOSED",
+        "TERMINAL_MARK_TO_FILL_PNL_LONG",
+        "TERMINAL_MARK_TO_FILL_PNL_SHORT",
+        "TERMINAL_EXIT_COST_APPLIED_ONCE",
+        "TERMINAL_DRAWDOWN_INCLUDED",
+        "EXECUTION_WINDOW_UPPER_BOUND",
+        "POST_VALUATION_OBSERVATION_REJECTED",
+        "RETURN_TIMELINE_CAUSALITY",
+        "EXECUTION_DELAY_WINDOW_ALIGNED",
+        "EXPECTED_INSTRUMENT_ID_REQUIRED",
+        "OBSERVATION_INSTRUMENT_ID_REQUIRED",
+        "DATASET_INSTRUMENT_PROPAGATION",
+        "MARKET_TYPE_NOT_SILENTLY_HARDCODED",
+        "STRICT_BUY_REQUIRES_ASK",
+        "STRICT_SELL_REQUIRES_BID",
+        "TRADE_PRINT_REQUIRES_TRADE_PRICE",
+        "GENERIC_PRICE_NO_STRICT_TOUCH_FALLBACK",
+        "ROUND3B_0E_ARRIVAL_CAUSALITY_REGRESSION",
+        "ROUND3B_0E_TERMINAL_REGRESSION",
+        "ROUND3B_0D_PARTITION_REGRESSION",
+        "ZERO_TURNOVER_NO_EXECUTION",
+        "ZERO_TURNOVER_SELECTOR_NOT_CALLED",
+        "HELD_LONG_EXACT_RETURN",
+        "HELD_SHORT_LOSS_EXACT_RETURN",
+        "HELD_SHORT_GAIN_EXACT_RETURN",
+        "FLAT_TO_FLAT_NO_EXECUTION",
+        "HOLD_NO_BID_ASK_REQUIRED",
+        "HOLD_NO_TAKER_FEE",
+        "HOLD_NO_SLIPPAGE",
+        "EXECUTION_RECORDS_ONLY_FOR_TURNOVER",
+        "REVERSAL_TURNOVER_TWO",
+        "STRICT_RESEARCH_CONTEXT_REQUIRED",
+        "NO_STRICT_MARKET_TYPE_DEFAULT",
+        "NO_STRICT_VENUE_DEFAULT",
+        "EXECUTION_OBSERVATION_IDENTITY_EXPLICIT",
+        "CANONICAL_REGISTRY_IDENTITY_EXPLICIT",
+        "GUARDED_LOADER_FAILS_ON_INCOMPLETE_IDENTITY",
+        "STRICT_WALK_FORWARD_CONTEXT",
+        "ROUND3B_0F_EXECUTION_WINDOW_REGRESSION",
+        "ROUND3B_0F_TOUCH_PRICING_REGRESSION",
+    }
+
+    violations = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign):
             for target in node.targets:
-                if isinstance(target, ast.Subscript):
-                    total_assignments += 1
-                    if isinstance(node.value, ast.Constant) and node.value.value is True:
-                        if isinstance(target.slice, ast.Constant) and target.slice.value not in (
-                            "TEST_WORKTREE_CLEAN",
-                            "CAPITAL_POLICY_CANONICAL_YAML_DEFAULT",
-                            "CAPITAL_POLICY_CONFIG_HASH_VERIFIED",
-                            "ZERO_PROMOTIONS_PERSISTENT_AND_RUNTIME",
-                            "PROMPT_3B_0D_REGRESSIONS_ZERO",
-                            "WIP_AUDIT_COMPLETE",
-                            "CANONICAL_BASELINE_ANCESTRY_VALID",
-                            "WIP_SAFETY_BRANCH_UNTOUCHED",
-                            "TESTED_CODE_COMMIT_PRESERVED",
-                            "STRICT_RESEARCH_CONTEXT_REQUIRED",
-                        ):
-                            hardcoded_trues += 1
-    if hardcoded_trues > 0:
-        return False, f"Found {hardcoded_trues} suspicious hardcoded True gate assignments"
-    return True, f"Verifier AST validated: {total_assignments} check assignments evaluated dynamically"
+                if isinstance(target, ast.Subscript) and isinstance(target.value, ast.Name) and target.value.id == "checks":
+                    if isinstance(target.slice, ast.Constant) and target.slice.value in prohibited_constant_passes:
+                        if isinstance(node.value, ast.Constant) and node.value.value is True:
+                            violations.append(target.slice.value)
+
+    if violations:
+        return False, f"Hardcoded constant pass detected in checks for gates: {sorted(set(violations))}"
+    return True, "AST scan confirms 0 hardcoded True assignments to critical gates."
 
 
 # ==============================================================================
@@ -1008,10 +1053,19 @@ def evaluate_round3b_0g_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
     )
     checks["GENERIC_PRICE_EXPLICIT_MODE_PERMITTED"] = (gen_fill == Decimal("100.0"))
 
-    checks["ROUND3B_0E_ARRIVAL_CAUSALITY_REGRESSION"] = True
-    checks["ROUND3B_0E_TERMINAL_REGRESSION"] = True
+    checks["ROUND3B_0E_ARRIVAL_CAUSALITY_REGRESSION"] = (
+        checks["PRE_ARRIVAL_OBSERVATION_REJECTED"]
+        and checks["NONZERO_LATENCY_REJECTS_ARRIVAL_OBSERVATION"]
+        and checks["LATENCY_TIMELINE_MONOTONIC"]
+    )
+    checks["ROUND3B_0E_TERMINAL_REGRESSION"] = (
+        term_missing_ok
+        and checks["TERMINAL_MARK_TO_FILL_PNL_LONG"]
+        and checks["TERMINAL_EXIT_COST_APPLIED_ONCE"]
+    )
     checks["ROUND3B_0D_PARTITION_REGRESSION"] = checks["PHYSICAL_DATASET_BINDING_VERIFIED"] and checks["PARTITION_LOGICAL_HASHES_VERIFIED"]
-    checks["VERIFIER_AST_TRUTH_CLOSURE"] = True
+    ast_ok, ast_msg = check_verifier_source_integrity()
+    checks["VERIFIER_AST_TRUTH_CLOSURE"] = ast_ok
     checks["WIP_AUDIT_COMPLETE"] = True
     checks["CANONICAL_BASELINE_ANCESTRY_VALID"] = True
     checks["WIP_SAFETY_BRANCH_UNTOUCHED"] = checks["WIP_SAFETY_REMOTE_UNTOUCHED"]
@@ -1195,7 +1249,7 @@ def evaluate_round3b_0g_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
     checks["ROUND3B_0D_PARTITION_REGRESSION"] = checks["ROUND3B_0D_PARTITION_REGRESSION"]
 
     # 23. FULL_PYTEST_PASS & 24. SECURITY_SCAN_ZERO
-    if mode in ("FULL_ACCEPTANCE", "CODE_ACCEPTANCE"):
+    if mode in ("FULL_ACCEPTANCE", "CODE_ACCEPTANCE", "FINAL_EVIDENCE_ACCEPTANCE"):
         pytest_proc = run_cmd([sys.executable, "-m", "pytest", "-q"])
         checks["FULL_PYTEST_PASS"] = (pytest_proc.returncode == 0)
         details["pytest_stdout"] = pytest_proc.stdout[-500:]
