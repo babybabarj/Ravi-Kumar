@@ -1,7 +1,7 @@
 {
   "report_version": "ROUND3B.0G",
   "status": "VERIFIED",
-  "timestamp_utc": "2026-09-22T20:42:39.056015+00:00",
+  "timestamp_utc": "2026-09-22T20:45:22.505274+00:00",
   "round3b_0f_execution_window_regression": true,
   "round3b_0f_touch_pricing_regression": true,
   "round3b_0e_terminal_regression": true,

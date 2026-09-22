@@ -1,12 +1,12 @@
 # BTCETH TRADING OS: RESEARCH ROUND 3B.0G RELIABILITY ACCEPTANCE REPORT
 
 **Acceptance Status:** `ROUND3B_0G_RELIABILITY = VERIFIED`
-**Timestamp UTC:** `2026-09-22T20:42:51.711582+00:00`
+**Timestamp UTC:** `2026-09-22T20:45:35.348949+00:00`
 **Work Branch:** `btceth-round3b-reliability`
-**Head Commit SHA:** `5e88bbd26aeb2195560409308645cacf5ba40d33`
-**Tree SHA:** `061e169d9c1e2e65b6470a816b2ecf50ad70dc0a`
+**Head Commit SHA:** `58ca55a6bf42575dc2b407e2e3cf9c6500792e4b`
+**Tree SHA:** `ddfacba9cbb7de1d5d08f8dfc391f4c9d2d1de61`
 **Canonical Baseline:** `cfa80f3aabbb75a28969701d8013f6784c35a495` (Untouched: `True`)
-**Acceptance Payload SHA-256:** `6e28b1a481fb327f12fd654a7fe1d8001a391213fd455b2813e5942b2ef93888`
+**Acceptance Payload SHA-256:** `d96146994cc3a97ec2ff043f792e1bb3e045b53cfba57b542c3c9876db626dbe`
 
 ## Safety Boundaries
 - `APPROVED_FOR_SHADOW = 0`

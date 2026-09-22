@@ -1,10 +1,10 @@
 {
   "report_version": "ROUND3B.0G",
   "acceptance_status": "ROUND3B_0G_RELIABILITY = VERIFIED",
-  "timestamp_utc": "2026-09-22T20:42:51.711582+00:00",
+  "timestamp_utc": "2026-09-22T20:45:35.348949+00:00",
   "work_branch": "btceth-round3b-reliability",
-  "tested_code_commit_sha": "5e88bbd26aeb2195560409308645cacf5ba40d33",
-  "tested_tree_sha": "061e169d9c1e2e65b6470a816b2ecf50ad70dc0a",
+  "tested_code_commit_sha": "58ca55a6bf42575dc2b407e2e3cf9c6500792e4b",
+  "tested_tree_sha": "ddfacba9cbb7de1d5d08f8dfc391f4c9d2d1de61",
   "canonical_baseline_sha": "cfa80f3aabbb75a28969701d8013f6784c35a495",
   "canonical_baseline_untouched": true,
   "superseded_round3b_0f_evidence_sha": "c3c0b625de51adde8bfd51da08c0584d67f27d79",
@@ -120,5 +120,5 @@
     "FULL_PYTEST_PASS": true,
     "SECURITY_SCAN_ZERO": true
   },
-  "acceptance_payload_sha256": "6e28b1a481fb327f12fd654a7fe1d8001a391213fd455b2813e5942b2ef93888"
+  "acceptance_payload_sha256": "d96146994cc3a97ec2ff043f792e1bb3e045b53cfba57b542c3c9876db626dbe"
 }
