@@ -1,0 +1,13 @@
+{
+  "report_version": "ROUND3B.0G",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T20:42:38.558395+00:00",
+  "strict_research_context_required": true,
+  "missing_instrument_blocked": true,
+  "missing_market_type_blocked": true,
+  "execution_observation_defaults_none": true,
+  "canonical_registry_explicit_identity": true,
+  "strict_usd_m_default_removed": true,
+  "strict_binance_default_removed": true,
+  "guarded_loader_incomplete_identity_blocked": true
+}

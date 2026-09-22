@@ -1,0 +1,15 @@
+{
+  "report_version": "ROUND3B.0G",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T20:42:38.557863+00:00",
+  "held_long_100_to_110_return": "0.1",
+  "held_short_100_to_110_return": "-0.1",
+  "held_short_100_to_90_return": "0.1",
+  "intermediate_quote_invariance_verified": true,
+  "zero_turnover_execution_records": 0,
+  "hold_no_bid_ask_required": true,
+  "hold_no_taker_fee": true,
+  "hold_no_slippage": true,
+  "flat_to_flat_no_execution": true,
+  "reversal_turnover_two": true
+}
