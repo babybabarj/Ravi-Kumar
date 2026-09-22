@@ -529,6 +529,12 @@ def load_kline_candles(path: Path | str) -> tuple[str, tuple[Candle, ...]]:
     has_open = "open" in schema_names
     if has_open:
         cols.append("open")
+    has_inst = "instrument_id" in schema_names
+    if has_inst:
+        cols.append("instrument_id")
+    has_dataset = "source_dataset" in schema_names
+    if has_dataset:
+        cols.append("source_dataset")
     table = pq.read_table(path, columns=cols)
     hashes = set(table.column("source_object_sha256").to_pylist())
     if len(hashes) != 1 or not re.fullmatch(r"[0-9a-f]{64}", next(iter(hashes), "")):
@@ -536,11 +542,31 @@ def load_kline_candles(path: Path | str) -> tuple[str, tuple[Candle, ...]]:
     ts_list = table.column("ts_event_ns").to_pylist()
     close_list = table.column("close").to_pylist()
     open_list = table.column("open").to_pylist() if has_open else [None] * len(ts_list)
+    inst_list = table.column("instrument_id").to_pylist() if has_inst else [None] * len(ts_list)
+    ds_list = table.column("source_dataset").to_pylist() if has_dataset else [None] * len(ts_list)
+
+    raw_inst = inst_list[0] if inst_list and inst_list[0] else None
+    raw_ds = ds_list[0] if ds_list and ds_list[0] else None
+    eff_inst = "BTCUSDT"
+    eff_mkt = "USD_M_PERP"
+    eff_ven = "BINANCE"
+    eff_ds = raw_ds or "HISTORICAL_SILVER"
+    if raw_inst:
+        parts = raw_inst.split(":")
+        if len(parts) == 3:
+            eff_ven, eff_mkt, eff_inst = parts[0], parts[1], parts[2]
+        else:
+            eff_inst = raw_inst
+
     candles = tuple(
         Candle(
             int(timestamp),
             Decimal(str(close)),
             open=Decimal(str(op)) if op is not None else None,
+            instrument_id=eff_inst,
+            dataset_id=eff_ds,
+            market_type=eff_mkt,
+            venue=eff_ven,
         )
         for timestamp, close, op in zip(ts_list, close_list, open_list, strict=True)
     )
@@ -739,6 +765,107 @@ def run_backtest(candles: Sequence[Candle], positions: Sequence[int], costs: Cos
     )
 
 
+@dataclass(frozen=True)
+class ResolvedSeriesIdentity:
+    instrument_id: str
+    dataset_id: str
+    market_type: str
+    venue: str
+
+
+def validate_research_series_identity(
+    candles: Sequence[Candle],
+    *,
+    expected_instrument_id: Optional[str] = None,
+    expected_dataset_id: Optional[str] = None,
+    expected_market_type: Optional[str] = None,
+    expected_venue: Optional[str] = None,
+) -> ResolvedSeriesIdentity:
+    """Validate that every candle in a strict research valuation series has complete and homogeneous identity."""
+    if len(candles) < 2:
+        raise ValueError("at least two candles are required for series validation")
+
+    first = candles[0]
+    first_inst = first.instrument_id or first.source_instrument
+    first_ds = first.dataset_id or first.source_dataset_id
+    first_mkt = first.market_type
+    first_ven = first.venue
+
+    if not first_inst or not first_ds or not first_mkt or not first_ven:
+        raise TemporalIntegrityViolationError(
+            f"RESEARCH_EXECUTION_CONTEXT_INCOMPLETE: RESEARCH_SERIES_IDENTITY_INCOMPLETE: "
+            f"Candle at index 0 has incomplete identity (instrument_id={first_inst}, "
+            f"dataset_id={first_ds}, market_type={first_mkt}, venue={first_ven})"
+        )
+
+    resolved_inst = expected_instrument_id or first_inst
+    resolved_ds = expected_dataset_id or first_ds
+    resolved_mkt = expected_market_type or first_mkt
+    resolved_ven = expected_venue or first_ven
+
+    if expected_instrument_id is not None and first_inst != expected_instrument_id:
+        raise TemporalIntegrityViolationError(
+            f"RESEARCH_SERIES_IDENTITY_MISMATCH: Instrument mismatch at candle index 0: "
+            f"expected '{expected_instrument_id}', got '{first_inst}'"
+        )
+    if expected_dataset_id is not None and first_ds != expected_dataset_id:
+        raise TemporalIntegrityViolationError(
+            f"RESEARCH_SERIES_DATASET_MISMATCH: Dataset mismatch at candle index 0: "
+            f"expected '{expected_dataset_id}', got '{first_ds}'"
+        )
+    if expected_market_type is not None and first_mkt != expected_market_type:
+        raise TemporalIntegrityViolationError(
+            f"RESEARCH_SERIES_MARKET_TYPE_MISMATCH: Market type mismatch at candle index 0: "
+            f"expected '{expected_market_type}', got '{first_mkt}'"
+        )
+    if expected_venue is not None and first_ven != expected_venue:
+        raise TemporalIntegrityViolationError(
+            f"RESEARCH_SERIES_VENUE_MISMATCH: Venue mismatch at candle index 0: "
+            f"expected '{expected_venue}', got '{first_ven}'"
+        )
+
+    for idx, c in enumerate(candles):
+        c_inst = c.instrument_id or c.source_instrument
+        c_ds = c.dataset_id or c.source_dataset_id
+        c_mkt = c.market_type
+        c_ven = c.venue
+
+        if not c_inst or not c_ds or not c_mkt or not c_ven:
+            raise TemporalIntegrityViolationError(
+                f"RESEARCH_SERIES_IDENTITY_INCOMPLETE: RESEARCH_EXECUTION_CONTEXT_INCOMPLETE: "
+                f"Candle at index {idx} has incomplete identity (instrument_id={c_inst}, "
+                f"dataset_id={c_ds}, market_type={c_mkt}, venue={c_ven})"
+            )
+
+        if c_inst != resolved_inst:
+            raise TemporalIntegrityViolationError(
+                f"RESEARCH_SERIES_IDENTITY_MISMATCH: Instrument mismatch at candle index {idx}: "
+                f"expected '{resolved_inst}', got '{c_inst}'"
+            )
+        if c_ds != resolved_ds:
+            raise TemporalIntegrityViolationError(
+                f"RESEARCH_SERIES_DATASET_MISMATCH: Dataset mismatch at candle index {idx}: "
+                f"expected '{resolved_ds}', got '{c_ds}'"
+            )
+        if c_mkt != resolved_mkt:
+            raise TemporalIntegrityViolationError(
+                f"RESEARCH_SERIES_MARKET_TYPE_MISMATCH: Market type mismatch at candle index {idx}: "
+                f"expected '{resolved_mkt}', got '{c_mkt}'"
+            )
+        if c_ven != resolved_ven:
+            raise TemporalIntegrityViolationError(
+                f"RESEARCH_SERIES_VENUE_MISMATCH: Venue mismatch at candle index {idx}: "
+                f"expected '{resolved_ven}', got '{c_ven}'"
+            )
+
+    return ResolvedSeriesIdentity(
+        instrument_id=resolved_inst,
+        dataset_id=resolved_ds,
+        market_type=resolved_mkt,
+        venue=resolved_ven,
+    )
+
+
 def walk_forward_causal(
     candles: Sequence[Candle],
     *,
@@ -749,6 +876,8 @@ def walk_forward_causal(
     assumptions: Optional[ExecutionAssumptions] = None,
 ) -> WalkForwardResult:
     """Select one momentum lookback on each train block and evaluate on following test block strictly using run_causal_backtest."""
+    # Force strict research context & validate sequence identity upfront
+    validate_research_series_identity(candles)
     candidates = tuple(sorted(set(candidate_lookbacks)))
     if not candidates or min(candidates) < 1 or train_bars <= max(candidates) or test_bars < 2:
         raise ValueError("need positive lookbacks, train_bars above them, and at least two test bars")
@@ -756,6 +885,8 @@ def walk_forward_causal(
         price_source=PriceSource.NEXT_BAR_OPEN,
         decision_latency_ns=0,
         allow_open_fallback=False,
+        strict_research_context=True,
+        context=RESEARCH_CONTEXT,
     )
     folds: list[WalkForwardFold] = []
     for start in range(0, len(candles) - train_bars - test_bars + 1, test_bars):
@@ -767,7 +898,14 @@ def walk_forward_causal(
             for k in range(1, exec_assumptions.execution_delay_bars + 2):
                 if k <= len(pos_train):
                     pos_train[-k] = 0
-            c_res = run_causal_backtest(candles[start:train_end], pos_train, costs, assumptions=exec_assumptions)
+            c_res = run_causal_backtest(
+                candles[start:train_end],
+                pos_train,
+                costs,
+                assumptions=exec_assumptions,
+                strict_research_context=True,
+                context=RESEARCH_CONTEXT,
+            )
             scored.append((c_res.result.net_return, -lookback, lookback))
         selected = max(scored)[2]
 
@@ -801,6 +939,8 @@ def walk_forward_causal(
             costs,
             assumptions=exec_assumptions,
             execution_stream=exec_stream,
+            strict_research_context=True,
+            context=RESEARCH_CONTEXT,
         )
         folds.append(WalkForwardFold(start, train_end, train_end, test_end, selected, c_test_res.result))
     if not folds:
@@ -831,20 +971,40 @@ def walk_forward_momentum(
             price_source=PriceSource.NEXT_BAR_OPEN,
             decision_latency_ns=0,
             allow_open_fallback=False,
+            strict_research_context=True,
+            context=RESEARCH_CONTEXT,
         ),
     )
 
 
 def _select_lookback(candles: Sequence[Candle], start: int, end: int, candidates: Sequence[int], costs: CostModel) -> int:
+    validate_research_series_identity(candles)
     scored = []
-    exec_assumptions = ExecutionAssumptions(price_source=PriceSource.NEXT_BAR_OPEN, decision_latency_ns=0, allow_open_fallback=False)
+    exec_assumptions = ExecutionAssumptions(
+        price_source=PriceSource.NEXT_BAR_OPEN,
+        decision_latency_ns=0,
+        allow_open_fallback=False,
+        strict_research_context=True,
+        context=RESEARCH_CONTEXT,
+    )
     for lookback in candidates:
         positions = list(_momentum_positions(candles[:end], lookback))
         pos_slice = list(positions[start:end])
         for k in range(1, 3):
             if k <= len(pos_slice):
                 pos_slice[-k] = 0
-        scored.append((run_causal_backtest(candles[start:end], pos_slice, costs, assumptions=exec_assumptions).result.net_return, -lookback, lookback))
+        scored.append((
+            run_causal_backtest(
+                candles[start:end],
+                pos_slice,
+                costs,
+                assumptions=exec_assumptions,
+                strict_research_context=True,
+                context=RESEARCH_CONTEXT,
+            ).result.net_return,
+            -lookback,
+            lookback,
+        ))
     return max(scored)[2]
 
 
@@ -949,23 +1109,29 @@ def run_causal_backtest(
     if any(later.ts_event_ns <= earlier.ts_event_ns for earlier, later in zip(candles, candles[1:])):
         raise ValueError("candles must be strictly increasing")
 
-    # Determine whether strict research context is active
-    if strict_research_context is not None:
-        is_strict = strict_research_context
-    elif context == SYNTHETIC_TEST_CONTEXT:
+    # Determine whether strict research context is active (strict by default)
+    if strict_research_context is False or context == SYNTHETIC_TEST_CONTEXT:
         is_strict = False
-    elif context == RESEARCH_CONTEXT:
-        is_strict = True
-    elif assumptions is not None and assumptions.context == SYNTHETIC_TEST_CONTEXT:
+    elif assumptions is not None and (assumptions.context == SYNTHETIC_TEST_CONTEXT or assumptions.strict_research_context is False):
         is_strict = False
-    elif assumptions is not None and assumptions.context == RESEARCH_CONTEXT:
+    elif strict_research_context is True or context == RESEARCH_CONTEXT:
         is_strict = True
-    elif assumptions is not None and assumptions.strict_research_context is not None:
-        is_strict = assumptions.strict_research_context
-    elif any(c.instrument_id is not None or c.dataset_id is not None for c in candles) or instrument_id is not None or dataset_id is not None:
+    elif assumptions is not None and (assumptions.context == RESEARCH_CONTEXT or assumptions.strict_research_context is True):
         is_strict = True
     else:
-        is_strict = False
+        # Strict research is the default
+        is_strict = True
+
+    # If in strict research context, validate sequence identity homogeneity upfront
+    resolved_identity = None
+    if is_strict:
+        resolved_identity = validate_research_series_identity(
+            candles,
+            expected_instrument_id=instrument_id,
+            expected_dataset_id=dataset_id,
+            expected_market_type=market_type,
+            expected_venue=venue,
+        )
 
     # Validate strategy funding boundary if funding signals provided
     if funding_signals is not None:
@@ -1050,10 +1216,16 @@ def run_causal_backtest(
         turnover = abs(target_position - previous)
 
         # Resolve execution identity from candle or explicit context
-        source_inst = candle.instrument_id or candle.source_instrument or instrument_id
-        source_ds_id = candle.dataset_id or candle.source_dataset_id or dataset_id
-        source_mkt = market_type or candle.market_type
-        source_ven = venue or candle.venue
+        if is_strict and resolved_identity is not None:
+            source_inst = resolved_identity.instrument_id
+            source_ds_id = resolved_identity.dataset_id
+            source_mkt = resolved_identity.market_type
+            source_ven = resolved_identity.venue
+        else:
+            source_inst = candle.instrument_id or candle.source_instrument or instrument_id
+            source_ds_id = candle.dataset_id or candle.source_dataset_id or dataset_id
+            source_mkt = market_type or candle.market_type or "USD_M_PERP"
+            source_ven = venue or candle.venue or "BINANCE"
 
         if is_strict:
             if not source_inst or not source_ds_id or not source_mkt or not source_ven:
@@ -1271,10 +1443,16 @@ def run_causal_backtest(
 
         terminal_side = OrderSide.SELL if previous > 0 else OrderSide.BUY
 
-        term_inst = last_candle.instrument_id or last_candle.source_instrument or instrument_id
-        term_ds_id = last_candle.dataset_id or last_candle.source_dataset_id or dataset_id
-        term_mkt = market_type or last_candle.market_type
-        term_ven = venue or last_candle.venue
+        if is_strict and resolved_identity is not None:
+            term_inst = resolved_identity.instrument_id
+            term_ds_id = resolved_identity.dataset_id
+            term_mkt = resolved_identity.market_type
+            term_ven = resolved_identity.venue
+        else:
+            term_inst = last_candle.instrument_id or last_candle.source_instrument or instrument_id
+            term_ds_id = last_candle.dataset_id or last_candle.source_dataset_id or dataset_id
+            term_mkt = market_type or last_candle.market_type or "USD_M_PERP"
+            term_ven = venue or last_candle.venue or "BINANCE"
 
         if is_strict:
             if not term_inst or not term_ds_id or not term_mkt or not term_ven:

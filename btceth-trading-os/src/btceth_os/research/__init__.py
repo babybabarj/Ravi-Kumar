@@ -23,6 +23,9 @@ from .backtest import (
     select_first_executable_observation,
     NAMED_LATENCY_PROFILES,
     LATENCY_VALUES_SOURCE,
+    ResolvedSeriesIdentity,
+    validate_research_series_identity,
+    run_synthetic_causal_backtest,
 )
 from .data_guard import (
     resolve_dataset_metadata,
@@ -38,6 +41,7 @@ __all__ = [
     "load_guarded_kline_candles",
     "run_backtest",
     "run_causal_backtest",
+    "run_synthetic_causal_backtest",
     "walk_forward_momentum",
     "walk_forward_causal",
     "write_walk_forward_report",
@@ -54,4 +58,6 @@ __all__ = [
     "NAMED_LATENCY_PROFILES",
     "LATENCY_VALUES_SOURCE",
     "resolve_dataset_metadata",
+    "ResolvedSeriesIdentity",
+    "validate_research_series_identity",
 ]

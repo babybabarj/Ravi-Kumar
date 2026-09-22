@@ -32,6 +32,7 @@ from btceth_os.research.backtest import (
     run_backtest,
     SYNTHETIC_TEST_CONTEXT,
     RESEARCH_CONTEXT,
+    run_synthetic_causal_backtest,
 )
 
 
@@ -1904,6 +1905,244 @@ def test_execution_record_identity_assertions() -> None:
         assert exec_rec.dataset_id == "BTCUSDT_DEV_2020_2022"
         assert exec_rec.market_type == "USD_M_PERP"
         assert exec_rec.venue == "BINANCE"
+
+
+# ==============================================================================
+# ROUND 3B.0H TESTS: Strict Entry-Point Defaults & Series Identity Homogeneity
+# ==============================================================================
+
+
+def test_anonymous_candles_blocked_in_primary_causal_api() -> None:
+    """[3B.0H GATES 1 & 3] run_causal_backtest is strict by default and blocks anonymous candles."""
+    candles = [
+        Candle(ts_event_ns=1000, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=2000, close=Decimal("102.0"), open=Decimal("100.0")),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        _run_causal_backtest_strict(candles, [1, 0], costs)
+    err = str(exc_info.value)
+    assert "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE" in err or "RESEARCH_SERIES_IDENTITY_INCOMPLETE" in err
+
+
+def test_synthetic_helper_allows_anonymous_candles() -> None:
+    """[3B.0H GATE 2] run_synthetic_causal_backtest allows anonymous candles via explicit opt-in."""
+    candles = [
+        Candle(ts_event_ns=1000, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=2000, close=Decimal("102.0"), open=Decimal("100.0")),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    res = run_synthetic_causal_backtest(candles, [0, 0], costs)
+    assert res.result.bars == 2
+    assert res.assumptions.context == SYNTHETIC_TEST_CONTEXT
+    assert res.assumptions.strict_research_context is False
+
+
+def test_walk_forward_causal_blocks_anonymous_candles() -> None:
+    """[3B.0H GATE 4] walk_forward_causal rejects anonymous candles fail-closed."""
+    from btceth_os.research.backtest import walk_forward_causal
+    candles = [
+        Candle(ts_event_ns=1000 * i, close=Decimal(str(10 + i % 5)), open=Decimal(str(10 + i % 5)))
+        for i in range(20)
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        walk_forward_causal(candles, train_bars=6, test_bars=4, candidate_lookbacks=[1, 2], costs=costs)
+    err = str(exc_info.value)
+    assert "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE" in err or "RESEARCH_SERIES_IDENTITY_INCOMPLETE" in err
+
+
+def test_walk_forward_momentum_blocks_anonymous_candles() -> None:
+    """[3B.0H GATE 4] walk_forward_momentum rejects anonymous candles fail-closed."""
+    from btceth_os.research.backtest import walk_forward_momentum
+    candles = [
+        Candle(ts_event_ns=1000 * i, close=Decimal(str(10 + i % 5)), open=Decimal(str(10 + i % 5)))
+        for i in range(20)
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        walk_forward_momentum(candles, train_bars=6, test_bars=4, candidate_lookbacks=[1, 2], costs=costs)
+    err = str(exc_info.value)
+    assert "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE" in err or "RESEARCH_SERIES_IDENTITY_INCOMPLETE" in err
+
+
+def test_guarded_candles_walk_forward_allowed() -> None:
+    """[3B.0H GATE 5] walk_forward_causal succeeds with fully identified candles."""
+    from btceth_os.research.backtest import walk_forward_causal
+    candles = [
+        Candle(
+            ts_event_ns=1000 * i,
+            close=Decimal(str(10 + i % 5)),
+            open=Decimal(str(10 + i % 5)),
+            instrument_id="BTCUSDT",
+            dataset_id="BTCUSDT_DEV_2020_2022",
+            market_type="USD_M_PERP",
+            venue="BINANCE",
+        )
+        for i in range(20)
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    wf_res = walk_forward_causal(candles, train_bars=6, test_bars=4, candidate_lookbacks=[1, 2], costs=costs)
+    assert len(wf_res.folds) > 0
+    assert wf_res.trades >= 0
+
+
+def test_series_instrument_homogeneity() -> None:
+    """[3B.0H GATE 8] Mixed instruments in valuation series fail closed."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("102.0"), open=Decimal("100.0"), instrument_id="ETHUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        _run_causal_backtest_strict(candles, [0, 0], costs)
+    assert "RESEARCH_SERIES_IDENTITY_MISMATCH" in str(exc_info.value)
+
+
+def test_series_dataset_homogeneity() -> None:
+    """[3B.0H GATE 9] Mixed dataset IDs in valuation series fail closed."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("102.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_VAL_2023", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        _run_causal_backtest_strict(candles, [0, 0], costs)
+    assert "RESEARCH_SERIES_DATASET_MISMATCH" in str(exc_info.value)
+
+
+def test_series_market_type_homogeneity() -> None:
+    """[3B.0H GATE 10] Mixed market types in valuation series fail closed."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("102.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="SPOT", venue="BINANCE"),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        _run_causal_backtest_strict(candles, [0, 0], costs)
+    assert "RESEARCH_SERIES_MARKET_TYPE_MISMATCH" in str(exc_info.value)
+
+
+def test_series_venue_homogeneity() -> None:
+    """[3B.0H GATE 11] Mixed venues in valuation series fail closed."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("102.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="OKX"),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        _run_causal_backtest_strict(candles, [0, 0], costs)
+    assert "RESEARCH_SERIES_VENUE_MISMATCH" in str(exc_info.value)
+
+
+def test_series_missing_identity_mid_sequence() -> None:
+    """[3B.0H GATE 12] Missing identity on any candle in series fails closed."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("102.0"), open=Decimal("100.0"), instrument_id=None, dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        _run_causal_backtest_strict(candles, [0, 0], costs)
+    err = str(exc_info.value)
+    assert "RESEARCH_SERIES_IDENTITY_INCOMPLETE" in err or "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE" in err
+
+
+def test_btc_eth_valuation_contamination_blocked_before_pnl() -> None:
+    """[3B.0H GATE 13] Contaminating BTC series with ETH candle is blocked before P&L."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("30000.0"), open=Decimal("30000.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("1800.0"), open=Decimal("1800.0"), instrument_id="ETHUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        _run_causal_backtest_strict(candles, [0, 0], costs)
+    assert "RESEARCH_SERIES_IDENTITY_MISMATCH" in str(exc_info.value)
+
+
+def test_dev_val_sequence_contamination_blocked() -> None:
+    """[3B.0H GATE 14] Splicing DEV and VAL partitions in single valuation series fails closed."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("105.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_VAL_2023", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        _run_causal_backtest_strict(candles, [0, 0], costs)
+    assert "RESEARCH_SERIES_DATASET_MISMATCH" in str(exc_info.value)
+
+
+def test_homogeneous_btc_sequence_allowed() -> None:
+    """[3B.0H GATE 15] Homogeneous BTC sequence validates and executes cleanly."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("105.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("110.0"), open=Decimal("105.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    res = _run_causal_backtest_strict(candles, [1, 0, 0], costs)
+    assert res.result.bars == 3
+    assert len(res.executions) >= 1
+    assert res.executions[0].instrument_id == "BTCUSDT"
+
+
+def test_homogeneous_eth_sequence_allowed() -> None:
+    """[3B.0H GATE 16] Homogeneous ETH sequence validates and executes cleanly."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("1000.0"), open=Decimal("1000.0"), instrument_id="ETHUSDT", dataset_id="ETHUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("1050.0"), open=Decimal("1000.0"), instrument_id="ETHUSDT", dataset_id="ETHUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("1100.0"), open=Decimal("1050.0"), instrument_id="ETHUSDT", dataset_id="ETHUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    res = _run_causal_backtest_strict(candles, [1, 0, 0], costs)
+    assert res.result.bars == 3
+    assert len(res.executions) >= 1
+    assert res.executions[0].instrument_id == "ETHUSDT"
+
+
+def test_select_lookback_strict_context() -> None:
+    """[3B.0H GATE 7] _select_lookback rejects anonymous candles and accepts guarded candles."""
+    from btceth_os.research.backtest import _select_lookback
+    anon_candles = [
+        Candle(ts_event_ns=1000 * i, close=Decimal(str(10 + i % 5)), open=Decimal(str(10 + i % 5)))
+        for i in range(15)
+    ]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+    with pytest.raises(TemporalIntegrityViolationError):
+        _select_lookback(anon_candles, 0, 10, [1, 2], costs)
+
+    guarded_candles = [
+        Candle(
+            ts_event_ns=1000 * i,
+            close=Decimal(str(10 + i % 5)),
+            open=Decimal(str(10 + i % 5)),
+            instrument_id="BTCUSDT",
+            dataset_id="BTCUSDT_DEV_2020_2022",
+            market_type="USD_M_PERP",
+            venue="BINANCE",
+        )
+        for i in range(15)
+    ]
+    best_lb = _select_lookback(guarded_candles, 0, 10, [1, 2], costs)
+    assert best_lb in [1, 2]
 
 
 

@@ -232,9 +232,9 @@ def generate_execution_causality_audit(force: bool = False) -> dict[str, Any]:
 
     # 1. 3-candle execution causality test (next bar open at authentic open observation timestamp)
     candles = [
-        Candle(ts_event_ns=1609459200_000_000_000, open=Decimal("29950.0"), high=Decimal("30100.0"), low=Decimal("29900.0"), close=Decimal("30000.0")),
-        Candle(ts_event_ns=1609462800_000_000_000, open=Decimal("30050.0"), high=Decimal("30600.0"), low=Decimal("30000.0"), close=Decimal("30500.0")),
-        Candle(ts_event_ns=1609466400_000_000_000, open=Decimal("30600.0"), high=Decimal("31100.0"), low=Decimal("30550.0"), close=Decimal("31000.0")),
+        Candle(ts_event_ns=1609459200_000_000_000, open=Decimal("29950.0"), high=Decimal("30100.0"), low=Decimal("29900.0"), close=Decimal("30000.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=1609462800_000_000_000, open=Decimal("30050.0"), high=Decimal("30600.0"), low=Decimal("30000.0"), close=Decimal("30500.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=1609466400_000_000_000, open=Decimal("30600.0"), high=Decimal("31100.0"), low=Decimal("30550.0"), close=Decimal("31000.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
     ]
     costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
     result = run_causal_backtest(candles, [1, 0, 0], costs)
@@ -265,9 +265,9 @@ def generate_execution_causality_audit(force: bool = False) -> dict[str, Any]:
     # 3. Execution stream post-decision observation selection
     bar_close = 1609462800_000_000_000
     exec_stream = [
-        ExecutionPriceObservation(ts_event_ns=bar_close + 10_000_000, price=Decimal("30020.0"), bid=Decimal("30020.0"), ask=Decimal("30020.0")),
-        ExecutionPriceObservation(ts_event_ns=bar_close + 60_000_000, price=Decimal("30040.0"), bid=Decimal("30040.0"), ask=Decimal("30040.0")),
-        ExecutionPriceObservation(ts_event_ns=bar_close + 3_600_000_000_000 + 60_000_000, price=Decimal("30040.0"), bid=Decimal("30040.0"), ask=Decimal("30040.0")),
+        ExecutionPriceObservation(ts_event_ns=bar_close + 10_000_000, price=Decimal("30020.0"), bid=Decimal("30020.0"), ask=Decimal("30020.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        ExecutionPriceObservation(ts_event_ns=bar_close + 60_000_000, price=Decimal("30040.0"), bid=Decimal("30040.0"), ask=Decimal("30040.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        ExecutionPriceObservation(ts_event_ns=bar_close + 3_600_000_000_000 + 60_000_000, price=Decimal("30040.0"), bid=Decimal("30040.0"), ask=Decimal("30040.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
     ]
     stream_res = run_causal_backtest(
         candles[:2], [1, 0], costs,
@@ -290,8 +290,8 @@ def generate_execution_causality_audit(force: bool = False) -> dict[str, Any]:
     # 5. Missing open fails closed (no fallback)
     missing_open_blocked = False
     c_no_open = [
-        Candle(ts_event_ns=1000, close=Decimal("100.0"), open=Decimal("100.0")),
-        Candle(ts_event_ns=2000, close=Decimal("110.0"), open=None),
+        Candle(ts_event_ns=1000, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=2000, close=Decimal("110.0"), open=None, instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
     ]
     try:
         run_causal_backtest(c_no_open, [1, 0], costs)
@@ -300,7 +300,15 @@ def generate_execution_causality_audit(force: bool = False) -> dict[str, Any]:
 
     # 6. Walk-forward causal routing
     candles_wf = [
-        Candle(ts_event_ns=1000 * i, close=Decimal(str(10 + i % 5)), open=Decimal(str(10 + i % 5)))
+        Candle(
+            ts_event_ns=1000 * i,
+            close=Decimal(str(10 + i % 5)),
+            open=Decimal(str(10 + i % 5)),
+            instrument_id="BTCUSDT",
+            dataset_id="BTCUSDT_DEV_2020_2022",
+            market_type="USD_M_PERP",
+            venue="BINANCE",
+        )
         for i in range(20)
     ]
     wf_res = walk_forward_causal(candles_wf, train_bars=6, test_bars=4, candidate_lookbacks=[1, 2], costs=costs)
@@ -784,9 +792,9 @@ def evaluate_round3b_0d_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
     )
 
     # 27. SIGNAL_CLOSE_AVAILABLE_AT_CLOSE_TIME
-    c1 = Candle(ts_event_ns=1609459200_000_000_000, open=Decimal("100.0"), close=Decimal("100.0"))
-    c2 = Candle(ts_event_ns=1609462800_000_000_000, open=Decimal("102.0"), close=Decimal("105.0"))
-    c3 = Candle(ts_event_ns=1609466400_000_000_000, open=Decimal("105.0"), close=Decimal("105.0"))
+    c1 = Candle(ts_event_ns=1609459200_000_000_000, open=Decimal("100.0"), close=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE")
+    c2 = Candle(ts_event_ns=1609462800_000_000_000, open=Decimal("102.0"), close=Decimal("105.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE")
+    c3 = Candle(ts_event_ns=1609466400_000_000_000, open=Decimal("105.0"), close=Decimal("105.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE")
     costs_zero = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
     res_causal = run_causal_backtest([c1, c2, c3], [1, 0, 0], costs_zero)
     first_contract = res_causal.contracts[0]
@@ -807,9 +815,9 @@ def evaluate_round3b_0d_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
 
     # 30. FIRST_POST_DECISION_OBSERVATION
     stream_ex = [
-        ExecutionPriceObservation(ts_event_ns=1609462800_010_000_000, price=Decimal("101.0"), bid=Decimal("101.0"), ask=Decimal("101.0")),
-        ExecutionPriceObservation(ts_event_ns=1609462800_060_000_000, price=Decimal("103.0"), bid=Decimal("103.0"), ask=Decimal("103.0")),
-        ExecutionPriceObservation(ts_event_ns=1609466400_060_000_000, price=Decimal("103.0"), bid=Decimal("103.0"), ask=Decimal("103.0")),
+        ExecutionPriceObservation(ts_event_ns=1609462800_010_000_000, price=Decimal("101.0"), bid=Decimal("101.0"), ask=Decimal("101.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        ExecutionPriceObservation(ts_event_ns=1609462800_060_000_000, price=Decimal("103.0"), bid=Decimal("103.0"), ask=Decimal("103.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        ExecutionPriceObservation(ts_event_ns=1609466400_060_000_000, price=Decimal("103.0"), bid=Decimal("103.0"), ask=Decimal("103.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
     ]
     res_stream = run_causal_backtest(
         [c1, c2], [1, 0], costs_zero,
@@ -832,7 +840,10 @@ def evaluate_round3b_0d_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
 
     # 32. NO_UNSAFE_OPEN_FALLBACK
     no_fallback_ok = False
-    c_bad_open = [Candle(ts_event_ns=1000, close=Decimal("100"), open=Decimal("100")), Candle(ts_event_ns=2000, close=Decimal("110"), open=None)]
+    c_bad_open = [
+        Candle(ts_event_ns=1000, close=Decimal("100"), open=Decimal("100"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=2000, close=Decimal("110"), open=None, instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
     try:
         run_causal_backtest(c_bad_open, [1, 0], costs_zero)
     except TemporalIntegrityViolationError as exc:
@@ -849,11 +860,11 @@ def evaluate_round3b_0d_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
 
     # 34. EXECUTION_DELAY_ACTUALLY_APPLIED
     c_delay = [
-        Candle(ts_event_ns=1000, close=Decimal("100"), open=Decimal("100")),
-        Candle(ts_event_ns=2000, close=Decimal("105"), open=Decimal("100")),
-        Candle(ts_event_ns=3000, close=Decimal("110"), open=Decimal("105")),
-        Candle(ts_event_ns=4000, close=Decimal("115"), open=Decimal("110")),
-        Candle(ts_event_ns=5000, close=Decimal("120"), open=Decimal("115")),
+        Candle(ts_event_ns=1000, close=Decimal("100"), open=Decimal("100"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=2000, close=Decimal("105"), open=Decimal("100"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=3000, close=Decimal("110"), open=Decimal("105"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=4000, close=Decimal("115"), open=Decimal("110"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=5000, close=Decimal("120"), open=Decimal("115"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
     ]
     res_del = run_causal_backtest(c_delay, [1, 1, 0, 0, 0], costs_zero, assumptions=ExecutionAssumptions(execution_delay_bars=2))
     checks["EXECUTION_DELAY_ACTUALLY_APPLIED"] = (
@@ -873,7 +884,15 @@ def evaluate_round3b_0d_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
 
     # 37. STRICT_CAUSAL_WALK_FORWARD
     candles_wf = [
-        Candle(ts_event_ns=1000 * i, close=Decimal(str(10 + i % 5)), open=Decimal(str(10 + i % 5)))
+        Candle(
+            ts_event_ns=1000 * i,
+            close=Decimal(str(10 + i % 5)),
+            open=Decimal(str(10 + i % 5)),
+            instrument_id="BTCUSDT",
+            dataset_id="BTCUSDT_DEV_2020_2022",
+            market_type="USD_M_PERP",
+            venue="BINANCE",
+        )
         for i in range(20)
     ]
     wf_c = walk_forward_causal(candles_wf, train_bars=6, test_bars=4, candidate_lookbacks=[1, 2], costs=costs_zero)

@@ -1199,7 +1199,15 @@ def evaluate_round3b_0e_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
     )
 
     candles_wf = [
-        Candle(ts_event_ns=1000 * i, close=Decimal(str(10 + i % 5)), open=Decimal(str(10 + i % 5)))
+        Candle(
+            ts_event_ns=1000 * i,
+            close=Decimal(str(10 + i % 5)),
+            open=Decimal(str(10 + i % 5)),
+            instrument_id="BTCUSDT",
+            dataset_id="BTCUSDT_DEV_2020_2022",
+            market_type="USD_M_PERP",
+            venue="BINANCE",
+        )
         for i in range(20)
     ]
     wf_c = walk_forward_causal(candles_wf, train_bars=6, test_bars=4, candidate_lookbacks=[1, 2], costs=costs_zero)
