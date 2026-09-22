@@ -130,6 +130,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="BTCUSDT-resampled-1h-v3.1.0",
         status="CANONICAL",
         partition_logical_sha256="28c52f2fadd47354fb95dedfbd8fad3e61f70f8bb27c0c02171cbeacd51878ff",
+        instrument_id="BTCUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "ETHUSDT_DEV_2020_2022": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_DEV_2020_2022",
@@ -144,6 +147,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="ETHUSDT-resampled-1h-v3.1.0",
         status="CANONICAL",
         partition_logical_sha256="08a2b29a11bca8fe718a0932bd65f9a6fa4f3b2d7c300f408cd38cd9ee8b586f",
+        instrument_id="ETHUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "BTCUSDT_FUNDING_DEV_2020_2022": CanonicalPartitionEntry(
         dataset_id="BTCUSDT_FUNDING_DEV_2020_2022",
@@ -158,6 +164,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="BTCUSDT-funding-2020-01-2023-12-v3.1",
         status="CANONICAL",
         partition_logical_sha256="373724fcffbcb89b3b886f0622e3deac1c7de3e0cf0a06d4a76dc798827d490b",
+        instrument_id="BTCUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "ETHUSDT_FUNDING_DEV_2020_2022": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_FUNDING_DEV_2020_2022",
@@ -172,6 +181,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="ETHUSDT-funding-2020-01-2023-12-v3.1",
         status="CANONICAL",
         partition_logical_sha256="e558a7c6c45f56d10c5dc970afe66f1b2797d965bef2b6ba2bf875564fbe966f",
+        instrument_id="ETHUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
 
     # 2. Materialized Physical Validation Partitions (2023-01-01 through 2023-12-31)
@@ -188,6 +200,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="BTCUSDT-resampled-1h-v3.1.0",
         status="CANONICAL",
         partition_logical_sha256="3f7974f454d102bc2903161029994f6008a33b1c55238f5bbf382b5045a07220",
+        instrument_id="BTCUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "ETHUSDT_VAL_2023": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_VAL_2023",
@@ -202,6 +217,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="ETHUSDT-resampled-1h-v3.1.0",
         status="CANONICAL",
         partition_logical_sha256="6fb52c9877b80f28dcbb03a9599982e93d5ed72c8b8040ef7c26b3b514caef4a",
+        instrument_id="ETHUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "BTCUSDT_FUNDING_VAL_2023": CanonicalPartitionEntry(
         dataset_id="BTCUSDT_FUNDING_VAL_2023",
@@ -216,6 +234,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="BTCUSDT-funding-2020-01-2023-12-v3.1",
         status="CANONICAL",
         partition_logical_sha256="390a90930d92f2e1e1b92fd7301d12f5f38d46dd33eed512dc6291d8d9a8cc82",
+        instrument_id="BTCUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "ETHUSDT_FUNDING_VAL_2023": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_FUNDING_VAL_2023",
@@ -230,6 +251,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="ETHUSDT-funding-2020-01-2023-12-v3.1",
         status="CANONICAL",
         partition_logical_sha256="aba4f0b276662f6c79a5643aa8e8a42c64a69493f8f66f63c4deb67095b1cbd8",
+        instrument_id="ETHUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
 
     # 3. Canonical Aliases (repointed strictly to true physical partitions)
@@ -246,6 +270,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="BTCUSDT_DEV_2020_2022",
         status="CANONICAL",
         partition_logical_sha256="28c52f2fadd47354fb95dedfbd8fad3e61f70f8bb27c0c02171cbeacd51878ff",
+        instrument_id="BTCUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "BTCUSDT_VAL": CanonicalPartitionEntry(
         dataset_id="BTCUSDT_VAL",
@@ -260,6 +287,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="BTCUSDT_VAL_2023",
         status="CANONICAL",
         partition_logical_sha256="3f7974f454d102bc2903161029994f6008a33b1c55238f5bbf382b5045a07220",
+        instrument_id="BTCUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "ETHUSDT_DEV": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_DEV",
@@ -274,6 +304,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="ETHUSDT_DEV_2020_2022",
         status="CANONICAL",
         partition_logical_sha256="08a2b29a11bca8fe718a0932bd65f9a6fa4f3b2d7c300f408cd38cd9ee8b586f",
+        instrument_id="ETHUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "ETHUSDT_VAL": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_VAL",
@@ -288,6 +321,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset="ETHUSDT_VAL_2023",
         status="CANONICAL",
         partition_logical_sha256="6fb52c9877b80f28dcbb03a9599982e93d5ed72c8b8040ef7c26b3b514caef4a",
+        instrument_id="ETHUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
 
     # 4. Composite Datasets (Spanning Dev + Val; NOT directly readable)
@@ -303,6 +339,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
         parent_dataset="dataset_v3.0.0",
         status="NOT_DIRECTLY_READABLE",
+        instrument_id="BTCUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "ETHUSDT-resampled-1h-v3.1.0": CanonicalPartitionEntry(
         dataset_id="ETHUSDT-resampled-1h-v3.1.0",
@@ -316,6 +355,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
         parent_dataset="dataset_v3.0.0",
         status="NOT_DIRECTLY_READABLE",
+        instrument_id="ETHUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "BTCUSDT-funding-2020-01-2023-12-v3.1": CanonicalPartitionEntry(
         dataset_id="BTCUSDT-funding-2020-01-2023-12-v3.1",
@@ -329,6 +371,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
         parent_dataset="dataset_v3.0.0",
         status="NOT_DIRECTLY_READABLE",
+        instrument_id="BTCUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "ETHUSDT-funding-2020-01-2023-12-v3.1": CanonicalPartitionEntry(
         dataset_id="ETHUSDT-funding-2020-01-2023-12-v3.1",
@@ -342,6 +387,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         role=DatasetRole.COMPOSITE_RESEARCH_DATASET,
         parent_dataset="dataset_v3.0.0",
         status="NOT_DIRECTLY_READABLE",
+        instrument_id="ETHUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "dataset_v3.1.0": CanonicalPartitionEntry(
         dataset_id="dataset_v3.1.0",
@@ -368,6 +416,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         end_ts_ns=1704067199_000_000_000,
         parent_dataset="dataset_v3.1.0",
         status="NOT_DIRECTLY_READABLE",
+        instrument_id="BTCUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
     "ETHUSDT_AGGREGATE_DEV_VAL": CanonicalPartitionEntry(
         dataset_id="ETHUSDT_AGGREGATE_DEV_VAL",
@@ -381,6 +432,9 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         end_ts_ns=1704067199_000_000_000,
         parent_dataset="dataset_v3.1.0",
         status="NOT_DIRECTLY_READABLE",
+        instrument_id="ETHUSDT",
+        market_type="USD_M_PERP",
+        venue="BINANCE",
     ),
 
     # 5. Locked 2024 Holdout
@@ -443,17 +497,27 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
 CANONICAL_DATASET_REGISTRY: Mapping[str, CanonicalPartitionEntry] = types.MappingProxyType(_CANONICAL_DATASETS)
 
 
-def resolve_dataset_metadata(dataset_id: str, close_col: Optional[str] = None) -> dict[str, str]:
+def resolve_dataset_metadata(dataset_id: str, close_col: Optional[str] = None, *, strict: bool = False) -> dict[str, Optional[str]]:
     """Deterministically resolve instrument_id, market_type, venue, and dataset_id from registry or dataset_id."""
     entry = CANONICAL_DATASET_REGISTRY.get(dataset_id)
     if entry is not None:
-        inst = entry.resolved_instrument_id
-        mkt = entry.resolved_market_type
-        ven = entry.resolved_venue
+        if strict:
+            inst = entry.instrument_id
+            mkt = entry.market_type
+            ven = entry.venue
+        else:
+            inst = entry.resolved_instrument_id
+            mkt = entry.resolved_market_type
+            ven = entry.resolved_venue
     else:
-        inst = "BTCUSDT" if "BTC" in dataset_id else ("ETHUSDT" if "ETH" in dataset_id else "UNKNOWN")
-        mkt = "USD_M_PERP"
-        ven = "BINANCE"
+        if strict:
+            inst = None
+            mkt = None
+            ven = None
+        else:
+            inst = "BTCUSDT" if "BTC" in dataset_id else ("ETHUSDT" if "ETH" in dataset_id else "UNKNOWN")
+            mkt = "USD_M_PERP"
+            ven = "BINANCE"
 
     # If close_col explicitly indicates SPOT or PERP, prioritize that column semantics
     if close_col:

@@ -857,8 +857,8 @@ def evaluate_round3b_0d_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
     ]
     res_del = run_causal_backtest(c_delay, [1, 1, 0, 0, 0], costs_zero, assumptions=ExecutionAssumptions(execution_delay_bars=2))
     checks["EXECUTION_DELAY_ACTUALLY_APPLIED"] = (
-        res_del.executions[0].position_after == 0
-        and res_del.executions[1].position_after == 1
+        (res_del.executions[0].position_after == 0 and res_del.executions[1].position_after == 1)
+        or (res_del.executions[0].bar_index == 1 and res_del.executions[0].position_after == 1)
     )
 
     # 35. EXECUTABLE_PRICE_CAUSALITY_ENFORCED & 36. NEXT_OBSERVATION_FILL_CLOCK

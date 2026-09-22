@@ -28,9 +28,18 @@ from btceth_os.research.backtest import (
     OrderSide,
     ExecutionMode,
     select_first_executable_observation,
-    run_causal_backtest,
+    run_causal_backtest as _run_causal_backtest_strict,
     run_backtest,
+    SYNTHETIC_TEST_CONTEXT,
+    RESEARCH_CONTEXT,
 )
+
+
+def run_causal_backtest(*args: Any, **kwargs: Any) -> Any:
+    """Test helper defaulting to SYNTHETIC_TEST_CONTEXT for bare synthetic candle fixtures."""
+    kwargs.setdefault("context", SYNTHETIC_TEST_CONTEXT)
+    return _run_causal_backtest_strict(*args, **kwargs)
+
 
 from btceth_os.research.features.price_returns import (
     compute_log_returns,
@@ -425,8 +434,10 @@ def test_real_causal_backtest_execution() -> None:
     assert causal_res.result.net_return == legacy_res.net_return
     assert causal_res.result.total_cost == legacy_res.total_cost
 
-    # Contract verification: every bar execution has a valid contract and observation
-    assert len(causal_res.contracts) == len(candles) - 1
+    # Contract verification: every true execution has a valid contract and observation
+    # (Bar 1 is hold-state with turnover==0, so no synthetic execution or contract)
+    assert len(causal_res.contracts) == 4
+    assert len(causal_res.executions) == 4
     for c in causal_res.contracts:
         c.validate()
         assert c.source_ts_ns <= c.available_ts_ns
@@ -548,7 +559,15 @@ def test_walk_forward_causal_routing() -> None:
     """Verify walk_forward_causal and walk_forward_momentum route to causal engine with open fallback."""
     from btceth_os.research.backtest import walk_forward_causal, walk_forward_momentum
     candles = [
-        Candle(ts_event_ns=1000 * i, close=Decimal(str(10 + i % 5)), open=Decimal(str(10 + i % 5)))
+        Candle(
+            ts_event_ns=1000 * i,
+            close=Decimal(str(10 + i % 5)),
+            open=Decimal(str(10 + i % 5)),
+            instrument_id="BTCUSDT",
+            dataset_id="BTCUSDT_DEV_2020_2022",
+            market_type="USD_M_PERP",
+            venue="BINANCE",
+        )
         for i in range(20)
     ]
     costs = CostModel(taker_fee_bps=Decimal("1"), slippage_bps=Decimal("1"))
@@ -710,10 +729,8 @@ def test_functional_execution_delay_bars() -> None:
 
     # With delay = 2: signal on bar 0 is NOT executed at bar 1; it executes at bar 2 (index 1 transition)
     res_delay2 = run_causal_backtest(candles, positions, costs, assumptions=ExecutionAssumptions(execution_delay_bars=2))
-    assert res_delay2.executions[0].bar_index == 0
-    assert res_delay2.executions[0].position_after == 0  # Still 0 at bar 1!
-    assert res_delay2.executions[1].bar_index == 1
-    assert res_delay2.executions[1].position_after == 1  # Becomes 1 at bar 2!
+    assert res_delay2.executions[0].bar_index == 1
+    assert res_delay2.executions[0].position_after == 1  # Becomes 1 at bar 2!
 
 
 def test_terminal_exit_uses_authentic_market_observation() -> None:
@@ -1335,9 +1352,8 @@ def test_execution_delay_bars_window_aligned() -> None:
         ),
     ]
     res = run_causal_backtest(candles, positions, costs, assumptions=assumptions, execution_stream=delayed_stream)
-    assert res.executions[0].position_after == 0  # Bar 1 transition still 0
-    assert res.executions[1].position_after == 1  # Bar 2 transition becomes 1
-    assert res.executions[1].observation.fill_price_observation_ts_ns == t0 + 2 * bar_dur + 10_000_000
+    assert res.executions[0].position_after == 1  # Bar 2 transition becomes 1 (no synthetic execution at Bar 1)
+    assert res.executions[0].observation.fill_price_observation_ts_ns == t0 + 2 * bar_dur + 10_000_000
 
 
 def test_same_instrument_missing_obs_id_blocked() -> None:
@@ -1495,6 +1511,400 @@ def test_generic_price_no_strict_touch_fallback() -> None:
     )
     assert fill_price == Decimal("100.0")
     assert raw_price == Decimal("100.0")
+
+
+# ==============================================================================
+# ROUND 3B.0G MANDATORY GATES: HOLD-STATE ACCOUNTING + STRICT RESEARCH IDENTITY
+# ==============================================================================
+
+
+def test_held_long_exact_return() -> None:
+    """[3B.0G SECTION 7 & 33] Held long position (100 -> 110) earns exactly +10% discrete-bar return with zero turnover."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("110.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3 * bar_dur, close=Decimal("110.0"), open=Decimal("110.0")),
+    ]
+    # Bar 0 (t0->t1): target=1 (0->1 entry). Bar 1 (t1->t2): target=1 (1->1 HOLD). Bar 2 (t2->t3): target=0 (1->0 exit).
+    positions = [1, 1, 0, 0]
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    res = run_causal_backtest(candles, positions, zero_costs)
+    assert res.result.gross_return == Decimal("0.10")
+    assert res.result.net_return == Decimal("0.10")
+    # Only 2 executions: entry at bar 0 and exit at bar 2. NO execution for hold bar 1!
+    assert len(res.executions) == 2
+    assert res.executions[0].bar_index == 0
+    assert res.executions[0].position_after == 1
+    assert res.executions[1].bar_index == 2
+    assert res.executions[1].position_after == 0
+    assert res.result.trades == 2
+
+
+def test_held_short_loss_exact_return() -> None:
+    """[3B.0G SECTION 8, 33, 34] Held short position (100 -> 110) experiences exactly -10% discrete-bar return with zero turnover."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("110.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3 * bar_dur, close=Decimal("110.0"), open=Decimal("110.0")),
+    ]
+    positions = [-1, -1, 0, 0]
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    res = run_causal_backtest(candles, positions, zero_costs)
+    assert res.result.gross_return == Decimal("-0.10")
+    assert res.result.net_return == Decimal("-0.10")
+    assert len(res.executions) == 2
+    assert res.executions[0].bar_index == 0
+    assert res.executions[0].position_after == -1
+    assert res.executions[1].bar_index == 2
+    assert res.executions[1].position_after == 0
+
+
+def test_held_short_gain_exact_return() -> None:
+    """[3B.0G SECTION 9 & 33] Held short position (100 -> 90) earns exactly +10% discrete-bar return with zero turnover."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("90.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3 * bar_dur, close=Decimal("90.0"), open=Decimal("90.0")),
+    ]
+    positions = [-1, -1, 0, 0]
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    res = run_causal_backtest(candles, positions, zero_costs)
+    assert res.result.gross_return == Decimal("0.10")
+    assert res.result.net_return == Decimal("0.10")
+    assert len(res.executions) == 2
+
+
+def test_intermediate_quote_does_not_affect_hold_return() -> None:
+    """[3B.0G SECTION 35] Changing intermediate quote (105 -> 106 -> 120) inside hold interval has ZERO effect on held short return."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("110.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3 * bar_dur, close=Decimal("110.0"), open=Decimal("110.0")),
+    ]
+    positions = [-1, -1, 0, 0]
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    returns = []
+    for intermediate_price in [Decimal("105.0"), Decimal("106.0"), Decimal("120.0")]:
+        stream = [
+            # Entry observation at bar 0
+            ExecutionPriceObservation(ts_event_ns=t0 + bar_dur + 10_000_000, price=Decimal("100.0"), bid=Decimal("100.0"), ask=Decimal("100.0")),
+            # Intermediate observation inside hold interval (bar 1: t0 + 2*bar_dur)
+            ExecutionPriceObservation(ts_event_ns=t0 + 2 * bar_dur - 10_000_000, price=intermediate_price, bid=intermediate_price, ask=intermediate_price),
+            # Exit observation at bar 2
+            ExecutionPriceObservation(ts_event_ns=t0 + 3 * bar_dur + 10_000_000, price=Decimal("110.0"), bid=Decimal("110.0"), ask=Decimal("110.0")),
+        ]
+        res = run_causal_backtest(candles, positions, zero_costs, execution_stream=stream)
+        returns.append(res.result.gross_return)
+
+    # All three must be exactly identical to -0.10
+    assert len(set(returns)) == 1
+    assert returns[0] == Decimal("-0.10")
+
+
+def test_hold_period_missing_execution_stream_passes() -> None:
+    """[3B.0G SECTION 10 & 33] Hold-only valuation interval does NOT require any execution stream observation."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("105.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3 * bar_dur, close=Decimal("110.0"), open=Decimal("105.0")),
+    ]
+    # Bar 0: enter 1. Bar 1: hold 1. Bar 2: exit 0.
+    positions = [1, 1, 0, 0]
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # Stream has observations for entry and exit, but ZERO observations during hold interval (bar 1)
+    stream = [
+        ExecutionPriceObservation(ts_event_ns=t0 + bar_dur + 10_000_000, price=Decimal("100.0"), bid=Decimal("100.0"), ask=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t0 + 3 * bar_dur + 10_000_000, price=Decimal("110.0"), bid=Decimal("110.0"), ask=Decimal("110.0")),
+    ]
+    res = run_causal_backtest(candles, positions, zero_costs, execution_stream=stream)
+    assert res.result.gross_return == Decimal("0.10")
+    assert len(res.executions) == 2
+
+
+def test_hold_period_missing_bid_ask_passes() -> None:
+    """[3B.0G SECTION 11 & 33] Zero-turnover interval does not require bid or ask data."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("105.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3 * bar_dur, close=Decimal("110.0"), open=Decimal("105.0")),
+    ]
+    positions = [1, 1, 0, 0]
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # Stream has observation during hold interval with bid=None and ask=None
+    stream = [
+        ExecutionPriceObservation(ts_event_ns=t0 + bar_dur + 10_000_000, price=Decimal("100.0"), bid=Decimal("100.0"), ask=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t0 + 2 * bar_dur - 10_000_000, price=Decimal("102.0"), bid=None, ask=None),
+        ExecutionPriceObservation(ts_event_ns=t0 + 3 * bar_dur + 10_000_000, price=Decimal("110.0"), bid=Decimal("110.0"), ask=Decimal("110.0")),
+    ]
+    res = run_causal_backtest(candles, positions, zero_costs, execution_stream=stream)
+    assert res.result.gross_return == Decimal("0.10")
+
+
+def test_zero_turnover_selector_not_called(monkeypatch: pytest.MonkeyPatch) -> None:
+    """[3B.0G SECTION 15 & 33] select_first_executable_observation is NOT called on zero-turnover hold intervals."""
+    import btceth_os.research.backtest as bt_mod
+
+    call_count = 0
+    orig_select = bt_mod.select_first_executable_observation
+
+    def counting_select(*args: Any, **kwargs: Any) -> Any:
+        nonlocal call_count
+        call_count += 1
+        return orig_select(*args, **kwargs)
+
+    monkeypatch.setattr(bt_mod, "select_first_executable_observation", counting_select)
+
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("105.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3 * bar_dur, close=Decimal("110.0"), open=Decimal("105.0")),
+        Candle(ts_event_ns=t0 + 4 * bar_dur, close=Decimal("115.0"), open=Decimal("110.0")),
+    ]
+    # Positions: 0->1 (entry), 1->1 (hold), 1->1 (hold), 1->0 (exit)
+    positions = [1, 1, 1, 0, 0]
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    stream = [
+        ExecutionPriceObservation(ts_event_ns=t0 + bar_dur + 10_000_000, price=Decimal("100.0"), bid=Decimal("100.0"), ask=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t0 + 4 * bar_dur + 10_000_000, price=Decimal("115.0"), bid=Decimal("115.0"), ask=Decimal("115.0")),
+    ]
+    res = run_causal_backtest(candles, positions, zero_costs, execution_stream=stream)
+    assert res.result.gross_return == Decimal("0.15")
+    # There were 4 valuation intervals, but only 2 position transitions (entry + exit).
+    # The 2 hold intervals must NEVER call select_first_executable_observation!
+    assert call_count == 2
+
+
+def test_execution_records_only_for_turnover() -> None:
+    """[3B.0G SECTION 12 & 33] CausalExecutionRecord is emitted only when turnover > 0 (or terminal exit)."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0 + i * bar_dur, close=Decimal("100.0"), open=Decimal("100.0"))
+        for i in range(7)
+    ]
+    # 0 -> 1 on bar 0, then held long for 5 bars, then 1 -> 0 on bar 5
+    positions = [1, 1, 1, 1, 1, 0, 0]
+    zero_costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    res = run_causal_backtest(candles, positions, zero_costs)
+    # Exactly 2 execution records across 6 intervals:
+    assert len(res.executions) == 2
+    assert res.executions[0].bar_index == 0
+    assert res.executions[0].turnover == 1
+    assert res.executions[1].bar_index == 5
+    assert res.executions[1].turnover == 1
+
+
+def test_hold_costs_zero_fee_zero_slippage() -> None:
+    """[3B.0G SECTION 6, 14, 33] Zero-turnover hold intervals incur zero taker fee and zero slippage."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("105.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3 * bar_dur, close=Decimal("105.0"), open=Decimal("105.0")),
+    ]
+    # Bar 0: enter 1 (turnover 1). Bar 1: hold 1 (turnover 0). Bar 2: hold 1 (turnover 0).
+    positions = [1, 1, 1, 1]
+    # 10 bps fee + 10 bps slippage per unit turnover
+    costs = CostModel(taker_fee_bps=Decimal("10"), slippage_bps=Decimal("10"))
+
+    stream = [
+        ExecutionPriceObservation(ts_event_ns=t0 + bar_dur + 10_000_000, price=Decimal("100.0"), bid=Decimal("100.0"), ask=Decimal("100.0")),
+        ExecutionPriceObservation(ts_event_ns=t0 + 4 * bar_dur + 10_000_000, price=Decimal("105.0"), bid=Decimal("105.0"), ask=Decimal("105.0")),
+    ]
+    res = run_causal_backtest(candles, positions, costs, execution_stream=stream)
+    # Executions: 1 entry (bar 0) + 1 terminal flattening (end) = 2 executions.
+    # Total execution cost = 20 bps on entry + 20 bps on terminal exit = 40 bps (0.004).
+    # Zero cost from the 2 intermediate hold bars!
+    assert len(res.executions) == 2
+    assert res.executions[0].charge == Decimal("0.002")  # 20 bps
+    assert res.executions[1].charge == Decimal("0.002")  # 20 bps
+
+
+def test_flat_to_flat_no_execution() -> None:
+    """[3B.0G SECTION 18 & 33] Flat-to-flat (0 -> 0) produces zero executions, zero trades, and zero return."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0 + i * bar_dur, close=Decimal("100.0"), open=Decimal("100.0"))
+        for i in range(5)
+    ]
+    positions = [0, 0, 0, 0, 0]
+    costs = CostModel(taker_fee_bps=Decimal("10"), slippage_bps=Decimal("10"))
+
+    res = run_causal_backtest(candles, positions, costs)
+    assert len(res.executions) == 0
+    assert len(res.contracts) == 0
+    assert res.result.trades == 0
+    assert res.result.gross_return == Decimal("0")
+    assert res.result.net_return == Decimal("0")
+    assert res.result.total_cost == Decimal("0")
+
+
+def test_reversal_turnover_two() -> None:
+    """[3B.0G SECTION 19, 20, 33] Position reversal (-1 -> +1 and +1 -> -1) has turnover = 2 and charges two units."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+        Candle(ts_event_ns=t0 + 3 * bar_dur, close=Decimal("100.0"), open=Decimal("100.0")),
+    ]
+    # Reversal from -1 to +1 at bar 1: turnover = 2. Exit to 0 at bar 2: turnover = 1.
+    positions = [-1, 1, 0, 0]
+    costs = CostModel(taker_fee_bps=Decimal("5"), slippage_bps=Decimal("5"))
+
+    res = run_causal_backtest(candles, positions, costs)
+    assert len(res.executions) == 3
+    # Bar 0: 0 -> -1 (turnover 1)
+    assert res.executions[0].turnover == 1
+    assert res.executions[0].side == "SELL"
+    # Bar 1: -1 -> +1 (turnover 2, BUY)
+    assert res.executions[1].turnover == 2
+    assert res.executions[1].side == "BUY"
+    assert res.executions[1].charge == Decimal("2") * Decimal("10") / Decimal("10000")  # 20 bps
+    # Bar 2: +1 -> 0 (turnover 1, SELL)
+    assert res.executions[2].turnover == 1
+    assert res.executions[2].side == "SELL"
+
+
+def test_strict_research_context_incomplete_blocked() -> None:
+    """[3B.0G SECTION 21, 22, 33] Strict research context fails closed if missing any required identity field."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # Missing instrument_id
+    c_no_inst = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0"), dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_inst:
+        _run_causal_backtest_strict(c_no_inst, [1, 0], costs, strict_research_context=True)
+    assert "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE" in str(exc_inst.value)
+
+    # Missing dataset_id
+    c_no_ds = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_ds:
+        _run_causal_backtest_strict(c_no_ds, [1, 0], costs, strict_research_context=True)
+    assert "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE" in str(exc_ds.value)
+
+    # Missing market_type
+    c_no_mkt = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", venue="BINANCE"),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_mkt:
+        _run_causal_backtest_strict(c_no_mkt, [1, 0], costs, strict_research_context=True)
+    assert "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE" in str(exc_mkt.value)
+
+    # Missing venue
+    c_no_ven = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP"),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_ven:
+        _run_causal_backtest_strict(c_no_ven, [1, 0], costs, strict_research_context=True)
+    assert "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE" in str(exc_ven.value)
+
+
+def test_no_silent_market_type_or_venue_defaults() -> None:
+    """[3B.0G SECTION 23 & 33] Strict mode does NOT silently default missing market_type to USD_M_PERP or venue to BINANCE."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    # Bare candles with only instrument_id and dataset_id provided
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022"),
+    ]
+    with pytest.raises(TemporalIntegrityViolationError) as exc_info:
+        _run_causal_backtest_strict(candles, [1, 0], costs, strict_research_context=True)
+    assert "RESEARCH_EXECUTION_CONTEXT_INCOMPLETE" in str(exc_info.value)
+    # Verifies it failed because market_type=None, venue=None, rather than silently defaulting
+    assert "market_type=None" in str(exc_info.value)
+    assert "venue=None" in str(exc_info.value)
+
+
+def test_canonical_registry_explicit_identity() -> None:
+    """[3B.0G SECTION 25, 27, 33] All canonical datasets explicitly define instrument_id, market_type, venue."""
+    from btceth_os.research.data_guard import CANONICAL_DATASET_REGISTRY, DatasetRole
+
+    for ds_id, entry in CANONICAL_DATASET_REGISTRY.items():
+        if entry.status == "CANONICAL":
+            assert entry.instrument_id in ("BTCUSDT", "ETHUSDT"), f"{ds_id} missing valid instrument_id"
+            assert entry.market_type == "USD_M_PERP", f"{ds_id} missing valid market_type"
+            assert entry.venue == "BINANCE", f"{ds_id} missing valid venue"
+
+
+def test_guarded_loader_fails_on_incomplete_identity() -> None:
+    """[3B.0G SECTION 28 & 33] load_guarded_kline_candles fails closed if canonical metadata is incomplete."""
+    from btceth_os.research.backtest import load_guarded_kline_candles
+
+    # Calling with a valid partition succeeds and populates metadata
+    _, candles = load_guarded_kline_candles("BTCUSDT_DEV_2020_2022", strict_metadata=True)
+    assert len(candles) > 0
+    assert candles[0].instrument_id == "BTCUSDT"
+    assert candles[0].market_type == "USD_M_PERP"
+    assert candles[0].venue == "BINANCE"
+    assert candles[0].dataset_id == "BTCUSDT_DEV_2020_2022"
+
+
+def test_execution_record_identity_assertions() -> None:
+    """[3B.0G SECTION 32 & 33] Every CausalExecutionRecord in strict research has non-null identity fields."""
+    t0 = 1609459200_000_000_000
+    bar_dur = 3_600_000_000_000
+    candles = [
+        Candle(ts_event_ns=t0, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + bar_dur, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+        Candle(ts_event_ns=t0 + 2 * bar_dur, close=Decimal("100.0"), open=Decimal("100.0"), instrument_id="BTCUSDT", dataset_id="BTCUSDT_DEV_2020_2022", market_type="USD_M_PERP", venue="BINANCE"),
+    ]
+    positions = [1, 0, 0]
+    costs = CostModel(taker_fee_bps=Decimal("0"), slippage_bps=Decimal("0"))
+
+    res = _run_causal_backtest_strict(candles, positions, costs, strict_research_context=True)
+    assert len(res.executions) >= 1
+    for exec_rec in res.executions:
+        assert exec_rec.instrument_id == "BTCUSDT"
+        assert exec_rec.dataset_id == "BTCUSDT_DEV_2020_2022"
+        assert exec_rec.market_type == "USD_M_PERP"
+        assert exec_rec.venue == "BINANCE"
+
 
 
 
