@@ -1,0 +1,9 @@
+{
+  "report_version": "ROUND3B.0F",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T20:07:17.102788+00:00",
+  "strict_buy_requires_ask": true,
+  "strict_sell_requires_bid": true,
+  "trade_print_requires_trade_price": true,
+  "generic_price_no_strict_touch_fallback": true
+}

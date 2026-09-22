@@ -1,0 +1,9 @@
+{
+  "report_version": "ROUND3B.0F",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T20:07:17.100430+00:00",
+  "missing_expected_instrument_id_rejected": true,
+  "missing_observation_instrument_id_rejected": true,
+  "dataset_loader_propagation_verified": true,
+  "market_type_mismatch_rejected": true
+}

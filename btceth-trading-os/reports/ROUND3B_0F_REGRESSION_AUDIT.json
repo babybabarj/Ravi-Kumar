@@ -1,0 +1,10 @@
+{
+  "report_version": "ROUND3B.0F",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T20:07:17.463888+00:00",
+  "round3b_0e_order_arrival_regression_verified": true,
+  "round3b_0e_terminal_regression_verified": true,
+  "round3b_0d_partition_regression_verified": true,
+  "physical_partitions_matched": 8,
+  "logical_partitions_matched": 8
+}

@@ -1,0 +1,9 @@
+{
+  "report_version": "ROUND3B.0F",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-22T20:07:16.777477+00:00",
+  "execution_window_upper_bound_enforced": true,
+  "valid_observation_in_window_selected": true,
+  "return_timeline_causality_order_enforced": true,
+  "execution_delay_bars_window_aligned": true
+}
