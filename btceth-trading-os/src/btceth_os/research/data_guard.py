@@ -79,13 +79,39 @@ class CanonicalPartitionEntry:
     parent_dataset: Optional[str] = None
     status: str = "CANONICAL"
     partition_logical_sha256: Optional[str] = None
+    instrument_id: Optional[str] = None
+    market_type: Optional[str] = None
+    venue: Optional[str] = None
 
     @property
     def dataset_logical_sha(self) -> Optional[str]:
         return self.dataset_logical_sha256
 
+    @property
+    def resolved_instrument_id(self) -> str:
+        if self.instrument_id:
+            return self.instrument_id
+        if "BTC" in self.dataset_id:
+            return "BTCUSDT"
+        if "ETH" in self.dataset_id:
+            return "ETHUSDT"
+        return "UNKNOWN"
+
+    @property
+    def resolved_market_type(self) -> str:
+        if self.market_type:
+            return self.market_type
+        return "USD_M_PERP"
+
+    @property
+    def resolved_venue(self) -> str:
+        if self.venue:
+            return self.venue
+        return "BINANCE"
+
 
 CanonicalDatasetEntry = CanonicalPartitionEntry
+
 
 
 # Authoritative Dataset Registry
@@ -415,6 +441,34 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
 }
 
 CANONICAL_DATASET_REGISTRY: Mapping[str, CanonicalPartitionEntry] = types.MappingProxyType(_CANONICAL_DATASETS)
+
+
+def resolve_dataset_metadata(dataset_id: str, close_col: Optional[str] = None) -> dict[str, str]:
+    """Deterministically resolve instrument_id, market_type, venue, and dataset_id from registry or dataset_id."""
+    entry = CANONICAL_DATASET_REGISTRY.get(dataset_id)
+    if entry is not None:
+        inst = entry.resolved_instrument_id
+        mkt = entry.resolved_market_type
+        ven = entry.resolved_venue
+    else:
+        inst = "BTCUSDT" if "BTC" in dataset_id else ("ETHUSDT" if "ETH" in dataset_id else "UNKNOWN")
+        mkt = "USD_M_PERP"
+        ven = "BINANCE"
+
+    # If close_col explicitly indicates SPOT or PERP, prioritize that column semantics
+    if close_col:
+        c_lower = close_col.lower()
+        if "spot" in c_lower:
+            mkt = "SPOT"
+        elif "perp" in c_lower:
+            mkt = "USD_M_PERP"
+
+    return {
+        "dataset_id": dataset_id,
+        "instrument_id": inst,
+        "market_type": mkt,
+        "venue": ven,
+    }
 
 
 def register_canonical_dataset(entry: CanonicalPartitionEntry) -> None:

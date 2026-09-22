@@ -265,9 +265,9 @@ def generate_execution_causality_audit(force: bool = False) -> dict[str, Any]:
     # 3. Execution stream post-decision observation selection
     bar_close = 1609462800_000_000_000
     exec_stream = [
-        ExecutionPriceObservation(ts_event_ns=bar_close + 10_000_000, price=Decimal("30020.0")),
-        ExecutionPriceObservation(ts_event_ns=bar_close + 60_000_000, price=Decimal("30040.0")),
-        ExecutionPriceObservation(ts_event_ns=bar_close + 3_600_000_000_000 + 60_000_000, price=Decimal("30040.0")),
+        ExecutionPriceObservation(ts_event_ns=bar_close + 10_000_000, price=Decimal("30020.0"), bid=Decimal("30020.0"), ask=Decimal("30020.0")),
+        ExecutionPriceObservation(ts_event_ns=bar_close + 60_000_000, price=Decimal("30040.0"), bid=Decimal("30040.0"), ask=Decimal("30040.0")),
+        ExecutionPriceObservation(ts_event_ns=bar_close + 3_600_000_000_000 + 60_000_000, price=Decimal("30040.0"), bid=Decimal("30040.0"), ask=Decimal("30040.0")),
     ]
     stream_res = run_causal_backtest(
         candles[:2], [1, 0], costs,
@@ -807,9 +807,9 @@ def evaluate_round3b_0d_reliability(mode: str = "FULL_ACCEPTANCE") -> tuple[bool
 
     # 30. FIRST_POST_DECISION_OBSERVATION
     stream_ex = [
-        ExecutionPriceObservation(ts_event_ns=1609462800_010_000_000, price=Decimal("101.0")),
-        ExecutionPriceObservation(ts_event_ns=1609462800_060_000_000, price=Decimal("103.0")),
-        ExecutionPriceObservation(ts_event_ns=1609466400_060_000_000, price=Decimal("103.0")),
+        ExecutionPriceObservation(ts_event_ns=1609462800_010_000_000, price=Decimal("101.0"), bid=Decimal("101.0"), ask=Decimal("101.0")),
+        ExecutionPriceObservation(ts_event_ns=1609462800_060_000_000, price=Decimal("103.0"), bid=Decimal("103.0"), ask=Decimal("103.0")),
+        ExecutionPriceObservation(ts_event_ns=1609466400_060_000_000, price=Decimal("103.0"), bid=Decimal("103.0"), ask=Decimal("103.0")),
     ]
     res_stream = run_causal_backtest(
         [c1, c2], [1, 0], costs_zero,

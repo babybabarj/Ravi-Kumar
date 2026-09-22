@@ -47,6 +47,7 @@ class ExecutionMode(str, Enum):
     TRADE_PRINT = "TRADE_PRINT"
     BAR_OPEN_IDEALIZED = "BAR_OPEN_IDEALIZED"
     BAR_CLOSE_CONSERVATIVE = "BAR_CLOSE_CONSERVATIVE"
+    GENERIC_PRICE = "GENERIC_PRICE"
 
 
 LATENCY_VALUES_SOURCE = "ASSUMPTION"
@@ -105,6 +106,14 @@ class ExecutionPriceObservation:
     sequence_id: Optional[int] = None
 
     def __post_init__(self) -> None:
+        if self.source_instrument and not self.instrument_id:
+            object.__setattr__(self, "instrument_id", self.source_instrument)
+        elif self.instrument_id and not self.source_instrument:
+            object.__setattr__(self, "source_instrument", self.instrument_id)
+        if self.source_dataset_id and not self.dataset_id:
+            object.__setattr__(self, "dataset_id", self.source_dataset_id)
+        elif self.dataset_id and not self.source_dataset_id:
+            object.__setattr__(self, "source_dataset_id", self.dataset_id)
         if self.price is not None and self.price <= 0:
             raise ValueError("price must be positive")
         if self.bid is not None and self.bid <= 0:
@@ -137,7 +146,7 @@ class ExecutionAssumptions:
     allow_open_fallback: bool = False
     signal_timeframe: str = "1h"
     execution_timeframe: str = "1h"
-    execution_model_version: str = "ROUND3B_0E_EXECUTION_ARRIVAL_CAUSAL"
+    execution_model_version: str = "ROUND3B_0F_EXECUTION_WINDOW_INTEGRITY"
     latency_values_source: str = LATENCY_VALUES_SOURCE
 
     def __post_init__(self) -> None:
@@ -171,12 +180,24 @@ class ExecutionObservation:
     venue: Optional[str] = "BINANCE"
     terminal: bool = False
     price_observation_ts_ns: Optional[int] = None
+    instrument_id: Optional[str] = None
+    dataset_id: Optional[str] = None
 
     def __post_init__(self) -> None:
+        if self.source_instrument and not self.instrument_id:
+            object.__setattr__(self, "instrument_id", self.source_instrument)
+        elif self.instrument_id and not self.source_instrument:
+            object.__setattr__(self, "source_instrument", self.instrument_id)
+        if self.source_dataset_id and not self.dataset_id:
+            object.__setattr__(self, "dataset_id", self.source_dataset_id)
+        elif self.dataset_id and not self.source_dataset_id:
+            object.__setattr__(self, "source_dataset_id", self.dataset_id)
+
         if self.price_observation_ts_ns is not None and not self.fill_price_observation_ts_ns:
             object.__setattr__(self, "fill_price_observation_ts_ns", self.price_observation_ts_ns)
         elif self.fill_price_observation_ts_ns and self.price_observation_ts_ns is None:
             object.__setattr__(self, "price_observation_ts_ns", self.fill_price_observation_ts_ns)
+
 
         if self.fill_price <= 0:
             raise ValueError("fill_price must be positive")
@@ -220,10 +241,13 @@ def select_first_executable_observation(
     *,
     execution_eligible_ts_ns: int,
     order_side: OrderSide,
+    execution_window_end_ts_ns: Optional[int] = None,
     instrument_id: Optional[str] = None,
     market_type: Optional[str] = "USD_M_PERP",
     venue: Optional[str] = "BINANCE",
+    dataset_id: Optional[str] = None,
     execution_mode: ExecutionMode = ExecutionMode.BID_ASK_TOUCH,
+    strict_identity: bool = False,
 ) -> tuple[ExecutionPriceObservation, Decimal, Decimal]:
     """Centralized auditable helper to select first eligible observation.
 
@@ -232,7 +256,12 @@ def select_first_executable_observation(
     - Stream is empty: NO_VALID_EXECUTION_OBSERVATION
     - Stream is not monotonic: EXECUTION_STREAM_NOT_MONOTONIC
     - Stream has ambiguous duplicate timestamps: AMBIGUOUS_EXECUTION_OBSERVATION
-    - No eligible observation found >= execution_eligible_ts_ns matching criteria: NO_VALID_EXECUTION_OBSERVATION
+    - Expected instrument missing when strict: EXECUTION_INSTRUMENT_IDENTITY_REQUIRED
+    - Observation instrument missing when required: EXECUTION_OBSERVATION_INSTRUMENT_REQUIRED
+    - Touch pricing missing for BID_ASK_TOUCH: EXECUTABLE_ASK_MISSING / EXECUTABLE_BID_MISSING
+    - Trade print missing for TRADE_PRINT: EXECUTABLE_TRADE_PRICE_MISSING
+    - No observation in execution window: NO_VALID_EXECUTION_OBSERVATION_IN_WINDOW
+    - No eligible observation found: NO_VALID_EXECUTION_OBSERVATION
     """
     if not execution_stream:
         raise TemporalIntegrityViolationError("NO_VALID_EXECUTION_OBSERVATION: Execution stream is empty")
@@ -256,61 +285,113 @@ def select_first_executable_observation(
                         f"with differing prices and no strictly increasing sequence_id"
                     )
 
-    # 2. Candidate Filtering
+    # 2. Strict Instrument Identity Check
+    if strict_identity and not instrument_id:
+        raise TemporalIntegrityViolationError(
+            "EXECUTION_INSTRUMENT_IDENTITY_REQUIRED: Expected instrument_id is missing or None in strict execution"
+        )
+
+    # 3. Candidate Filtering
     for s_obs in execution_stream:
         # Pre-arrival observations are strictly rejected
         if s_obs.ts_event_ns < execution_eligible_ts_ns:
             continue
 
-        # Same-instrument check
+        # Check execution window upper bound
+        if execution_window_end_ts_ns is not None and s_obs.ts_event_ns > execution_window_end_ts_ns:
+            continue
+
+        # Instrument identity check
         obs_inst = s_obs.instrument_id or s_obs.source_instrument
-        if instrument_id is not None and obs_inst is not None:
+        if strict_identity:
+            if not obs_inst:
+                raise TemporalIntegrityViolationError(
+                    "EXECUTION_OBSERVATION_INSTRUMENT_REQUIRED: Observation instrument_id is missing or None in strict execution"
+                )
             if obs_inst != instrument_id:
                 continue
-
-        # Market-type check
-        if market_type is not None and s_obs.market_type is not None:
-            if s_obs.market_type != market_type:
+            if market_type is not None:
+                if not s_obs.market_type:
+                    raise TemporalIntegrityViolationError(
+                        "EXECUTION_OBSERVATION_MARKET_TYPE_REQUIRED: Observation market_type is missing in strict execution"
+                    )
+                if s_obs.market_type != market_type:
+                    continue
+            if venue is not None:
+                if not s_obs.venue:
+                    raise TemporalIntegrityViolationError(
+                        "EXECUTION_OBSERVATION_VENUE_REQUIRED: Observation venue is missing in strict execution"
+                    )
+                if s_obs.venue != venue:
+                    continue
+        else:
+            if instrument_id is not None:
+                if not obs_inst:
+                    raise TemporalIntegrityViolationError(
+                        "EXECUTION_OBSERVATION_INSTRUMENT_REQUIRED: Observation instrument_id is missing or None"
+                    )
+                if obs_inst != instrument_id:
+                    continue
+            if market_type is not None and s_obs.market_type is not None and s_obs.market_type != market_type:
+                continue
+            if venue is not None and s_obs.venue is not None and s_obs.venue != venue:
                 continue
 
-        # Venue check
-        if venue is not None and s_obs.venue is not None:
-            if s_obs.venue != venue:
-                continue
-
-        # Side-aware executable touch derivation
-        raw_price = s_obs.price or s_obs.trade_price
+        # Strict Touch & Execution Pricing (No Fallback to Generic Price in Strict Touch Modes)
+        raw_price: Optional[Decimal] = None
         fill_price: Optional[Decimal] = None
 
-        if order_side == OrderSide.BUY:
-            if execution_mode == ExecutionMode.BID_ASK_TOUCH:
-                if s_obs.ask is not None:
-                    fill_price = s_obs.ask
-                    raw_price = s_obs.ask
-                elif s_obs.price is not None:
-                    fill_price = s_obs.price
-                    raw_price = s_obs.price
+        if execution_mode == ExecutionMode.BID_ASK_TOUCH:
+            if order_side == OrderSide.BUY:
+                if s_obs.ask is None:
+                    raise TemporalIntegrityViolationError(
+                        "EXECUTABLE_ASK_MISSING: ExecutionMode.BID_ASK_TOUCH requires ask price for BUY orders"
+                    )
+                fill_price = s_obs.ask
+                raw_price = s_obs.ask
+            elif order_side == OrderSide.SELL:
+                if s_obs.bid is None:
+                    raise TemporalIntegrityViolationError(
+                        "EXECUTABLE_BID_MISSING: ExecutionMode.BID_ASK_TOUCH requires bid price for SELL orders"
+                    )
+                fill_price = s_obs.bid
+                raw_price = s_obs.bid
             else:
-                fill_price = s_obs.trade_price or s_obs.price
-                raw_price = fill_price
-        elif order_side == OrderSide.SELL:
-            if execution_mode == ExecutionMode.BID_ASK_TOUCH:
-                if s_obs.bid is not None:
-                    fill_price = s_obs.bid
-                    raw_price = s_obs.bid
-                elif s_obs.price is not None:
-                    fill_price = s_obs.price
-                    raw_price = s_obs.price
-            else:
-                fill_price = s_obs.trade_price or s_obs.price
-                raw_price = fill_price
+                raise TemporalIntegrityViolationError(
+                    f"INVALID_ORDER_SIDE: Unsupported order side {order_side} for BID_ASK_TOUCH"
+                )
+        elif execution_mode == ExecutionMode.TRADE_PRINT:
+            if s_obs.trade_price is None:
+                raise TemporalIntegrityViolationError(
+                    "EXECUTABLE_TRADE_PRICE_MISSING: ExecutionMode.TRADE_PRINT requires trade_price"
+                )
+            fill_price = s_obs.trade_price
+            raw_price = s_obs.trade_price
+        elif execution_mode in (
+            ExecutionMode.GENERIC_PRICE,
+            ExecutionMode.BAR_OPEN_IDEALIZED,
+            ExecutionMode.BAR_CLOSE_CONSERVATIVE,
+        ):
+            price_val = s_obs.price or s_obs.trade_price
+            if price_val is None:
+                raise TemporalIntegrityViolationError(
+                    f"EXECUTABLE_PRICE_MISSING: Mode {execution_mode} requires generic price or trade_price"
+                )
+            fill_price = price_val
+            raw_price = price_val
         else:
-            fill_price = s_obs.price or s_obs.trade_price
-            raw_price = fill_price
+            raise TemporalIntegrityViolationError(
+                f"UNSUPPORTED_EXECUTION_MODE: Execution mode {execution_mode} is not supported"
+            )
 
         if fill_price is not None and fill_price > 0:
             return s_obs, fill_price, raw_price
 
+    if execution_window_end_ts_ns is not None:
+        raise TemporalIntegrityViolationError(
+            f"NO_VALID_EXECUTION_OBSERVATION_IN_WINDOW: No matching observation found in execution window "
+            f"[{execution_eligible_ts_ns}, {execution_window_end_ts_ns}] for instrument={instrument_id}, side={order_side}"
+        )
     raise TemporalIntegrityViolationError(
         f"NO_VALID_EXECUTION_OBSERVATION: No matching observation found >= {execution_eligible_ts_ns} "
         f"for instrument={instrument_id}, side={order_side}"
@@ -328,12 +409,40 @@ class Candle:
     bar_close_ts_ns: Optional[int] = None
     source_instrument: Optional[str] = None
     source_dataset_id: Optional[str] = None
+    instrument_id: Optional[str] = None
+    dataset_id: Optional[str] = None
+    market_type: Optional[str] = None
+    venue: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.close <= 0:
             raise ValueError("candle close must be positive")
         if self.open is not None and self.open <= 0:
             raise ValueError("candle open must be positive")
+        if self.source_instrument and not self.instrument_id:
+            object.__setattr__(self, "instrument_id", self.source_instrument)
+        elif self.instrument_id and not self.source_instrument:
+            object.__setattr__(self, "source_instrument", self.instrument_id)
+        if self.source_dataset_id and not self.dataset_id:
+            object.__setattr__(self, "dataset_id", self.source_dataset_id)
+        elif self.dataset_id and not self.source_dataset_id:
+            object.__setattr__(self, "source_dataset_id", self.dataset_id)
+
+    @property
+    def resolved_instrument_id(self) -> Optional[str]:
+        return self.instrument_id or self.source_instrument
+
+    @property
+    def resolved_dataset_id(self) -> Optional[str]:
+        return self.dataset_id or self.source_dataset_id
+
+    @property
+    def resolved_market_type(self) -> Optional[str]:
+        return self.market_type
+
+    @property
+    def resolved_venue(self) -> Optional[str]:
+        return self.venue
 
     @property
     def resolved_bar_open_ts_ns(self) -> int:
@@ -344,6 +453,7 @@ class Candle:
         if self.bar_close_ts_ns is not None:
             return self.bar_close_ts_ns
         return self.resolved_bar_open_ts_ns + 3_600_000_000_000
+
 
 
 def resolve_candle_close_ts(
@@ -433,35 +543,88 @@ def load_kline_candles(path: Path | str) -> tuple[str, tuple[Candle, ...]]:
 
 def load_guarded_kline_candles(
     path: Path | str,
-    dataset_id: str,
+    dataset_id: Optional[str] = None,
     operation: Any = "backtest",
     open_col: str = "open",
     close_col: str = "close",
+    instrument_id: Optional[str] = None,
+    market_type: Optional[str] = None,
+    venue: Optional[str] = None,
 ) -> tuple[str, tuple[Candle, ...]]:
     """Read a guarded historical Parquet partition for causal research backtests."""
-    from .data_guard import load_research_parquet
+    from .data_guard import ROOT, load_research_parquet, resolve_dataset_metadata, CANONICAL_DATASET_REGISTRY
+    p_str = str(path)
+    if dataset_id is None:
+        if p_str in CANONICAL_DATASET_REGISTRY:
+            dataset_id = p_str
+            candidate = ROOT / "artifacts" / "research" / "partitions" / f"{dataset_id}.parquet"
+            if candidate.is_file():
+                path = candidate
+        else:
+            dataset_id = Path(path).stem
+    elif not Path(path).is_file() and p_str in CANONICAL_DATASET_REGISTRY:
+        candidate = ROOT / "artifacts" / "research" / "partitions" / f"{p_str}.parquet"
+        if candidate.is_file():
+            path = candidate
+
     tbl = load_research_parquet(file_path=path, dataset_id=dataset_id, operation=operation)
     schema_names = tbl.column_names
     has_close = close_col in schema_names
     has_open = open_col in schema_names
-    if not has_close and "spot_close" in schema_names:
-        close_col = "spot_close"
-        has_close = True
-    if not has_open and "spot_open" in schema_names:
-        open_col = "spot_open"
-        has_open = True
+
+    meta = resolve_dataset_metadata(dataset_id, close_col=close_col if has_close else None)
+    eff_market_type = market_type or meta["market_type"]
+    eff_instrument = instrument_id or meta["instrument_id"]
+    eff_venue = venue or meta["venue"]
+
+    if not has_close:
+        if eff_market_type == "USD_M_PERP" and "perp_close" in schema_names:
+            close_col = "perp_close"
+            has_close = True
+        elif eff_market_type == "SPOT" and "spot_close" in schema_names:
+            close_col = "spot_close"
+            has_close = True
+        elif "perp_close" in schema_names:
+            close_col = "perp_close"
+            eff_market_type = "USD_M_PERP"
+            has_close = True
+        elif "spot_close" in schema_names:
+            close_col = "spot_close"
+            eff_market_type = "SPOT"
+            has_close = True
+
+    if not has_open:
+        if eff_market_type == "USD_M_PERP" and "perp_open" in schema_names:
+            open_col = "perp_open"
+            has_open = True
+        elif eff_market_type == "SPOT" and "spot_open" in schema_names:
+            open_col = "spot_open"
+            has_open = True
+        elif "perp_open" in schema_names:
+            open_col = "perp_open"
+            has_open = True
+        elif "spot_open" in schema_names:
+            open_col = "spot_open"
+            has_open = True
+
     if not has_close:
         raise ValueError(f"Could not find close price column '{close_col}' in dataset '{dataset_id}'")
-    
+
     ts_list = tbl["ts_event_ns"].to_pylist()
     close_list = tbl[close_col].to_pylist()
     open_list = tbl[open_col].to_pylist() if has_open else [None] * len(ts_list)
-    
+
     candles = tuple(
         Candle(
             ts_event_ns=int(ts),
             close=Decimal(str(c)),
             open=Decimal(str(o)) if o is not None else None,
+            source_instrument=eff_instrument,
+            source_dataset_id=dataset_id,
+            instrument_id=eff_instrument,
+            dataset_id=dataset_id,
+            market_type=eff_market_type,
+            venue=eff_venue,
         )
         for ts, c, o in zip(ts_list, close_list, open_list, strict=True)
     )
@@ -588,19 +751,19 @@ def walk_forward_causal(
         pos_test = list(positions[train_end:test_end])
         exec_stream = None
         if test_end < len(candles):
-            fol_c = candles[test_end]
             exec_stream = [
                 ExecutionPriceObservation(
-                    ts_event_ns=fol_c.resolved_bar_open_ts_ns,
-                    price=fol_c.open or fol_c.close,
-                    bid=fol_c.open or fol_c.close,
-                    ask=fol_c.open or fol_c.close,
-                    trade_price=fol_c.open or fol_c.close,
+                    ts_event_ns=c.resolved_bar_open_ts_ns,
+                    price=c.open or c.close,
+                    bid=c.open or c.close,
+                    ask=c.open or c.close,
+                    trade_price=c.open or c.close,
                     price_source=PriceSource.NEXT_BAR_OPEN,
-                    instrument_id=fol_c.source_instrument,
-                    market_type="USD_M_PERP",
-                    venue="BINANCE",
+                    instrument_id=c.instrument_id or c.source_instrument,
+                    market_type=c.market_type or "USD_M_PERP",
+                    venue=c.venue or "BINANCE",
                 )
+                for c in candles[train_end + 1 : test_end + 1]
             ]
         else:
             for k in range(1, exec_assumptions.execution_delay_bars + 2):
@@ -725,6 +888,10 @@ def run_causal_backtest(
     execution_stream: Optional[Sequence[ExecutionPriceObservation]] = None,
     funding_signals: Optional[Sequence[Any]] = None,
     override_contracts: Optional[Sequence[TemporalEventContract]] = None,
+    instrument_id: Optional[str] = None,
+    market_type: Optional[str] = None,
+    venue: Optional[str] = None,
+    dataset_id: Optional[str] = None,
 ) -> CausalBacktestResult:
     """Run an offline research backtest enforcing true market-time causality, order-arrival timing, and authentic terminal settlement.
 
@@ -820,6 +987,10 @@ def run_causal_backtest(
     for index, candle in enumerate(candles[:-1]):
         next_candle = candles[index + 1]
 
+        # Valuation close timestamp for the interval ending at next_candle
+        candle_close_ts = resolve_candle_close_ts(candle, next_candle)
+        next_close_ts = resolve_candle_close_ts(next_candle, candles[index + 2] if index + 2 < len(candles) else None)
+
         # Functional execution delay: target position executed at next_candle
         sig_idx = index - delay + 1
         target_position = positions[sig_idx] if sig_idx >= 0 else 0
@@ -833,15 +1004,23 @@ def run_causal_backtest(
 
         # Explicit bar timing: signal available strictly at bar close
         source_ts_ns = candle.resolved_bar_open_ts_ns
-        available_ts_ns = resolve_candle_close_ts(candle, next_candle)
+        available_ts_ns = candle_close_ts
         decision_ts_ns = available_ts_ns + exec_assumptions.decision_latency_ns
         order_submit_ts_ns = decision_ts_ns
         exchange_arrival_ts_ns = order_submit_ts_ns + exec_assumptions.execution_latency_ns
         execution_eligible_ts_ns = exchange_arrival_ts_ns
 
-        # Resolve executable fill price and authentic observation timestamp
-        source_inst = candle.source_instrument
-        source_ds_id = candle.source_dataset_id
+        # Resolve execution identity from candle or explicit context
+        source_inst = candle.instrument_id or candle.source_instrument or instrument_id
+        source_ds_id = candle.dataset_id or candle.source_dataset_id or dataset_id
+        source_mkt = market_type or candle.market_type or "USD_M_PERP"
+        source_ven = venue or candle.venue or "BINANCE"
+
+        if market_type is not None and candle.market_type is not None and candle.market_type != market_type:
+            raise TemporalIntegrityViolationError(
+                f"MARKET_TYPE_MISMATCH: candle market_type '{candle.market_type}' does not match requested market_type '{market_type}'"
+            )
+
         obs_bid = None
         obs_ask = None
         raw_observed_price = None
@@ -850,16 +1029,21 @@ def run_causal_backtest(
             s_obs, fill_price, raw_observed_price = select_first_executable_observation(
                 execution_stream,
                 execution_eligible_ts_ns=execution_eligible_ts_ns,
+                execution_window_end_ts_ns=next_close_ts,
                 order_side=order_side,
                 instrument_id=source_inst,
-                market_type="USD_M_PERP",
-                venue="BINANCE",
+                market_type=source_mkt,
+                venue=source_ven,
+                dataset_id=source_ds_id,
                 execution_mode=exec_assumptions.execution_mode,
+                strict_identity=True if source_inst else False,
             )
             fill_obs_ts = s_obs.ts_event_ns
             fill_ts_ns = max(fill_obs_ts, exchange_arrival_ts_ns) + exec_assumptions.fill_latency_ns
             source_inst = s_obs.instrument_id or s_obs.source_instrument or source_inst
             source_ds_id = s_obs.dataset_id or s_obs.source_dataset_id or source_ds_id
+            source_mkt = s_obs.market_type or source_mkt
+            source_ven = s_obs.venue or source_ven
             obs_bid = s_obs.bid
             obs_ask = s_obs.ask
 
@@ -880,7 +1064,6 @@ def run_causal_backtest(
             fill_ts_ns = max(fill_obs_ts, exchange_arrival_ts_ns) + exec_assumptions.fill_latency_ns
 
         elif exec_assumptions.price_source in (PriceSource.NEXT_BAR_CLOSE, PriceSource.BAR_CLOSE_CONSERVATIVE):
-            next_close_ts = resolve_candle_close_ts(next_candle, candles[index + 2] if index + 2 < len(candles) else None)
             if next_close_ts < execution_eligible_ts_ns:
                 raise TemporalIntegrityViolationError(
                     f"PRICE_CAUSALITY_VIOLATION: Next-bar close ({next_close_ts}) "
@@ -893,6 +1076,18 @@ def run_causal_backtest(
 
         else:
             raise ValueError(f"Unsupported price source: {exec_assumptions.price_source}")
+
+        # Enforce return-timeline causality order (Section 9 and 26):
+        # signal_close_ts <= fill_obs_ts <= valuation_close_ts
+        if not (candle_close_ts <= fill_obs_ts <= next_close_ts):
+            raise TemporalIntegrityViolationError(
+                f"RETURN_TIMELINE_CAUSALITY_VIOLATION: Signal close ({candle_close_ts}) <= "
+                f"fill observation ({fill_obs_ts}) <= valuation close ({next_close_ts}) invariant violated"
+            )
+        if fill_obs_ts > next_close_ts:
+            raise TemporalIntegrityViolationError(
+                f"RETURN_TIMELINE_CAUSALITY_VIOLATION: fill_obs_ts ({fill_obs_ts}) > next_valuation_ts ({next_close_ts})"
+            )
 
         contract = TemporalEventContract(
             source_ts_ns=source_ts_ns,
@@ -921,9 +1116,11 @@ def run_causal_backtest(
             bid=obs_bid,
             ask=obs_ask,
             side=order_side if turnover else None,
-            market_type="USD_M_PERP",
-            venue="BINANCE",
+            market_type=source_mkt,
+            venue=source_ven,
             terminal=False,
+            instrument_id=source_inst,
+            dataset_id=source_ds_id,
         )
 
         charge = Decimal(turnover) * costs.turnover_rate + abs(Decimal(target_position)) * costs.carry_bps_per_bar / BPS
@@ -995,22 +1192,32 @@ def run_causal_backtest(
 
         terminal_side = OrderSide.SELL if previous > 0 else OrderSide.BUY
 
+        term_inst = last_candle.instrument_id or last_candle.source_instrument or instrument_id
+        term_ds_id = last_candle.dataset_id or last_candle.source_dataset_id or dataset_id
+        term_mkt = market_type or last_candle.market_type or "USD_M_PERP"
+        term_ven = venue or last_candle.venue or "BINANCE"
+
         if execution_stream is not None:
             try:
                 term_obs, exit_price, raw_observed_price = select_first_executable_observation(
                     execution_stream,
                     execution_eligible_ts_ns=terminal_execution_eligible_ts,
+                    execution_window_end_ts_ns=None,
                     order_side=terminal_side,
-                    instrument_id=last_candle.source_instrument,
-                    market_type="USD_M_PERP",
-                    venue="BINANCE",
+                    instrument_id=term_inst,
+                    market_type=term_mkt,
+                    venue=term_ven,
+                    dataset_id=term_ds_id,
                     execution_mode=exec_assumptions.execution_mode,
+                    strict_identity=True if term_inst else False,
                 )
                 exit_obs_ts = term_obs.ts_event_ns
                 term_bid = term_obs.bid
                 term_ask = term_obs.ask
-                term_inst = term_obs.instrument_id or term_obs.source_instrument
-                term_ds_id = term_obs.dataset_id or term_obs.source_dataset_id
+                term_inst = term_obs.instrument_id or term_obs.source_instrument or term_inst
+                term_ds_id = term_obs.dataset_id or term_obs.source_dataset_id or term_ds_id
+                term_mkt = term_obs.market_type or term_mkt
+                term_ven = term_obs.venue or term_ven
                 exit_fill_ts = max(exit_obs_ts, terminal_exchange_arrival_ts) + exec_assumptions.fill_latency_ns
             except TemporalIntegrityViolationError as exc:
                 raise TemporalIntegrityViolationError(

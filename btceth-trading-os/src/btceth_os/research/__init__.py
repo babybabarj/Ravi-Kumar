@@ -24,6 +24,9 @@ from .backtest import (
     NAMED_LATENCY_PROFILES,
     LATENCY_VALUES_SOURCE,
 )
+from .data_guard import (
+    resolve_dataset_metadata,
+)
 
 __all__ = [
     "Candle",
@@ -50,4 +53,5 @@ __all__ = [
     "select_first_executable_observation",
     "NAMED_LATENCY_PROFILES",
     "LATENCY_VALUES_SOURCE",
+    "resolve_dataset_metadata",
 ]
