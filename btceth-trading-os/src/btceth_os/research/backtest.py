@@ -977,8 +977,11 @@ def walk_forward_momentum(
     )
 
 
-def _select_lookback(candles: Sequence[Candle], start: int, end: int, candidates: Sequence[int], costs: CostModel) -> int:
+def _select_lookback(candles: Sequence[Candle], start: int, end: int, candidates: Iterable[int], costs: CostModel) -> int:
     validate_research_series_identity(candles)
+    sorted_candidates = tuple(sorted(set(candidates)))
+    if not sorted_candidates:
+        raise ValueError("candidate_lookbacks cannot be empty")
     scored = []
     exec_assumptions = ExecutionAssumptions(
         price_source=PriceSource.NEXT_BAR_OPEN,
@@ -987,7 +990,7 @@ def _select_lookback(candles: Sequence[Candle], start: int, end: int, candidates
         strict_research_context=True,
         context=RESEARCH_CONTEXT,
     )
-    for lookback in candidates:
+    for lookback in sorted_candidates:
         positions = list(_momentum_positions(candles[:end], lookback))
         pos_slice = list(positions[start:end])
         for k in range(1, 3):

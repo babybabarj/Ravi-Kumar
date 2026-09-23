@@ -47,6 +47,9 @@ class ExperimentRecord:
     funding_pnl: float = 0.0
     basis_pnl: float = 0.0
     execution_cost: float = 0.0
+    # Series & Partition Identity Binding (Round 3B.0I)
+    instrument_id: str = "BTCUSDT"
+    dataset_id: str = ""
 
     def __post_init__(self) -> None:
         if not self.created_at_utc:
@@ -59,8 +62,16 @@ def compute_experiment_id(
     hypothesis: str,
     dataset_sha: str,
     parameters: dict[str, Any],
+    instrument_id: Optional[str] = None,
+    dataset_id: Optional[str] = None,
 ) -> str:
-    seed = f"{family}:{strategy_id}:{hypothesis}:{dataset_sha}:{canonical_json(parameters)}"
+    parts = [family, strategy_id, hypothesis, dataset_sha]
+    if instrument_id:
+        parts.append(instrument_id)
+    if dataset_id:
+        parts.append(dataset_id)
+    parts.append(canonical_json(parameters))
+    seed = ":".join(parts)
     return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16]
 
 
@@ -114,7 +125,7 @@ class ExperimentRegistry:
             conn.execute("CREATE INDEX IF NOT EXISTS idx_family ON experiments(family);")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_status ON experiments(status);")
 
-            # Migration for Round 3 structural columns
+            # Migration for Round 3 structural columns and Round 3B.0I identity columns
             extra_cols = [
                 ("research_round", "INTEGER DEFAULT 2"),
                 ("strategy_type", "TEXT DEFAULT 'DIRECTIONAL'"),
@@ -125,6 +136,8 @@ class ExperimentRegistry:
                 ("funding_pnl", "REAL DEFAULT 0.0"),
                 ("basis_pnl", "REAL DEFAULT 0.0"),
                 ("execution_cost", "REAL DEFAULT 0.0"),
+                ("instrument_id", "TEXT DEFAULT 'BTCUSDT'"),
+                ("dataset_id", "TEXT DEFAULT ''"),
             ]
             for col_name, col_def in extra_cols:
                 try:
@@ -147,8 +160,9 @@ class ExperimentRegistry:
                     rejection_reasons_json, created_at_utc,
                     research_round, strategy_type, market_neutral_target,
                     gross_exposure, net_delta, capital_committed,
-                    funding_pnl, basis_pnl, execution_cost
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    funding_pnl, basis_pnl, execution_cost,
+                    instrument_id, dataset_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """,
                 (
                     exp.experiment_id,
@@ -184,6 +198,8 @@ class ExperimentRegistry:
                     exp.funding_pnl,
                     exp.basis_pnl,
                     exp.execution_cost,
+                    exp.instrument_id,
+                    exp.dataset_id,
                 ),
             )
 
@@ -238,6 +254,8 @@ class ExperimentRegistry:
                         funding_pnl=r["funding_pnl"] if "funding_pnl" in keys else 0.0,
                         basis_pnl=r["basis_pnl"] if "basis_pnl" in keys else 0.0,
                         execution_cost=r["execution_cost"] if "execution_cost" in keys else 0.0,
+                        instrument_id=r["instrument_id"] if "instrument_id" in keys else "BTCUSDT",
+                        dataset_id=r["dataset_id"] if "dataset_id" in keys else "",
                     )
                 )
             return records
