@@ -32,7 +32,7 @@ def test_spec_is_immutable_and_rejects_float_or_cross_product_identity() -> None
         settlement_asset="USDT",
         product_family="TRADFI_COMMODITY_PERP",
         market_type="PERPETUAL",
-        contract_type="PERPETUAL",
+        contract_type="TRADIFI_PERPETUAL",
         underlying_type="GOLD_PRICE",
         tradfi_asset_class="COMMODITY",
         listing_ts=None,

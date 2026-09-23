@@ -86,7 +86,12 @@ class InstrumentSpec:
             raise ValueError("Instrument ID disagrees with venue, product family, or symbol")
         if self.market_type != ("SPOT" if self.product_family == "SPOT" else "PERPETUAL"):
             raise ValueError("market_type disagrees with product family")
-        if self.contract_type != ("NONE" if self.product_family == "SPOT" else "PERPETUAL"):
+        expected_contract_type = {
+            "SPOT": "NONE",
+            "USD_M_PERP": "PERPETUAL",
+            "TRADFI_COMMODITY_PERP": "TRADIFI_PERPETUAL",
+        }[self.product_family]
+        if self.contract_type != expected_contract_type:
             raise ValueError("contract_type disagrees with product family")
         for name in ("tick_size", "step_size", "min_qty", "max_qty", "min_notional", "max_notional", "contract_size"):
             value = getattr(self, name)
