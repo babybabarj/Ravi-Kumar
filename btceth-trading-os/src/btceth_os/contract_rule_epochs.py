@@ -5,6 +5,8 @@ Enforces:
 - Explicit isolation of unknown fields (no retrospective backfilling from current snapshots)
 - Cryptographic source hashing (physical and logical SHA-256)
 - Monotonic chronological intervals with quarantine protection
+- Separate funding_cap and funding_floor Decimals with full backwards compatibility
+- Field-level provenance tracking preventing backward rule leakage
 """
 
 from __future__ import annotations
@@ -41,6 +43,18 @@ class ContractRuleEpoch:
     source_logical_sha256: str
     confidence: str
     unknown_fields: list[str] = field(default_factory=list)
+    funding_cap: Decimal | None = None
+    funding_floor: Decimal | None = None
+    field_provenance: dict[str, str] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        # Harmonize funding_cap_floor and (funding_cap, funding_floor)
+        if self.funding_cap is None and self.funding_cap_floor is not None:
+            object.__setattr__(self, "funding_cap", abs(self.funding_cap_floor))
+        if self.funding_floor is None and self.funding_cap_floor is not None:
+            object.__setattr__(self, "funding_floor", -abs(self.funding_cap_floor))
+        if self.funding_cap_floor is None and self.funding_cap is not None:
+            object.__setattr__(self, "funding_cap_floor", self.funding_cap)
 
     def is_effective_at(self, dt_utc: datetime) -> bool:
         start = datetime.fromisoformat(self.effective_from_utc).replace(tzinfo=timezone.utc)
@@ -61,6 +75,8 @@ class ContractRuleEpoch:
             "funding_interval_seconds": self.funding_interval_seconds,
             "funding_interest_component": str(self.funding_interest_component) if self.funding_interest_component is not None else None,
             "funding_cap_floor": str(self.funding_cap_floor) if self.funding_cap_floor is not None else None,
+            "funding_cap": str(self.funding_cap) if self.funding_cap is not None else None,
+            "funding_floor": str(self.funding_floor) if self.funding_floor is not None else None,
             "price_index_method": self.price_index_method,
             "mark_price_method": self.mark_price_method,
             "underlying_session_rules": self.underlying_session_rules,
@@ -75,6 +91,7 @@ class ContractRuleEpoch:
             "source_logical_sha256": self.source_logical_sha256,
             "confidence": self.confidence,
             "unknown_fields": list(self.unknown_fields),
+            "field_provenance": dict(self.field_provenance),
         }
 
 
@@ -171,6 +188,9 @@ class ContractRuleEpochRegistry:
                     source_logical_sha256=raw["source_logical_sha256"],
                     confidence=raw["confidence"],
                     unknown_fields=list(raw.get("unknown_fields", [])),
+                    funding_cap=Decimal(str(raw["funding_cap"])) if raw.get("funding_cap") is not None else None,
+                    funding_floor=Decimal(str(raw["funding_floor"])) if raw.get("funding_floor") is not None else None,
+                    field_provenance=dict(raw.get("field_provenance", {})),
                 )
             )
         return cls(epochs)

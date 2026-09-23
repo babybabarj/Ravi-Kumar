@@ -173,87 +173,150 @@ def audit_single_archive(
     }
 
 
+def extract_kline_day_stats(date_str: str) -> tuple[int, Decimal, int]:
+    """Extract (bar_count, base_volume, trade_count) from raw klines for a given date."""
+    year_month = date_str[:7]
+    monthly_kline = ROOT / "artifacts" / "xau_native" / "raw" / "binance" / "futures_um" / "klines" / "XAUUSDT" / f"XAUUSDT-1m-{year_month}.zip"
+    daily_kline = ROOT / "artifacts" / "xau_native" / "raw" / "binance" / "futures_um" / "klines" / "XAUUSDT" / f"XAUUSDT-1m-{date_str}.zip"
+
+    kline_zip = daily_kline if daily_kline.is_file() else (monthly_kline if monthly_kline.is_file() else None)
+    if not kline_zip:
+        return 0, Decimal(0), 0
+
+    dt_start = int(datetime.fromisoformat(f"{date_str}T00:00:00+00:00").timestamp() * 1000)
+    dt_end = int(datetime.fromisoformat(f"{date_str}T23:59:59.999+00:00").timestamp() * 1000)
+
+    bar_count = 0
+    kline_vol = Decimal(0)
+    kline_trades = 0
+
+    with zipfile.ZipFile(kline_zip) as zf:
+        with zf.open(zf.namelist()[0]) as f, io.TextIOWrapper(f, encoding="utf-8") as tf:
+            reader = csv.reader(tf)
+            for row in reader:
+                if not row or not row[0].isdigit():
+                    continue
+                open_ts = int(row[0])
+                if dt_start <= open_ts <= dt_end:
+                    bar_count += 1
+                    kline_vol += Decimal(row[5])
+                    kline_trades += int(row[8])
+
+    return bar_count, kline_vol, kline_trades
+
+
 def run_full_trade_audit(
     through_date: str = "2026-09-22",
     max_workers: int = 4,
     output_path: Path | None = None,
+    cache_from: Path | None = None,
 ) -> dict[str, object]:
     as_of = datetime.now(timezone.utc).isoformat()
 
     monthly_periods = ["2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08"]
     daily_periods = [f"2026-09-{d:02d}" for d in range(1, 23)]
+    # Benchmark days required for multi-epoch reconciliation:
+    benchmark_days = ["2026-01-15", "2026-05-15", "2026-09-01"]
+
+    results_map: dict[tuple[str, str, str], dict[str, object]] = {}
+
+    # Load cache if available
+    if cache_from and cache_from.is_file():
+        try:
+            cached_data = json.loads(cache_from.read_text())
+            for arc in cached_data.get("archives", []):
+                key = (arc["dataset_type"], arc["cadence"], arc["period"])
+                results_map[key] = arc
+            print(f"Loaded {len(results_map)} cached archive audit records from {cache_from}")
+        except Exception as exc:
+            print(f"Warning: Failed to load cache from {cache_from}: {exc}")
 
     tasks: list[tuple[str, str, str]] = []
     for dt in ("trades", "aggTrades"):
         for m in monthly_periods:
-            tasks.append((dt, "monthly", m))
+            if (dt, "monthly", m) not in results_map:
+                tasks.append((dt, "monthly", m))
         for d in daily_periods:
-            tasks.append((dt, "daily", d))
+            if (dt, "daily", d) not in results_map:
+                tasks.append((dt, "daily", d))
+        for b_day in benchmark_days:
+            if (dt, "daily", b_day) not in results_map:
+                tasks.append((dt, "daily", b_day))
 
-    print(f"Beginning full audit of {len(tasks)} trade/aggTrade archives using {max_workers} workers...")
-    results: list[dict[str, object]] = []
-
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        future_map = {
-            executor.submit(audit_single_archive, dt, cad, per): (dt, cad, per)
-            for dt, cad, per in tasks
-        }
-        for future in as_completed(future_map):
-            meta = future_map[future]
-            try:
-                res = future.result()
-                results.append(res)
-                st = res.get("status")
-                rows = res.get("rows", 0)
-                sec = res.get("elapsed_seconds", 0)
-                print(f"[{st}] {meta[0]} {meta[1]} {meta[2]}: {rows:,} rows in {sec}s")
-            except Exception as exc:
-                print(f"[FAIL] {meta[0]} {meta[1]} {meta[2]}: Exception {exc}")
-                results.append({"status": "FAIL", "dataset_type": meta[0], "cadence": meta[1], "period": meta[2], "error": str(exc)})
+    if tasks:
+        print(f"Auditing {len(tasks)} trade/aggTrade archives using {max_workers} workers...")
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_map = {
+                executor.submit(audit_single_archive, dt, cad, per): (dt, cad, per)
+                for dt, cad, per in tasks
+            }
+            for future in as_completed(future_map):
+                meta = future_map[future]
+                try:
+                    res = future.result()
+                    results_map[meta] = res
+                    st = res.get("status")
+                    rows = res.get("rows", 0)
+                    sec = res.get("elapsed_seconds", 0)
+                    print(f"[{st}] {meta[0]} {meta[1]} {meta[2]}: {rows:,} rows in {sec}s")
+                except Exception as exc:
+                    print(f"[FAIL] {meta[0]} {meta[1]} {meta[2]}: Exception {exc}")
+                    results_map[meta] = {
+                        "status": "FAIL",
+                        "dataset_type": meta[0],
+                        "cadence": meta[1],
+                        "period": meta[2],
+                        "error": str(exc),
+                    }
+    else:
+        print(f"All {len(results_map)} required archives already present in cache.")
 
     # Sort results
+    results = list(results_map.values())
     results.sort(key=lambda r: (r.get("dataset_type", ""), r.get("cadence", ""), r.get("period", "")))
 
     all_passed = all(r.get("status") == "PASS" for r in results)
     total_trades_rows = sum(r.get("rows", 0) for r in results if r.get("dataset_type") == "trades")
     total_agg_rows = sum(r.get("rows", 0) for r in results if r.get("dataset_type") == "aggTrades")
 
-    # Reconciliation between daily trades, aggTrades, and klines for 2026-09-01
-    kline_ref_zip = ROOT / "artifacts" / "xau_native" / "raw" / "binance" / "futures_um" / "klines" / "XAUUSDT" / "XAUUSDT-1m-2026-09-01.zip"
-    reconciliation = {}
-    if kline_ref_zip.is_file():
-        kline_vol = Decimal(0)
-        kline_trades = 0
-        with zipfile.ZipFile(kline_ref_zip) as zf:
-            with zf.open(zf.namelist()[0]) as f, io.TextIOWrapper(f, encoding="utf-8") as tf:
-                reader = csv.reader(tf)
-                next(reader)
-                for row in reader:
-                    kline_vol += Decimal(row[5])
-                    kline_trades += int(row[8])
-
-        day_trades = next((r for r in results if r.get("dataset_type") == "trades" and r.get("period") == "2026-09-01"), None)
-        day_agg = next((r for r in results if r.get("dataset_type") == "aggTrades" and r.get("period") == "2026-09-01"), None)
+    # Multi-epoch benchmark day reconciliations
+    reconciliations: dict[str, dict[str, object]] = {}
+    for b_day in benchmark_days:
+        k_bars, k_vol, k_trades = extract_kline_day_stats(b_day)
+        day_trades = next((r for r in results if r.get("dataset_type") == "trades" and r.get("period") == b_day and r.get("cadence") == "daily"), None)
+        day_agg = next((r for r in results if r.get("dataset_type") == "aggTrades" and r.get("period") == b_day and r.get("cadence") == "daily"), None)
 
         if day_trades and day_agg:
             t_vol = Decimal(str(day_trades.get("total_base_volume", "0")))
             a_vol = Decimal(str(day_agg.get("total_base_volume", "0")))
-            reconciliation = {
-                "benchmark_day": "2026-09-01",
-                "kline_trade_count": kline_trades,
-                "trades_file_count": day_trades.get("rows"),
-                "trade_count_match": (kline_trades == day_trades.get("rows")),
-                "kline_base_volume": str(kline_vol),
+            t_count = day_trades.get("rows", 0)
+
+            trades_vol_diff = abs(k_vol - t_vol)
+            agg_vol_diff = abs(k_vol - a_vol)
+            count_match = (k_trades == t_count)
+            trades_exact = (count_match and trades_vol_diff == Decimal(0))
+            all_exact = (trades_exact and agg_vol_diff == Decimal(0))
+
+            reconciliations[b_day] = {
+                "benchmark_day": b_day,
+                "kline_bar_count": k_bars,
+                "kline_trade_count": k_trades,
+                "trades_file_count": t_count,
+                "trade_count_match": count_match,
+                "kline_base_volume": str(k_vol),
                 "trades_base_volume": str(t_vol),
                 "aggtrades_base_volume": str(a_vol),
-                "trades_vs_kline_vol_diff": str(abs(kline_vol - t_vol)),
-                "aggtrades_vs_kline_vol_diff": str(abs(kline_vol - a_vol)),
-                "exact_reconciliation": (kline_vol == t_vol == a_vol and kline_trades == day_trades.get("rows")),
+                "trades_vs_kline_vol_diff": str(trades_vol_diff),
+                "aggtrades_vs_kline_vol_diff": str(agg_vol_diff),
+                "trades_exact_reconciliation": trades_exact,
+                "exact_reconciliation": all_exact,
             }
 
+    primary_rec = reconciliations.get("2026-09-01", {})
+
     report = {
-        "report_type": "XAU_TRADES_AGGTRADES_FULL_AUDIT",
-        "audit_version": "1.0.0",
+        "report_type": "XAU_TRADES_AGGTRADES_FULL_AUDIT_V15",
+        "audit_version": "1.1.0",
         "timestamp_utc": as_of,
         "instrument_id": INSTRUMENT_ID,
         "through_date": through_date,
@@ -263,7 +326,9 @@ def run_full_trade_audit(
         "total_aggtrades_rows": total_agg_rows,
         "quarantined_2025_status": "VERIFIED_QUARANTINED",
         "research_admission_floor_utc": "2026-01-06T00:00:00Z",
-        "reconciliation": reconciliation,
+        "reconciliation": primary_rec,
+        "reconciliations": reconciliations,
+        "multi_epoch_reconciliation_passed": all(r["trades_exact_reconciliation"] for r in reconciliations.values()),
         "archives": results,
     }
 
@@ -276,13 +341,18 @@ def run_full_trade_audit(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Full Audit of XAUUSDT Trades and AggTrades")
+    parser = argparse.ArgumentParser(description="Full Audit of XAUUSDT Trades and AggTrades (V15)")
     parser.add_argument("--workers", type=int, default=4, help="Number of concurrent download/audit workers")
-    parser.add_argument("--output", type=Path, default=ROOT / "reports" / "XAU_TRADES_AGGTRADES_AUDIT.json")
+    parser.add_argument("--output", type=Path, default=ROOT / "reports" / "XAU_TRADES_AGGTRADES_AUDIT_V15.json")
+    parser.add_argument("--cache-from", type=Path, default=ROOT / "reports" / "XAU_TRADES_AGGTRADES_AUDIT.json")
     args = parser.parse_args()
 
-    report = run_full_trade_audit(max_workers=args.workers, output_path=args.output)
-    return 0 if report.get("all_archives_passed") else 1
+    report = run_full_trade_audit(
+        max_workers=args.workers,
+        output_path=args.output,
+        cache_from=args.cache_from if args.cache_from.is_file() else None,
+    )
+    return 0 if (report.get("all_archives_passed") and report.get("multi_epoch_reconciliation_passed")) else 1
 
 
 if __name__ == "__main__":

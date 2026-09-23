@@ -1868,9 +1868,14 @@ def test_canonical_registry_explicit_identity() -> None:
 
     for ds_id, entry in CANONICAL_DATASET_REGISTRY.items():
         if entry.status == "CANONICAL":
-            assert entry.instrument_id in ("BTCUSDT", "ETHUSDT"), f"{ds_id} missing valid instrument_id"
-            assert entry.market_type == "USD_M_PERP", f"{ds_id} missing valid market_type"
-            assert entry.venue == "BINANCE", f"{ds_id} missing valid venue"
+            if ds_id.startswith("XAUUSDT"):
+                assert entry.instrument_id == "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT", f"{ds_id} invalid instrument_id"
+                assert entry.market_type == "TRADFI_COMMODITY_PERP", f"{ds_id} invalid market_type"
+                assert entry.venue == "BINANCE", f"{ds_id} invalid venue"
+            else:
+                assert entry.instrument_id in ("BTCUSDT", "ETHUSDT"), f"{ds_id} missing valid instrument_id"
+                assert entry.market_type == "USD_M_PERP", f"{ds_id} missing valid market_type"
+                assert entry.venue == "BINANCE", f"{ds_id} missing valid venue"
 
 
 def test_guarded_loader_fails_on_incomplete_identity() -> None:

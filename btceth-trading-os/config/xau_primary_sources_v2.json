@@ -1,0 +1,173 @@
+{
+  "manifest_version": "2.0.0",
+  "generated_at_utc": "2026-09-23T12:00:00Z",
+  "instrument_id": "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+  "sources": {
+    "ecf7318c0d434c339e80878588e700d0": {
+      "source_id": "ecf7318c0d434c339e80878588e700d0",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "title": "Binance Futures Launches XAUUSDT Perpetual Contract",
+      "source_url": "https://www.binance.com/en/support/announcement/detail/ecf7318c0d434c339e80878588e700d0",
+      "file_path": "artifacts/instrument_specs/announcements/ecf7318c0d434c339e80878588e700d0.html",
+      "bytes": 59952,
+      "physical_sha256": "7aaf4eb5870b647ec35d07afcdbcecd7f630d04c96f9cf12dc2d1c7fd5e82218",
+      "logical_sha256": "4f16eb6f065d62a50985e27572f3f46e6b2c8a6c292f62ddeb0a5ca9caa192a6",
+      "published_utc": "2026-01-05T10:00:00+00:00",
+      "effective_utc": "2026-01-06T08:30:00+00:00",
+      "supported_claims": [
+        "contract_launch",
+        "funding_interval_14400s",
+        "funding_cap_floor_0.00375",
+        "max_leverage_50x"
+      ],
+      "unsupported_fields": [
+        "historical_tick_size",
+        "historical_step_size",
+        "historical_margin_rules"
+      ]
+    },
+    "4636922abdba4e5787c5f7643f8170d7": {
+      "source_id": "4636922abdba4e5787c5f7643f8170d7",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "title": "Updates on the Funding Rate of XAUUSDT Perpetual Contract (2026-01-22)",
+      "source_url": "https://www.binance.com/en/support/announcement/detail/4636922abdba4e5787c5f7643f8170d7",
+      "file_path": "artifacts/instrument_specs/announcements/4636922abdba4e5787c5f7643f8170d7.html",
+      "bytes": 56475,
+      "physical_sha256": "891fcf3a96a98039ca70656a3e7768448a95cdf7c292cf8d5ce2e441f7c15e9d",
+      "logical_sha256": "9c44ae848a1f2c5adecaf2158923ed5c834949e6033dd3e302d6ecc11a7d66da",
+      "published_utc": "2026-01-22T11:57:00+00:00",
+      "effective_utc": "2026-01-23T08:00:00+00:00",
+      "supported_claims": [
+        "funding_interest_component_zero"
+      ],
+      "unsupported_fields": [
+        "historical_tick_size",
+        "historical_step_size"
+      ]
+    },
+    "9c9e956d5dae412fadcd62c88b3d7849": {
+      "source_id": "9c9e956d5dae412fadcd62c88b3d7849",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "title": "Binance Futures Will Update Price Index Calculation for XAUUSDT",
+      "source_url": "https://www.binance.com/en-AE/support/announcement/detail/9c9e956d5dae412fadcd62c88b3d7849",
+      "file_path": "artifacts/instrument_specs/announcements/9c9e956d5dae412fadcd62c88b3d7849.html",
+      "bytes": 57628,
+      "physical_sha256": "d1020f1f6bf3bdbf2b1dbe597808c8674a7d853634e4cca472c966895f87bce8",
+      "logical_sha256": "72f3a1e18bacb8d80a06137de81a2f13be1227d0e1fd3cc80a8bd0b5a9b90a10",
+      "published_utc": "2026-01-26T06:45:00+00:00",
+      "effective_utc": "2026-01-28T08:00:00+00:00",
+      "supported_claims": [
+        "price_index_weight_rebalance"
+      ],
+      "unsupported_fields": [
+        "historical_tick_size",
+        "historical_step_size"
+      ]
+    },
+    "db04567123a44a89b112b9ae403a9c7d": {
+      "source_id": "db04567123a44a89b112b9ae403a9c7d",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "title": "Important Updates on the Funding Rate of XAUUSDT (2026-01-30 12:15 UTC)",
+      "source_url": "https://www.binance.com/en/support/announcement/detail/db04567123a44a89b112b9ae403a9c7d",
+      "file_path": "artifacts/instrument_specs/announcements/db04567123a44a89b112b9ae403a9c7d.html",
+      "bytes": 59622,
+      "physical_sha256": "b5fc65f3ae8e4b49a1f58ac46b0858c59988e396ca116f4ab5aeb1cacb0b0013",
+      "logical_sha256": "089d13cf7ee444ab90e32c7f4bf759f3efcc03ff5281ad256b172526b3380045",
+      "published_utc": "2026-01-30T06:30:00+00:00",
+      "effective_utc": "2026-01-30T12:15:00+00:00",
+      "supported_claims": [
+        "funding_interval_28800s",
+        "funding_cap_floor_0.0005"
+      ],
+      "unsupported_fields": [
+        "historical_tick_size",
+        "historical_step_size"
+      ]
+    },
+    "55bd3594394a46daa910df5746355ff4": {
+      "source_id": "55bd3594394a46daa910df5746355ff4",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "title": "Important Updates on the Funding Rate of XAUUSDT, XAGUSDT, XPTUSDT and XPDUSDT Perpetual Contracts (2026-01-30 18:15 UTC)",
+      "source_url": "https://www.binance.com/en/support/announcement/detail/55bd3594394a46daa910df5746355ff4",
+      "file_path": "artifacts/instrument_specs/announcements/55bd3594394a46daa910df5746355ff4.html",
+      "bytes": 58428,
+      "physical_sha256": "c0b5cd58b1e1db643a2f151dd77c106e3cfecc94bcf7008f3a88f7caf05e0ecc",
+      "logical_sha256": "d053b788147880d129063407930b8c93c74a757522ccd1974d43bfbc8979c83c",
+      "published_utc": "2026-01-30T18:03:00+00:00",
+      "effective_utc": "2026-01-30T18:15:00+00:00",
+      "supported_claims": [
+        "funding_interval_14400s",
+        "funding_cap_0.0050",
+        "funding_floor_minus_0.0050"
+      ],
+      "unsupported_fields": [
+        "historical_tick_size",
+        "historical_step_size"
+      ]
+    },
+    "319824740830977": {
+      "source_id": "319824740830977",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "title": "Updates on Binance Futures Price Index for TradFi Perps (Orderbook EWMA)",
+      "source_url": "https://www.binance.com/en/square/post/319824740830977",
+      "file_path": "artifacts/instrument_specs/announcements/319824740830977.html",
+      "bytes": 49151,
+      "physical_sha256": "ea9936aa00723b6b6ce5f4eda01e87916d74f2b0743674cfe7c0c85f93a951a7",
+      "logical_sha256": "9e10965cea07dc5c50d092f0b389e14a144a34a61c5537658012b73267df42e1",
+      "published_utc": "2026-05-05T00:00:00+00:00",
+      "effective_utc": "2026-05-08T21:00:00+00:00",
+      "supported_claims": [
+        "orderbook_ewma_price_index_mode"
+      ],
+      "unsupported_fields": [
+        "historical_tick_size",
+        "historical_step_size"
+      ]
+    },
+    "f69c05ebdba7422e9c614685abe84dc5": {
+      "source_id": "f69c05ebdba7422e9c614685abe84dc5",
+      "source_type": "EXCHANGE_ANNOUNCEMENT",
+      "title": "Updates on the Trading Schedule and Price Index Mode of TradFi Assets Perpetual Contracts (2026-09-15)",
+      "source_url": "https://www.binance.com/en/support/announcement/detail/f69c05ebdba7422e9c614685abe84dc5",
+      "file_path": "artifacts/instrument_specs/announcements/f69c05ebdba7422e9c614685abe84dc5.html",
+      "bytes": 58744,
+      "physical_sha256": "3ef1b80e16f2cdface79defdded465908bb30fed80be96abc9c15ec4121b31f3",
+      "logical_sha256": "606a11fb9893370edb613453d737fc8d66094a5c1e3bc0af554895b027948ff0",
+      "published_utc": "2026-09-12T11:00:00+00:00",
+      "effective_utc": "2026-09-15T21:00:00+00:00",
+      "supported_claims": [
+        "et_session_calendar_regime",
+        "continuous_trading_sunday_friday_et",
+        "weekend_holiday_ewma_mode"
+      ],
+      "unsupported_fields": [
+        "tick_size",
+        "step_size",
+        "min_qty",
+        "max_qty"
+      ]
+    },
+    "BINANCE_REST_EXCHANGE_INFO_SNAPSHOT_20260923": {
+      "source_id": "BINANCE_REST_EXCHANGE_INFO_SNAPSHOT_20260923",
+      "source_type": "REST_API_SNAPSHOT",
+      "title": "Binance Futures USD-M exchangeInfo Snapshot for XAUUSDT",
+      "source_url": "https://fapi.binance.com/fapi/v1/exchangeInfo",
+      "file_path": "artifacts/instrument_specs/probes/exchangeInfo.raw.json",
+      "bytes": 1125464,
+      "physical_sha256": "c4b52556e6b03d179e4a02fc2a9758a0c40312945ca5ba1bc4f68ff07a1ae8ec",
+      "logical_sha256": "c4b52556e6b03d179e4a02fc2a9758a0c40312945ca5ba1bc4f68ff07a1ae8ec",
+      "published_utc": "2026-09-23T07:22:00+00:00",
+      "effective_utc": "2026-09-15T21:00:00+00:00",
+      "supported_claims": [
+        "tick_size_0.01",
+        "step_size_0.001",
+        "min_qty_0.001",
+        "max_qty_1000",
+        "min_notional_5.0"
+      ],
+      "unsupported_fields": [
+        "historical_filter_rules_pre_20260915"
+      ]
+    }
+  }
+}

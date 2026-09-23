@@ -1,0 +1,255 @@
+# Source-backed historical rule epochs v2 for BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT
+version: 2.0.0
+instrument_id: "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+
+epochs:
+  - epoch_id: "XAU_EPOCH_0_QUARANTINED_PRE_ADMISSION"
+    instrument_id: "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+    effective_from_utc: "2025-12-11T00:00:00+00:00"
+    effective_to_utc: "2026-01-06T00:00:00+00:00"
+    funding_interval_seconds: null
+    funding_interest_component: null
+    funding_cap: null
+    funding_floor: null
+    funding_cap_floor: null
+    price_index_method: "UNKNOWN_PRE_ADMISSION"
+    mark_price_method: "UNKNOWN_PRE_ADMISSION"
+    underlying_session_rules: "UNKNOWN"
+    tradfi_session_rules: "UNKNOWN"
+    tick_size: null
+    step_size: null
+    quantity_rules: null
+    margin_rules: null
+    source_url: "https://www.binance.com/en/support/announcement/detail/ecf7318c0d434c339e80878588e700d0"
+    source_document_timestamp: "2026-01-08T08:00:00+00:00"
+    source_physical_sha256: "7aaf4eb5870b647ec35d07afcdbcecd7f630d04c96f9cf12dc2d1c7fd5e82218"
+    source_logical_sha256: "4f16eb6f065d62a50985e27572f3f46e6b2c8a6c292f62ddeb0a5ca9caa192a6"
+    confidence: "QUARANTINED"
+    unknown_fields:
+      - "account_eligibility"
+      - "tick_size"
+      - "step_size"
+      - "margin_rules"
+      - "contract_size"
+      - "funding_interval_seconds"
+    field_provenance: {}
+
+  - epoch_id: "XAU_EPOCH_1_LAUNCH_DISCOVERY"
+    instrument_id: "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+    effective_from_utc: "2026-01-06T00:00:00+00:00"
+    effective_to_utc: "2026-01-23T08:00:00+00:00"
+    funding_interval_seconds: 14400
+    funding_interest_component: null
+    funding_cap: 0.00375
+    funding_floor: -0.00375
+    funding_cap_floor: 0.00375
+    price_index_method: "MULTI_VENDOR_FIXED_OFF_HOURS"
+    mark_price_method: "EWMA_SMOOTHED_OFF_HOURS_3PCT_CLAMP"
+    underlying_session_rules: "TRADFI_COMMODITY_MARKET_HOURS"
+    tradfi_session_rules: "24_7_CONTINUOUS"
+    tick_size: null
+    step_size: null
+    quantity_rules: null
+    margin_rules: null
+    source_url: "https://www.binance.com/en/support/announcement/detail/ecf7318c0d434c339e80878588e700d0"
+    source_document_timestamp: "2026-01-08T08:00:00+00:00"
+    source_physical_sha256: "7aaf4eb5870b647ec35d07afcdbcecd7f630d04c96f9cf12dc2d1c7fd5e82218"
+    source_logical_sha256: "4f16eb6f065d62a50985e27572f3f46e6b2c8a6c292f62ddeb0a5ca9caa192a6"
+    confidence: "PROVEN_PRIMARY"
+    unknown_fields:
+      - "historical_tick_size"
+      - "historical_step_size"
+      - "historical_margin_rules"
+      - "historical_contract_size"
+    field_provenance:
+      funding_interval_seconds: "ecf7318c0d434c339e80878588e700d0"
+      funding_cap_floor: "ecf7318c0d434c339e80878588e700d0"
+      tradfi_session_rules: "ecf7318c0d434c339e80878588e700d0"
+
+  - epoch_id: "XAU_EPOCH_2_ZERO_INTEREST_COMPONENT"
+    instrument_id: "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+    effective_from_utc: "2026-01-23T08:00:00+00:00"
+    effective_to_utc: "2026-01-28T08:00:00+00:00"
+    funding_interval_seconds: 14400
+    funding_interest_component: 0.0
+    funding_cap: 0.00375
+    funding_floor: -0.00375
+    funding_cap_floor: 0.00375
+    price_index_method: "MULTI_VENDOR_FIXED_OFF_HOURS"
+    mark_price_method: "EWMA_SMOOTHED_OFF_HOURS_3PCT_CLAMP"
+    underlying_session_rules: "TRADFI_COMMODITY_MARKET_HOURS"
+    tradfi_session_rules: "24_7_CONTINUOUS"
+    tick_size: null
+    step_size: null
+    quantity_rules: null
+    margin_rules: null
+    source_url: "https://www.binance.com/en/support/announcement/detail/4636922abdba4e5787c5f7643f8170d7"
+    source_document_timestamp: "2026-01-22T11:57:00+00:00"
+    source_physical_sha256: "891fcf3a96a98039ca70656a3e7768448a95cdf7c292cf8d5ce2e441f7c15e9d"
+    source_logical_sha256: "9c44ae848a1f2c5adecaf2158923ed5c834949e6033dd3e302d6ecc11a7d66da"
+    confidence: "PROVEN_PRIMARY"
+    unknown_fields:
+      - "historical_tick_size"
+      - "historical_step_size"
+      - "historical_margin_rules"
+      - "historical_contract_size"
+    field_provenance:
+      funding_interest_component: "4636922abdba4e5787c5f7643f8170d7"
+
+  - epoch_id: "XAU_EPOCH_3_INDEX_WEIGHT_REBALANCE"
+    instrument_id: "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+    effective_from_utc: "2026-01-28T08:00:00+00:00"
+    effective_to_utc: "2026-01-30T12:15:00+00:00"
+    funding_interval_seconds: 14400
+    funding_interest_component: 0.0
+    funding_cap: 0.00375
+    funding_floor: -0.00375
+    funding_cap_floor: 0.00375
+    price_index_method: "REBALANCED_CONSTITUENTS_33PCT_EACH_PAXG_1PCT_FIXED_OFF_HOURS"
+    mark_price_method: "EWMA_SMOOTHED_OFF_HOURS_3PCT_CLAMP"
+    underlying_session_rules: "TRADFI_COMMODITY_MARKET_HOURS"
+    tradfi_session_rules: "24_7_CONTINUOUS"
+    tick_size: null
+    step_size: null
+    quantity_rules: null
+    margin_rules: null
+    source_url: "https://www.binance.com/en-AE/support/announcement/detail/9c9e956d5dae412fadcd62c88b3d7849"
+    source_document_timestamp: "2026-01-26T06:45:00+00:00"
+    source_physical_sha256: "d1020f1f6bf3bdbf2b1dbe597808c8674a7d853634e4cca472c966895f87bce8"
+    source_logical_sha256: "72f3a1e18bacb8d80a06137de81a2f13be1227d0e1fd3cc80a8bd0b5a9b90a10"
+    confidence: "PROVEN_PRIMARY"
+    unknown_fields:
+      - "historical_tick_size"
+      - "historical_step_size"
+      - "historical_margin_rules"
+      - "historical_contract_size"
+    field_provenance:
+      price_index_method: "9c9e956d5dae412fadcd62c88b3d7849"
+
+  - epoch_id: "XAU_EPOCH_4A_8H_TEMPORARY_FUNDING"
+    instrument_id: "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+    effective_from_utc: "2026-01-30T12:15:00+00:00"
+    effective_to_utc: "2026-01-30T18:15:00+00:00"
+    funding_interval_seconds: 28800
+    funding_interest_component: 0.0
+    funding_cap: 0.0005
+    funding_floor: -0.0005
+    funding_cap_floor: 0.0005
+    price_index_method: "REBALANCED_CONSTITUENTS_FIXED_OFF_HOURS"
+    mark_price_method: "EWMA_SMOOTHED_OFF_HOURS_3PCT_CLAMP"
+    underlying_session_rules: "TRADFI_COMMODITY_MARKET_HOURS"
+    tradfi_session_rules: "24_7_CONTINUOUS"
+    tick_size: null
+    step_size: null
+    quantity_rules: null
+    margin_rules: null
+    source_url: "https://www.binance.com/en/support/announcement/detail/db04567123a44a89b112b9ae403a9c7d"
+    source_document_timestamp: "2026-01-30T06:30:00+00:00"
+    source_physical_sha256: "b5fc65f3ae8e4b49a1f58ac46b0858c59988e396ca116f4ab5aeb1cacb0b0013"
+    source_logical_sha256: "089d13cf7ee444ab90e32c7f4bf759f3efcc03ff5281ad256b172526b3380045"
+    confidence: "PROVEN_PRIMARY"
+    unknown_fields:
+      - "historical_tick_size"
+      - "historical_step_size"
+      - "historical_margin_rules"
+      - "historical_contract_size"
+    field_provenance:
+      funding_interval_seconds: "db04567123a44a89b112b9ae403a9c7d"
+      funding_cap_floor: "db04567123a44a89b112b9ae403a9c7d"
+
+  - epoch_id: "XAU_EPOCH_4B_4H_FUNDING_AND_CAP_EXPANSION"
+    instrument_id: "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+    effective_from_utc: "2026-01-30T18:15:00+00:00"
+    effective_to_utc: "2026-05-08T21:00:00+00:00"
+    funding_interval_seconds: 14400
+    funding_interest_component: 0.0
+    funding_cap: 0.0050
+    funding_floor: -0.0050
+    funding_cap_floor: 0.0050
+    price_index_method: "REBALANCED_CONSTITUENTS_FIXED_OFF_HOURS"
+    mark_price_method: "EWMA_SMOOTHED_OFF_HOURS_3PCT_CLAMP"
+    underlying_session_rules: "TRADFI_COMMODITY_MARKET_HOURS"
+    tradfi_session_rules: "24_7_CONTINUOUS"
+    tick_size: null
+    step_size: null
+    quantity_rules: null
+    margin_rules: null
+    source_url: "https://www.binance.com/en/support/announcement/detail/55bd3594394a46daa910df5746355ff4"
+    source_document_timestamp: "2026-01-30T18:03:00+00:00"
+    source_physical_sha256: "c0b5cd58b1e1db643a2f151dd77c106e3cfecc94bcf7008f3a88f7caf05e0ecc"
+    source_logical_sha256: "d053b788147880d129063407930b8c93c74a757522ccd1974d43bfbc8979c83c"
+    confidence: "PROVEN_PRIMARY"
+    unknown_fields:
+      - "historical_tick_size"
+      - "historical_step_size"
+      - "historical_margin_rules"
+      - "historical_contract_size"
+    field_provenance:
+      funding_interval_seconds: "55bd3594394a46daa910df5746355ff4"
+      funding_cap: "55bd3594394a46daa910df5746355ff4"
+      funding_floor: "55bd3594394a46daa910df5746355ff4"
+
+  - epoch_id: "XAU_EPOCH_5_ORDERBOOK_EWMA_INDEX_MODE"
+    instrument_id: "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+    effective_from_utc: "2026-05-08T21:00:00+00:00"
+    effective_to_utc: "2026-09-15T21:00:00+00:00"
+    funding_interval_seconds: 14400
+    funding_interest_component: 0.0
+    funding_cap: 0.0050
+    funding_floor: -0.0050
+    funding_cap_floor: 0.0050
+    price_index_method: "ORDERBOOK_EWMA_OFF_HOURS_REPLACING_FIXED"
+    mark_price_method: "EWMA_SMOOTHED_OFF_HOURS_3PCT_CLAMP"
+    underlying_session_rules: "TRADFI_COMMODITY_MARKET_HOURS"
+    tradfi_session_rules: "24_7_CONTINUOUS"
+    tick_size: null
+    step_size: null
+    quantity_rules: null
+    margin_rules: null
+    source_url: "https://www.binance.com/en/square/post/319824740830977"
+    source_document_timestamp: "2026-05-05T00:00:00+00:00"
+    source_physical_sha256: "ea9936aa00723b6b6ce5f4eda01e87916d74f2b0743674cfe7c0c85f93a951a7"
+    source_logical_sha256: "9e10965cea07dc5c50d092f0b389e14a144a34a61c5537658012b73267df42e1"
+    confidence: "PROVEN_PRIMARY"
+    unknown_fields:
+      - "historical_tick_size"
+      - "historical_step_size"
+      - "historical_margin_rules"
+      - "historical_contract_size"
+    field_provenance:
+      price_index_method: "319824740830977"
+
+  - epoch_id: "XAU_EPOCH_6_ET_SESSION_CALENDAR_REGIME"
+    instrument_id: "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+    effective_from_utc: "2026-09-15T21:00:00+00:00"
+    effective_to_utc: null
+    funding_interval_seconds: 14400
+    funding_interest_component: 0.0
+    funding_cap: 0.0050
+    funding_floor: -0.0050
+    funding_cap_floor: 0.0050
+    price_index_method: "STANDARD_REGULAR_AND_ORDERBOOK_EWMA_WEEKENDS_HOLIDAYS"
+    mark_price_method: "EWMA_SMOOTHED_OFF_HOURS_3PCT_CLAMP"
+    underlying_session_rules: "US_EASTERN_SUNDAY_1800_TO_FRIDAY_1700"
+    tradfi_session_rules: "24_7_CONTINUOUS"
+    tick_size: 0.01
+    step_size: 0.001
+    quantity_rules:
+      min_qty: "0.001"
+      max_qty: "1000"
+      min_notional: "5"
+    margin_rules:
+      max_leverage: 50
+    source_url: "https://www.binance.com/en/support/announcement/detail/f69c05ebdba7422e9c614685abe84dc5"
+    source_document_timestamp: "2026-09-12T11:00:00+00:00"
+    source_physical_sha256: "3ef1b80e16f2cdface79defdded465908bb30fed80be96abc9c15ec4121b31f3"
+    source_logical_sha256: "606a11fb9893370edb613453d737fc8d66094a5c1e3bc0af554895b027948ff0"
+    confidence: "PROVEN_PRIMARY"
+    unknown_fields: []
+    field_provenance:
+      underlying_session_rules: "f69c05ebdba7422e9c614685abe84dc5"
+      price_index_method: "f69c05ebdba7422e9c614685abe84dc5"
+      tick_size: "BINANCE_REST_EXCHANGE_INFO_SNAPSHOT_20260923"
+      step_size: "BINANCE_REST_EXCHANGE_INFO_SNAPSHOT_20260923"
+      quantity_rules: "BINANCE_REST_EXCHANGE_INFO_SNAPSHOT_20260923"
+      margin_rules: "BINANCE_REST_EXCHANGE_INFO_SNAPSHOT_20260923"

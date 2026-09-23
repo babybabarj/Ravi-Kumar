@@ -25,16 +25,19 @@ HOLDOUT_WINDOW_START_NS = 1704067200_000_000_000  # 2024-01-01T00:00:00Z
 HOLDOUT_WINDOW_END_NS   = 1733011199_999_999_999  # 2024-11-30T23:59:59.999999999Z
 
 HOLDOUT_UNLOCK_CAPABILITY = 0  # Invariant: Zero unlock capability in this phase
+XAU_HOLDOUT_UNLOCK_CAPABILITY = 0  # Invariant: Zero XAU holdout unlock capability
+XAU_PROSPECTIVE_PRISTINE_UNLOCK_CAPABILITY = 0  # Invariant: Zero XAU prospective pristine unlock capability
 
 
 class DatasetRole(str, Enum):
     DEVELOPMENT = "DEVELOPMENT"                  # 2020 - 2022
     VALIDATION = "VALIDATION"                    # 2023
-    LOCKED_HOLDOUT = "LOCKED_HOLDOUT"            # 2024-01-01 to 2024-11-30
+    LOCKED_HOLDOUT = "LOCKED_HOLDOUT"            # 2024-01-01 to 2024-11-30 / XAU Locked Holdout
     PROSPECTIVE_FORWARD = "PROSPECTIVE_FORWARD"  # 2025 onwards / prospective
     SHADOW = "SHADOW"                            # Live shadow execution
     PAPER = "PAPER"                              # Live paper execution
     COMPOSITE_RESEARCH_DATASET = "COMPOSITE_RESEARCH_DATASET"  # Composite aggregate (not directly readable)
+    LOCKED_PROSPECTIVE_PRISTINE = "LOCKED_PROSPECTIVE_PRISTINE"  # Locked pristine holdout (2026-09-15 21:00 UTC onward)
 
 
 class ResearchOperation(str, Enum):
@@ -95,12 +98,16 @@ class CanonicalPartitionEntry:
             return "BTCUSDT"
         if "ETH" in self.dataset_id:
             return "ETHUSDT"
+        if "XAU" in self.dataset_id:
+            return "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
         return "UNKNOWN"
 
     @property
     def resolved_market_type(self) -> str:
         if self.market_type:
             return self.market_type
+        if "XAU" in self.dataset_id:
+            return "TRADFI_COMMODITY_PERP"
         return "USD_M_PERP"
 
     @property
@@ -492,6 +499,146 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
         parent_dataset=None,
         status="PROSPECTIVE_UNMATERIALIZED",
     ),
+    # -----------------------------------------------------------------
+    # XAUUSDT TradFi Commodity Perpetual Partitions (V2 Canonical)
+    # -----------------------------------------------------------------
+    "XAUUSDT_DEV_2026_01_04_V2": CanonicalPartitionEntry(
+        dataset_id="XAUUSDT_DEV_2026_01_04_V2",
+        dataset_version="v2.0.0",
+        partition_id="XAUUSDT_DEV_2026_01_04_V2",
+        canonical_relative_path="artifacts/research/partitions/XAUUSDT_DEV_2026_01_04_V2.parquet",
+        physical_sha256="2a3cc4de1155fc126ef5a40d53b97ed4a7e24e51d08ca0c32458788e9bedeaa9",
+        dataset_logical_sha256="0c344d982d4611afd284cd56552f848b82b98c894d274410566a9331e67dc52b",
+        start_ts_ns=1767657600_000_000_000,
+        end_ts_ns=1777593599_999_999_000,
+        role=DatasetRole.DEVELOPMENT,
+        parent_dataset="XAUUSDT-resampled-1m-silver-v2",
+        status="CANONICAL",
+        partition_logical_sha256="73a11ad96ba0c40a075c7f43a21bf9c1148adfb72ef7c57a242304585bcdd99f",
+        instrument_id="BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+        market_type="TRADFI_COMMODITY_PERP",
+        venue="BINANCE",
+    ),
+    "XAUUSDT_VAL_2026_05_07_V2": CanonicalPartitionEntry(
+        dataset_id="XAUUSDT_VAL_2026_05_07_V2",
+        dataset_version="v2.0.0",
+        partition_id="XAUUSDT_VAL_2026_05_07_V2",
+        canonical_relative_path="artifacts/research/partitions/XAUUSDT_VAL_2026_05_07_V2.parquet",
+        physical_sha256="67197b555a2ad8beca834c9a8353f0d1cdecdacf019868a9d58e43e809983fc0",
+        dataset_logical_sha256="0c344d982d4611afd284cd56552f848b82b98c894d274410566a9331e67dc52b",
+        start_ts_ns=1777593600_000_000_000,
+        end_ts_ns=1785542399_999_999_000,
+        role=DatasetRole.VALIDATION,
+        parent_dataset="XAUUSDT-resampled-1m-silver-v2",
+        status="CANONICAL",
+        partition_logical_sha256="8226a4754ddd9abd5ee848af9fd4c08e010016114c86f4d812f54c9fa19badd8",
+        instrument_id="BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+        market_type="TRADFI_COMMODITY_PERP",
+        venue="BINANCE",
+    ),
+    "XAUUSDT_HOLDOUT_2026_08_09_V2": CanonicalPartitionEntry(
+        dataset_id="XAUUSDT_HOLDOUT_2026_08_09_V2",
+        dataset_version="v2.0.0",
+        partition_id="XAUUSDT_HOLDOUT_2026_08_09_V2",
+        canonical_relative_path="artifacts/research/partitions/XAUUSDT_HOLDOUT_2026_08_09_V2.parquet",
+        physical_sha256="46bc3af674b466c68bd9e421c8fa46e54afa0751dc48952fe1e5e4a712771687",
+        dataset_logical_sha256="0c344d982d4611afd284cd56552f848b82b98c894d274410566a9331e67dc52b",
+        start_ts_ns=1785542400_000_000_000,
+        end_ts_ns=1789505999_999_999_000,
+        role=DatasetRole.LOCKED_HOLDOUT,
+        parent_dataset="XAUUSDT-resampled-1m-silver-v2",
+        status="LOCKED_UNREGISTERED_FOR_READ",
+        partition_logical_sha256="62f11d462ddc6a9d2dd4568c5205839c1bb643bc3c49daf3ec8bcc96967da0cd",
+        instrument_id="BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+        market_type="TRADFI_COMMODITY_PERP",
+        venue="BINANCE",
+    ),
+    "XAUUSDT_PROSPECTIVE_PRISTINE_V2": CanonicalPartitionEntry(
+        dataset_id="XAUUSDT_PROSPECTIVE_PRISTINE_V2",
+        dataset_version="v2.0.0",
+        partition_id="XAUUSDT_PROSPECTIVE_PRISTINE_V2",
+        canonical_relative_path="artifacts/research/partitions/XAUUSDT_PROSPECTIVE_PRISTINE_V2.parquet",
+        physical_sha256="cc5a246be21fad4f14b1dc1fb8312c203f29c90fa26da17bf1a917b9fe338ff9",
+        dataset_logical_sha256="0c344d982d4611afd284cd56552f848b82b98c894d274410566a9331e67dc52b",
+        start_ts_ns=1789506000_000_000_000,
+        end_ts_ns=1790121599_999_999_000,
+        role=DatasetRole.LOCKED_PROSPECTIVE_PRISTINE,
+        parent_dataset="XAUUSDT-resampled-1m-silver-v2",
+        status="LOCKED_UNREGISTERED_FOR_READ",
+        partition_logical_sha256="eea913f691081f363f0c82c1f5c0f9d20a5c5dbc59db09a87edcb6d339befd27",
+        instrument_id="BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+        market_type="TRADFI_COMMODITY_PERP",
+        venue="BINANCE",
+    ),
+    # XAUUSDT V1 Partitions (Preserved for backwards compatibility)
+    "XAUUSDT_DEV_2026_01_04": CanonicalPartitionEntry(
+        dataset_id="XAUUSDT_DEV_2026_01_04",
+        dataset_version="v1.0.0",
+        partition_id="XAUUSDT_DEV_2026_01_04",
+        canonical_relative_path="artifacts/research/partitions/XAUUSDT_DEV_2026_01_04.parquet",
+        physical_sha256="18bf9b2842ca60b87579574390384a27a4c6cacd2405f222833fa07495e4fb09",
+        dataset_logical_sha256="a1186570ec816a63aad721c5f8764a47da1d398ec8c4a22a3e970cbcd8ea7bc7",
+        start_ts_ns=1767657600_000_000_000,
+        end_ts_ns=1777593599_999_000_000,
+        role=DatasetRole.DEVELOPMENT,
+        parent_dataset="XAUUSDT-resampled-1m-silver",
+        status="CANONICAL",
+        partition_logical_sha256="7dd83570b44b59e1c494ebd82024c542529425febf8fd16519ab3aab728250ea",
+        instrument_id="BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+        market_type="TRADFI_COMMODITY_PERP",
+        venue="BINANCE",
+    ),
+    "XAUUSDT_VAL_2026_05_07": CanonicalPartitionEntry(
+        dataset_id="XAUUSDT_VAL_2026_05_07",
+        dataset_version="v1.0.0",
+        partition_id="XAUUSDT_VAL_2026_05_07",
+        canonical_relative_path="artifacts/research/partitions/XAUUSDT_VAL_2026_05_07.parquet",
+        physical_sha256="798a40f1fdf43c41cb43e1f70a2aaef9eea7c0587e02dbfb60a18cc46cc4e345",
+        dataset_logical_sha256="a1186570ec816a63aad721c5f8764a47da1d398ec8c4a22a3e970cbcd8ea7bc7",
+        start_ts_ns=1777593600_000_000_000,
+        end_ts_ns=1785542399_999_000_000,
+        role=DatasetRole.VALIDATION,
+        parent_dataset="XAUUSDT-resampled-1m-silver",
+        status="CANONICAL",
+        partition_logical_sha256="2c70629ba897d2125e3a701beda358139cd2fadd814d6faa30cff046d257bfa7",
+        instrument_id="BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+        market_type="TRADFI_COMMODITY_PERP",
+        venue="BINANCE",
+    ),
+    "XAUUSDT_HOLDOUT_2026_08_09": CanonicalPartitionEntry(
+        dataset_id="XAUUSDT_HOLDOUT_2026_08_09",
+        dataset_version="v1.0.0",
+        partition_id="XAUUSDT_HOLDOUT_2026_08_09",
+        canonical_relative_path="artifacts/research/partitions/XAUUSDT_HOLDOUT_2026_08_09.parquet",
+        physical_sha256="c9bb1b75a9183ce036091bf83b15613193dc9b84f3535eb65c1daeda63c4aacd",
+        dataset_logical_sha256="a1186570ec816a63aad721c5f8764a47da1d398ec8c4a22a3e970cbcd8ea7bc7",
+        start_ts_ns=1785542400_000_000_000,
+        end_ts_ns=1789505999_999_000_000,
+        role=DatasetRole.LOCKED_HOLDOUT,
+        parent_dataset="XAUUSDT-resampled-1m-silver",
+        status="LOCKED_UNREGISTERED_FOR_READ",
+        partition_logical_sha256="93c9d26ea25298cf92c94866f9df526775e5c74eedd141649367e514a44b9fe3",
+        instrument_id="BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+        market_type="TRADFI_COMMODITY_PERP",
+        venue="BINANCE",
+    ),
+    "XAUUSDT_PROSPECTIVE_PRISTINE": CanonicalPartitionEntry(
+        dataset_id="XAUUSDT_PROSPECTIVE_PRISTINE",
+        dataset_version="v1.0.0",
+        partition_id="XAUUSDT_PROSPECTIVE_PRISTINE",
+        canonical_relative_path="artifacts/research/partitions/XAUUSDT_PROSPECTIVE_PRISTINE.parquet",
+        physical_sha256="169fd170a0825f52ef4d8d408056aca0e2ee389b4a56df3e9e2dd18979c24c94",
+        dataset_logical_sha256="a1186570ec816a63aad721c5f8764a47da1d398ec8c4a22a3e970cbcd8ea7bc7",
+        start_ts_ns=1789506000_000_000_000,
+        end_ts_ns=1790121599_999_000_000,
+        role=DatasetRole.LOCKED_PROSPECTIVE_PRISTINE,
+        parent_dataset="XAUUSDT-resampled-1m-silver",
+        status="LOCKED_UNREGISTERED_FOR_READ",
+        partition_logical_sha256="acca92932276b18e69acf394a52995918e994add0dc6fdb5a89573c3625a615f",
+        instrument_id="BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+        market_type="TRADFI_COMMODITY_PERP",
+        venue="BINANCE",
+    ),
 }
 
 CANONICAL_DATASET_REGISTRY: Mapping[str, CanonicalPartitionEntry] = types.MappingProxyType(_CANONICAL_DATASETS)
@@ -641,19 +788,28 @@ def _get_last_ledger_chain_state(ledger_path: Optional[Path] = None) -> tuple[in
         return 0, "0" * 64
 
 
-def _verify_access_ledger_integrity_unlocked(ledger_path: Optional[Path] = None) -> tuple[bool, int, str, dict[str, Any]]:
+def _verify_access_ledger_integrity_unlocked(
+    ledger_path: Optional[Path] = None,
+    require_exists: bool = False,
+) -> tuple[bool, int, str, dict[str, Any]]:
     """Cryptographically verify the research access ledger hash chain without locking."""
     target = ledger_path or LEDGER_PATH
     if not target.is_file():
-        return True, 0, "LEDGER_EMPTY", {"total_entries": 0, "allowed_holdout_accesses": 0}
+        if require_exists:
+            return False, 0, "LEDGER_MISSING", {"total_entries": 0, "allowed_holdout_accesses": 0, "allowed_pristine_accesses": 0}
+        return True, 0, "LEDGER_EMPTY", {"total_entries": 0, "allowed_holdout_accesses": 0, "allowed_pristine_accesses": 0}
     
     lines = [line.strip() for line in target.read_text(encoding="utf-8").splitlines() if line.strip()]
     if not lines:
-        return True, 0, "LEDGER_EMPTY", {"total_entries": 0, "allowed_holdout_accesses": 0}
+        if require_exists:
+            return False, 0, "LEDGER_EMPTY", {"total_entries": 0, "allowed_holdout_accesses": 0, "allowed_pristine_accesses": 0}
+        return True, 0, "LEDGER_EMPTY", {"total_entries": 0, "allowed_holdout_accesses": 0, "allowed_pristine_accesses": 0}
     
     expected_prev = "0" * 64
     allowed_holdout_accesses = 0
     blocked_holdout_accesses = 0
+    allowed_pristine_accesses = 0
+    blocked_pristine_accesses = 0
     
     for idx, raw in enumerate(lines, 1):
         try:
@@ -696,6 +852,11 @@ def _verify_access_ledger_integrity_unlocked(ledger_path: Optional[Path] = None)
                 allowed_holdout_accesses += 1
             else:
                 blocked_holdout_accesses += 1
+        elif role == DatasetRole.LOCKED_PROSPECTIVE_PRISTINE.value:
+            if decision == "ALLOWED":
+                allowed_pristine_accesses += 1
+            else:
+                blocked_pristine_accesses += 1
                 
         expected_prev = entry_sha
         
@@ -703,6 +864,8 @@ def _verify_access_ledger_integrity_unlocked(ledger_path: Optional[Path] = None)
         "total_entries": len(lines),
         "allowed_holdout_accesses": allowed_holdout_accesses,
         "blocked_holdout_accesses": blocked_holdout_accesses,
+        "allowed_pristine_accesses": allowed_pristine_accesses,
+        "blocked_pristine_accesses": blocked_pristine_accesses,
         "last_entry_sha": expected_prev,
     }
     return True, len(lines), "HASH_CHAIN_VERIFIED", summary
@@ -711,6 +874,7 @@ def _verify_access_ledger_integrity_unlocked(ledger_path: Optional[Path] = None)
 def verify_access_ledger_integrity(
     ledger_path: Optional[Path] = None,
     lock_path: Optional[Path] = None,
+    require_exists: bool = False,
 ) -> tuple[bool, int, str, dict[str, Any]]:
     """Cryptographically verify the research access ledger hash chain with process safety.
     
@@ -723,10 +887,10 @@ def verify_access_ledger_integrity(
             with open(target_lock, "a") as lock_file:
                 fcntl.flock(lock_file.fileno(), fcntl.LOCK_SH)
                 try:
-                    return _verify_access_ledger_integrity_unlocked(target_ledger)
+                    return _verify_access_ledger_integrity_unlocked(target_ledger, require_exists=require_exists)
                 finally:
                     fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
-        return _verify_access_ledger_integrity_unlocked(target_ledger)
+        return _verify_access_ledger_integrity_unlocked(target_ledger, require_exists=require_exists)
 
 
 def log_guard_event(
@@ -889,6 +1053,11 @@ class ResearchDataAccessGuard:
         # TRUST LEVEL 1: Canonical Registry Verification
         # -------------------------------------------------------------
         registry_entry = active_registry.get(dataset_id)
+        is_xau = (
+            (registry_entry and "XAU" in str(registry_entry.instrument_id))
+            or (dataset_id and "XAU" in dataset_id)
+            or (p_obj and "XAU" in p_obj.name)
+        )
         if registry_entry:
             # Enforce logical SHA match if caller provided one (supports both parent aggregate and partition logical SHA)
             if dataset_logical_sha is not None:
@@ -912,10 +1081,13 @@ class ResearchDataAccessGuard:
                     raise HoldoutAccessDeniedError(reason)
 
             # Check for locked holdout entries in registry
-            if registry_entry.status == "LOCKED_UNREGISTERED_FOR_READ" or registry_entry.role == DatasetRole.LOCKED_HOLDOUT:
+            if (
+                registry_entry.status == "LOCKED_UNREGISTERED_FOR_READ"
+                or registry_entry.role in (DatasetRole.LOCKED_HOLDOUT, DatasetRole.LOCKED_PROSPECTIVE_PRISTINE)
+            ):
                 reason = (
-                    f"HOLDOUT_FIREWALL_VIOLATION: Locked holdout dataset '{dataset_id}' is inaccessible. "
-                    f"Operation '{op_enum.value}' denied. HOLDOUT_UNLOCK_CAPABILITY is ZERO."
+                    f"HOLDOUT_FIREWALL_VIOLATION: Locked dataset '{dataset_id}' (role={registry_entry.role.value}) is inaccessible. "
+                    f"Operation '{op_enum.value}' denied. HOLDOUT_UNLOCK_CAPABILITY is ZERO. UNLOCK_CAPABILITY is ZERO."
                 )
                 log_guard_event(
                     operation=op_enum.value,
@@ -1005,61 +1177,128 @@ class ResearchDataAccessGuard:
 
                 # Role boundary checks on actual row timestamps
                 check_role = detected_role or (registry_entry.role if registry_entry else None)
-                if check_role == DatasetRole.DEVELOPMENT:
-                    if actual_max_ts >= 1672531200_000_000_000:
-                        reason = (
-                            f"ROLE_BOUNDARY_VIOLATION: File '{p_obj.name}' assigned role DEVELOPMENT contains "
-                            f"post-2022 rows (max ts {actual_max_ts} >= 1672531200000000000 [2023-01-01T00:00:00Z])."
-                        )
-                        log_guard_event(
-                            operation=op_enum.value,
-                            dataset_id=dataset_id,
-                            dataset_version=dataset_version,
-                            role=check_role.value,
-                            start_ns=actual_min_ts,
-                            end_ns=actual_max_ts,
-                            decision="BLOCKED",
-                            reason=reason,
-                            research_generation=research_generation,
-                        )
-                        raise RoleBoundaryViolationError(reason)
+                is_xau = (
+                    (registry_entry and "XAU" in str(registry_entry.instrument_id))
+                    or (dataset_id and "XAU" in dataset_id)
+                    or (p_obj and "XAU" in p_obj.name)
+                )
 
-                if check_role == DatasetRole.VALIDATION:
-                    if actual_min_ts < 1672531200_000_000_000:
-                        reason = (
-                            f"ROLE_BOUNDARY_VIOLATION: File '{p_obj.name}' assigned role VALIDATION contains "
-                            f"pre-2023 rows (min ts {actual_min_ts} < 1672531200000000000 [2023-01-01T00:00:00Z])."
-                        )
-                        log_guard_event(
-                            operation=op_enum.value,
-                            dataset_id=dataset_id,
-                            dataset_version=dataset_version,
-                            role=check_role.value,
-                            start_ns=actual_min_ts,
-                            end_ns=actual_max_ts,
-                            decision="BLOCKED",
-                            reason=reason,
-                            research_generation=research_generation,
-                        )
-                        raise RoleBoundaryViolationError(reason)
+                if is_xau:
+                    XAU_DEV_END_NS = 1777593600_000_000_000      # 2026-05-01 00:00:00 UTC
+                    XAU_HOLDOUT_START_NS = 1785542400_000_000_000  # 2026-08-01 00:00:00 UTC
 
-                    if actual_max_ts >= HOLDOUT_WINDOW_START_NS:
-                        reason = (
-                            f"HOLDOUT_FIREWALL_VIOLATION: File '{p_obj.name}' assigned role VALIDATION contains "
-                            f"2024 holdout rows (max ts {actual_max_ts} >= {HOLDOUT_WINDOW_START_NS})."
-                        )
-                        log_guard_event(
-                            operation=op_enum.value,
-                            dataset_id=dataset_id,
-                            dataset_version=dataset_version,
-                            role=check_role.value,
-                            start_ns=actual_min_ts,
-                            end_ns=actual_max_ts,
-                            decision="BLOCKED",
-                            reason=reason,
-                            research_generation=research_generation,
-                        )
-                        raise HoldoutAccessDeniedError(reason)
+                    if check_role in (DatasetRole.DEVELOPMENT, DatasetRole.VALIDATION):
+                        if actual_max_ts >= XAU_HOLDOUT_START_NS:
+                            reason = (
+                                f"HOLDOUT_FIREWALL_VIOLATION: File '{p_obj.name}' assigned role {check_role.value} contains "
+                                f"XAU holdout rows (max ts {actual_max_ts} >= {XAU_HOLDOUT_START_NS})."
+                            )
+                            log_guard_event(
+                                operation=op_enum.value,
+                                dataset_id=dataset_id,
+                                dataset_version=dataset_version,
+                                role=check_role.value,
+                                start_ns=actual_min_ts,
+                                end_ns=actual_max_ts,
+                                decision="BLOCKED",
+                                reason=reason,
+                                research_generation=research_generation,
+                            )
+                            raise HoldoutAccessDeniedError(reason)
+
+                    if check_role == DatasetRole.DEVELOPMENT:
+                        if actual_max_ts >= XAU_DEV_END_NS:
+                            reason = (
+                                f"ROLE_BOUNDARY_VIOLATION: File '{p_obj.name}' assigned role DEVELOPMENT contains "
+                                f"post-DEV rows (max ts {actual_max_ts} >= {XAU_DEV_END_NS})."
+                            )
+                            log_guard_event(
+                                operation=op_enum.value,
+                                dataset_id=dataset_id,
+                                dataset_version=dataset_version,
+                                role=check_role.value,
+                                start_ns=actual_min_ts,
+                                end_ns=actual_max_ts,
+                                decision="BLOCKED",
+                                reason=reason,
+                                research_generation=research_generation,
+                            )
+                            raise RoleBoundaryViolationError(reason)
+
+                    if check_role == DatasetRole.VALIDATION:
+                        if actual_min_ts < XAU_DEV_END_NS:
+                            reason = (
+                                f"ROLE_BOUNDARY_VIOLATION: File '{p_obj.name}' assigned role VALIDATION contains "
+                                f"pre-VAL rows (min ts {actual_min_ts} < {XAU_DEV_END_NS})."
+                            )
+                            log_guard_event(
+                                operation=op_enum.value,
+                                dataset_id=dataset_id,
+                                dataset_version=dataset_version,
+                                role=check_role.value,
+                                start_ns=actual_min_ts,
+                                end_ns=actual_max_ts,
+                                decision="BLOCKED",
+                                reason=reason,
+                                research_generation=research_generation,
+                            )
+                            raise RoleBoundaryViolationError(reason)
+                else:
+                    if check_role == DatasetRole.DEVELOPMENT:
+                        if actual_max_ts >= 1672531200_000_000_000:
+                            reason = (
+                                f"ROLE_BOUNDARY_VIOLATION: File '{p_obj.name}' assigned role DEVELOPMENT contains "
+                                f"post-2022 rows (max ts {actual_max_ts} >= 1672531200000000000 [2023-01-01T00:00:00Z])."
+                            )
+                            log_guard_event(
+                                operation=op_enum.value,
+                                dataset_id=dataset_id,
+                                dataset_version=dataset_version,
+                                role=check_role.value,
+                                start_ns=actual_min_ts,
+                                end_ns=actual_max_ts,
+                                decision="BLOCKED",
+                                reason=reason,
+                                research_generation=research_generation,
+                            )
+                            raise RoleBoundaryViolationError(reason)
+
+                    if check_role == DatasetRole.VALIDATION:
+                        if actual_min_ts < 1672531200_000_000_000:
+                            reason = (
+                                f"ROLE_BOUNDARY_VIOLATION: File '{p_obj.name}' assigned role VALIDATION contains "
+                                f"pre-2023 rows (min ts {actual_min_ts} < 1672531200000000000 [2023-01-01T00:00:00Z])."
+                            )
+                            log_guard_event(
+                                operation=op_enum.value,
+                                dataset_id=dataset_id,
+                                dataset_version=dataset_version,
+                                role=check_role.value,
+                                start_ns=actual_min_ts,
+                                end_ns=actual_max_ts,
+                                decision="BLOCKED",
+                                reason=reason,
+                                research_generation=research_generation,
+                            )
+                            raise RoleBoundaryViolationError(reason)
+
+                        if actual_max_ts >= HOLDOUT_WINDOW_START_NS:
+                            reason = (
+                                f"HOLDOUT_FIREWALL_VIOLATION: File '{p_obj.name}' assigned role VALIDATION contains "
+                                f"2024 holdout rows (max ts {actual_max_ts} >= {HOLDOUT_WINDOW_START_NS})."
+                            )
+                            log_guard_event(
+                                operation=op_enum.value,
+                                dataset_id=dataset_id,
+                                dataset_version=dataset_version,
+                                role=check_role.value,
+                                start_ns=actual_min_ts,
+                                end_ns=actual_max_ts,
+                                decision="BLOCKED",
+                                reason=reason,
+                                research_generation=research_generation,
+                            )
+                            raise HoldoutAccessDeniedError(reason)
 
                 # 2. Physical SHA-256 verification
                 actual_physical_sha = hashlib.sha256(p_obj.read_bytes()).hexdigest()
@@ -1211,87 +1450,67 @@ class ResearchDataAccessGuard:
         # TRUST LEVEL 3: Authoritative Holdout Boundary Precedence
         # -------------------------------------------------------------
         intersects_holdout = False
-        if start_ts_ns is not None and end_ts_ns is not None:
-            intersects_holdout = (start_ts_ns <= HOLDOUT_WINDOW_END_NS) and (end_ts_ns >= HOLDOUT_WINDOW_START_NS)
-        elif start_ts_ns is not None:
-            intersects_holdout = (start_ts_ns >= HOLDOUT_WINDOW_START_NS) and (start_ts_ns <= HOLDOUT_WINDOW_END_NS)
-        elif end_ts_ns is not None:
-            intersects_holdout = (end_ts_ns >= HOLDOUT_WINDOW_START_NS) and (end_ts_ns <= HOLDOUT_WINDOW_END_NS)
+        if is_xau:
+            XAU_HOLDOUT_WINDOW_START_NS = 1785542400_000_000_000
+            XAU_HOLDOUT_WINDOW_END_NS = 1789505999_999_999_000
+            if start_ts_ns is not None and end_ts_ns is not None:
+                intersects_holdout = (start_ts_ns <= XAU_HOLDOUT_WINDOW_END_NS) and (end_ts_ns >= XAU_HOLDOUT_WINDOW_START_NS)
+            elif start_ts_ns is not None:
+                intersects_holdout = (start_ts_ns >= XAU_HOLDOUT_WINDOW_START_NS) and (start_ts_ns <= XAU_HOLDOUT_WINDOW_END_NS)
+            elif end_ts_ns is not None:
+                intersects_holdout = (end_ts_ns >= XAU_HOLDOUT_WINDOW_START_NS) and (end_ts_ns <= XAU_HOLDOUT_WINDOW_END_NS)
 
-        path_indicates_holdout = bool(p_obj and ("holdout" in p_obj.name.lower() or "2024" in p_obj.name.lower()))
-
-        if intersects_holdout or path_indicates_holdout:
-            effective_role = DatasetRole.LOCKED_HOLDOUT
-        elif detected_role:
-            effective_role = detected_role
-        elif start_ts_ns and start_ts_ns > HOLDOUT_WINDOW_END_NS:
-            effective_role = DatasetRole.PROSPECTIVE_FORWARD
-        elif end_ts_ns and end_ts_ns < HOLDOUT_WINDOW_START_NS:
-            effective_role = DatasetRole.DEVELOPMENT
+            path_indicates_holdout = bool(p_obj and ("holdout" in p_obj.name.lower() or "pristine" in p_obj.name.lower()))
+            if intersects_holdout or path_indicates_holdout:
+                if p_obj and "pristine" in p_obj.name.lower():
+                    effective_role = DatasetRole.LOCKED_PROSPECTIVE_PRISTINE
+                else:
+                    effective_role = DatasetRole.LOCKED_HOLDOUT
+            elif detected_role:
+                effective_role = detected_role
+            elif start_ts_ns and start_ts_ns >= 1777593600_000_000_000:
+                effective_role = DatasetRole.VALIDATION
+            elif end_ts_ns and end_ts_ns < 1777593600_000_000_000:
+                effective_role = DatasetRole.DEVELOPMENT
+            else:
+                reason = f"DATASET_PROVENANCE_UNKNOWN: Dataset '{dataset_id}' cannot be proven. Access denied."
+                log_guard_event(
+                    operation=op_enum.value,
+                    dataset_id=dataset_id,
+                    dataset_version=dataset_version,
+                    role="UNKNOWN",
+                    start_ns=start_ts_ns,
+                    end_ns=end_ts_ns,
+                    decision="BLOCKED",
+                    reason=reason,
+                    research_generation=research_generation,
+                )
+                raise HoldoutAccessDeniedError(reason)
         else:
-            reason = f"DATASET_PROVENANCE_UNKNOWN: Dataset '{dataset_id}' cannot be proven. Access denied."
-            log_guard_event(
-                operation=op_enum.value,
-                dataset_id=dataset_id,
-                dataset_version=dataset_version,
-                role="UNKNOWN",
-                start_ns=start_ts_ns,
-                end_ns=end_ts_ns,
-                decision="BLOCKED",
-                reason=reason,
-                research_generation=research_generation,
-            )
-            raise HoldoutAccessDeniedError(reason)
+            if start_ts_ns is not None and end_ts_ns is not None:
+                intersects_holdout = (start_ts_ns <= HOLDOUT_WINDOW_END_NS) and (end_ts_ns >= HOLDOUT_WINDOW_START_NS)
+            elif start_ts_ns is not None:
+                intersects_holdout = (start_ts_ns >= HOLDOUT_WINDOW_START_NS) and (start_ts_ns <= HOLDOUT_WINDOW_END_NS)
+            elif end_ts_ns is not None:
+                intersects_holdout = (end_ts_ns >= HOLDOUT_WINDOW_START_NS) and (end_ts_ns <= HOLDOUT_WINDOW_END_NS)
 
-        # Role boundary checks on effective role and requested timestamps
-        if effective_role == DatasetRole.DEVELOPMENT:
-            if (start_ts_ns is not None and start_ts_ns >= 1672531200_000_000_000) or (end_ts_ns is not None and end_ts_ns >= 1672531200_000_000_000):
-                reason = (
-                    f"ROLE_BOUNDARY_VIOLATION: DEVELOPMENT dataset '{dataset_id}' requested range "
-                    f"[{start_ts_ns}, {end_ts_ns}] violates 2022 cutoff (1672531200000000000 [2023-01-01T00:00:00Z])."
-                )
+            path_indicates_holdout = bool(p_obj and ("holdout" in p_obj.name.lower() or "2024" in p_obj.name.lower()))
+
+            if intersects_holdout or path_indicates_holdout:
+                effective_role = DatasetRole.LOCKED_HOLDOUT
+            elif detected_role:
+                effective_role = detected_role
+            elif start_ts_ns and start_ts_ns > HOLDOUT_WINDOW_END_NS:
+                effective_role = DatasetRole.PROSPECTIVE_FORWARD
+            elif end_ts_ns and end_ts_ns < HOLDOUT_WINDOW_START_NS:
+                effective_role = DatasetRole.DEVELOPMENT
+            else:
+                reason = f"DATASET_PROVENANCE_UNKNOWN: Dataset '{dataset_id}' cannot be proven. Access denied."
                 log_guard_event(
                     operation=op_enum.value,
                     dataset_id=dataset_id,
                     dataset_version=dataset_version,
-                    role=effective_role.value,
-                    start_ns=start_ts_ns,
-                    end_ns=end_ts_ns,
-                    decision="BLOCKED",
-                    reason=reason,
-                    research_generation=research_generation,
-                )
-                raise RoleBoundaryViolationError(reason)
-
-        if effective_role == DatasetRole.VALIDATION:
-            if start_ts_ns is not None and start_ts_ns < 1672531200_000_000_000:
-                reason = (
-                    f"ROLE_BOUNDARY_VIOLATION: VALIDATION dataset '{dataset_id}' requested start "
-                    f"{start_ts_ns} violates 2023 start boundary (1672531200000000000 [2023-01-01T00:00:00Z])."
-                )
-                log_guard_event(
-                    operation=op_enum.value,
-                    dataset_id=dataset_id,
-                    dataset_version=dataset_version,
-                    role=effective_role.value,
-                    start_ns=start_ts_ns,
-                    end_ns=end_ts_ns,
-                    decision="BLOCKED",
-                    reason=reason,
-                    research_generation=research_generation,
-                )
-                raise RoleBoundaryViolationError(reason)
-
-            if end_ts_ns is not None and end_ts_ns >= HOLDOUT_WINDOW_START_NS:
-                reason = (
-                    f"HOLDOUT_FIREWALL_VIOLATION: VALIDATION dataset '{dataset_id}' requested end "
-                    f"{end_ts_ns} intersects locked 2024 holdout ({HOLDOUT_WINDOW_START_NS})."
-                )
-                log_guard_event(
-                    operation=op_enum.value,
-                    dataset_id=dataset_id,
-                    dataset_version=dataset_version,
-                    role=effective_role.value,
+                    role="UNKNOWN",
                     start_ns=start_ts_ns,
                     end_ns=end_ts_ns,
                     decision="BLOCKED",
@@ -1300,14 +1519,132 @@ class ResearchDataAccessGuard:
                 )
                 raise HoldoutAccessDeniedError(reason)
 
+        # Role boundary checks on effective role and requested timestamps
+        if is_xau:
+            XAU_DEV_END_NS = 1777593600_000_000_000
+            XAU_HOLDOUT_START_NS = 1785542400_000_000_000
+
+            if effective_role in (DatasetRole.DEVELOPMENT, DatasetRole.VALIDATION):
+                if (end_ts_ns is not None and end_ts_ns >= XAU_HOLDOUT_START_NS) or (start_ts_ns is not None and start_ts_ns >= XAU_HOLDOUT_START_NS):
+                    reason = (
+                        f"HOLDOUT_FIREWALL_VIOLATION: XAU {effective_role.value} dataset '{dataset_id}' requested range "
+                        f"[{start_ts_ns}, {end_ts_ns}] intersects locked XAU holdout ({XAU_HOLDOUT_START_NS})."
+                    )
+                    log_guard_event(
+                        operation=op_enum.value,
+                        dataset_id=dataset_id,
+                        dataset_version=dataset_version,
+                        role=effective_role.value,
+                        start_ns=start_ts_ns,
+                        end_ns=end_ts_ns,
+                        decision="BLOCKED",
+                        reason=reason,
+                        research_generation=research_generation,
+                    )
+                    raise HoldoutAccessDeniedError(reason)
+
+            if effective_role == DatasetRole.DEVELOPMENT:
+                if (start_ts_ns is not None and start_ts_ns >= XAU_DEV_END_NS) or (end_ts_ns is not None and end_ts_ns >= XAU_DEV_END_NS):
+                    reason = (
+                        f"ROLE_BOUNDARY_VIOLATION: DEVELOPMENT dataset '{dataset_id}' requested range "
+                        f"[{start_ts_ns}, {end_ts_ns}] violates XAU DEV cutoff ({XAU_DEV_END_NS})."
+                    )
+                    log_guard_event(
+                        operation=op_enum.value,
+                        dataset_id=dataset_id,
+                        dataset_version=dataset_version,
+                        role=effective_role.value,
+                        start_ns=start_ts_ns,
+                        end_ns=end_ts_ns,
+                        decision="BLOCKED",
+                        reason=reason,
+                        research_generation=research_generation,
+                    )
+                    raise RoleBoundaryViolationError(reason)
+
+            if effective_role == DatasetRole.VALIDATION:
+                if start_ts_ns is not None and start_ts_ns < XAU_DEV_END_NS:
+                    reason = (
+                        f"ROLE_BOUNDARY_VIOLATION: VALIDATION dataset '{dataset_id}' requested start "
+                        f"{start_ts_ns} violates XAU VAL start boundary ({XAU_DEV_END_NS})."
+                    )
+                    log_guard_event(
+                        operation=op_enum.value,
+                        dataset_id=dataset_id,
+                        dataset_version=dataset_version,
+                        role=effective_role.value,
+                        start_ns=start_ts_ns,
+                        end_ns=end_ts_ns,
+                        decision="BLOCKED",
+                        reason=reason,
+                        research_generation=research_generation,
+                    )
+                    raise RoleBoundaryViolationError(reason)
+        else:
+            if effective_role == DatasetRole.DEVELOPMENT:
+                if (start_ts_ns is not None and start_ts_ns >= 1672531200_000_000_000) or (end_ts_ns is not None and end_ts_ns >= 1672531200_000_000_000):
+                    reason = (
+                        f"ROLE_BOUNDARY_VIOLATION: DEVELOPMENT dataset '{dataset_id}' requested range "
+                        f"[{start_ts_ns}, {end_ts_ns}] violates 2022 cutoff (1672531200000000000 [2023-01-01T00:00:00Z])."
+                    )
+                    log_guard_event(
+                        operation=op_enum.value,
+                        dataset_id=dataset_id,
+                        dataset_version=dataset_version,
+                        role=effective_role.value,
+                        start_ns=start_ts_ns,
+                        end_ns=end_ts_ns,
+                        decision="BLOCKED",
+                        reason=reason,
+                        research_generation=research_generation,
+                    )
+                    raise RoleBoundaryViolationError(reason)
+
+            if effective_role == DatasetRole.VALIDATION:
+                if start_ts_ns is not None and start_ts_ns < 1672531200_000_000_000:
+                    reason = (
+                        f"ROLE_BOUNDARY_VIOLATION: VALIDATION dataset '{dataset_id}' requested start "
+                        f"{start_ts_ns} violates 2023 start boundary (1672531200000000000 [2023-01-01T00:00:00Z])."
+                    )
+                    log_guard_event(
+                        operation=op_enum.value,
+                        dataset_id=dataset_id,
+                        dataset_version=dataset_version,
+                        role=effective_role.value,
+                        start_ns=start_ts_ns,
+                        end_ns=end_ts_ns,
+                        decision="BLOCKED",
+                        reason=reason,
+                        research_generation=research_generation,
+                    )
+                    raise RoleBoundaryViolationError(reason)
+
+                if end_ts_ns is not None and end_ts_ns >= HOLDOUT_WINDOW_START_NS:
+                    reason = (
+                        f"HOLDOUT_FIREWALL_VIOLATION: VALIDATION dataset '{dataset_id}' requested end "
+                        f"{end_ts_ns} intersects locked 2024 holdout ({HOLDOUT_WINDOW_START_NS})."
+                    )
+                    log_guard_event(
+                        operation=op_enum.value,
+                        dataset_id=dataset_id,
+                        dataset_version=dataset_version,
+                        role=effective_role.value,
+                        start_ns=start_ts_ns,
+                        end_ns=end_ts_ns,
+                        decision="BLOCKED",
+                        reason=reason,
+                        research_generation=research_generation,
+                    )
+                    raise HoldoutAccessDeniedError(reason)
+
         # -------------------------------------------------------------
         # TRUST LEVEL 4: Policy Enforcement
         # -------------------------------------------------------------
-        # 1. LOCKED_HOLDOUT Policy (HOLDOUT_UNLOCK_CAPABILITY = 0)
-        if effective_role == DatasetRole.LOCKED_HOLDOUT:
+        # 1. LOCKED_HOLDOUT & LOCKED_PROSPECTIVE_PRISTINE Policy (UNLOCK_CAPABILITY = 0)
+        if effective_role in (DatasetRole.LOCKED_HOLDOUT, DatasetRole.LOCKED_PROSPECTIVE_PRISTINE):
             reason = (
-                f"HOLDOUT_FIREWALL_VIOLATION: Locked holdout (2024-01-01 to 2024-11-30) is inaccessible. "
-                f"Operation '{op_enum.value}' denied. HOLDOUT_UNLOCK_CAPABILITY is ZERO."
+                f"HOLDOUT_FIREWALL_VIOLATION: Locked dataset '{dataset_id}' (role={effective_role.value}) is inaccessible. "
+                f"Operation '{op_enum.value}' denied. HOLDOUT_UNLOCK_CAPABILITY is ZERO. UNLOCK_CAPABILITY is ZERO."
             )
             log_guard_event(
                 operation=op_enum.value,
@@ -1403,9 +1740,9 @@ def load_research_parquet(
     entry = CANONICAL_DATASET_REGISTRY.get(dataset_id)
     if entry:
         if entry.status in ("NOT_DIRECTLY_READABLE", "LOCKED_UNREGISTERED_FOR_READ") or entry.canonical_relative_path is None or entry.physical_sha256 is None:
-            if entry.role == DatasetRole.LOCKED_HOLDOUT or entry.status == "LOCKED_UNREGISTERED_FOR_READ":
+            if entry.role in (DatasetRole.LOCKED_HOLDOUT, DatasetRole.LOCKED_PROSPECTIVE_PRISTINE) or entry.status == "LOCKED_UNREGISTERED_FOR_READ":
                 raise HoldoutAccessDeniedError(
-                    f"HOLDOUT_FIREWALL_VIOLATION: Dataset '{dataset_id}' is locked holdout and cannot be loaded directly."
+                    f"HOLDOUT_FIREWALL_VIOLATION: Dataset '{dataset_id}' is locked holdout/pristine and cannot be loaded directly."
                 )
             if entry.role == DatasetRole.PROSPECTIVE_FORWARD or entry.status == "PROSPECTIVE_UNMATERIALIZED":
                 raise HoldoutAccessDeniedError(
