@@ -1,0 +1,67 @@
+{
+  "accepted_dataset_physical_shas": {
+    "artifacts/research/partitions/BTCUSDT_DEV_2020_2022.parquet": "4daa270f04c5e5305b7033b745253e862fc72f17a9ff16a9d0e1c6bca5847b47",
+    "artifacts/research/partitions/BTCUSDT_FUNDING_DEV_2020_2022.parquet": "2991e597d8c80a4b11181364e95168a46a6bc1cbd0f7a7f44fbf6341c0fcad3d",
+    "artifacts/research/partitions/BTCUSDT_FUNDING_VAL_2023.parquet": "5f24907c3cd87c0465cd81356f192143c9f831c671f9a1aeeb9f6a39740614d3",
+    "artifacts/research/partitions/BTCUSDT_VAL_2023.parquet": "2db5dd7bdd758f3ae07420f443feb42b4319f59462b4697d7d72e524e0027c85",
+    "artifacts/research/partitions/ETHUSDT_DEV_2020_2022.parquet": "007cdce2eca501924935090eba141889b8d26d60b941e3fcf37501aa14b50f23",
+    "artifacts/research/partitions/ETHUSDT_FUNDING_DEV_2020_2022.parquet": "97ab50866782c4c2b99eff0caafbba23cb8522180bf460f23b73f8bd368042f8",
+    "artifacts/research/partitions/ETHUSDT_FUNDING_VAL_2023.parquet": "16d3edbb7b031847bcf0dfb9c75c88dd643683f9d555b0bee4bd1fb6f1977462",
+    "artifacts/research/partitions/ETHUSDT_VAL_2023.parquet": "2ce4e724e3e082dac0976e2192304780cc1c0ea4ad977e12da1497e4b0f52ff7",
+    "artifacts/research/silver_v3/BTCUSDT-funding-2020-01-2023-12-v3.1.parquet": "a966c54a24d6ab8558221b329c8ba2f024fa981738ca9b368bf6ae1d6668bdf6",
+    "artifacts/research/silver_v3/BTCUSDT-resampled-1h-v3.1.0.parquet": "f706dfa1fc637e46fa6604b19fd8dea15edfebaa3478cc859ed1d23111eff70e",
+    "artifacts/research/silver_v3/ETHUSDT-funding-2020-01-2023-12-v3.1.parquet": "89a22768444ebb06b618fd2e30699dc020c46ccb38ae804a8cf164874eb6462b",
+    "artifacts/research/silver_v3/ETHUSDT-resampled-1h-v3.1.0.parquet": "64cd9f71654fe6e9791fb379b2fdf7891d3d27fd8f7456b97c0d31e892b8e510"
+  },
+  "canonical_baseline_sha": "fb2d2c1f25f199ea040212fe683e64776754b805",
+  "code_acceptance": {
+    "failed_gates": [],
+    "gates_passed": 13,
+    "gates_total": 13
+  },
+  "config_physical_shas": {
+    "research_capital_policy_v1.yaml": "a651c73b348a67f1aa6528f5f81b561a88572b60e0c3d6ce463b46a2d846577f",
+    "research_execution_cost_policy_v1.yaml": "070a5ec85a6b7b858c2f0f40d40faaf489ac2ef80e1ffbdf3732496190be5435",
+    "research_partitions_v1.json": "0a6d1bfd516e34a81b12c118823ac3ed5679cbf38d85633d153c08390cf1fc0a"
+  },
+  "full_pytest": {
+    "failed": 0,
+    "passed": 375,
+    "skipped": 1
+  },
+  "holdout": {
+    "allowed_accesses": 0,
+    "ledger_entries": 4719,
+    "status": "LOCKED"
+  },
+  "instrument_ids": [
+    "BINANCE:SPOT:BTCUSDT",
+    "BINANCE:USD_M_PERP:BTCUSDT",
+    "BINANCE:SPOT:ETHUSDT",
+    "BINANCE:USD_M_PERP:ETHUSDT",
+    "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT"
+  ],
+  "known_limitations": [
+    "Current XAU exchange specification has not yet been probed or accepted.",
+    "No XAU rule epochs, calendar, native history, or strategy approval are established.",
+    "No live order capability exists."
+  ],
+  "next": "PHASE_D_XAU_CURRENT_SPEC_DISCOVERY",
+  "payload_sha256": "2034e37a8c5363d07b148eb40686e1f0365d9bb6445853a03b7d89165f103402",
+  "report_version": "PHASE2C_V11",
+  "security": {
+    "hits": [],
+    "trading_capability": "ZERO"
+  },
+  "status": "MULTIASSET_INSTRUMENT_ARCHITECTURE_VERIFIED",
+  "strategy_registry": {
+    "approved_for_paper": 0,
+    "approved_for_shadow": 0,
+    "experiments": 26
+  },
+  "tested_code_commit_sha": "1ed66ff299725a7d4ceb3097ef7a37a0603f5ea1",
+  "tested_tree_sha": "55b183d16bdadb2425871f2e4ecf524d2a7224e4",
+  "timestamp_utc": "2026-09-23T07:20:37.912410+00:00",
+  "xaeusdt_handling": "REJECT_WITH_EXPLICIT_XAU_XAUT_SUGGESTION",
+  "xaut_support": "NOT_ENABLED"
+}
