@@ -119,6 +119,9 @@ class CombinedSessionSnapshot:
     is_contract_tradable: bool
     price_index_regime: str
     holiday_status: str = HolidayStatus.NOT_IMPLEMENTED.value
+    underlying_session_certainty: str = "UNKNOWN"
+    price_index_mode: str = "UNKNOWN"
+    price_index_mode_certainty: str = "UNKNOWN"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -128,6 +131,9 @@ class CombinedSessionSnapshot:
             "is_contract_tradable": self.is_contract_tradable,
             "price_index_regime": self.price_index_regime,
             "holiday_status": self.holiday_status,
+            "underlying_session_certainty": self.underlying_session_certainty,
+            "price_index_mode": self.price_index_mode,
+            "price_index_mode_certainty": self.price_index_mode_certainty,
         }
 
 
@@ -150,6 +156,20 @@ def evaluate_sessions(
 
     underlying_st = underlying_session.get_state(dt, price_index_method)
     contract_st = contract_session.get_state(dt)
+    if underlying_st == GoldSessionState.UNDERLYING_OPEN:
+        # A weekday rule cannot prove a reference-market holiday is absent.
+        session_certainty = "WEEKDAY_RULE_ONLY"
+        index_mode = "REGULAR_SCHEDULE_INFERRED"
+        index_certainty = "HOLIDAY_UNKNOWN"
+    else:
+        session_certainty = "WEEKDAY_RULE_ONLY" if dt.astimezone(ET_TZ).weekday() < 5 else "VERIFIED_WEEKEND_RULE"
+        if "EWMA" in price_index_method and "FIXED" not in price_index_method:
+            index_mode = "ORDERBOOK_EWMA_SCHEDULE_INFERRED"
+        else:
+            index_mode = "FIXED_OR_OTHER_OFF_HOURS_SCHEDULE_INFERRED"
+        index_certainty = "HOLIDAY_UNKNOWN" if session_certainty == "WEEKDAY_RULE_ONLY" else (
+            "VERIFIED_EWMA" if index_mode == "ORDERBOOK_EWMA_SCHEDULE_INFERRED" else "UNKNOWN"
+        )
 
     return CombinedSessionSnapshot(
         timestamp_utc=dt.isoformat(),
@@ -158,4 +178,7 @@ def evaluate_sessions(
         is_contract_tradable=(contract_st == GoldSessionState.CONTRACT_TRADING),
         price_index_regime=price_index_method,
         holiday_status=HolidayStatus.NOT_IMPLEMENTED.value,
+        underlying_session_certainty=session_certainty,
+        price_index_mode=index_mode,
+        price_index_mode_certainty=index_certainty,
     )

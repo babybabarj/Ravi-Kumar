@@ -641,6 +641,24 @@ _CANONICAL_DATASETS: dict[str, CanonicalPartitionEntry] = {
     ),
 }
 
+# V3 hashes and role boundaries are pinned in the committed manifest.
+_xau_v3_manifest = ROOT / "config/xau_research_partitions_v3.json"
+if _xau_v3_manifest.is_file():
+    for _id, _part in json.loads(_xau_v3_manifest.read_text()).get("partitions", {}).items():
+        _CANONICAL_DATASETS[_id] = CanonicalPartitionEntry(
+            dataset_id=_id, dataset_version="v3.0.0", partition_id=_id,
+            canonical_relative_path=_part["relative_path"],
+            physical_sha256=_part["physical_sha256"],
+            dataset_logical_sha256=None,
+            start_ts_ns=_part["start_ts_ns"], end_ts_ns=_part["end_ts_ns"],
+            role=DatasetRole(_part["role"]),
+            parent_dataset="XAUUSDT-resampled-1m-silver-v3",
+            status="LOCKED_UNREGISTERED_FOR_READ" if _part["role"].startswith("LOCKED_") else "CANONICAL",
+            partition_logical_sha256=_part["logical_sha256"],
+            instrument_id="BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+            market_type="TRADFI_COMMODITY_PERP", venue="BINANCE",
+        )
+
 CANONICAL_DATASET_REGISTRY: Mapping[str, CanonicalPartitionEntry] = types.MappingProxyType(_CANONICAL_DATASETS)
 
 
