@@ -1,0 +1,141 @@
+{
+  "canonical_baseline_sha": "fb2d2c1f25f199ea040212fe683e64776754b805",
+  "code_acceptance": {
+    "failed_gates": [],
+    "gates_passed": 20,
+    "gates_total": 20
+  },
+  "config_physical_shas": {
+    "research_capital_policy_v1.yaml": "a651c73b348a67f1aa6528f5f81b561a88572b60e0c3d6ce463b46a2d846577f",
+    "research_execution_cost_policy_v1.yaml": "070a5ec85a6b7b858c2f0f40d40faaf489ac2ef80e1ffbdf3732496190be5435",
+    "research_partitions_v1.json": "0a6d1bfd516e34a81b12c118823ac3ed5679cbf38d85633d153c08390cf1fc0a"
+  },
+  "full_pytest": {
+    "failed": 0,
+    "passed": 376,
+    "skipped": 1
+  },
+  "holdout": {
+    "allowed_accesses": 0,
+    "ledger_entries": 4719,
+    "status": "LOCKED"
+  },
+  "known_limitations": [
+    "onboardDate is not accepted as native listing/start timestamp.",
+    "Historical funding, sessions, mark/index mechanics, and contract rule epochs remain unverified.",
+    "Exchange maximum leverage and account eligibility are unknown.",
+    "Current public metadata does not approve any strategy or order capability."
+  ],
+  "next": "PHASE_E_XAU_HISTORICAL_AND_CURRENT_DATA_PIPELINE",
+  "official_sources": [
+    "https://developers.binance.com/en/docs/catalog/core-trading-derivatives-trading-usd-s-m-futures/api/rest-api/market-data",
+    "https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Connect"
+  ],
+  "payload_sha256": "6784acd3734a6f0400bcbdc17bd0192200d117b7cab0de4a153f50457f0ebf74",
+  "public_probe": {
+    "probe_summary_physical_sha256": "864f9d3fc6cdedae94ca191d6c6235cd7497528701ba86dbe2f281672408c74f",
+    "rest_http_statuses": {
+      "bookTicker": 200,
+      "exchangeInfo": 200,
+      "fundingInfo": 200,
+      "fundingRate": 200,
+      "premiumIndex": 200,
+      "tradingSchedule": 200
+    },
+    "routed_websocket": {
+      "event": "markPriceUpdate",
+      "physical_sha256": "c5fde373a90bad783376f5395011ffa4e36697fc2216950105b87818f71ffbef",
+      "status": "RECEIVED",
+      "symbol": "XAUUSDT",
+      "url": "wss://fstream.binance.com/market/ws/xauusdt@markPrice"
+    }
+  },
+  "report_version": "PHASE2D_V12",
+  "security": {
+    "hits": [],
+    "trading_capability": "ZERO"
+  },
+  "status": "XAU_PUBLIC_SPEC_DISCOVERY_VERIFIED",
+  "strategy_registry": {
+    "approved_for_paper": 0,
+    "approved_for_shadow": 0,
+    "experiments": 26
+  },
+  "tested_code_commit_sha": "38bc267515ae315757282ab5dc7b2ac509b65d3f",
+  "tested_tree_sha": "dafd73d475d779ce000a52ecb98e4a466e422c85",
+  "timestamp_utc": "2026-09-23T07:33:28.244550+00:00",
+  "xau_spec": {
+    "account_eligibility": "UNKNOWN",
+    "execution_approval": "NOT_ACCEPTED",
+    "instrument_id": "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+    "local_snapshot_path": "artifacts/instrument_specs/specs/BINANCE_TRADFI_COMMODITY_PERP_XAUUSDT-1790148478917876000.json",
+    "parsed_instrument_spec": {
+      "api_segment": "usdm",
+      "base_asset": "XAU",
+      "contract_size": null,
+      "contract_type": "TRADIFI_PERPETUAL",
+      "current_funding_interval": 14400,
+      "effective_from_ts": 1790148478917876000,
+      "exchange_info_snapshot_sha": "d13836bf6983b6cbff79966708d23a8dd229147e0d09a7297223eea14c9320a1",
+      "exchange_max_leverage": null,
+      "funding_enabled": true,
+      "instrument_id": "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+      "leverage_supported": true,
+      "listing_ts": null,
+      "mark_price_type": null,
+      "market_type": "PERPETUAL",
+      "max_notional": null,
+      "max_qty": "10000",
+      "min_notional": "5",
+      "min_qty": "0.001",
+      "price_index_type": null,
+      "price_precision": 2,
+      "product_family": "TRADFI_COMMODITY_PERP",
+      "quantity_precision": 3,
+      "quote_asset": "USDT",
+      "retrieved_at_ts": 1790148478917876000,
+      "session_calendar_id": "BINANCE:COMMODITY",
+      "settlement_asset": "USDT",
+      "status": "TRADING",
+      "step_size": "0.001",
+      "symbol": "XAUUSDT",
+      "tick_size": "0.01",
+      "tradfi_asset_class": "COMMODITY",
+      "underlying_type": "COMMODITY",
+      "venue": "BINANCE"
+    },
+    "retrieved_at_ns": 1790148478917876000,
+    "rules_logical_sha256": "1fc3ee6782d74a9d6cccff1da3e95d0d194fb10ec488f9c61d2adf813f47e420",
+    "snapshot_physical_sha256": "57d92989649f12e7bc86a924c0cc51c3fdacfc79eb1a4aa09525acc03a410cd8",
+    "source_snapshots": [
+      {
+        "logical_sha256": "c5121122a4c6d52a84bfdd0fa6f35119b01034f71348d35ff609418b8a12e68b",
+        "physical_sha256": "d13836bf6983b6cbff79966708d23a8dd229147e0d09a7297223eea14c9320a1",
+        "raw_file": "raw/d13836bf6983b6cbff79966708d23a8dd229147e0d09a7297223eea14c9320a1.json",
+        "retrieved_at_ns": 1790148477864164000,
+        "source_endpoint": "https://fapi.binance.com/fapi/v1/exchangeInfo"
+      },
+      {
+        "logical_sha256": "e5f8c876fa8fec8dc8af92449159d820522b3a46ebdba41fa38713306dfb8217",
+        "physical_sha256": "a460eda5b1b0cae812f4bdee489de93b427207feec85292bdfd49de5da6d40ea",
+        "raw_file": "raw/a460eda5b1b0cae812f4bdee489de93b427207feec85292bdfd49de5da6d40ea.json",
+        "retrieved_at_ns": 1790148478338638000,
+        "source_endpoint": "https://fapi.binance.com/fapi/v1/fundingInfo"
+      },
+      {
+        "logical_sha256": "594bff401a4afc59c52f64e09435a34992fb8d1d8d93e2a4b4f1d0e5503ebefd",
+        "physical_sha256": "c1697ef9dda4139c0b4ec2fe8e4df89743e6e6600178ea12f2695c3b11a468a4",
+        "raw_file": "raw/c1697ef9dda4139c0b4ec2fe8e4df89743e6e6600178ea12f2695c3b11a468a4.json",
+        "retrieved_at_ns": 1790148478623402000,
+        "source_endpoint": "https://fapi.binance.com/fapi/v1/tradingSchedule"
+      },
+      {
+        "logical_sha256": "6d53748cfa81fd778d5ad84090c2b6d6ea5083a303146bcceccd114aebc32b4f",
+        "physical_sha256": "49b7c51ee4cbcb7bbfba55c7c3a621ae095f7e77347bbf719c84eab79547aa59",
+        "raw_file": "raw/49b7c51ee4cbcb7bbfba55c7c3a621ae095f7e77347bbf719c84eab79547aa59.json",
+        "retrieved_at_ns": 1790148478915613000,
+        "source_endpoint": "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=XAUUSDT"
+      }
+    ]
+  }
+}
