@@ -1,0 +1,82 @@
+{
+  "report_type": "PHASE2E_1_XAU_FOUNDATION_V15",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-23T12:49:42.284350+00:00",
+  "instrument_id": "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+  "market_type": "TRADFI_COMMODITY_PERP",
+  "venue": "BINANCE",
+  "canonical_baseline": "fb2d2c1f25f199ea040212fe683e64776754b805",
+  "canonical_tag": "btceth-reliability-3b0i-canonical-2026-09-23",
+  "v14_parent_commit": "d7bf609b8d61cd549be9c11943854bc66f0b3459",
+  "tested_code_commit_sha": "2871266785d0c56fea05a93669b5c6db12a95979",
+  "tested_tree_sha": "690710f3a8ed6281d1ee3d62414f4871e93cc2b4",
+  "partitions_manifest_physical_sha256": "663d6a387c0091daba16302b2da91acc3d09ef0931de926945397e52d2c949bb",
+  "audit_report_physical_sha256": "9d8f9420041ab91225bdc95334092ad12d256a2f23fdf12457631bdba7501bc9",
+  "series_alignment_physical_sha256": "660430784c5413db8ba186528fa05d933232f0bd05e6487aac02c3e0ea0c5faf",
+  "decimal_schema_physical_sha256": "607224d2d53ef0c118a81c280570617a54a11d1e1945d58b40c29ebde6f99198",
+  "primary_sources_manifest_physical_sha256": "14b1aaebb7da778b091faf7f4fb789fe4d5513cc4048c7b9baa0f7ff5c1c5f0a",
+  "contract_rule_epochs_physical_sha256": "3d968e49b231fb3edc41e3250797ed7d1a8045921951e5d9bee1adbd5a58c45d",
+  "safety_constraints": {
+    "trading_capability": "ZERO",
+    "mainnet_order_mutation": "DISABLED",
+    "approved_for_shadow": 0,
+    "approved_for_paper": 0,
+    "xau_holdout_allowed_research_accesses": 0,
+    "xau_prospective_pristine_allowed_research_accesses": 0,
+    "btc_eth_holdout_allowed_accesses": 0,
+    "xau_holdout_unlock_capability": 0,
+    "xau_prospective_pristine_unlock_capability": 0
+  },
+  "blockers_resolved": {
+    "blocker_A_primary_sources": "RESOLVED_8_SOURCES_PRESENT_HASHED",
+    "blocker_B_trade_aggtrade_audit": "RESOLVED_66_ARCHIVES_AUDITED_MULTI_EPOCH_RECONCILED",
+    "blocker_C_decimal_parquet_schema": "RESOLVED_ZERO_FLOAT_FINANCIALS_DECIMAL_PRECISION",
+    "blocker_D_series_alignment_audit": "RESOLVED_100PCT_EXACT_ALIGNMENT_ZERO_FALLBACKS",
+    "blocker_E_discrete_funding_events": "RESOLVED_1589_EVENTS_DISCRETE_BAR_SETTLEMENT",
+    "blocker_F_fail_closed_session_engine": "RESOLVED_TIMEZONE_UNAVAILABLE_RAISES_ERROR",
+    "blocker_G_holiday_calendar_stance": "RESOLVED_EXPLICIT_HOLIDAY_STATUS_NOT_IMPLEMENTED",
+    "blocker_H_epoch_aware_maintenance": "RESOLVED_BREAK_VS_CONTINUOUS_SWITCH_AT_EPOCH_6",
+    "blocker_I_exact_1815_utc_transition": "RESOLVED_EPOCH_4A_TO_4B_AT_EXACT_1815_UTC",
+    "blocker_J_leverage_tier_reconstruction": "RESOLVED_TIER_TABLES_SOURCE_ATTRIBUTED",
+    "blocker_K_partitions_v2_materialization": "RESOLVED_4_PARTITIONS_374400_ROWS_PHYSICAL_LOGICAL_SHAS",
+    "blocker_L_data_guard_locks": "RESOLVED_HOLDOUT_AND_PRISTINE_FAIL_CLOSED_ZERO_UNLOCK_CAPABILITY",
+    "blocker_M_ledger_integrity_fail_closed": "RESOLVED_REQUIRE_EXISTS_FAILS_CLOSED_IF_MISSING",
+    "blocker_N_quarantined_terminology": "RESOLVED_PRE_ADMISSION_QUARANTINE_NO_SPECULATIVE_FIELDS",
+    "blocker_O_mechanical_verifier_v15": "RESOLVED_27_GATE_AUTOMATION_TWO_COMMIT_PROTOCOL"
+  },
+  "partitions_v2": {
+    "DEV": {
+      "dataset_id": "XAUUSDT_DEV_2026_01_04_V2",
+      "role": "DEVELOPMENT",
+      "rows": 165600,
+      "logical_sha256": "73a11ad96ba0c40a075c7f43a21bf9c1148adfb72ef7c57a242304585bcdd99f"
+    },
+    "VAL": {
+      "dataset_id": "XAUUSDT_VAL_2026_05_07_V2",
+      "role": "VALIDATION",
+      "rows": 132480,
+      "logical_sha256": "8226a4754ddd9abd5ee848af9fd4c08e010016114c86f4d812f54c9fa19badd8"
+    },
+    "HOLDOUT": {
+      "dataset_id": "XAUUSDT_HOLDOUT_2026_08_09_V2",
+      "role": "LOCKED_HOLDOUT",
+      "locked": true,
+      "rows": 66060,
+      "logical_sha256": "62f11d462ddc6a9d2dd4568c5205839c1bb643bc3c49daf3ec8bcc96967da0cd"
+    },
+    "PROSPECTIVE_PRISTINE": {
+      "dataset_id": "XAUUSDT_PROSPECTIVE_PRISTINE_V2",
+      "role": "LOCKED_PROSPECTIVE_PRISTINE",
+      "locked": true,
+      "rows": 10260,
+      "logical_sha256": "eea913f691081f363f0c82c1f5c0f9d20a5c5dbc59db09a87edcb6d339befd27"
+    }
+  },
+  "verification_gates": {
+    "total_gates": 27,
+    "gates_passed": 27,
+    "code_acceptance_status": "VERIFIED",
+    "verifier_version": "15.0.0"
+  },
+  "payload_sha256": "cc644d261ba5dfed8c7088910744f0ad5829cfc7ea714beefef593b2a2d0293e"
+}

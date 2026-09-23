@@ -1,0 +1,15 @@
+{
+  "report_type": "XAU_SERIES_ALIGNMENT_AUDIT_V15",
+  "timestamp_utc": "2026-09-23T12:07:09.771877+00:00",
+  "instrument_id": "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+  "alignment_statistics": {
+    "total_admitted_bars": 374400,
+    "exact_aligned_bars": 374400,
+    "fallback_substitutions": 0,
+    "missing_mark_bars": 0,
+    "missing_index_bars": 0,
+    "missing_premium_bars": 0,
+    "alignment_status": "PERFECT_100_PERCENT_NO_FALLBACK"
+  },
+  "silent_fallback_policy": "DISABLED_STRICT_EVALUATION"
+}
