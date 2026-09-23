@@ -1,0 +1,122 @@
+{
+  "bar_level_research_ready": true,
+  "capabilities": {
+    "AGGTRADE_RESEARCH": {
+      "allowed_for_research": true,
+      "constraints": [
+        "Aggregation combines simultaneous fills at identical price."
+      ],
+      "name": "AGGTRADE_RESEARCH",
+      "reason": "Complete aggTrade stream verified via official archives with volume reconciliation to 1m klines.",
+      "status": "VERIFIED"
+    },
+    "BAR_DIRECTIONAL_RESEARCH": {
+      "allowed_for_research": true,
+      "constraints": [
+        "Fills must assume conservative bar execution models; no touch/spread fills permitted.",
+        "Candle close is not an executable touch quote.",
+        "High/low difference must not be treated as a bid-ask spread."
+      ],
+      "name": "BAR_DIRECTIONAL_RESEARCH",
+      "reason": "Checksum-verified 1m OHLCV contract klines available from 2026-01-06 with daily repair for 2026-06-29 gap.",
+      "status": "VERIFIED"
+    },
+    "BEST_BID_ASK_RESEARCH": {
+      "allowed_for_research": false,
+      "constraints": [
+        "Historical best bid and best ask are completely unavailable in public archives.",
+        "Strategies requiring top-of-book quotes cannot execute historical research."
+      ],
+      "name": "BEST_BID_ASK_RESEARCH",
+      "reason": "Binance public data vision archives do not publish tick bookTicker for XAUUSDT.",
+      "status": "NOT_COMPUTABLE"
+    },
+    "FUNDING_RESEARCH": {
+      "allowed_for_research": true,
+      "constraints": [
+        "Funding interval shifts from 4h to 8h at 2026-01-30 12:15 UTC with cap/floor reduction."
+      ],
+      "name": "FUNDING_RESEARCH",
+      "reason": "Realized funding events verified via monthly archives and live REST fallback.",
+      "status": "VERIFIED"
+    },
+    "INDEX_PRICE_RESEARCH": {
+      "allowed_for_research": true,
+      "constraints": [
+        "Index method reflects underlying reference feeds and changes across epochs."
+      ],
+      "name": "INDEX_PRICE_RESEARCH",
+      "reason": "Continuous 1m index price klines available across all historical rule epochs.",
+      "status": "VERIFIED"
+    },
+    "MARK_PRICE_RESEARCH": {
+      "allowed_for_research": true,
+      "constraints": [
+        "Mark price is used for liquidation and margin valuation, not direct taker fill price."
+      ],
+      "name": "MARK_PRICE_RESEARCH",
+      "reason": "Continuous 1m mark price klines available; off-hours smoothed with EWMA \u00b13% clamp.",
+      "status": "VERIFIED"
+    },
+    "ORDERBOOK_DEPTH_RESEARCH": {
+      "allowed_for_research": false,
+      "constraints": [
+        "Percentage depth cannot reconstruct order book queue priority or market depth liquidity.",
+        "Queue-position backtesting is blocked."
+      ],
+      "name": "ORDERBOOK_DEPTH_RESEARCH",
+      "reason": "Only coarse periodic percentage depth buckets exist; true L2/L3 order book snapshots and deltas are not published.",
+      "status": "NOT_COMPUTABLE"
+    },
+    "PREMIUM_INDEX_RESEARCH": {
+      "allowed_for_research": true,
+      "constraints": [
+        "Values can be zero or negative; numerical parser must use signed FinancialDecimal."
+      ],
+      "name": "PREMIUM_INDEX_RESEARCH",
+      "reason": "Continuous 1m premium index klines available with zero/negative value support.",
+      "status": "VERIFIED"
+    },
+    "REALISTIC_FILL_RESEARCH": {
+      "allowed_for_research": false,
+      "constraints": [
+        "Realistic fill simulation is strictly NOT_COMPUTABLE.",
+        "No strategy may claim realistic historical fill edge on XAUUSDT from bar data alone."
+      ],
+      "name": "REALISTIC_FILL_RESEARCH",
+      "reason": "Authentic executable touch quotes and orderbook depth deltas do not exist in historical archives.",
+      "status": "NOT_COMPUTABLE"
+    },
+    "RULE_EPOCH_REPLAY": {
+      "allowed_for_research": true,
+      "constraints": [
+        "Unknown historical fields are isolated and never backfilled from current snapshot."
+      ],
+      "name": "RULE_EPOCH_REPLAY",
+      "reason": "Source-backed ContractRuleEpochRegistry defines 7 verified historical epochs with primary-source hashes.",
+      "status": "VERIFIED"
+    },
+    "SESSION_GAP_RESEARCH": {
+      "allowed_for_research": true,
+      "constraints": [
+        "Underlying market closure does not excuse perpetual contract missing bars."
+      ],
+      "name": "SESSION_GAP_RESEARCH",
+      "reason": "Distinct UnderlyingReferenceSession and PerpetualContractSession models separate underlying market closure from continuous contract trading.",
+      "status": "VERIFIED"
+    },
+    "TRADE_PRINT_RESEARCH": {
+      "allowed_for_research": true,
+      "constraints": [
+        "Pre-2026-01-06 trades remain quarantined."
+      ],
+      "name": "TRADE_PRINT_RESEARCH",
+      "reason": "Full trade tick stream verified via official monthly and daily archives.",
+      "status": "VERIFIED"
+    }
+  },
+  "instrument_id": "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+  "matrix_version": "1.0.0",
+  "orderbook_research_ready": false,
+  "realistic_fills_ready": false
+}

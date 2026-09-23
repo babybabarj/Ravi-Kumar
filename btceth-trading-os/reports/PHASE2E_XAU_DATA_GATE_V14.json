@@ -1,0 +1,87 @@
+{
+  "audit_report_physical_sha256": "5f0f6a574f673c9a8ae8d107c5ce3c416fc411e96383b6449159c54f87d45cc9",
+  "blockers_resolved": {
+    "blocker_A_rule_epochs": "RESOLVED_7_PROVEN_EPOCHS_WITH_PRIMARY_HASHES",
+    "blocker_B_trades_aggtrades_audit": "RESOLVED_62_ARCHIVES_AUDITED_VOLUME_RECONCILED",
+    "blocker_C_quote_depth_availability": "RESOLVED_CLASSIFIED_NOT_COMPUTABLE_BOUNDS_ENFORCED",
+    "blocker_D_session_semantics": "RESOLVED_SEPARATE_UNDERLYING_AND_CONTRACT_CLOCKS",
+    "blocker_E_guarded_partitions": "RESOLVED_4_PARTITIONS_MATERIALIZED_HOLDOUT_SEALED"
+  },
+  "capability_matrix_physical_sha256": "c52330fd78073e8767e94d9b1e564b22da476c86c0251e25e75d189741e0b807",
+  "code_acceptance": {
+    "failed_gates": [],
+    "gates_passed": 24,
+    "gates_total": 24
+  },
+  "critical_phase_gates": {
+    "complete_trade_and_aggtrade_row_quality": "PASS",
+    "guarded_research_partitions_and_locked_holdout": "PASS",
+    "historical_contract_rule_replay": "PASS",
+    "phase_E_acceptance": "PASS",
+    "quote_and_depth_availability_classification": "CLASSIFIED_NOT_COMPUTABLE",
+    "raw_one_minute_bar_coverage": "PASS",
+    "realized_funding_source": "PASS",
+    "session_semantics_separation": "PASS"
+  },
+  "full_pytest": {
+    "failed": 0,
+    "passed": 400,
+    "skipped": 1
+  },
+  "holdout": {
+    "allowed_accesses": 0,
+    "ledger_integrity": "VERIFIED",
+    "status": "LOCKED"
+  },
+  "instrument_id": "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
+  "mainnet_order_mutation": "DISABLED",
+  "partitions": {
+    "DEV": {
+      "dataset_id": "XAUUSDT_DEV_2026_01_04",
+      "role": "DEVELOPMENT",
+      "rows": 165600
+    },
+    "HOLDOUT": {
+      "dataset_id": "XAUUSDT_HOLDOUT_2026_08_09",
+      "locked": true,
+      "role": "HOLDOUT",
+      "rows": 66060
+    },
+    "PROSPECTIVE_PRISTINE": {
+      "dataset_id": "XAUUSDT_PROSPECTIVE_PRISTINE",
+      "locked": true,
+      "role": "PROSPECTIVE_PRISTINE",
+      "rows": 10260
+    },
+    "VAL": {
+      "dataset_id": "XAUUSDT_VAL_2026_05_07",
+      "role": "VALIDATION",
+      "rows": 132480
+    }
+  },
+  "payload_sha256": "a19dbbb53dfb63cbd9007462920b867941ba47ab13db332bae99c0cdb365135e",
+  "remote_head_before_evidence_push": "7cede77e38a76648a556bcf309f53e268d335eeb",
+  "report_version": "PHASE2E_V14",
+  "research_capabilities": {
+    "aggtrade_research": "READY",
+    "bar_directional_research": "READY_WITH_EXECUTION_CONSTRAINTS",
+    "best_bid_ask_research": "NOT_COMPUTABLE",
+    "funding_research": "READY",
+    "index_price_research": "READY",
+    "mark_price_research": "READY",
+    "orderbook_depth_research": "NOT_COMPUTABLE",
+    "premium_index_research": "READY",
+    "realistic_fill_research": "NOT_COMPUTABLE",
+    "trade_print_research": "READY"
+  },
+  "security": {
+    "hits": [],
+    "trading_capability": "ZERO"
+  },
+  "status": "PHASE_E_DATA_FOUNDATION_CLOSED",
+  "strategy_approved": false,
+  "tested_code_commit_sha": "7cede77e38a76648a556bcf309f53e268d335eeb",
+  "tested_tree_sha": "9aab18e663425079ce154a51a57b9671ba8e5601",
+  "through_utc_day": "2026-09-22",
+  "timestamp_utc": "2026-09-23T11:04:59.599179+00:00"
+}
