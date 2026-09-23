@@ -36,6 +36,7 @@ KLINE_HEADER = (
 )
 FUNDING_HEADER = ("calc_time", "funding_interval_hours", "last_funding_rate")
 TRADE_HEADER = ("id", "price", "qty", "quote_qty", "time", "is_buyer_maker", "is_best_match")
+USDM_TRADE_HEADER = TRADE_HEADER[:-1]
 AGG_TRADE_HEADER = ("agg_trade_id", "price", "quantity", "first_trade_id", "last_trade_id", "transact_time", "is_buyer_maker")
 
 
@@ -58,7 +59,7 @@ def iter_bronze_records(path: Path | str, spec: ArchiveObjectSpec) -> Iterator[B
                 first = next(rows, None)
                 if first is None:
                     raise ArchiveSchemaError("archive CSV is empty")
-                header, pending = _header_or_first_row(first, spec.source_dataset_name)
+                header, pending = _header_or_first_row(first, spec.source_dataset_name, spec.market)
                 row_number = 1 if pending is None else 0
                 if pending is not None:
                     row_number += 1
@@ -70,23 +71,23 @@ def iter_bronze_records(path: Path | str, spec: ArchiveObjectSpec) -> Iterator[B
         raise ArchiveSchemaError("RAW object is not a valid ZIP archive") from exc
 
 
-def _header_or_first_row(first: list[str], dataset: str) -> tuple[tuple[str, ...], list[str] | None]:
+def _header_or_first_row(first: list[str], dataset: str, market: str) -> tuple[tuple[str, ...], list[str] | None]:
     if first and first[0].lstrip("-").isdigit():
-        return _default_header(dataset), first
+        return _default_header(dataset, market), first
     normalized = tuple(_normalize(column) for column in first)
-    expected = _default_header(dataset)
+    expected = _default_header(dataset, market)
     if normalized != expected:
         raise ArchiveSchemaError(f"unexpected {dataset!r} header: {first!r}")
     return expected, None
 
 
-def _default_header(dataset: str) -> tuple[str, ...]:
+def _default_header(dataset: str, market: str) -> tuple[str, ...]:
     if dataset in {"klines", "markPriceKlines", "indexPriceKlines", "premiumIndexKlines"}:
         return KLINE_HEADER
     if dataset == "fundingRate":
         return FUNDING_HEADER
     if dataset == "trades":
-        return TRADE_HEADER
+        return TRADE_HEADER if market == "spot" else USDM_TRADE_HEADER
     if dataset == "aggTrades":
         return AGG_TRADE_HEADER
     raise ArchiveSchemaError(f"unsupported Binance source dataset {dataset!r}")

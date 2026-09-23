@@ -56,6 +56,16 @@ def test_trade_and_aggtrade_headers_are_normalized_but_strict(tmp_path: Path):
     assert agg_record.values["first_trade_id"] == 1
 
 
+def test_usdm_trade_schema_has_no_spot_best_match_field(tmp_path: Path):
+    path = archive(tmp_path, "id,price,qty,quote_qty,time,is_buyer_maker\n1,4217.00,0.017,71.689,1765440320838,true\n")
+    record = list(iter_bronze_records(path, spec("trades")))[0]
+    assert record.values["price"] == "4217.00"
+    assert record.values["is_buyer_maker"] is True
+    assert "is_best_match" not in record.values
+    with pytest.raises(ArchiveSchemaError, match="unexpected"):
+        list(iter_bronze_records(path, spec("trades", "spot")))
+
+
 def test_unknown_headers_and_malformed_rows_fail_closed(tmp_path: Path):
     with pytest.raises(ArchiveSchemaError, match="unexpected"):
         list(iter_bronze_records(archive(tmp_path, "time,rate\n1,2\n"), spec("fundingRate")))

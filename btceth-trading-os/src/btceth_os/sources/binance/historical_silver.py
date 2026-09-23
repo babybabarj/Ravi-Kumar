@@ -115,7 +115,7 @@ def _trade_row(record: BronzeRecord, physical_hash: str) -> dict[str, object]:
         "trade_id": int(values["id"]),
         "price": Decimal(str(values["price"])), "quantity": Decimal(str(values["qty"])),
         "quote_quantity": Decimal(str(values["quote_qty"])), "is_buyer_maker": bool(values["is_buyer_maker"]),
-        "is_best_match": bool(values["is_best_match"]),
+        "is_best_match": bool(values["is_best_match"]) if "is_best_match" in values else None,
     }
 
 

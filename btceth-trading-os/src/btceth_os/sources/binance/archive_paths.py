@@ -27,7 +27,7 @@ USDM_DATASETS = {
     "fundingRate",
 }
 KLINE_LIKE_DATASETS = {"klines", "markPriceKlines", "indexPriceKlines", "premiumIndexKlines"}
-SUPPORTED_SYMBOLS = {"BTCUSDT", "ETHUSDT"}
+SUPPORTED_SYMBOLS = {"BTCUSDT", "ETHUSDT", "XAUUSDT"}
 
 MONTHLY_PERIOD_REGEX = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$")
 DAILY_PERIOD_REGEX = re.compile(r"^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$")
@@ -65,6 +65,8 @@ def validate_archive_parameters(
         raise BinancePathError(
             f"Symbol {symbol!r} outside canonical universe ({sorted(SUPPORTED_SYMBOLS)})."
         )
+    if symbol_norm == "XAUUSDT" and market_norm != "usdm":
+        raise BinancePathError("XAUUSDT is supported only as a USD-M TradFi perpetual archive")
 
     if market_norm == "spot" and dataset not in SPOT_DATASETS:
         raise BinancePathError(f"Dataset {dataset!r} unsupported for Spot market ({sorted(SPOT_DATASETS)}).")

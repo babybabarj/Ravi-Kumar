@@ -30,6 +30,10 @@ def test_trade_and_aggregate_trade_remain_distinct_silver_schemas(tmp_path: Path
     assert "trade_id" in pq.read_table(trade_path).column_names
     assert "agg_trade_id" in pq.read_table(agg_path).column_names
 
+    usdm_trade = BronzeRecord("x", "BINANCE:USD_M_PERP:BTCUSDT", "trades", "x.csv", 1, 2, 2, "ms", "ms", {"id": 9, "price": "10.01", "qty": "1.0", "quote_qty": "10.01", "is_buyer_maker": False})
+    usdm_path, _ = write_historical_silver([usdm_trade], tmp_path / "usdm_trade.parquet", "b" * 64)
+    assert pq.read_table(usdm_path).column("is_best_match")[0].as_py() is None
+
 
 def test_silver_refuses_bad_provenance_or_overwrite(tmp_path: Path):
     destination = tmp_path / "funding.parquet"

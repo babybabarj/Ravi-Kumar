@@ -141,6 +141,19 @@ def parse_checksum_sidecar(payload: bytes, expected_filename: str) -> str:
     return sha
 
 
+def _write_receipt(path: Path, receipt: DownloadReceipt) -> None:
+    part = path.with_name(path.name + ".part")
+    try:
+        with part.open("w", encoding="utf-8") as stream:
+            json.dump(receipt.to_dict(), stream, indent=2)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(part, path)
+    finally:
+        part.unlink(missing_ok=True)
+
+
 class ArchiveDownloader:
     """Production-grade streaming archive downloader enforcing Checksum-First and Bronze Immutability."""
 
@@ -305,7 +318,7 @@ class ArchiveDownloader:
                     physical_sha256=existing_sha,
                     content_length=archive_path.stat().st_size,
                 )
-                receipt_path.write_text(json.dumps(receipt.to_dict(), indent=2) + "\n", encoding="utf-8")
+                _write_receipt(receipt_path, receipt)
                 return receipt
             else:
                 # Corrupted existing file: quarantine before re-download
@@ -418,5 +431,5 @@ class ArchiveDownloader:
             etag=etag,
             last_modified=last_modified,
         )
-        receipt_path.write_text(json.dumps(receipt.to_dict(), indent=2) + "\n", encoding="utf-8")
+        _write_receipt(receipt_path, receipt)
         return receipt
