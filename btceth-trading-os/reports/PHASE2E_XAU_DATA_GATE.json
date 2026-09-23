@@ -1,0 +1,81 @@
+{
+  "audit_report_physical_sha256": "ee0f572764343eecf439d0ac0cca6745abb4acfd90227e3a99353721537eb19a",
+  "code_acceptance": {
+    "failed_gates": [],
+    "gates_passed": 22,
+    "gates_total": 22
+  },
+  "critical_phase_gates": {
+    "XAU_research_partitions_and_locked_holdout": "NOT_CREATED",
+    "complete_trade_and_aggtrade_row_quality": "NOT_COMPLETED",
+    "historical_best_bid_ask_and_executable_depth": "NOT_COMPUTABLE",
+    "historical_contract_rule_replay": "FAIL",
+    "phase_E_acceptance": "FAIL",
+    "raw_one_minute_bar_coverage": "PASS",
+    "realized_funding_source": "PASS"
+  },
+  "full_pytest": {
+    "failed": 0,
+    "passed": 378,
+    "skipped": 1
+  },
+  "holdout": {
+    "allowed_accesses": 0,
+    "ledger_entries_at_code_acceptance": 4768,
+    "status": "LOCKED"
+  },
+  "known_limitations": [
+    "A current exchangeInfo snapshot cannot establish historical tick, step, margin, leverage, contract size, or account eligibility.",
+    "The public notices identify several rule changes but no complete source-hashed ContractRuleEpoch sequence exists.",
+    "The underlying commodity schedule must not be mistaken for a 24/7 contract closure calendar.",
+    "Historical best bid/ask, executable order-book depth, and full trade/aggTrade row quality are not yet audited.",
+    "The 2025 archive and 2026-01-01 through 2026-01-05 remain quarantined from executable-history claims.",
+    "No XAU Silver/Gold research partition, locked historical holdout, or prospective elapsed-time evidence was created."
+  ],
+  "mainnet_order_mutation": "DISABLED",
+  "next": "STOP before Phase F. Verify historical rule snapshots and quote/depth availability, audit full trades, then create guarded XAU partitions and rerun a new versioned Phase E verifier.",
+  "official_sources": [
+    "https://www.binance.com/en/support/announcement/detail/ecf7318c0d434c339e80878588e700d0",
+    "https://www.binance.com/en/support/announcement/detail/4636922abdba4e5787c5f7643f8170d7",
+    "https://www.binance.com/en-AE/support/announcement/detail/9c9e956d5dae412fadcd62c88b3d7849",
+    "https://www.binance.com/en/support/announcement/detail/db04567123a44a89b112b9ae403a9c7d",
+    "https://www.binance.com/en-TR/support/announcement/detail/55bd3594394a46daa910df5746355ff4",
+    "https://www.binance.com/en/square/post/319824740830977",
+    "https://www.binance.com/en/support/announcement/detail/f69c05ebdba7422e9c614685abe84dc5",
+    "https://developers.binance.com/en/docs/catalog/core-trading-derivatives-trading-usd-s-m-futures/api/rest-api/market-data",
+    "https://github.com/binance/binance-public-data"
+  ],
+  "payload_sha256": "05fcdd5ea8172a09253dab5e55f667cb30cb155a46bbb54e79c3063c5ed918bb",
+  "quarantine": {
+    "archive_first_xau_kline_utc": "2025-12-11T08:05:00Z",
+    "december_2025_trades_rows_parsed": 189419,
+    "december_2025_trades_zip_sha256": "c35f9aa90273333156ceca301c14ec9abedbcb27ecc45b67861dc840ce5556ec",
+    "reason": "Public all-eligible launch was announced for 2026-01-05 without an exact UTC time; prior archive access scope is unknown.",
+    "research_admission_not_before_utc": "2026-01-06T00:00:00Z"
+  },
+  "remote_head_before_evidence_push": "f0532dc9904912e8d16a9849fd4a972e1b4310ce",
+  "report_version": "PHASE2E_V13",
+  "security": {
+    "hits": [],
+    "trading_capability": "ZERO"
+  },
+  "source_coverage": {
+    "current_month_funding_rest_rows": 132,
+    "monthly_gap": "2026-06-29 mark/index/premium 1m bars absent from monthly files; each official daily file supplies 1440 rows",
+    "official_daily_repair_archives": 3,
+    "one_minute_bars_per_dataset": {
+      "indexPriceKlines": 381600,
+      "klines": 381600,
+      "markPriceKlines": 381600,
+      "premiumIndexKlines": 381600
+    },
+    "raw_audit_status": "PASS",
+    "source_archives_verified": 128,
+    "through_utc_day": "2026-09-22"
+  },
+  "status": "PHASE_E_BLOCKED",
+  "strategy_approved": false,
+  "tested_code_commit_sha": "e707a466f4e13e0bfaf3a9c2de945f51286ead6c",
+  "tested_tree_sha": "83f048a52f1d8c61227dc7274738464650df16fe",
+  "timestamp_utc": "2026-09-23T08:02:34.228075+00:00"
+}
