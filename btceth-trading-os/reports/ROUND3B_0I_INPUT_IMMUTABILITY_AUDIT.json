@@ -1,0 +1,8 @@
+{
+  "report_version": "ROUND3B.0I",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-23T06:32:10.422373+00:00",
+  "input_candle_immutability": true,
+  "input_position_immutability": true,
+  "cost_object_immutability": true
+}

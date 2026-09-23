@@ -1,0 +1,11 @@
+{
+  "report_version": "ROUND3B.0I",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-23T06:32:10.421380+00:00",
+  "fixture_1_flat_throughout": true,
+  "reversal_long_to_short_accounting": true,
+  "reversal_short_to_long_accounting": true,
+  "no_fee_double_count": true,
+  "no_slippage_double_count": true,
+  "capital_accounting_identities_verified": true
+}

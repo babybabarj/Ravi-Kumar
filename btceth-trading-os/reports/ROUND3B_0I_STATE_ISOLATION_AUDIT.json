@@ -1,0 +1,12 @@
+{
+  "report_version": "ROUND3B.0I",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-23T06:32:10.420572+00:00",
+  "cross_series_capital_isolation": true,
+  "run_order_independence": true,
+  "btc_after_eth_isolation": true,
+  "eth_after_btc_isolation": true,
+  "failed_run_state_atomicity": true,
+  "btc_net_return": "-0.0009140007676916847115028406",
+  "eth_net_return": "-0.0531477453040851550444225656"
+}

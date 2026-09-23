@@ -1,0 +1,11 @@
+{
+  "report_version": "ROUND3B.0I",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-23T06:32:10.423839+00:00",
+  "decimal_accounting_integrity": true,
+  "float_classification": {
+    "money_accounting_paths": "EXACT_DECIMAL_ONLY",
+    "return_calculations": "EXACT_DECIMAL_ONLY",
+    "statistical_summary_metrics": "SAFE_FLOAT_ISOLATED"
+  }
+}

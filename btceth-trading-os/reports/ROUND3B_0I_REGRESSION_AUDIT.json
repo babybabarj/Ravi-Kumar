@@ -1,0 +1,8 @@
+{
+  "report_version": "ROUND3B.0I",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-23T06:32:10.437868+00:00",
+  "round3b_0h_regression": true,
+  "single_leg_architecture_enforced": true,
+  "anonymous_series_blocked": true
+}

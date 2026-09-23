@@ -1,0 +1,7 @@
+{
+  "report_version": "ROUND3B.0I",
+  "status": "VERIFIED",
+  "timestamp_utc": "2026-09-23T06:32:10.427036+00:00",
+  "walk_forward_capital_reset": true,
+  "lookback_evaluation_order_independence": true
+}
