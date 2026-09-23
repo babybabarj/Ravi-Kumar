@@ -4,17 +4,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 import yaml
+from ..instruments import SUPPORTED_INSTRUMENT_IDS
 
-CANONICAL_INSTRUMENTS = {
-    "BINANCE:SPOT:BTCUSDT",
-    "BINANCE:SPOT:ETHUSDT",
-    "BINANCE:USD_M_PERP:BTCUSDT",
-    "BINANCE:USD_M_PERP:ETHUSDT",
-}
+CANONICAL_INSTRUMENTS = SUPPORTED_INSTRUMENT_IDS
 
 
 def validate_canonical_instrument(instrument_id: str) -> bool:
-    """Validate that an instrument identifier conforms to the frozen canonical BTC/ETH universe."""
+    """Validate the explicit supported instrument universe."""
     return instrument_id in CANONICAL_INSTRUMENTS
 
 

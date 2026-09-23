@@ -1,6 +1,8 @@
-# BTCETH Trading OS
+# BTC / ETH / XAU Trading OS
 
 Read-only public market-data collection workspace. No order placement, account trading, withdrawals, transfers, leverage changes, or position modification.
+
+Current mode: **research infrastructure**. BTC/ETH reliability acceptance is verified; XAUUSDT has a distinct instrument identity, but XAU data, session rules, strategy approval, shadow readiness, and paper readiness are not yet verified. XAUTUSDT remains a separate, unsupported product.
 
 Verified milestones: Phase 1A live public capture, Phase 1B.0 data contracts and provenance, Phase 1B.1 official archive discovery/planning, Phase 1B.2 streamed archive retrieval, Phase 1B.3 historical RAW-object cataloguing, Phase 1B.4 strict Bronze parsing, and Phase 1B.5 immutable historical Silver output.
 

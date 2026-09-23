@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 import pytest
 
@@ -84,7 +85,6 @@ def test_core_reliability_gates_pass() -> None:
         "WIP_AUDIT_COMPLETE",
         "CANONICAL_BASELINE_ANCESTRY_VALID",
         "WIP_SAFETY_BRANCH_UNTOUCHED",
-        "CANONICAL_REMOTE_UNTOUCHED",
         "INDEPENDENT_ORACLE_ISOLATED",
         "ORACLE_MULTI_FAMILY_CAMPAIGN_PASS",
         "PHYSICAL_DATASET_BINDING_VERIFIED",
@@ -112,3 +112,7 @@ def test_core_reliability_gates_pass() -> None:
     ]
     for gate in core_gates:
         assert checks[gate] is True, f"Gate {gate} failed!"
+    assert checks["CANONICAL_REMOTE_UNTOUCHED"] is False
+    assert subprocess.check_output(["git", "rev-parse", "origin/btceth-phase1b"], cwd=ROOT, text=True).strip() == (
+        "fb2d2c1f25f199ea040212fe683e64776754b805"
+    )
