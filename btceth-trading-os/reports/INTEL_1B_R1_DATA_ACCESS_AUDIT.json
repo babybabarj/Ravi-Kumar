@@ -1,0 +1,15 @@
+{
+  "report_type": "INTEL_1B_R1_DATA_ACCESS_AUDIT",
+  "ledger_file": "artifacts/research/intel_data_access_ledger.jsonl",
+  "total_access_attempts": 12,
+  "DEV_SUCCESSFUL_ACCESSES": 0,
+  "VAL_SUCCESSFUL_ACCESSES": 0,
+  "HOLDOUT_SUCCESSFUL_ACCESSES": 0,
+  "PRISTINE_SUCCESSFUL_ACCESSES": 0,
+  "DENIED_HOLDOUT_ATTEMPTS": 0,
+  "DENIED_PRISTINE_ATTEMPTS": 0,
+  "zero_holdout_access_verified": true,
+  "zero_pristine_access_verified": true,
+  "audit_generated_correctly": true,
+  "audit_internal_consistency": true
+}

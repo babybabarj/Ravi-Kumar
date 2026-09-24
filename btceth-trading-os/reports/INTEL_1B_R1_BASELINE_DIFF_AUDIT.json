@@ -1,0 +1,222 @@
+{
+  "report_type": "INTEL_1B_R1_BASELINE_DIFF_AUDIT",
+  "baseline_sha": "2caf4e99cb18517d3938c8c11f3e9014cc608368",
+  "head_sha": "0b2692a3eb652a7ef57ceee28466bc5eefff41f8",
+  "protected_manifests_unchanged": true,
+  "manifests_detail": {
+    "btceth-trading-os/config/xau_research_partitions_v1.json": true,
+    "btceth-trading-os/config/xau_research_partitions_v2.json": true,
+    "btceth-trading-os/config/xau_research_partitions_v3.json": true,
+    "btceth-trading-os/config/research_partitions_v1.json": true,
+    "btceth-trading-os/config/xau_primary_sources_v2.json": true,
+    "btceth-trading-os/config/xau_primary_sources_v3.json": true,
+    "btceth-trading-os/config/xau_contract_rule_epochs_v2.yaml": true,
+    "btceth-trading-os/config/xau_contract_rule_epochs_v3.yaml": true
+  },
+  "total_changed_files": 40,
+  "unauthorized_baseline_mutations_count": 0,
+  "classified_files": [
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_CROSS_ASSET_CAUSALITY.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_DATA_ACCESS_AUDIT.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_DATA_QUALITY_PROPAGATION.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_FEATURE_AVAILABILITY.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_FEATURE_DISTRIBUTION.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_FEATURE_DRIFT.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_FEATURE_REDUNDANCY.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_FOUNDATION.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_LEAD_LAG_AUDIT.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_NUMERIC_BOUNDARY_AUDIT.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_REPRODUCIBILITY.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_SECURITY_AUDIT.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_STATE_STABILITY_AUDIT.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_STATE_TRANSITION_AUDIT.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/reports/INTEL_1B_THRESHOLD_SENSITIVITY.json",
+      "classification": "AUTHORIZED_EVIDENCE_REPORTS"
+    },
+    {
+      "status": "M",
+      "file": "btceth-trading-os/src/btceth_os/intel/__init__.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "M",
+      "file": "btceth-trading-os/src/btceth_os/intel/data_access.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/data_quality_propagation.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/feature_audit.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/feature_availability.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/lead_lag.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/missingness.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/multitimeframe.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/numeric_boundary.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/snapshot_v2.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/stability_audit.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/src/btceth_os/intel/state_transitions.py",
+      "classification": "AUTHORIZED_INTEL_1B_CODE"
+    },
+    {
+      "status": "M",
+      "file": "btceth-trading-os/tests/test_gap_forensics.py",
+      "classification": "AUTHORIZED_INTEL_1B_TEST"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/tests/test_intel_1b.py",
+      "classification": "AUTHORIZED_INTEL_1B_TEST"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/tests/test_intel_1b_r1.py",
+      "classification": "AUTHORIZED_INTEL_1B_TEST"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/tests/test_intel_quarantine.py",
+      "classification": "AUTHORIZED_INTEL_1B_TEST"
+    },
+    {
+      "status": "M",
+      "file": "btceth-trading-os/tests/test_materialize_partitions.py",
+      "classification": "AUTHORIZED_INTEL_1B_TEST"
+    },
+    {
+      "status": "M",
+      "file": "btceth-trading-os/tests/test_round3b_temporal_causality.py",
+      "classification": "AUTHORIZED_INTEL_1B_TEST"
+    },
+    {
+      "status": "M",
+      "file": "btceth-trading-os/tests/test_verify_round3b_reliability_v4.py",
+      "classification": "AUTHORIZED_INTEL_1B_TEST"
+    },
+    {
+      "status": "M",
+      "file": "btceth-trading-os/tests/test_verify_round3b_reliability_v5.py",
+      "classification": "AUTHORIZED_INTEL_1B_TEST"
+    },
+    {
+      "status": "M",
+      "file": "btceth-trading-os/tests/test_xau_partitions.py",
+      "classification": "AUTHORIZED_INTEL_1B_TEST"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/tools/generate_intel_1b_r1_reports.py",
+      "classification": "AUTHORIZED_REPORT_TOOLING_OR_VERIFIER"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/tools/generate_intel_1b_reports.py",
+      "classification": "AUTHORIZED_REPORT_TOOLING_OR_VERIFIER"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/tools/verify_intel_1b.py",
+      "classification": "AUTHORIZED_REPORT_TOOLING_OR_VERIFIER"
+    },
+    {
+      "status": "A",
+      "file": "btceth-trading-os/tools/verify_intel_1b_r1.py",
+      "classification": "AUTHORIZED_REPORT_TOOLING_OR_VERIFIER"
+    }
+  ],
+  "audit_generated_correctly": true,
+  "audit_internal_consistency": true
+}

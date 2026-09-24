@@ -1,0 +1,209 @@
+{
+  "report_type": "INTEL_1B_R1_STATE_TRUTH_AUDIT",
+  "dataset": "XAUUSDT_DEV_2026_01_04_V3",
+  "sample_size_bars": 10000,
+  "all_dimensions_present": true,
+  "all_dimensions_sum_reconciled": true,
+  "reconciliation_detail": {
+    "TREND": true,
+    "VOLATILITY": true,
+    "LIQUIDITY_ACTIVITY": true,
+    "FUNDING": true,
+    "MARKET_QUALITY": true
+  },
+  "dimensions": {
+    "TREND": {
+      "total_bars": 10000,
+      "state_counts": {
+        "UNCERTAIN": 3354,
+        "RANGE": 6360,
+        "UP": 192,
+        "DOWN": 94
+      },
+      "transition_count": 1672,
+      "reversal_count": 895,
+      "rapid_flip_rate": 0.5353,
+      "unknown_fraction": 0.3354,
+      "degraded_fraction": 0.0,
+      "persistence_probability": 0.8328,
+      "mean_duration_bars": {
+        "UNCERTAIN": 4.02,
+        "RANGE": 8.44,
+        "UP": 3.84,
+        "DOWN": 2.76
+      },
+      "median_duration_bars": {
+        "UNCERTAIN": 2.0,
+        "RANGE": 5.0,
+        "UP": 2.0,
+        "DOWN": 2.0
+      },
+      "p10_duration_bars": {
+        "UNCERTAIN": 1.0,
+        "RANGE": 1.0,
+        "UP": 1.0,
+        "DOWN": 1.0
+      },
+      "p90_duration_bars": {
+        "UNCERTAIN": 9.0,
+        "RANGE": 20.700000000000045,
+        "UP": 9.0,
+        "DOWN": 5.699999999999999
+      }
+    },
+    "VOLATILITY": {
+      "total_bars": 10000,
+      "state_counts": {
+        "UNKNOWN": 119,
+        "NORMAL": 5037,
+        "HIGH": 1794,
+        "LOW": 2451,
+        "EXTREME": 599
+      },
+      "transition_count": 1178,
+      "reversal_count": 413,
+      "rapid_flip_rate": 0.3506,
+      "unknown_fraction": 0.0119,
+      "degraded_fraction": 0.0,
+      "persistence_probability": 0.8822,
+      "mean_duration_bars": {
+        "UNKNOWN": 119.0,
+        "NORMAL": 9.93,
+        "HIGH": 5.88,
+        "LOW": 8.69,
+        "EXTREME": 7.13
+      },
+      "median_duration_bars": {
+        "UNKNOWN": 119.0,
+        "NORMAL": 7.0,
+        "HIGH": 4.0,
+        "LOW": 4.0,
+        "EXTREME": 5.0
+      },
+      "p10_duration_bars": {
+        "UNKNOWN": 119.0,
+        "NORMAL": 1.0,
+        "HIGH": 1.0,
+        "LOW": 1.0,
+        "EXTREME": 1.0
+      },
+      "p90_duration_bars": {
+        "UNKNOWN": 119.0,
+        "NORMAL": 24.400000000000034,
+        "HIGH": 11.0,
+        "LOW": 22.0,
+        "EXTREME": 15.0
+      }
+    },
+    "LIQUIDITY_ACTIVITY": {
+      "total_bars": 10000,
+      "state_counts": {
+        "UNKNOWN": 59,
+        "NORMAL": 5642,
+        "ELEVATED": 2223,
+        "THIN": 2076
+      },
+      "transition_count": 4627,
+      "reversal_count": 3011,
+      "rapid_flip_rate": 0.6507,
+      "unknown_fraction": 0.0059,
+      "degraded_fraction": 0.0,
+      "persistence_probability": 0.5373,
+      "mean_duration_bars": {
+        "UNKNOWN": 59.0,
+        "NORMAL": 2.63,
+        "ELEVATED": 1.85,
+        "THIN": 1.62
+      },
+      "median_duration_bars": {
+        "UNKNOWN": 59.0,
+        "NORMAL": 2.0,
+        "ELEVATED": 1.0,
+        "THIN": 1.0
+      },
+      "p10_duration_bars": {
+        "UNKNOWN": 59.0,
+        "NORMAL": 1.0,
+        "ELEVATED": 1.0,
+        "THIN": 1.0
+      },
+      "p90_duration_bars": {
+        "UNKNOWN": 59.0,
+        "NORMAL": 5.0,
+        "ELEVATED": 3.0,
+        "THIN": 3.0
+      }
+    },
+    "FUNDING": {
+      "total_bars": 10000,
+      "state_counts": {
+        "UNKNOWN": 1,
+        "NEGATIVE": 1200,
+        "NEUTRAL": 7599,
+        "POSITIVE": 1200
+      },
+      "transition_count": 12,
+      "reversal_count": 0,
+      "rapid_flip_rate": 0.0,
+      "unknown_fraction": 0.0001,
+      "degraded_fraction": 0.0,
+      "persistence_probability": 0.9988,
+      "mean_duration_bars": {
+        "UNKNOWN": 1.0,
+        "NEGATIVE": 400.0,
+        "NEUTRAL": 1266.5,
+        "POSITIVE": 400.0
+      },
+      "median_duration_bars": {
+        "UNKNOWN": 1.0,
+        "NEGATIVE": 480.0,
+        "NEUTRAL": 600.0,
+        "POSITIVE": 480.0
+      },
+      "p10_duration_bars": {
+        "UNKNOWN": 1.0,
+        "NEGATIVE": 288.0,
+        "NEUTRAL": 240.0,
+        "POSITIVE": 288.0
+      },
+      "p90_duration_bars": {
+        "UNKNOWN": 1.0,
+        "NEGATIVE": 480.0,
+        "NEUTRAL": 2959.5,
+        "POSITIVE": 480.0
+      }
+    },
+    "MARKET_QUALITY": {
+      "total_bars": 10000,
+      "state_counts": {
+        "HEALTHY": 10000
+      },
+      "transition_count": 0,
+      "reversal_count": 0,
+      "rapid_flip_rate": 0.0,
+      "unknown_fraction": 0.0,
+      "degraded_fraction": 0.0,
+      "persistence_probability": 1.0,
+      "mean_duration_bars": {
+        "HEALTHY": 10000.0
+      },
+      "median_duration_bars": {
+        "HEALTHY": 10000.0
+      },
+      "p10_duration_bars": {
+        "HEALTHY": 10000.0
+      },
+      "p90_duration_bars": {
+        "HEALTHY": 10000.0
+      }
+    }
+  },
+  "audit_generated_correctly": true,
+  "audit_internal_consistency": true,
+  "audit_limitations": [
+    "Trend dimension exhibits 53.53% rapid flip rate at 1m granularity, indicating high local noise requiring higher timeframe aggregation or smoothing before use in predictive models",
+    "Liquidity Activity exhibits 65.07% flip rate at 1m resolution due to volatile minute-by-minute trade bursts",
+    "Initial 59 bars of Liquidity Activity are UNKNOWN due to trailing 60m lookback requirement (expected warmup)",
+    "Bar 0 of Funding is UNKNOWN prior to first observed settlement event (expected warmup)"
+  ]
+}

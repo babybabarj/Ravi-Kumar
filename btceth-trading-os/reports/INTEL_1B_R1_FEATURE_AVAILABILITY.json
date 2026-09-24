@@ -1,0 +1,1039 @@
+{
+  "report_type": "INTEL_1B_R1_FEATURE_AVAILABILITY",
+  "manifest": {
+    "matrix_version": "2.0.0",
+    "feature_set_id": "INTEL_FEATURESET_V1",
+    "total_features": 39,
+    "all_features_causal_live_eligible": true,
+    "zero_retrospective_leakage": true,
+    "features": {
+      "abnormal_activity_score_60m": {
+        "feature_name": "abnormal_activity_score_60m",
+        "family": "volume_activity",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "trade_count"
+        ],
+        "minimum_history": 60,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 60 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "candle_body_to_range_ratio": {
+        "feature_name": "candle_body_to_range_ratio",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "open",
+          "high",
+          "low",
+          "close"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "directional_persistence_20m": {
+        "feature_name": "directional_persistence_20m",
+        "family": "trend_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "open",
+          "close"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "distance_from_high_20m": {
+        "feature_name": "distance_from_high_20m",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close",
+          "high"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "distance_from_low_20m": {
+        "feature_name": "distance_from_low_20m",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close",
+          "low"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "efficiency_ratio_20m": {
+        "feature_name": "efficiency_ratio_20m",
+        "family": "trend_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 21,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 21 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "funding_rate_trailing_average_24h": {
+        "feature_name": "funding_rate_trailing_average_24h",
+        "family": "funding",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "funding_rate_stream",
+        "inputs": [
+          "last_realized_funding_rate"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "DISCRETE_EVENT_FORWARD_FILLED",
+        "discrete_event_dependency": "last_realized_funding_event_ts_ns",
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Discrete settlement event dependent: updates at discrete settlement intervals (4h/8h epoch dependent) and remains invariant between settlements",
+          "Requires trailing window of realized funding settlements over 1440m"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "funding_sign_persistence": {
+        "feature_name": "funding_sign_persistence",
+        "family": "funding",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "funding_rate_stream",
+        "inputs": [
+          "last_realized_funding_rate"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "DISCRETE_EVENT_FORWARD_FILLED",
+        "discrete_event_dependency": "last_realized_funding_event_ts_ns",
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Discrete settlement event dependent: updates at discrete settlement intervals (4h/8h epoch dependent) and remains invariant between settlements"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "holiday_status": {
+        "feature_name": "holiday_status",
+        "family": "session_context",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "session_calendar_schedule",
+        "inputs": [
+          "holiday_status"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "CALENDAR_SCHEDULE_TIMESTAMP",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": "HOLIDAY_STATUS_PRESERVED_NOT_IMPLEMENTED",
+        "source_specific_limitations": [
+          "TradFi exchange calendar: preserves NOT_IMPLEMENTED when holiday schedule is unproven",
+          "BTCUSDT and ETHUSDT operate under continuous 24/7 regime; holiday flags active for XAUUSDT"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "latest_realized_funding_rate": {
+        "feature_name": "latest_realized_funding_rate",
+        "family": "funding",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "funding_rate_stream",
+        "inputs": [
+          "last_realized_funding_rate"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "DISCRETE_EVENT_FORWARD_FILLED",
+        "discrete_event_dependency": "last_realized_funding_event_ts_ns",
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Discrete settlement event dependent: updates at discrete settlement intervals (4h/8h epoch dependent) and remains invariant between settlements"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "log_return_1m": {
+        "feature_name": "log_return_1m",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 2,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 2 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "medium_horizon_vol_60m": {
+        "feature_name": "medium_horizon_vol_60m",
+        "family": "volatility_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 61,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 61 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "order_flow_imbalance_20m": {
+        "feature_name": "order_flow_imbalance_20m",
+        "family": "order_flow",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "trades_aggtrades_stream",
+        "inputs": [
+          "taker_buy_volume",
+          "volume"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "INTRA_BAR_AGGREGATION_AT_CLOSE",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires continuous raw trade/aggTrade event stream aggregated within closed 1m bar"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "parkinson_volatility_20m": {
+        "feature_name": "parkinson_volatility_20m",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "high",
+          "low"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "price_displacement_20m": {
+        "feature_name": "price_displacement_20m",
+        "family": "trend_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 21,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 21 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "price_index_mode": {
+        "feature_name": "price_index_mode",
+        "family": "session_context",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "session_calendar_schedule",
+        "inputs": [
+          "price_index_mode"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "CALENDAR_SCHEDULE_TIMESTAMP",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": "PRICE_INDEX_CERTAINTY_PRESERVED",
+        "source_specific_limitations": [
+          "Preserves HOLIDAY_UNKNOWN certainty during unverified holiday intervals"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "price_index_mode_certainty": {
+        "feature_name": "price_index_mode_certainty",
+        "family": "session_context",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "session_calendar_schedule",
+        "inputs": [
+          "price_index_mode_certainty"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "CALENDAR_SCHEDULE_TIMESTAMP",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": "PRICE_INDEX_CERTAINTY_PRESERVED",
+        "source_specific_limitations": [
+          "Preserves HOLIDAY_UNKNOWN certainty during unverified holiday intervals"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "quote_volume_raw": {
+        "feature_name": "quote_volume_raw",
+        "family": "volume_activity",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "quote_volume"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "range_expansion_contraction_ratio_20m": {
+        "feature_name": "range_expansion_contraction_ratio_20m",
+        "family": "volatility_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "high",
+          "low"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "range_location_20m": {
+        "feature_name": "range_location_20m",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close",
+          "high",
+          "low"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "relative_activity_20m": {
+        "feature_name": "relative_activity_20m",
+        "family": "volume_activity",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "volume"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "return_15m": {
+        "feature_name": "return_15m",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 16,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 16 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "return_1h": {
+        "feature_name": "return_1h",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 61,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 61 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "return_5m": {
+        "feature_name": "return_5m",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 6,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 6 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "rolling_autocorrelation_20m": {
+        "feature_name": "rolling_autocorrelation_20m",
+        "family": "trend_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 22,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 22 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "rolling_high_20m": {
+        "feature_name": "rolling_high_20m",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "high"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "rolling_low_20m": {
+        "feature_name": "rolling_low_20m",
+        "family": "price_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "low"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "rolling_slope_20m": {
+        "feature_name": "rolling_slope_20m",
+        "family": "trend_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 20 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "short_horizon_vol_10m": {
+        "feature_name": "short_horizon_vol_10m",
+        "family": "volatility_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 11,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 11 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "taker_buy_volume_ratio": {
+        "feature_name": "taker_buy_volume_ratio",
+        "family": "order_flow",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "trades_aggtrades_stream",
+        "inputs": [
+          "taker_buy_volume",
+          "volume"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "INTRA_BAR_AGGREGATION_AT_CLOSE",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires continuous raw trade/aggTrade event stream aggregated within closed 1m bar"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "time_since_last_funding_minutes": {
+        "feature_name": "time_since_last_funding_minutes",
+        "family": "funding",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "funding_rate_stream",
+        "inputs": [
+          "ts_event_ns",
+          "last_realized_funding_event_ts_ns"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "DISCRETE_EVENT_FORWARD_FILLED",
+        "discrete_event_dependency": "last_realized_funding_event_ts_ns",
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Discrete settlement event dependent: updates at discrete settlement intervals (4h/8h epoch dependent) and remains invariant between settlements",
+          "Monotonically increments by 1m per bar following discrete settlement event"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "trade_count_raw": {
+        "feature_name": "trade_count_raw",
+        "family": "volume_activity",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "trade_count"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "trade_intensity_per_volume_20m": {
+        "feature_name": "trade_intensity_per_volume_20m",
+        "family": "order_flow",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "trades_aggtrades_stream",
+        "inputs": [
+          "trade_count",
+          "volume"
+        ],
+        "minimum_history": 20,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "INTRA_BAR_AGGREGATION_AT_CLOSE",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires continuous raw trade/aggTrade event stream aggregated within closed 1m bar"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "traded_volume_raw": {
+        "feature_name": "traded_volume_raw",
+        "family": "volume_activity",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "volume"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "underlying_session_certainty": {
+        "feature_name": "underlying_session_certainty",
+        "family": "session_context",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "session_calendar_schedule",
+        "inputs": [
+          "underlying_session_certainty"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "CALENDAR_SCHEDULE_TIMESTAMP",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": "SESSION_STATE_SCHEDULE",
+        "source_specific_limitations": [
+          "Available only during session schedule evaluation; inactive during weekend breaks"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "underlying_session_state": {
+        "feature_name": "underlying_session_state",
+        "family": "session_context",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "session_calendar_schedule",
+        "inputs": [
+          "underlying_session_state"
+        ],
+        "minimum_history": 1,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "CALENDAR_SCHEDULE_TIMESTAMP",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": "SESSION_STATE_SCHEDULE",
+        "source_specific_limitations": [
+          "Available only during session schedule evaluation; inactive during weekend breaks"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "volatility_percentile_trailing_1440m": {
+        "feature_name": "volatility_percentile_trailing_1440m",
+        "family": "volatility_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 120,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 120 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "volatility_ratio_10m_60m": {
+        "feature_name": "volatility_ratio_10m_60m",
+        "family": "volatility_structure",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "close"
+        ],
+        "minimum_history": 61,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 61 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      },
+      "volume_percentile_trailing_1440m": {
+        "feature_name": "volume_percentile_trailing_1440m",
+        "family": "volume_activity",
+        "asset_support": [
+          "BTCUSDT",
+          "ETHUSDT",
+          "XAUUSDT"
+        ],
+        "source": "klines_1m",
+        "inputs": [
+          "volume"
+        ],
+        "minimum_history": 120,
+        "publication_delay_bars": 0,
+        "availability_timestamp_rule": "BAR_CLOSE_TIMESTAMP_TRAILING",
+        "discrete_event_dependency": null,
+        "session_certainty_semantics": null,
+        "source_specific_limitations": [
+          "Requires minimum lookback warmup of 120 closed 1m bars"
+        ],
+        "causal_live_eligible": true,
+        "retrospective_only": false,
+        "missing_value_behavior": "EMIT_TYPED_MISSING_VALUE",
+        "data_quality_dependency": "REQUIRES_USABLE_QUALITY",
+        "numeric_type": "float64_ephemeral_statistic"
+      }
+    }
+  },
+  "total_features": 39,
+  "all_contracts_derived": true,
+  "audit_generated_correctly": true,
+  "audit_internal_consistency": true
+}

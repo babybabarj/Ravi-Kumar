@@ -1,0 +1,84 @@
+{
+  "report_type": "INTEL_1B_R1_CROSS_ASSET_CAUSALITY",
+  "anchor_index": 500,
+  "sample_size": 1000,
+  "future_mutation_start_index": 501,
+  "mutation_magnitude": 999.0,
+  "metrics_evaluated_count": 11,
+  "zero_divergence_verified": true,
+  "metric_comparisons": {
+    "XAU_BTC_return_correlation": {
+      "baseline": 0.13948038589705855,
+      "mutated": 0.13948038589705855,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "XAU_BTC_relative_volatility_ratio": {
+      "baseline": 0.7129785265118926,
+      "mutated": 0.7129785265118926,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "XAU_BTC_beta_a_to_b": {
+      "baseline": 0.09944652001419499,
+      "mutated": 0.09944652001419499,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "XAU_BTC_lead_lag_lag1_corr_a_leads": {
+      "baseline": 0.16397839696878966,
+      "mutated": 0.16397839696878966,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "XAU_BTC_lead_lag_lag1_corr_b_leads": {
+      "baseline": 0.21734806089879388,
+      "mutated": 0.21734806089879388,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "BTC_ETH_return_correlation": {
+      "baseline": -0.06103045934459526,
+      "mutated": -0.06103045934459526,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "BTC_ETH_beta_a_to_b": {
+      "baseline": -0.021078095314547306,
+      "mutated": -0.021078095314547306,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "XAU_ETH_return_correlation": {
+      "baseline": 0.17912477990020398,
+      "mutated": 0.17912477990020398,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "cross_asset_dispersion_60m": {
+      "baseline": 0.0007918346574855067,
+      "mutated": 0.0007918346574855067,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "lead_lag_lag1_correlation": {
+      "baseline": 0.118855,
+      "mutated": 0.118855,
+      "divergence": 0.0,
+      "zero_divergence": true
+    },
+    "lead_lag_lag1_covariance": {
+      "baseline": 1.14e-08,
+      "mutated": 1.14e-08,
+      "divergence": 0.0,
+      "zero_divergence": true
+    }
+  },
+  "lead_lag_safety_partitioning": {
+    "negative_lag_rejected": true,
+    "zero_lag_allowed": true,
+    "positive_lag_allowed": true
+  },
+  "audit_generated_correctly": true,
+  "audit_internal_consistency": true
+}

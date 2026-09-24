@@ -1,0 +1,42 @@
+{
+  "report_type": "INTEL_1B_R1_UNKNOWN_DIMENSION_AUDIT",
+  "issue_investigated": "100% UNKNOWN in LIQUIDITY_ACTIVITY and FUNDING in initial INTEL-1B evidence",
+  "root_cause_analysis": {
+    "LIQUIDITY_ACTIVITY": {
+      "classification": "CLASSIFIER_INPUT_BUG",
+      "raw_source_field_status": "PRESENT_AND_VALID (volume, quote_volume, trade_count non-null in parquet)",
+      "feature_engine_status": "CORRECT (volume_percentile_trailing_1440m and abnormal_activity_score_60m computed)",
+      "classifier_status": "CORRECT (classify_activity functions as designed when passed inputs)",
+      "failure_location": "tools/generate_intel_1b_reports.py lines 133-140",
+      "exact_mechanism": "Generator script constructed a hardcoded feat_dict omitting volume_percentile_trailing_1440m and abnormal_activity_score_60m, causing classify_activity to receive (None, None) on all bars",
+      "remediation": "Passed complete row_features = {k: feat_dict[k][i] for k in feat_dict} into evaluate_state",
+      "post_remediation_counts": {
+        "UNKNOWN": 59,
+        "NORMAL": 5642,
+        "ELEVATED": 2223,
+        "THIN": 2076
+      },
+      "warmup_unknown_bars": 59,
+      "warmup_unknown_reason": "Minimum 60m history required for abnormal_activity_score_60m"
+    },
+    "FUNDING": {
+      "classification": "CLASSIFIER_INPUT_BUG / FEATURE_MAPPING_BUG",
+      "raw_source_field_status": "PRESENT_AND_VALID (last_realized_funding_rate has 9,999 non-null values in sample)",
+      "feature_engine_status": "CORRECT (latest_realized_funding_rate correctly computed and forward filled)",
+      "classifier_status": "CORRECT (classify_funding functions as designed when passed float rate)",
+      "failure_location": "tools/generate_intel_1b_reports.py line 130",
+      "exact_mechanism": "Generator script looked up 'funding_rate' instead of 'latest_realized_funding_rate', defaulting to [None] * num_rows, causing classify_funding to receive None on all bars",
+      "remediation": "Passed complete row_features containing latest_realized_funding_rate into evaluate_state",
+      "post_remediation_counts": {
+        "UNKNOWN": 1,
+        "NEGATIVE": 1200,
+        "NEUTRAL": 7599,
+        "POSITIVE": 1200
+      },
+      "warmup_unknown_bars": 1,
+      "warmup_unknown_reason": "Bar 0 prior to observation of initial funding settlement event"
+    }
+  },
+  "audit_generated_correctly": true,
+  "audit_internal_consistency": true
+}

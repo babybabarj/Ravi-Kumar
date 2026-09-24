@@ -1,0 +1,11 @@
+{
+  "report_type": "INTEL_1B_R1_SECURITY_AUDIT",
+  "trading_capability": "ZERO",
+  "mainnet_order_mutation": "DISABLED",
+  "decision_engine_absent": true,
+  "trade_board_quarantined": true,
+  "separate_btc_bot_isolated": true,
+  "security_violations": [],
+  "audit_generated_correctly": true,
+  "audit_internal_consistency": true
+}

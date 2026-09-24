@@ -1,0 +1,27 @@
+{
+  "report_type": "INTEL_1B_R1_FOUNDATION",
+  "phase": "INTEL_1B_R1",
+  "status": "GENERATED_PENDING_VERIFICATION",
+  "tested_code_sha": "0b2692a3eb652a7ef57ceee28466bc5eefff41f8",
+  "tested_tree_sha": "769143e0bdefddedbc6a936a773d423dffac6c00",
+  "intel_1a_baseline_sha": "2caf4e99cb18517d3938c8c11f3e9014cc608368",
+  "v16_baseline_sha": "8df25bc8e949219be77faba1a48c095852c0a1d5",
+  "quarantine_sha": "009b8d379c5d7eccc020ce74c3ab3c58d829b16a",
+  "feature_set_id": "INTEL_FEATURESET_V1",
+  "total_features": 39,
+  "trading_capability": "ZERO",
+  "mainnet_order_mutation": "DISABLED",
+  "successful_holdout_accesses": 0,
+  "successful_pristine_accesses": 0,
+  "report_sha256": {
+    "INTEL_1B_R1_BASELINE_DIFF_AUDIT.json": "a38fd9505710947e8f46d4efd0e6de1d26121ecfa44186995d2bd71fd75432fd",
+    "INTEL_1B_R1_STATE_TRUTH_AUDIT.json": "e27683d0601102399d6c5ce7e5009a9708447a2b33bc945353f86b318536048a",
+    "INTEL_1B_R1_UNKNOWN_DIMENSION_AUDIT.json": "5efa67eb3e2f4cd4a8377faf40efff08bbadecf345abafb14f76c0acb042fc16",
+    "INTEL_1B_R1_CROSS_ASSET_CAUSALITY.json": "f0e335b742c2b6e4aa24884a09ee3d7b75711d18a810e296baca4f75461172fc",
+    "INTEL_1B_R1_FEATURE_AVAILABILITY.json": "5b3ddc1bd5118d3c8988e2c0a27c76c3d2fac7452e16eb73e7049afade6feb00",
+    "INTEL_1B_R1_EMPIRICAL_EVIDENCE_VALIDATION.json": "e982c04a04048bbf2659dc879850dd37533cf47cb06b95e216b06ddcd109a137",
+    "INTEL_1B_R1_DATA_ACCESS_AUDIT.json": "40b1c688b848d585debb70898d79f3c2a3b420d4edc78d4f8109bdc2f3ec3c01",
+    "INTEL_1B_R1_SECURITY_AUDIT.json": "d4fecfb98676757703b2744202aa21c0066dae156cff1b22c545a954aa76de1f"
+  },
+  "next_step": "RUN_VERIFIER_FOR_ACCEPTANCE"
+}
