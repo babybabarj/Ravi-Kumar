@@ -143,9 +143,15 @@ def main() -> None:
 
     # 4. THRESHOLD SENSITIVITY AUDIT
     emp_valid, all_fin, rates_in_range, ag_reconciles, ts_data = audit_empirical_threshold_sensitivity()
+    r1_ev_path = ROOT / "reports" / "INTEL_1B_R1_EMPIRICAL_EVIDENCE_VALIDATION.json"
+    source_dataset = "UNKNOWN"
+    if r1_ev_path.is_file():
+        source_r1 = json.loads(r1_ev_path.read_text())
+        source_dataset = source_r1.get("dataset", source_dataset)
+
     ts_report = {
         "report_type": "INTEL_1B_R3_THRESHOLD_SENSITIVITY_AUDIT",
-        "dataset": "BTCUSDT_DEV_2026_01_04 (first 10,000 bars)",
+        "dataset": source_dataset,
         "sample_size": 10000,
         "empirical_valid": emp_valid,
         "finite_values": all_fin,
