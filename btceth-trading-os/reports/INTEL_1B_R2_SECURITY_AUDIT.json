@@ -1,0 +1,32 @@
+{
+  "report_type": "INTEL_1B_R2_SECURITY_AUDIT",
+  "trading_capability": "ZERO",
+  "mainnet_order_mutation": "DISABLED",
+  "decision_engine_absent": true,
+  "trade_board_quarantined": true,
+  "separate_btc_bot_isolated": true,
+  "security_scan_clean": true,
+  "forbidden_tokens_scanned": [
+    "create_order",
+    "cancel_order",
+    "withdraw",
+    "set_leverage",
+    "/fapi/v1/order",
+    "/api/v3/order"
+  ],
+  "active_code_forbidden_tokens_hits": [],
+  "forbidden_functions_scanned": [
+    "evaluate_trade",
+    "generate_signal",
+    "take_trade",
+    "entry_zone",
+    "stop_loss",
+    "take_profit",
+    "position_size",
+    "set_leverage",
+    "create_order",
+    "cancel_order"
+  ],
+  "active_code_forbidden_functions_hits": [],
+  "audit_internal_consistency": true
+}

@@ -1,0 +1,22 @@
+{
+  "report_type": "INTEL_1B_R2_DATA_ACCESS_AUDIT",
+  "ledger_file": "artifacts/research/intel_data_access_ledger.jsonl",
+  "TOTAL_ACCESS_ATTEMPTS": 12,
+  "TOTAL_GRANTED": 12,
+  "TOTAL_DENIED": 0,
+  "DEV_GRANTED": 12,
+  "VAL_GRANTED": 0,
+  "HOLDOUT_GRANTED": 0,
+  "PRISTINE_GRANTED": 0,
+  "OTHER_ROLE_GRANTED": 0,
+  "DEV_DENIED": 0,
+  "VAL_DENIED": 0,
+  "HOLDOUT_DENIED": 0,
+  "PRISTINE_DENIED": 0,
+  "OTHER_ROLE_DENIED": 0,
+  "unrecognized_entries": 0,
+  "reconciled": true,
+  "zero_holdout_access_verified": true,
+  "zero_pristine_access_verified": true,
+  "audit_internal_consistency": true
+}

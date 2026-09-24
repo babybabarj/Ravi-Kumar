@@ -1,0 +1,45 @@
+{
+  "report_type": "INTEL_1B_R2_BASELINE_MANIFEST_AUDIT",
+  "manifest_file": "config/xau_research_partitions_v1.json",
+  "manifest_sha256": "92da0d96b41f9c4041090ac9a8a26787b9150e36726a893563d8d4918e41644b",
+  "baseline_sha256": "92da0d96b41f9c4041090ac9a8a26787b9150e36726a893563d8d4918e41644b",
+  "exact_byte_equality": true,
+  "PARENT_ROWS": 374400,
+  "DEV_ROWS": 165600,
+  "VAL_ROWS": 132480,
+  "HOLDOUT_ROWS": 66060,
+  "PRISTINE_ROWS": 10260,
+  "partition_sum_rows": 374400,
+  "partition_sum_matches_parent": true,
+  "partitions_detail": {
+    "XAUUSDT_DEV_2026_01_04": {
+      "dataset_id": "XAUUSDT_DEV_2026_01_04",
+      "role": "DEVELOPMENT",
+      "expected_rows": 165600,
+      "expected_physical_sha256": "18bf9b2842ca60b87579574390384a27a4c6cacd2405f222833fa07495e4fb09",
+      "partition_logical_sha256": "7dd83570b44b59e1c494ebd82024c542529425febf8fd16519ab3aab728250ea"
+    },
+    "XAUUSDT_HOLDOUT_2026_08_09": {
+      "dataset_id": "XAUUSDT_HOLDOUT_2026_08_09",
+      "role": "HOLDOUT",
+      "expected_rows": 66060,
+      "expected_physical_sha256": "c9bb1b75a9183ce036091bf83b15613193dc9b84f3535eb65c1daeda63c4aacd",
+      "partition_logical_sha256": "93c9d26ea25298cf92c94866f9df526775e5c74eedd141649367e514a44b9fe3"
+    },
+    "XAUUSDT_PROSPECTIVE_PRISTINE": {
+      "dataset_id": "XAUUSDT_PROSPECTIVE_PRISTINE",
+      "role": "PROSPECTIVE_PRISTINE",
+      "expected_rows": 10260,
+      "expected_physical_sha256": "169fd170a0825f52ef4d8d408056aca0e2ee389b4a56df3e9e2dd18979c24c94",
+      "partition_logical_sha256": "acca92932276b18e69acf394a52995918e994add0dc6fdb5a89573c3625a615f"
+    },
+    "XAUUSDT_VAL_2026_05_07": {
+      "dataset_id": "XAUUSDT_VAL_2026_05_07",
+      "role": "VALIDATION",
+      "expected_rows": 132480,
+      "expected_physical_sha256": "798a40f1fdf43c41cb43e1f70a2aaef9eea7c0587e02dbfb60a18cc46cc4e345",
+      "partition_logical_sha256": "2c70629ba897d2125e3a701beda358139cd2fadd814d6faa30cff046d257bfa7"
+    }
+  },
+  "audit_internal_consistency": true
+}

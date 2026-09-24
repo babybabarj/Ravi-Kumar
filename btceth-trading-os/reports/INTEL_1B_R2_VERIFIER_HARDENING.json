@@ -1,0 +1,80 @@
+{
+  "report_type": "INTEL_1B_R2_VERIFIER_HARDENING",
+  "audit_timestamp_utc": "2026-09-24T10:59:03.376726+00:00",
+  "hardcoded_pass_count": 0,
+  "fail_open_count": 0,
+  "all_gates_authoritative": true,
+  "hardcoded_gates_remediated": {
+    "CURRENT_CANONICAL_BASELINE_VALID": {
+      "previous_implementation": "Hardcoded self._record('CURRENT_CANONICAL_BASELINE_VALID', True)",
+      "remediated_authoritative_source": "git rev-parse origin/btceth-phase1b == fb2d2c1f25f199ea040212fe683e64776754b805",
+      "status": "PASS"
+    },
+    "WIP_SAFETY_UNCHANGED": {
+      "previous_implementation": "Hardcoded self._record('WIP_SAFETY_UNCHANGED', True)",
+      "remediated_authoritative_source": "git rev-parse origin/btceth-round3b-wip-safety == 11d6e370db0d27cd635528a3c530286b28c60416",
+      "status": "PASS"
+    },
+    "HOLDOUT_CAPABILITY_ZERO": {
+      "previous_implementation": "Hardcoded self._record('HOLDOUT_CAPABILITY_ZERO', True)",
+      "remediated_authoritative_source": "HOLDOUT_UNLOCK_CAPABILITY == 0 and XAU_HOLDOUT_UNLOCK_CAPABILITY == 0 (from ResearchDataAccessGuard)",
+      "status": "PASS"
+    },
+    "PRISTINE_CAPABILITY_ZERO": {
+      "previous_implementation": "Hardcoded self._record('PRISTINE_CAPABILITY_ZERO', True)",
+      "remediated_authoritative_source": "XAU_PROSPECTIVE_PRISTINE_UNLOCK_CAPABILITY == 0 (from ResearchDataAccessGuard)",
+      "status": "PASS"
+    },
+    "TRADING_CAPABILITY_ZERO": {
+      "previous_implementation": "Hardcoded self._record('TRADING_CAPABILITY_ZERO', True)",
+      "remediated_authoritative_source": "Execute python -m btceth_os.security_scan -> returncode == 0 and trading_capability == 'ZERO'",
+      "status": "PASS"
+    },
+    "MAINNET_MUTATION_DISABLED": {
+      "previous_implementation": "Hardcoded self._record('MAINNET_MUTATION_DISABLED', True)",
+      "remediated_authoritative_source": "AST / regex scan of src/**/*.py for forbidden order mutation keywords",
+      "status": "PASS"
+    },
+    "ZERO_SHADOW_PROMOTIONS": {
+      "previous_implementation": "Hardcoded self._record('ZERO_SHADOW_PROMOTIONS', True)",
+      "remediated_authoritative_source": "inspect_promotion_state().persistent_approved_shadow == 0 and runtime_approved_shadow == 0",
+      "status": "PASS"
+    },
+    "ZERO_PAPER_PROMOTIONS": {
+      "previous_implementation": "Hardcoded self._record('ZERO_PAPER_PROMOTIONS', True)",
+      "remediated_authoritative_source": "inspect_promotion_state().persistent_approved_paper == 0 and runtime_approved_paper == 0",
+      "status": "PASS"
+    },
+    "ZERO_LIVE_PROMOTIONS": {
+      "previous_implementation": "Hardcoded self._record('ZERO_LIVE_PROMOTIONS', True)",
+      "remediated_authoritative_source": "inspect_promotion_state().trading_capability == 0",
+      "status": "PASS"
+    },
+    "FEATURE_DEPENDENCY_AUDIT_PASS": {
+      "previous_implementation": "Hardcoded self._record('FEATURE_DEPENDENCY_AUDIT_PASS', True)",
+      "remediated_authoritative_source": "Live feature perturbation test mutating close, high, low, volume, trade_count, funding, session_state independently",
+      "status": "PASS"
+    },
+    "DECISION_ENGINE_ABSENT": {
+      "previous_implementation": "Hardcoded self._record('DECISION_ENGINE_ABSENT', True)",
+      "remediated_authoritative_source": "Production code regex scan rejecting functions evaluate_trade, generate_signal, take_trade, entry_zone, stop_loss, take_profit, position_size, set_leverage, create_order, cancel_order",
+      "status": "PASS"
+    },
+    "SECURITY_SCAN_ZERO": {
+      "previous_implementation": "Hardcoded self._record('SECURITY_SCAN_ZERO', True)",
+      "remediated_authoritative_source": "Deterministic execution and returncode check of btceth_os.security_scan",
+      "status": "PASS"
+    },
+    "DATA_ACCESS_COUNTS_VALID": {
+      "previous_implementation": "Used r.get('access_granted') causing 0 DEV counts and fail-open if report missing",
+      "remediated_authoritative_source": "audit_intel_access_ledger() reading real access_result, reconciling total attempts and role breakdowns",
+      "status": "PASS"
+    },
+    "BASELINE_MANIFEST_VALID": {
+      "previous_implementation": "Walkthrough carried stale BTC/ETH row counts (260,000 / 182,000)",
+      "remediated_authoritative_source": "Dynamically derived from committed config/xau_research_partitions_v1.json (374,400 = 165,600 + 132,480 + 66,060 + 10,260)",
+      "status": "PASS"
+    }
+  },
+  "audit_internal_consistency": true
+}

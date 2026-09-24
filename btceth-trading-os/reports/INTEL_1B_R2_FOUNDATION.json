@@ -1,0 +1,26 @@
+{
+  "report_type": "INTEL_1B_R2_FOUNDATION",
+  "phase": "INTEL_1B_R2",
+  "status": "GENERATED_PENDING_VERIFICATION",
+  "tested_code_sha": "510f7b437620031291a38fed0ffb20899e016587",
+  "tested_tree_sha": "a96392be89eb0ae68475cf81ea35781ba300e94c",
+  "intel_1a_baseline_sha": "2caf4e99cb18517d3938c8c11f3e9014cc608368",
+  "v16_baseline_sha": "8df25bc8e949219be77faba1a48c095852c0a1d5",
+  "r1_code_sha": "0b2692a3eb652a7ef57ceee28466bc5eefff41f8",
+  "r1_evidence_sha": "aadd3dd093fb580cafef30dbca6670859d552ca3",
+  "quarantine_sha": "009b8d379c5d7eccc020ce74c3ab3c58d829b16a",
+  "feature_set_id": "INTEL_FEATURESET_V1",
+  "total_features": 39,
+  "trading_capability": "ZERO",
+  "mainnet_order_mutation": "DISABLED",
+  "successful_holdout_accesses": 0,
+  "successful_pristine_accesses": 0,
+  "report_sha256": {
+    "INTEL_1B_R2_VERIFIER_HARDENING.json": "a7d94a09b11448e8a5b643196ad08a73eff36ca3bb43c30b41623409824d3ed6",
+    "INTEL_1B_R2_DATA_ACCESS_AUDIT.json": "69ab813d5c6c5fab3fb5214b50cf7f21b02999dc0f0076196b0f7acadb9c2c99",
+    "INTEL_1B_R2_BASELINE_MANIFEST_AUDIT.json": "58fe46e3fde7d3077fb028a82d6d4b16e61c7da1330a3ef6c0d4b4f7b105870d",
+    "INTEL_1B_R2_SECURITY_AUDIT.json": "7f2727048661f0e7ec66bf988cd59c4e670f5f3900e5e1a4b72ee550a846c908",
+    "INTEL_1B_R2_EMPIRICAL_RECHECK.json": "d6aa0715c32b17e212c93dfce0dcf880cbcd9c76ab01fb4c3597ca3418edee9f"
+  },
+  "next_step": "RUN_VERIFIER_FOR_ACCEPTANCE"
+}
