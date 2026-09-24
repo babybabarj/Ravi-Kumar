@@ -54,10 +54,18 @@
     "g_is_ancestor_of_h": true,
     "h_pushed_to_origin": true,
     "remediation_strategy": "additive commits on top of H; no force-push; no rewrite of G or H",
-    "remote_branch": "origin/btceth-phase2-multiasset"
+    "remote_branch": "origin/btceth-phase2-multiasset",
+    "remediation_code_commits": [
+      "b4c4c131555f85de77cf0d8b95aa07c51451d853",
+      "44cf5f70bb078b5435928d3ef718607a97ae89d1"
+    ],
+    "remediation_evidence_parent": "168126d97f750935b843159d6ab209307387e5b8"
   },
   "v16_status_prior": "VERIFIED",
   "v16_status_remediated": "VERIFIED",
   "remediation_status": "CASE_A_WORDING_ONLY_DATA_CODE_CORRECT",
-  "phase2e_2_v16_status": "VERIFIED"
+  "phase2e_2_v16_status": "VERIFIED",
+  "verifier_gates_total": 44,
+  "verifier_gates_passed": 44,
+  "verifier_status": "VERIFIED"
 }
