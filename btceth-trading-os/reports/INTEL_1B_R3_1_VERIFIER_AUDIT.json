@@ -1,0 +1,9 @@
+{
+  "report_type": "INTEL_1B_R3_1_VERIFIER_AUDIT",
+  "verifier_file": "tools/verify_intel_1b_r3_1.py",
+  "code_gates_count": 27,
+  "evidence_gates_count": 5,
+  "total_gates": 32,
+  "hardcoded_pass_gates": 0,
+  "fail_open_paths": 0
+}

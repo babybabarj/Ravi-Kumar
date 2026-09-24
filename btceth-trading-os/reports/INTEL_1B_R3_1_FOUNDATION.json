@@ -1,0 +1,24 @@
+{
+  "report_type": "INTEL_1B_R3_1_FOUNDATION",
+  "phase": "INTEL_1B_R3_1",
+  "status": "GENERATED_PENDING_VERIFICATION",
+  "tested_code_sha": "f2a554824948becbc33866ed9a1b0ebdddab3313",
+  "tested_tree_sha": "0021d1ba319033ac0d3b948bd3cf35af0441d99e",
+  "r3_code_sha": "ed0c7d74036dadccc2abf8bfcf2aa89c0ffd9516",
+  "r3_evidence_sha": "304d0068027d24237a53436e3235aa4acf6b09c6",
+  "source_threshold_report": "reports/INTEL_1B_R1_EMPIRICAL_EVIDENCE_VALIDATION.json",
+  "source_threshold_report_sha256": "e982c04a04048bbf2659dc879850dd37533cf47cb06b95e216b06ddcd109a137",
+  "threshold_source_dataset": "XAUUSDT_DEV_2026_01_04_V3 (10,000 bars sample)",
+  "ledger_snapshot_source_report": "reports/INTEL_1B_R3_LEDGER_SNAPSHOT.json",
+  "ledger_snapshot_report_sha256": "0822a04b84b6d95a2a6571e1203c257051143c8f90a730788277417709a79939",
+  "trading_capability": "ZERO",
+  "mainnet_order_mutation": "DISABLED",
+  "successful_holdout_accesses": 0,
+  "successful_pristine_accesses": 0,
+  "report_sha256": {
+    "INTEL_1B_R3_1_THRESHOLD_PROVENANCE.json": "b9b07f48ddac30087f213ea5be57e094e612db71266b2c3f7abc6a49b161bd39",
+    "INTEL_1B_R3_1_LEDGER_HASH_AUDIT.json": "d3e5aa24b5c7f74629443b2aa411242715875193a0f51c7a67e2cc6b7a27881c",
+    "INTEL_1B_R3_1_VERIFIER_AUDIT.json": "0c776dce0c8f236312272b867d6e49a18d917da07cb58bb66c347df7ae820bd7"
+  },
+  "next_step": "RUN_VERIFIER_FOR_ACCEPTANCE"
+}

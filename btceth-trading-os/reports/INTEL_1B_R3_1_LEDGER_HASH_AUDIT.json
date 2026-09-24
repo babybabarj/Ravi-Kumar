@@ -1,0 +1,21 @@
+{
+  "report_type": "INTEL_1B_R3_1_LEDGER_HASH_AUDIT",
+  "source_ledger_path": "artifacts/research/intel_data_access_ledger.jsonl",
+  "source_ledger_sha256": "c9f2ae3ddc9505bbdaeff01820ba58600a6389e52827ab27e1c509791c32d532",
+  "ledger_snapshot_file": "reports/INTEL_1B_R3_LEDGER_SNAPSHOT.json",
+  "ledger_snapshot_file_sha256": "0822a04b84b6d95a2a6571e1203c257051143c8f90a730788277417709a79939",
+  "entry_count": 12,
+  "reported_normalized_snapshot_sha256": "de9e68b03dfe3f7263a1ab8270e500c153b770638b583d318b9ce34b0e864920",
+  "recomputed_normalized_snapshot_sha256": "de9e68b03dfe3f7263a1ab8270e500c153b770638b583d318b9ce34b0e864920",
+  "hash_match": true,
+  "total_access_attempts": 12,
+  "total_granted": 12,
+  "total_denied": 0,
+  "dev_granted": 12,
+  "val_granted": 0,
+  "holdout_granted": 0,
+  "pristine_granted": 0,
+  "unrecognized_entries": 0,
+  "reconciled": true,
+  "audit_passed": true
+}

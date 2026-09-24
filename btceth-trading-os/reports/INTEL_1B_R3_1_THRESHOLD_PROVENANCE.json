@@ -1,0 +1,129 @@
+{
+  "report_type": "INTEL_1B_R3_1_THRESHOLD_PROVENANCE",
+  "source_report": "reports/INTEL_1B_R1_EMPIRICAL_EVIDENCE_VALIDATION.json",
+  "source_report_sha256": "e982c04a04048bbf2659dc879850dd37533cf47cb06b95e216b06ddcd109a137",
+  "dataset": "XAUUSDT_DEV_2026_01_04_V3 (10,000 bars sample)",
+  "sample_size": 10000,
+  "empirical_valid": true,
+  "finite_values": true,
+  "valid_rate_range": true,
+  "internal_consistency": true,
+  "results": [
+    {
+      "parameter_name": "directional_persistence_up",
+      "dimension": "TREND",
+      "baseline_value": 0.65,
+      "perturbation_results": [
+        {
+          "parameter_name": "directional_persistence_up",
+          "baseline_value": 0.65,
+          "perturbation_pct": -0.1,
+          "perturbed_value": 0.5850000000000001,
+          "total_bars": 10000,
+          "disagreement_count": 57,
+          "disagreement_rate": 0.0057,
+          "baseline_transitions": 1672,
+          "perturbed_transitions": 1670,
+          "transition_difference": -2
+        },
+        {
+          "parameter_name": "directional_persistence_up",
+          "baseline_value": 0.65,
+          "perturbation_pct": -0.05,
+          "perturbed_value": 0.6174999999999999,
+          "total_bars": 10000,
+          "disagreement_count": 0,
+          "disagreement_rate": 0.0,
+          "baseline_transitions": 1672,
+          "perturbed_transitions": 1672,
+          "transition_difference": 0
+        },
+        {
+          "parameter_name": "directional_persistence_up",
+          "baseline_value": 0.65,
+          "perturbation_pct": 0.05,
+          "perturbed_value": 0.6825000000000001,
+          "total_bars": 10000,
+          "disagreement_count": 90,
+          "disagreement_rate": 0.009,
+          "baseline_transitions": 1672,
+          "perturbed_transitions": 1630,
+          "transition_difference": -42
+        },
+        {
+          "parameter_name": "directional_persistence_up",
+          "baseline_value": 0.65,
+          "perturbation_pct": 0.1,
+          "perturbed_value": 0.7150000000000001,
+          "total_bars": 10000,
+          "disagreement_count": 144,
+          "disagreement_rate": 0.0144,
+          "baseline_transitions": 1672,
+          "perturbed_transitions": 1601,
+          "transition_difference": -71
+        }
+      ],
+      "max_disagreement_rate": 0.0144,
+      "mean_disagreement_rate": 0.0073,
+      "is_classification_stable": true
+    },
+    {
+      "parameter_name": "efficiency_ratio_high",
+      "dimension": "TREND",
+      "baseline_value": 0.4,
+      "perturbation_results": [
+        {
+          "parameter_name": "efficiency_ratio_high",
+          "baseline_value": 0.4,
+          "perturbation_pct": -0.1,
+          "perturbed_value": 0.36000000000000004,
+          "total_bars": 10000,
+          "disagreement_count": 33,
+          "disagreement_rate": 0.0033,
+          "baseline_transitions": 1672,
+          "perturbed_transitions": 1676,
+          "transition_difference": 4
+        },
+        {
+          "parameter_name": "efficiency_ratio_high",
+          "baseline_value": 0.4,
+          "perturbation_pct": -0.05,
+          "perturbed_value": 0.38,
+          "total_bars": 10000,
+          "disagreement_count": 20,
+          "disagreement_rate": 0.002,
+          "baseline_transitions": 1672,
+          "perturbed_transitions": 1683,
+          "transition_difference": 11
+        },
+        {
+          "parameter_name": "efficiency_ratio_high",
+          "baseline_value": 0.4,
+          "perturbation_pct": 0.05,
+          "perturbed_value": 0.42000000000000004,
+          "total_bars": 10000,
+          "disagreement_count": 23,
+          "disagreement_rate": 0.0023,
+          "baseline_transitions": 1672,
+          "perturbed_transitions": 1670,
+          "transition_difference": -2
+        },
+        {
+          "parameter_name": "efficiency_ratio_high",
+          "baseline_value": 0.4,
+          "perturbation_pct": 0.1,
+          "perturbed_value": 0.44000000000000006,
+          "total_bars": 10000,
+          "disagreement_count": 41,
+          "disagreement_rate": 0.0041,
+          "baseline_transitions": 1672,
+          "perturbed_transitions": 1668,
+          "transition_difference": -4
+        }
+      ],
+      "max_disagreement_rate": 0.0041,
+      "mean_disagreement_rate": 0.0029,
+      "is_classification_stable": true
+    }
+  ]
+}
