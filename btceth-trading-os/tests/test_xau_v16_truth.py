@@ -82,3 +82,119 @@ def test_funding_event_milliseconds_do_not_leak_into_prior_bar():
     assert aligned["is_funding_event"] == [False, True]
     assert aligned["last_realized_funding_rate"] == [None, Decimal("0.001")]
     assert aligned["funding_event_ts_ns"] == [None, start + 1_000_000]
+
+
+def test_jan30_funding_epoch_transition_4h_8h_4h():
+    """Regression: Jan 30 2026 had a brief 8h window (12:15–18:15 UTC) then returned to 4h.
+    Epoch 4A: 2026-01-30T12:15Z → 18:15Z, funding_interval=8h.
+    The single event in epoch 4A is at 2026-01-30 16:00 UTC.
+    Before (epoch 3, 4h): last event 2026-01-30 12:00 UTC.
+    After (epoch 4B, 4h): events at 20:00, 2026-01-31 00:00, 04:00, 08:00 UTC.
+    """
+    import json
+    from pathlib import Path
+    import pyarrow.parquet as pq
+    from collections import Counter
+    from datetime import datetime
+
+    ROOT = Path(__file__).resolve().parents[1]
+    fund_path = ROOT / "artifacts/research/silver_xau/XAUUSDT-funding-events-silver-v3.parquet"
+    if not fund_path.exists():
+        pytest.skip("Funding events artifact not materialized")
+
+    t = pq.read_table(fund_path)
+    epochs = {x.as_py(): y.as_py() for x, y in zip(t["ts_event_ns"], t["contract_rule_epoch_id"])}
+    intervals = {x.as_py(): y.as_py() for x, y in zip(t["ts_event_ns"], t["funding_interval_hours"])}
+    timestamps = sorted(epochs.keys())
+    HOUR_NS = 3_600_000_000_000
+
+    # Epoch 4A: exactly 1 event at 2026-01-30 16:00 UTC, interval_hours=8
+    ep4a_events = [ts for ts, ep in epochs.items() if ep == "XAU_EPOCH_4A_8H_TEMPORARY_FUNDING"]
+    assert len(ep4a_events) == 1, f"Expected 1 event in epoch 4A, got {len(ep4a_events)}"
+    ep4a_ts = ep4a_events[0]
+    ep4a_dt = datetime.fromtimestamp(ep4a_ts / 1e9, tz=timezone.utc)
+    assert ep4a_dt.hour == 16 and ep4a_dt.day == 30 and ep4a_dt.month == 1
+    assert intervals[ep4a_ts] == 8
+
+    # Prev event must be epoch 3 at 12:00, delta ~4h
+    idx = timestamps.index(ep4a_ts)
+    prev_ts = timestamps[idx - 1]
+    assert epochs[prev_ts] == "XAU_EPOCH_3_INDEX_WEIGHT_REBALANCE"
+    assert datetime.fromtimestamp(prev_ts / 1e9, tz=timezone.utc).hour == 12
+    assert abs((ep4a_ts - prev_ts) / HOUR_NS - 4.0) < 0.01
+
+    # Next event must be epoch 4B at 20:00, delta ~4h
+    next_ts = timestamps[idx + 1]
+    assert epochs[next_ts] == "XAU_EPOCH_4B_4H_FUNDING_AND_CAP_EXPANSION"
+    assert datetime.fromtimestamp(next_ts / 1e9, tz=timezone.utc).hour == 20
+    assert abs((next_ts - ep4a_ts) / HOUR_NS - 4.0) < 0.01
+
+    # 2026-01-31 00:00, 04:00, 08:00 must all be in epoch 4B
+    for h in (0, 4, 8):
+        target_ns = int(datetime(2026, 1, 31, h, 0, tzinfo=timezone.utc).timestamp() * 1e9)
+        closest_ts = min(timestamps, key=lambda ts: abs(ts - target_ns))
+        assert abs(closest_ts - target_ns) < HOUR_NS
+        assert epochs[closest_ts] == "XAU_EPOCH_4B_4H_FUNDING_AND_CAP_EXPANSION"
+
+    # Overall: exactly 1 epoch-8h event, >1500 epoch-4h events (excluding pre-admission)
+    admitted_intervals = Counter(
+        intervals[ts] for ts in timestamps
+        if epochs[ts] != "XAU_EPOCH_0_QUARANTINED_PRE_ADMISSION"
+    )
+    assert admitted_intervals[8] == 1
+    assert admitted_intervals[4] > 1500
+
+
+def test_v3_partition_research_admission_boundaries():
+    """No DEV or VAL row may precede research admission (2026-01-06 00:00:00 UTC).
+    Partition name XAUUSDT_DEV_2026_01_04 reflects epoch range, NOT a Jan-4 start date.
+    """
+    import json
+    from pathlib import Path
+    import pyarrow.parquet as pq
+
+    ROOT = Path(__file__).resolve().parents[1]
+    pv3_path = ROOT / "config/xau_research_partitions_v3.json"
+    if not pv3_path.exists():
+        pytest.skip("Partition manifest V3 not found")
+    pv3 = json.loads(pv3_path.read_text())
+    RESEARCH_ADMISSION_NS = 1_767_657_600_000_000_000  # 2026-01-06 00:00:00 UTC
+
+    for pid in ("XAUUSDT_DEV_2026_01_04_V3", "XAUUSDT_VAL_2026_05_07_V3"):
+        path = ROOT / pv3["partitions"][pid]["relative_path"]
+        if not path.exists():
+            pytest.skip(f"Partition not found: {path}")
+        ts_vals = [x.as_py() for x in pq.read_table(path)["ts_event_ns"]]
+        assert min(ts_vals) >= RESEARCH_ADMISSION_NS, (
+            f"{pid}: earliest row {min(ts_vals)} precedes research_admission {RESEARCH_ADMISSION_NS}"
+        )
+
+
+def test_pre_admission_funding_events_did_not_leak_into_dev_val():
+    """30 PRE_ADMISSION_UNVERIFIABLE funding events must not appear in
+    DEV or VAL funding_event_ts_ns or last_realized_funding_event_ts_ns.
+    """
+    import json
+    from pathlib import Path
+    import pyarrow.parquet as pq
+
+    ROOT = Path(__file__).resolve().parents[1]
+    pv3_path = ROOT / "config/xau_research_partitions_v3.json"
+    if not pv3_path.exists():
+        pytest.skip("Partition manifest V3 not found")
+    pv3 = json.loads(pv3_path.read_text())
+    RESEARCH_ADMISSION_NS = 1_767_657_600_000_000_000
+
+    for pid in ("XAUUSDT_DEV_2026_01_04_V3", "XAUUSDT_VAL_2026_05_07_V3"):
+        path = ROOT / pv3["partitions"][pid]["relative_path"]
+        if not path.exists():
+            pytest.skip(f"Partition not found: {path}")
+        t = pq.read_table(path)
+        for col in ("funding_event_ts_ns", "last_realized_funding_event_ts_ns"):
+            if col not in t.column_names:
+                continue
+            pre = [x.as_py() for x in t[col] if x.as_py() is not None and x.as_py() < RESEARCH_ADMISSION_NS]
+            assert len(pre) == 0, (
+                f"{pid}.{col}: {len(pre)} pre-admission timestamps leaked: {pre[:3]}"
+            )
+
