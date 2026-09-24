@@ -1,0 +1,167 @@
+{
+  "report_type": "INTEL_1B_STATE_STABILITY_AUDIT",
+  "evaluated_dataset": "XAUUSDT_DEV_2026_01_04_V3 (10,000 bars sample)",
+  "stability_audit": {
+    "asset": "XAUUSDT_DEV",
+    "total_bars": 10000,
+    "dimensions": {
+      "TREND": {
+        "total_bars": 10000,
+        "state_counts": {
+          "UNCERTAIN": 3354,
+          "RANGE": 6360,
+          "UP": 192,
+          "DOWN": 94
+        },
+        "transition_count": 1672,
+        "reversal_count": 895,
+        "rapid_flip_rate": 0.5353,
+        "unknown_fraction": 0.3354,
+        "degraded_fraction": 0.0,
+        "persistence_probability": 0.8328,
+        "mean_duration_bars": {
+          "UNCERTAIN": 4.02,
+          "RANGE": 8.44,
+          "UP": 3.84,
+          "DOWN": 2.76
+        },
+        "median_duration_bars": {
+          "UNCERTAIN": 2.0,
+          "RANGE": 5.0,
+          "UP": 2.0,
+          "DOWN": 2.0
+        },
+        "p10_duration_bars": {
+          "UNCERTAIN": 1.0,
+          "RANGE": 1.0,
+          "UP": 1.0,
+          "DOWN": 1.0
+        },
+        "p90_duration_bars": {
+          "UNCERTAIN": 9.0,
+          "RANGE": 20.700000000000045,
+          "UP": 9.0,
+          "DOWN": 5.699999999999999
+        }
+      },
+      "VOLATILITY": {
+        "total_bars": 10000,
+        "state_counts": {
+          "UNKNOWN": 119,
+          "NORMAL": 5037,
+          "HIGH": 1794,
+          "LOW": 2451,
+          "EXTREME": 599
+        },
+        "transition_count": 1178,
+        "reversal_count": 413,
+        "rapid_flip_rate": 0.3506,
+        "unknown_fraction": 0.0119,
+        "degraded_fraction": 0.0,
+        "persistence_probability": 0.8822,
+        "mean_duration_bars": {
+          "UNKNOWN": 119.0,
+          "NORMAL": 9.93,
+          "HIGH": 5.88,
+          "LOW": 8.69,
+          "EXTREME": 7.13
+        },
+        "median_duration_bars": {
+          "UNKNOWN": 119.0,
+          "NORMAL": 7.0,
+          "HIGH": 4.0,
+          "LOW": 4.0,
+          "EXTREME": 5.0
+        },
+        "p10_duration_bars": {
+          "UNKNOWN": 119.0,
+          "NORMAL": 1.0,
+          "HIGH": 1.0,
+          "LOW": 1.0,
+          "EXTREME": 1.0
+        },
+        "p90_duration_bars": {
+          "UNKNOWN": 119.0,
+          "NORMAL": 24.400000000000034,
+          "HIGH": 11.0,
+          "LOW": 22.0,
+          "EXTREME": 15.0
+        }
+      },
+      "LIQUIDITY_ACTIVITY": {
+        "total_bars": 10000,
+        "state_counts": {
+          "UNKNOWN": 10000
+        },
+        "transition_count": 0,
+        "reversal_count": 0,
+        "rapid_flip_rate": 0.0,
+        "unknown_fraction": 1.0,
+        "degraded_fraction": 0.0,
+        "persistence_probability": 1.0,
+        "mean_duration_bars": {
+          "UNKNOWN": 10000.0
+        },
+        "median_duration_bars": {
+          "UNKNOWN": 10000.0
+        },
+        "p10_duration_bars": {
+          "UNKNOWN": 10000.0
+        },
+        "p90_duration_bars": {
+          "UNKNOWN": 10000.0
+        }
+      },
+      "FUNDING": {
+        "total_bars": 10000,
+        "state_counts": {
+          "UNKNOWN": 10000
+        },
+        "transition_count": 0,
+        "reversal_count": 0,
+        "rapid_flip_rate": 0.0,
+        "unknown_fraction": 1.0,
+        "degraded_fraction": 0.0,
+        "persistence_probability": 1.0,
+        "mean_duration_bars": {
+          "UNKNOWN": 10000.0
+        },
+        "median_duration_bars": {
+          "UNKNOWN": 10000.0
+        },
+        "p10_duration_bars": {
+          "UNKNOWN": 10000.0
+        },
+        "p90_duration_bars": {
+          "UNKNOWN": 10000.0
+        }
+      },
+      "MARKET_QUALITY": {
+        "total_bars": 10000,
+        "state_counts": {
+          "HEALTHY": 10000
+        },
+        "transition_count": 0,
+        "reversal_count": 0,
+        "rapid_flip_rate": 0.0,
+        "unknown_fraction": 0.0,
+        "degraded_fraction": 0.0,
+        "persistence_probability": 1.0,
+        "mean_duration_bars": {
+          "HEALTHY": 10000.0
+        },
+        "median_duration_bars": {
+          "HEALTHY": 10000.0
+        },
+        "p10_duration_bars": {
+          "HEALTHY": 10000.0
+        },
+        "p90_duration_bars": {
+          "HEALTHY": 10000.0
+        }
+      }
+    },
+    "overall_regime_coherence": "AUDITED_DESCRIPTIVE_ONLY"
+  },
+  "stability_audit_passed": true
+}

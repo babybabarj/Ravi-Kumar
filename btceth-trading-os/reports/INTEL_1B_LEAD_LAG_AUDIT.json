@@ -1,0 +1,43 @@
+{
+  "report_type": "INTEL_1B_LEAD_LAG_AUDIT",
+  "machine_enforced_separation": {
+    "causal_live_eligible_metrics": [
+      "causal_dispersion",
+      "contemporaneous_return_correlation",
+      "historical_lag_covariance",
+      "lagged_return_correlation",
+      "relative_volatility_ratio",
+      "rolling_cross_beta"
+    ],
+    "retrospective_research_only_metrics": [
+      "cross_asset_predictive_lead_ratio",
+      "future_lead_correlation",
+      "optimal_lead_lag_argmax",
+      "retrospective_lead_information_flow"
+    ]
+  },
+  "negative_lag_policy": "STRICT_FAIL_CLOSED_EXCEPTION",
+  "sample_causal_evaluation": {
+    "spec": {
+      "source_asset": "BTC",
+      "target_asset": "ETH",
+      "metric_name": "lagged_return_correlation",
+      "lag": 2,
+      "window": 60,
+      "minimum_samples": 20,
+      "timestamp_alignment_rule": "EXACT_TIMESTAMP_MATCH",
+      "metric_category": "CAUSAL_LIVE_ELIGIBLE"
+    },
+    "correlation": -0.156895,
+    "covariance": -1.164e-07,
+    "effective_samples": 60,
+    "is_causal_live_eligible": true,
+    "availability_timestamp_ns": 1767717540000000000
+  },
+  "clock_alignment_policy": {
+    "rule": "availability_timestamp <= snapshot_timestamp",
+    "forward_fill_across_unknown": "PROHIBITED",
+    "partial_context_state_preserved": true
+  },
+  "lead_lag_causality_verified": true
+}

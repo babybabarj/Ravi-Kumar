@@ -1,0 +1,119 @@
+{
+  "audit_type": "INTEL_1B_NUMERIC_BOUNDARY_AUDIT",
+  "version": "1.0.0",
+  "total_conversions_registered": 12,
+  "canonical_storage_downgrades": 0,
+  "all_conversions_ephemeral": true,
+  "float_contamination_in_storage": "ZERO",
+  "storage_precision_policy": "DECIMAL128_PURE_PERSISTENCE",
+  "conversions": [
+    {
+      "field": "open",
+      "source_type": "Decimal128(18, 4)",
+      "target_type": "float64",
+      "reason": "Ephemeral log-return and candle body calculations",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_price_features"
+    },
+    {
+      "field": "high",
+      "source_type": "Decimal128(18, 4)",
+      "target_type": "float64",
+      "reason": "Ephemeral True Range and rolling maximum calculations",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_volatility_features"
+    },
+    {
+      "field": "low",
+      "source_type": "Decimal128(18, 4)",
+      "target_type": "float64",
+      "reason": "Ephemeral True Range and rolling minimum calculations",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_volatility_features"
+    },
+    {
+      "field": "close",
+      "source_type": "Decimal128(18, 4)",
+      "target_type": "float64",
+      "reason": "Ephemeral logarithmic returns ln(close_t / close_{t-1}) and moving averages",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_price_features"
+    },
+    {
+      "field": "volume",
+      "source_type": "Decimal128(28, 8)",
+      "target_type": "float64",
+      "reason": "Ephemeral volume rolling percentile and z-score computation",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_volume_features"
+    },
+    {
+      "field": "quote_volume",
+      "source_type": "Decimal128(28, 8)",
+      "target_type": "float64",
+      "reason": "Ephemeral turnover ratio calculations",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_volume_features"
+    },
+    {
+      "field": "funding_rate",
+      "source_type": "Decimal128(18, 8)",
+      "target_type": "float64",
+      "reason": "Ephemeral funding regime threshold comparison and rolling z-scores",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_funding_features"
+    },
+    {
+      "field": "mark_price",
+      "source_type": "Decimal128(18, 8)",
+      "target_type": "float64",
+      "reason": "Ephemeral basis divergence and premium calculations",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_derivatives_features"
+    },
+    {
+      "field": "index_price",
+      "source_type": "Decimal128(18, 8)",
+      "target_type": "float64",
+      "reason": "Ephemeral basis divergence calculations",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_derivatives_features"
+    },
+    {
+      "field": "premium_index",
+      "source_type": "Decimal128(18, 8)",
+      "target_type": "float64",
+      "reason": "Ephemeral premium z-score and EWMA computation",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_derivatives_features"
+    },
+    {
+      "field": "taker_buy_volume",
+      "source_type": "Decimal128(28, 8)",
+      "target_type": "float64",
+      "reason": "Ephemeral buy volume ratio: taker_buy_volume / total_volume",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_orderflow_features"
+    },
+    {
+      "field": "taker_buy_quote_volume",
+      "source_type": "Decimal128(28, 8)",
+      "target_type": "float64",
+      "reason": "Ephemeral buy quote volume ratio",
+      "precision_loss_possible": false,
+      "persisted_or_ephemeral": "EPHEMERAL",
+      "scope": "feature_engine.compute_orderflow_features"
+    }
+  ]
+}

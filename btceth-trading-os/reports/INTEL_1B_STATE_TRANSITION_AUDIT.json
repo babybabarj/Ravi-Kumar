@@ -1,0 +1,251 @@
+{
+  "report_type": "INTEL_1B_STATE_TRANSITION_AUDIT",
+  "evaluated_dataset": "XAUUSDT_DEV_2026_01_04_V3",
+  "transitions_by_dimension": {
+    "TREND": {
+      "total_bars": 10000,
+      "transition_count": 1672,
+      "reversal_count": 895,
+      "rapid_flip_rate": 0.5353,
+      "persistence_probability": 0.8328,
+      "state_counts": {
+        "UNCERTAIN": 3354,
+        "RANGE": 6360,
+        "UP": 192,
+        "DOWN": 94
+      },
+      "sample_transitions": [
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "UNCERTAIN",
+          "to_state": "RANGE",
+          "transition_timestamp_ns": 1767658740000000000,
+          "previous_state_duration_bars": 19,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "RANGE",
+          "to_state": "UNCERTAIN",
+          "transition_timestamp_ns": 1767659400000000000,
+          "previous_state_duration_bars": 11,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "UNCERTAIN",
+          "to_state": "RANGE",
+          "transition_timestamp_ns": 1767659520000000000,
+          "previous_state_duration_bars": 2,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "RANGE",
+          "to_state": "UNCERTAIN",
+          "transition_timestamp_ns": 1767659700000000000,
+          "previous_state_duration_bars": 3,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "UNCERTAIN",
+          "to_state": "RANGE",
+          "transition_timestamp_ns": 1767660180000000000,
+          "previous_state_duration_bars": 8,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "RANGE",
+          "to_state": "UNCERTAIN",
+          "transition_timestamp_ns": 1767660540000000000,
+          "previous_state_duration_bars": 6,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "UNCERTAIN",
+          "to_state": "RANGE",
+          "transition_timestamp_ns": 1767660660000000000,
+          "previous_state_duration_bars": 2,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "RANGE",
+          "to_state": "UNCERTAIN",
+          "transition_timestamp_ns": 1767661320000000000,
+          "previous_state_duration_bars": 11,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "UNCERTAIN",
+          "to_state": "RANGE",
+          "transition_timestamp_ns": 1767661380000000000,
+          "previous_state_duration_bars": 1,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "TREND",
+          "from_state": "RANGE",
+          "to_state": "UNCERTAIN",
+          "transition_timestamp_ns": 1767662460000000000,
+          "previous_state_duration_bars": 18,
+          "data_quality": "GOOD"
+        }
+      ]
+    },
+    "VOLATILITY": {
+      "total_bars": 10000,
+      "transition_count": 1178,
+      "reversal_count": 413,
+      "rapid_flip_rate": 0.3506,
+      "persistence_probability": 0.8822,
+      "state_counts": {
+        "UNKNOWN": 119,
+        "NORMAL": 5037,
+        "HIGH": 1794,
+        "LOW": 2451,
+        "EXTREME": 599
+      },
+      "sample_transitions": [
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "UNKNOWN",
+          "to_state": "NORMAL",
+          "transition_timestamp_ns": 1767664740000000000,
+          "previous_state_duration_bars": 119,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "NORMAL",
+          "to_state": "HIGH",
+          "transition_timestamp_ns": 1767664860000000000,
+          "previous_state_duration_bars": 2,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "HIGH",
+          "to_state": "NORMAL",
+          "transition_timestamp_ns": 1767665400000000000,
+          "previous_state_duration_bars": 9,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "NORMAL",
+          "to_state": "HIGH",
+          "transition_timestamp_ns": 1767666060000000000,
+          "previous_state_duration_bars": 11,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "HIGH",
+          "to_state": "NORMAL",
+          "transition_timestamp_ns": 1767666120000000000,
+          "previous_state_duration_bars": 1,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "NORMAL",
+          "to_state": "LOW",
+          "transition_timestamp_ns": 1767666960000000000,
+          "previous_state_duration_bars": 14,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "LOW",
+          "to_state": "NORMAL",
+          "transition_timestamp_ns": 1767667020000000000,
+          "previous_state_duration_bars": 1,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "NORMAL",
+          "to_state": "LOW",
+          "transition_timestamp_ns": 1767667080000000000,
+          "previous_state_duration_bars": 1,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "LOW",
+          "to_state": "NORMAL",
+          "transition_timestamp_ns": 1767667200000000000,
+          "previous_state_duration_bars": 2,
+          "data_quality": "GOOD"
+        },
+        {
+          "asset": "XAUUSDT_DEV",
+          "dimension": "VOLATILITY",
+          "from_state": "NORMAL",
+          "to_state": "HIGH",
+          "transition_timestamp_ns": 1767667320000000000,
+          "previous_state_duration_bars": 2,
+          "data_quality": "GOOD"
+        }
+      ]
+    },
+    "LIQUIDITY_ACTIVITY": {
+      "total_bars": 10000,
+      "transition_count": 0,
+      "reversal_count": 0,
+      "rapid_flip_rate": 0.0,
+      "persistence_probability": 1.0,
+      "state_counts": {
+        "UNKNOWN": 10000
+      },
+      "sample_transitions": []
+    },
+    "FUNDING": {
+      "total_bars": 10000,
+      "transition_count": 0,
+      "reversal_count": 0,
+      "rapid_flip_rate": 0.0,
+      "persistence_probability": 1.0,
+      "state_counts": {
+        "UNKNOWN": 10000
+      },
+      "sample_transitions": []
+    },
+    "MARKET_QUALITY": {
+      "total_bars": 10000,
+      "transition_count": 0,
+      "reversal_count": 0,
+      "rapid_flip_rate": 0.0,
+      "persistence_probability": 1.0,
+      "state_counts": {
+        "HEALTHY": 10000
+      },
+      "sample_transitions": []
+    }
+  },
+  "transition_audit_passed": true
+}

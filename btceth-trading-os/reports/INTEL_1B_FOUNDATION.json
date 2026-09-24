@@ -1,0 +1,33 @@
+{
+  "report_type": "INTEL_1B_FOUNDATION",
+  "status": "VERIFIED",
+  "phase": "INTEL_1B",
+  "tested_code_sha": "2c9481bdd7b47751897fc7886a90c043105f03be",
+  "tested_tree_sha": "1533c070f5bd2756477ad19def095d9d977b8159",
+  "intel_1a_baseline_sha": "2caf4e99cb18517d3938c8c11f3e9014cc608368",
+  "v16_baseline_sha": "8df25bc8e949219be77faba1a48c095852c0a1d5",
+  "canonical_baseline_sha": "fb2d2c1f25f199ea040212fe683e64776754b805",
+  "feature_set_id": "INTEL_FEATURESET_V1",
+  "total_features": 39,
+  "trading_capability": "ZERO",
+  "mainnet_order_mutation": "DISABLED",
+  "successful_holdout_accesses": 0,
+  "successful_pristine_accesses": 0,
+  "report_sha256": {
+    "INTEL_1B_STATE_STABILITY_AUDIT.json": "f15f01bd1d24ae60f1b4d392a472bfc299c32960b4be9871694e54f5834e0c71",
+    "INTEL_1B_STATE_TRANSITION_AUDIT.json": "f5e7db1c2d53920c612b0ad1ba101d8fa50f93957c41dd5c2b4c3dc29d34a2e0",
+    "INTEL_1B_THRESHOLD_SENSITIVITY.json": "add3bb71f309f0767d9ac6eeaf7bc50d11df7bdc058ab59b74c8ecd38db3f312",
+    "INTEL_1B_CROSS_ASSET_CAUSALITY.json": "cdfb69799ec80be69f1064168882bd6ca2078b1747365a084b683c7109230087",
+    "INTEL_1B_LEAD_LAG_AUDIT.json": "209e054788b4a51f03a48d5bb6f5578106361bae3cd3418f7dca95865378c655",
+    "INTEL_1B_FEATURE_AVAILABILITY.json": "13eaed4e21cf407f78eb32d102d321d17c2f020e58eb41866ee08d5c4ba5b7cb",
+    "INTEL_1B_FEATURE_DISTRIBUTION.json": "0ee34ad22dae59b6d6151a455b3255edc66c4f6d70dcf511b34a29424d2432b4",
+    "INTEL_1B_FEATURE_REDUNDANCY.json": "ad8c154ef0d76741b326cfc90f389ca95b4e1136fc11e0544f53ef11437737d1",
+    "INTEL_1B_FEATURE_DRIFT.json": "c2c6ce1e5ef3472bcd2fdaebc96dce9a1619f660bae22c3593e823f031d6a6e0",
+    "INTEL_1B_NUMERIC_BOUNDARY_AUDIT.json": "b60991c6ada43a5e23f4d28add45dd24cc636b13a13a794d9cdbd21d172da607",
+    "INTEL_1B_DATA_QUALITY_PROPAGATION.json": "f2efa973613dd242b83371f4eea8097dd075ab0a950a0bcceab49d1d7e394165",
+    "INTEL_1B_DATA_ACCESS_AUDIT.json": "9abd89a64977fb10dc3e38da22548ea24279e8cc1bb30aa66318a4b6666bb0c0",
+    "INTEL_1B_REPRODUCIBILITY.json": "3b22d81b6156f894a6c5d436f8896f3403fc4d17b1795ecec9fbbda0bf712522",
+    "INTEL_1B_SECURITY_AUDIT.json": "613b46527da483728eea03c2a63311e0a05fa8330a4426011f57b5e82bd3019a"
+  },
+  "next_step": "STOP_FOR_INDEPENDENT_REVIEW"
+}

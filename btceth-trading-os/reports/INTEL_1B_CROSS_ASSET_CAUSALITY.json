@@ -1,0 +1,40 @@
+{
+  "report_type": "INTEL_1B_CROSS_ASSET_CAUSALITY",
+  "pairs_evaluated": [
+    {
+      "pair": "XAU_BTC",
+      "metrics": {
+        "asset_a": "XAU",
+        "asset_b": "BTC",
+        "lookback_window": 60,
+        "return_correlation": -0.12358827740122362,
+        "relative_volatility_ratio": 0.47732529759224296,
+        "beta_a_to_b": -0.058991811289451745,
+        "lead_lag_lag1_corr_a_leads": -0.12379903739378373,
+        "lead_lag_lag1_corr_b_leads": -0.1215195110777962,
+        "correlation_instability": 0.2037359778929252
+      }
+    },
+    {
+      "pair": "BTC_ETH",
+      "metrics": {
+        "asset_a": "BTC",
+        "asset_b": "ETH",
+        "lookback_window": 60,
+        "return_correlation": 0.03772231176733968,
+        "relative_volatility_ratio": 0.6878350168718145,
+        "beta_a_to_b": 0.025946726950931937,
+        "lead_lag_lag1_corr_a_leads": -0.047827413275860334,
+        "lead_lag_lag1_corr_b_leads": 0.15148316122652655,
+        "correlation_instability": 0.7134083502143824
+      }
+    }
+  ],
+  "adversarial_future_mutation_test": {
+    "anchor_index": 500,
+    "base_correlation": -0.1332314171810872,
+    "mutated_future_correlation": -0.1332314171810872,
+    "is_invariant": true
+  },
+  "cross_asset_causality_verified": true
+}

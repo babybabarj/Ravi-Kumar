@@ -1,0 +1,67 @@
+{
+  "report_type": "INTEL_1B_FEATURE_DRIFT",
+  "evaluated_dataset": "XAUUSDT_DEV_2026_01_04_V3 (DEV_EARLY vs DEV_LATE)",
+  "features": [
+    {
+      "feature_name": "log_return_1m",
+      "early_mean": 0.0,
+      "late_mean": 6e-06,
+      "mean_shift": 6e-06,
+      "variance_ratio": 0.5038,
+      "psi": 0.5077,
+      "wasserstein_distance": 0.000109,
+      "drift_status": "SIGNIFICANT_DRIFT"
+    },
+    {
+      "feature_name": "return_5m",
+      "early_mean": 0.0,
+      "late_mean": 3.1e-05,
+      "mean_shift": 3e-05,
+      "variance_ratio": 0.5705,
+      "psi": 0.4973,
+      "wasserstein_distance": 0.000192,
+      "drift_status": "SIGNIFICANT_DRIFT"
+    },
+    {
+      "feature_name": "return_15m",
+      "early_mean": 1e-06,
+      "late_mean": 9e-05,
+      "mean_shift": 9e-05,
+      "variance_ratio": 0.7166,
+      "psi": 0.3719,
+      "wasserstein_distance": 0.000285,
+      "drift_status": "SIGNIFICANT_DRIFT"
+    },
+    {
+      "feature_name": "return_1h",
+      "early_mean": -2e-06,
+      "late_mean": 0.000356,
+      "mean_shift": 0.000359,
+      "variance_ratio": 0.9401,
+      "psi": 0.3636,
+      "wasserstein_distance": 0.0006,
+      "drift_status": "SIGNIFICANT_DRIFT"
+    },
+    {
+      "feature_name": "efficiency_ratio_20m",
+      "early_mean": 0.200166,
+      "late_mean": 0.275293,
+      "mean_shift": 0.075128,
+      "variance_ratio": 2.1874,
+      "psi": 0.1581,
+      "wasserstein_distance": 0.076836,
+      "drift_status": "MODERATE_DRIFT"
+    },
+    {
+      "feature_name": "short_horizon_vol_10m",
+      "early_mean": 0.000302,
+      "late_mean": 0.000169,
+      "mean_shift": -0.000133,
+      "variance_ratio": 1.3384,
+      "psi": 1.2661,
+      "wasserstein_distance": 0.000136,
+      "drift_status": "SIGNIFICANT_DRIFT"
+    }
+  ],
+  "drift_audit_passed": true
+}

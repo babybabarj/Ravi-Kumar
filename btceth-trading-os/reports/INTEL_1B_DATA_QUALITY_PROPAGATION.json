@@ -1,0 +1,10 @@
+{
+  "report_type": "INTEL_1B_DATA_QUALITY_PROPAGATION",
+  "rules_enforced": {
+    "GOOD": "Normal intelligence computation allowed",
+    "DEGRADED": "Intelligence allowed; explicit warning reasons injected into uncertainties",
+    "UNRELIABLE": "Fail-closed; all regimes forced to UNKNOWN / UNCERTAIN; zero confident state",
+    "UNKNOWN": "Fail-closed; all regimes forced to UNKNOWN / UNCERTAIN"
+  },
+  "propagation_verified": true
+}

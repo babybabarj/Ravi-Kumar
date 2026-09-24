@@ -1,0 +1,114 @@
+{
+  "report_type": "INTEL_1B_FEATURE_REDUNDANCY",
+  "evaluated_dataset": "XAUUSDT_DEV_2026_01_04_V3",
+  "pairs_evaluated_count": 15,
+  "high_redundancy_pairs": [],
+  "all_pairs": [
+    {
+      "feature_a": "log_return_1m",
+      "feature_b": "return_5m",
+      "pearson_correlation": 0.4321,
+      "spearman_rank_correlation": 0.3791,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "log_return_1m",
+      "feature_b": "return_15m",
+      "pearson_correlation": 0.2593,
+      "spearman_rank_correlation": 0.2154,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "log_return_1m",
+      "feature_b": "return_1h",
+      "pearson_correlation": 0.1276,
+      "spearman_rank_correlation": 0.1041,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "log_return_1m",
+      "feature_b": "efficiency_ratio_20m",
+      "pearson_correlation": -0.0065,
+      "spearman_rank_correlation": -0.0145,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "log_return_1m",
+      "feature_b": "short_horizon_vol_10m",
+      "pearson_correlation": 0.0171,
+      "spearman_rank_correlation": 0.0182,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "return_5m",
+      "feature_b": "return_15m",
+      "pearson_correlation": 0.5756,
+      "spearman_rank_correlation": 0.5064,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "return_5m",
+      "feature_b": "return_1h",
+      "pearson_correlation": 0.2893,
+      "spearman_rank_correlation": 0.2405,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "return_5m",
+      "feature_b": "efficiency_ratio_20m",
+      "pearson_correlation": 0.0104,
+      "spearman_rank_correlation": -0.003,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "return_5m",
+      "feature_b": "short_horizon_vol_10m",
+      "pearson_correlation": 0.0177,
+      "spearman_rank_correlation": 0.0195,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "return_15m",
+      "feature_b": "return_1h",
+      "pearson_correlation": 0.4882,
+      "spearman_rank_correlation": 0.428,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "return_15m",
+      "feature_b": "efficiency_ratio_20m",
+      "pearson_correlation": 0.0849,
+      "spearman_rank_correlation": 0.0681,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "return_15m",
+      "feature_b": "short_horizon_vol_10m",
+      "pearson_correlation": 0.0017,
+      "spearman_rank_correlation": -0.0172,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "return_1h",
+      "feature_b": "efficiency_ratio_20m",
+      "pearson_correlation": 0.052,
+      "spearman_rank_correlation": 0.04,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "return_1h",
+      "feature_b": "short_horizon_vol_10m",
+      "pearson_correlation": 0.05,
+      "spearman_rank_correlation": -0.0386,
+      "redundancy_level": "REDUNDANCY_LOW"
+    },
+    {
+      "feature_a": "efficiency_ratio_20m",
+      "feature_b": "short_horizon_vol_10m",
+      "pearson_correlation": -0.121,
+      "spearman_rank_correlation": -0.0696,
+      "redundancy_level": "REDUNDANCY_LOW"
+    }
+  ],
+  "redundancy_audit_passed": true
+}
