@@ -265,8 +265,8 @@ def audit_intel_access_ledger(ledger_path: Path = INTEL_LEDGER_PATH) -> dict[str
             "accesses_by_asset": {},
             "accesses_by_role": {},
             "unrecognized_entries": 0,
-            "reconciled": True,
-            "audit_passed": True,
+            "reconciled": False,
+            "audit_passed": False,
         }
 
     total_attempts = 0
