@@ -1,0 +1,29 @@
+{
+  "report_type": "INTEL_1B_R3_DATA_ACCESS_AUDIT",
+  "ledger_file": "artifacts/research/intel_data_access_ledger.jsonl",
+  "LEDGER_EXISTS": true,
+  "SOURCE_LEDGER_SHA256": "c9f2ae3ddc9505bbdaeff01820ba58600a6389e52827ab27e1c509791c32d532",
+  "TOTAL_ACCESS_ATTEMPTS": 12,
+  "TOTAL_GRANTED": 12,
+  "TOTAL_DENIED": 0,
+  "DEV_GRANTED": 12,
+  "VAL_GRANTED": 0,
+  "HOLDOUT_GRANTED": 0,
+  "PRISTINE_GRANTED": 0,
+  "OTHER_ROLE_GRANTED": 0,
+  "DEV_DENIED": 0,
+  "VAL_DENIED": 0,
+  "HOLDOUT_DENIED": 0,
+  "PRISTINE_DENIED": 0,
+  "OTHER_ROLE_DENIED": 0,
+  "UNRECOGNIZED": 0,
+  "RECONCILED": true,
+  "AUDIT_PASSED": true,
+  "missing_ledger_test": {
+    "tested_path": "nonexistent_ledger.jsonl",
+    "ledger_exists": false,
+    "reconciled": false,
+    "audit_passed": false,
+    "fails_closed": true
+  }
+}

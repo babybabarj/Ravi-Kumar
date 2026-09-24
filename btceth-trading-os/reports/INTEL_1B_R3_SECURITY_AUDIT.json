@@ -1,0 +1,15 @@
+{
+  "report_type": "INTEL_1B_R3_SECURITY_AUDIT",
+  "TRADING_CAPABILITY": "ZERO",
+  "MAINNET_ORDER_MUTATION": "DISABLED",
+  "SHADOW": 0,
+  "PAPER": 0,
+  "LIVE": 0,
+  "HOLDOUT_GRANTED": 0,
+  "PRISTINE_GRANTED": 0,
+  "DECISION_ENGINE": "ABSENT",
+  "TRADE_BOARD": "QUARANTINED",
+  "SEPARATE_BTC_BOT_ISOLATED": true,
+  "security_scan_exit_code": 0,
+  "security_scan_clean": true
+}

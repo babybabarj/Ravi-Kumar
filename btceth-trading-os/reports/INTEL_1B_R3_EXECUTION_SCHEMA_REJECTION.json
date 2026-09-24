@@ -1,0 +1,239 @@
+{
+  "report_type": "INTEL_1B_R3_EXECUTION_SCHEMA_REJECTION",
+  "valid_snapshot_accepted": true,
+  "forbidden_cases_tested": [
+    "BUY",
+    "SELL",
+    "LONG",
+    "SHORT",
+    "ENTRY",
+    "STOP_LOSS",
+    "TAKE_PROFIT",
+    "POSITION_SIZE",
+    "LEVERAGE",
+    "SIGNAL",
+    "ORDER"
+  ],
+  "forbidden_cases_rejected": [
+    "BUY",
+    "SELL",
+    "LONG",
+    "SHORT",
+    "ENTRY",
+    "STOP_LOSS",
+    "TAKE_PROFIT",
+    "POSITION_SIZE",
+    "LEVERAGE",
+    "SIGNAL",
+    "ORDER"
+  ],
+  "nested_cases_tested": [
+    {
+      "nested": {
+        "position_size": 1.0
+      }
+    },
+    {
+      "signal": "BUY"
+    },
+    {
+      "context": {
+        "risk": {
+          "take_profit": 123
+        }
+      }
+    },
+    {
+      "strategy": {
+        "rules": [
+          {
+            "action": "SELL"
+          }
+        ]
+      }
+    },
+    {
+      "stOP_loSS": 50000
+    },
+    {
+      "SiGnAl": "LONG"
+    },
+    {
+      "nested_list": [
+        {
+          "deep": {
+            "entry": 2000.0
+          }
+        }
+      ]
+    }
+  ],
+  "nested_cases_rejected": [
+    {
+      "nested": {
+        "position_size": 1.0
+      }
+    },
+    {
+      "signal": "BUY"
+    },
+    {
+      "context": {
+        "risk": {
+          "take_profit": 123
+        }
+      }
+    },
+    {
+      "strategy": {
+        "rules": [
+          {
+            "action": "SELL"
+          }
+        ]
+      }
+    },
+    {
+      "stOP_loSS": 50000
+    },
+    {
+      "SiGnAl": "LONG"
+    },
+    {
+      "nested_list": [
+        {
+          "deep": {
+            "entry": 2000.0
+          }
+        }
+      ]
+    }
+  ],
+  "all_forbidden_rejected": true,
+  "total_fixtures_tested": 18,
+  "total_fixtures_rejected": 18,
+  "fixtures_detail": [
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "BUY",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "SELL",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "LONG",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "SHORT",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "ENTRY",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "STOP_LOSS",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "TAKE_PROFIT",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "POSITION_SIZE",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "LEVERAGE",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "SIGNAL",
+      "rejected": true
+    },
+    {
+      "fixture_type": "TOPLEVEL",
+      "token": "ORDER",
+      "rejected": true
+    },
+    {
+      "fixture_type": "NESTED",
+      "fixture": {
+        "nested": {
+          "position_size": 1.0
+        }
+      },
+      "rejected": true
+    },
+    {
+      "fixture_type": "NESTED",
+      "fixture": {
+        "signal": "BUY"
+      },
+      "rejected": true
+    },
+    {
+      "fixture_type": "NESTED",
+      "fixture": {
+        "context": {
+          "risk": {
+            "take_profit": 123
+          }
+        }
+      },
+      "rejected": true
+    },
+    {
+      "fixture_type": "NESTED",
+      "fixture": {
+        "strategy": {
+          "rules": [
+            {
+              "action": "SELL"
+            }
+          ]
+        }
+      },
+      "rejected": true
+    },
+    {
+      "fixture_type": "NESTED",
+      "fixture": {
+        "stOP_loSS": 50000
+      },
+      "rejected": true
+    },
+    {
+      "fixture_type": "NESTED",
+      "fixture": {
+        "SiGnAl": "LONG"
+      },
+      "rejected": true
+    },
+    {
+      "fixture_type": "NESTED",
+      "fixture": {
+        "nested_list": [
+          {
+            "deep": {
+              "entry": 2000.0
+            }
+          }
+        ]
+      },
+      "rejected": true
+    }
+  ]
+}

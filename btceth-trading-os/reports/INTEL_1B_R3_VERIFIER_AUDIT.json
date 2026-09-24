@@ -1,0 +1,14 @@
+{
+  "report_type": "INTEL_1B_R3_VERIFIER_AUDIT",
+  "verifier_file": "tools/verify_intel_1b_r3.py",
+  "UNJUSTIFIED_HARDCODED_PASS_GATES": 0,
+  "FAIL_OPEN_PATHS": 0,
+  "code_gates_count": 29,
+  "evidence_gates_count": 7,
+  "total_gates": 36,
+  "hardcoded_calls_found": [],
+  "fail_closed_validation": {
+    "missing_ledger_fails": true,
+    "missing_ledger_reconciled": true
+  }
+}
