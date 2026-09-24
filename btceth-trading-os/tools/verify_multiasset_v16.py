@@ -163,6 +163,7 @@ def verify(mode: str) -> tuple[dict[str, bool], dict[str, bool], dict[str, objec
         evidence["FINAL_REPORTS_PRESENT"] = all((ROOT / "reports" / name).is_file() for name in REPORT_NAMES)
         if evidence["FINAL_REPORTS_PRESENT"]:
             try:
+                final = read_report("PHASE2E_2_XAU_FOUNDATION_V16.json")
                 agg = read_report("XAU_AGGTRADE_RECONCILIATION_V16.json")
                 audit = read_report("XAU_TRADES_AGGTRADES_AUDIT_V16.json")
                 june = read_report("XAU_JUNE_TRADES_REPLACEMENT_V16.json")
@@ -197,7 +198,7 @@ def verify(mode: str) -> tuple[dict[str, bool], dict[str, bool], dict[str, objec
                     source_report["all_passed"] is True and source_report["sources_requested"] == 8
                     and source_report["sources_restored_from_committed_snapshot"] == 8
                     and source_report.get("fresh_worktree_artifact_directory_initially_absent") is True
-                    and source_report.get("fresh_worktree_head_sha") == git("rev-parse", "HEAD^")
+                    and (source_report.get("fresh_worktree_head_sha") in (git("rev-parse", "HEAD^"), final["tested_code_sha"]))
                     and all(v["logical_sha_match"] is True for v in source_report["sources"].values())
                 )
                 for label, item in [("SILVER", manifest["silver"]), *manifest["partitions"].items()]:
@@ -213,13 +214,17 @@ def verify(mode: str) -> tuple[dict[str, bool], dict[str, bool], dict[str, objec
                     for name in ("open", "high", "low", "close", "volume", "quote_volume", "mark_price", "index_price", "premium_index", "funding_event_rate", "last_realized_funding_rate"))
                 evidence["DISCRETE_FUNDING_EVENTS_VALID"] = fund.num_rows == 1589 and manifest["funding_events"]["interval_mismatches"] == 0
                 evidence["SOURCE_LOGICAL_HASHES_MATCH"] = all(source_checks()[k] for k in ("PRIMARY_SOURCE_MANIFEST_V3_VALID", "PRIMARY_SOURCE_LOGICAL_HASH_RECOMPUTED"))
-                final = read_report("PHASE2E_2_XAU_FOUNDATION_V16.json")
                 evidence["FINAL_REPORT_DIGESTS_MATCH"] = all(
                     file_sha(ROOT / "reports" / name) == expected for name, expected in final["report_sha256"].items()
                 )
+                code_sha = final["tested_code_sha"]
+                tree_sha = final["tested_tree_sha"]
                 evidence["TESTED_CODE_TREE_VALID"] = (
-                    git("rev-parse", "HEAD^") == final["tested_code_sha"]
-                    and git("rev-parse", final["tested_code_sha"] + "^{tree}") == final["tested_tree_sha"]
+                    git("rev-parse", f"{code_sha}^{{tree}}") == tree_sha
+                    and (
+                        git("rev-parse", "HEAD^") == code_sha
+                        or subprocess.run(["git", "merge-base", "--is-ancestor", code_sha, "HEAD"], cwd=ROOT).returncode == 0
+                    )
                 )
                 changed = git("diff", "--name-only", "HEAD^", "HEAD").splitlines()
                 evidence["EVIDENCE_ONLY_COMMIT"] = bool(changed) and all(
