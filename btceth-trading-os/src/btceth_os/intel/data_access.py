@@ -241,61 +241,142 @@ class IntelDatasetAccessAPI:
 
 
 def audit_intel_access_ledger(ledger_path: Path = INTEL_LEDGER_PATH) -> dict[str, Any]:
-    """Audits the INTEL-1A data access ledger, ensuring zero holdout or pristine successes."""
+    """Audits the INTEL data access ledger with full role-level accounting and reconciliation."""
     if not ledger_path.is_file():
         return {
             "ledger_exists": False,
             "total_access_attempts": 0,
+            "total_granted": 0,
+            "total_denied": 0,
+            "dev_granted": 0,
+            "val_granted": 0,
+            "holdout_granted": 0,
+            "pristine_granted": 0,
+            "other_role_granted": 0,
+            "dev_denied": 0,
+            "val_denied": 0,
+            "holdout_denied": 0,
+            "pristine_denied": 0,
+            "other_role_denied": 0,
             "granted_accesses": 0,
             "denied_accesses": 0,
             "successful_holdout_accesses": 0,
             "successful_pristine_accesses": 0,
             "accesses_by_asset": {},
             "accesses_by_role": {},
+            "unrecognized_entries": 0,
+            "reconciled": True,
             "audit_passed": True,
         }
 
     total_attempts = 0
-    granted = 0
-    denied = 0
-    successful_holdout = 0
-    successful_pristine = 0
+    total_granted = 0
+    total_denied = 0
+
+    dev_granted = 0
+    val_granted = 0
+    holdout_granted = 0
+    pristine_granted = 0
+    other_granted = 0
+
+    dev_denied = 0
+    val_denied = 0
+    holdout_denied = 0
+    pristine_denied = 0
+    other_denied = 0
+
     by_asset: dict[str, int] = {}
     by_role: dict[str, int] = {}
+    unrecognized_entries = 0
+
+    VALID_RESULTS = {"GRANTED", "DENIED"}
+    RECOGNIZED_ROLES = {
+        "DEV": {"DEVELOPMENT", "DEV"},
+        "VAL": {"VALIDATION", "VAL"},
+        "HOLDOUT": {"HOLDOUT", "LOCKED_HOLDOUT"},
+        "PRISTINE": {"PRISTINE", "LOCKED_PROSPECTIVE_PRISTINE", "PROSPECTIVE_PRISTINE"},
+        "OTHER": {"SHADOW", "PAPER", "PROSPECTIVE_FORWARD"},
+    }
+    ALL_VALID_ROLES = set().union(*RECOGNIZED_ROLES.values())
 
     with ledger_path.open("r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:
                 continue
-            entry = json.loads(line)
             total_attempts += 1
+            try:
+                entry = json.loads(line)
+            except Exception:
+                unrecognized_entries += 1
+                continue
+
             res = entry.get("access_result")
-            role = entry.get("dataset_role", "").upper()
+            role = (entry.get("dataset_role") or "").upper()
             asset = entry.get("asset", "")
+
+            if res not in VALID_RESULTS or role not in ALL_VALID_ROLES:
+                unrecognized_entries += 1
+                continue
 
             by_asset[asset] = by_asset.get(asset, 0) + 1
             by_role[role] = by_role.get(role, 0) + 1
 
             if res == "GRANTED":
-                granted += 1
-                if role in ("LOCKED_HOLDOUT", "HOLDOUT"):
-                    successful_holdout += 1
-                if role in ("LOCKED_PROSPECTIVE_PRISTINE", "PRISTINE", "PROSPECTIVE_PRISTINE"):
-                    successful_pristine += 1
+                total_granted += 1
+                if role in RECOGNIZED_ROLES["DEV"]:
+                    dev_granted += 1
+                elif role in RECOGNIZED_ROLES["VAL"]:
+                    val_granted += 1
+                elif role in RECOGNIZED_ROLES["HOLDOUT"]:
+                    holdout_granted += 1
+                elif role in RECOGNIZED_ROLES["PRISTINE"]:
+                    pristine_granted += 1
+                elif role in RECOGNIZED_ROLES["OTHER"]:
+                    other_granted += 1
             elif res == "DENIED":
-                denied += 1
+                total_denied += 1
+                if role in RECOGNIZED_ROLES["DEV"]:
+                    dev_denied += 1
+                elif role in RECOGNIZED_ROLES["VAL"]:
+                    val_denied += 1
+                elif role in RECOGNIZED_ROLES["HOLDOUT"]:
+                    holdout_denied += 1
+                elif role in RECOGNIZED_ROLES["PRISTINE"]:
+                    pristine_denied += 1
+                elif role in RECOGNIZED_ROLES["OTHER"]:
+                    other_denied += 1
 
-    audit_passed = (successful_holdout == 0) and (successful_pristine == 0)
+    reconciled = (
+        (unrecognized_entries == 0)
+        and (total_granted + total_denied == total_attempts)
+        and (dev_granted + val_granted + holdout_granted + pristine_granted + other_granted == total_granted)
+        and (dev_denied + val_denied + holdout_denied + pristine_denied + other_denied == total_denied)
+    )
+    audit_passed = reconciled and (holdout_granted == 0) and (pristine_granted == 0)
 
     return {
         "ledger_exists": True,
         "total_access_attempts": total_attempts,
-        "granted_accesses": granted,
-        "denied_accesses": denied,
-        "successful_holdout_accesses": successful_holdout,
-        "successful_pristine_accesses": successful_pristine,
+        "total_granted": total_granted,
+        "total_denied": total_denied,
+        "dev_granted": dev_granted,
+        "val_granted": val_granted,
+        "holdout_granted": holdout_granted,
+        "pristine_granted": pristine_granted,
+        "other_role_granted": other_granted,
+        "dev_denied": dev_denied,
+        "val_denied": val_denied,
+        "holdout_denied": holdout_denied,
+        "pristine_denied": pristine_denied,
+        "other_role_denied": other_denied,
+        "granted_accesses": total_granted,
+        "denied_accesses": total_denied,
+        "successful_holdout_accesses": holdout_granted,
+        "successful_pristine_accesses": pristine_granted,
         "accesses_by_asset": by_asset,
         "accesses_by_role": by_role,
+        "unrecognized_entries": unrecognized_entries,
+        "reconciled": reconciled,
         "audit_passed": audit_passed,
     }
