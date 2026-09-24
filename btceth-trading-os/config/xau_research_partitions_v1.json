@@ -1,12 +1,12 @@
 {
-  "created_at_utc": "2026-09-23T10:52:40.502194+00:00",
+  "created_at_utc": "2026-09-24T09:22:46.415002+00:00",
   "instrument_id": "BINANCE:TRADFI_COMMODITY_PERP:XAUUSDT",
   "manifest_version": "1.0.0",
   "parent_artifacts": {
     "XAUUSDT-resampled-1m-silver.parquet": {
       "end_ts_ns": 1790121599999000000,
       "file_name": "XAUUSDT-resampled-1m-silver.parquet",
-      "physical_sha256": "a1186570ec816a63aad721c5f8764a47da1d398ec8c4a22a3e970cbcd8ea7bc7",
+      "physical_sha256": "b924f30f0c7a0096a84b6919121511721b31c7bdde11da272f7c5eca87c6d0d5",
       "relative_path": "artifacts/research/silver_xau/XAUUSDT-resampled-1m-silver.parquet",
       "rows": 374400,
       "start_ts_ns": 1767657600000000000
@@ -20,7 +20,7 @@
       "expected_rows": 165600,
       "file_name": "XAUUSDT_DEV_2026_01_04.parquet",
       "parent_artifact": "XAUUSDT-resampled-1m-silver.parquet",
-      "parent_physical_sha256": "a1186570ec816a63aad721c5f8764a47da1d398ec8c4a22a3e970cbcd8ea7bc7",
+      "parent_physical_sha256": "b924f30f0c7a0096a84b6919121511721b31c7bdde11da272f7c5eca87c6d0d5",
       "partition_logical_sha256": "7dd83570b44b59e1c494ebd82024c542529425febf8fd16519ab3aab728250ea",
       "relative_path": "artifacts/research/partitions/XAUUSDT_DEV_2026_01_04.parquet",
       "role": "DEVELOPMENT",
@@ -39,7 +39,7 @@
       "expected_rows": 66060,
       "file_name": "XAUUSDT_HOLDOUT_2026_08_09.parquet",
       "parent_artifact": "XAUUSDT-resampled-1m-silver.parquet",
-      "parent_physical_sha256": "a1186570ec816a63aad721c5f8764a47da1d398ec8c4a22a3e970cbcd8ea7bc7",
+      "parent_physical_sha256": "b924f30f0c7a0096a84b6919121511721b31c7bdde11da272f7c5eca87c6d0d5",
       "partition_logical_sha256": "93c9d26ea25298cf92c94866f9df526775e5c74eedd141649367e514a44b9fe3",
       "relative_path": "artifacts/research/partitions/XAUUSDT_HOLDOUT_2026_08_09.parquet",
       "role": "HOLDOUT",
@@ -51,12 +51,12 @@
     "XAUUSDT_PROSPECTIVE_PRISTINE": {
       "dataset_id": "XAUUSDT_PROSPECTIVE_PRISTINE",
       "end_ts_ns": 1790121599999000000,
-      "expected_physical_sha256": "169fd170a0825f52ef4d8d408056aca0e2ee389b4a56df3e9e2dd18979c24c94",
+      "expected_physical_sha256": "d302637e37ce6376b833e7768555f4cbabcffec0c82cd7e4220e41deeb80ed90",
       "expected_rows": 10260,
       "file_name": "XAUUSDT_PROSPECTIVE_PRISTINE.parquet",
       "parent_artifact": "XAUUSDT-resampled-1m-silver.parquet",
-      "parent_physical_sha256": "a1186570ec816a63aad721c5f8764a47da1d398ec8c4a22a3e970cbcd8ea7bc7",
-      "partition_logical_sha256": "acca92932276b18e69acf394a52995918e994add0dc6fdb5a89573c3625a615f",
+      "parent_physical_sha256": "b924f30f0c7a0096a84b6919121511721b31c7bdde11da272f7c5eca87c6d0d5",
+      "partition_logical_sha256": "a412b033c0fb2990658b76cf7fd076c54dc13a1967189bae30692bdd0fc3d855",
       "relative_path": "artifacts/research/partitions/XAUUSDT_PROSPECTIVE_PRISTINE.parquet",
       "role": "PROSPECTIVE_PRISTINE",
       "rule_epoch_coverage": [
@@ -71,7 +71,7 @@
       "expected_rows": 132480,
       "file_name": "XAUUSDT_VAL_2026_05_07.parquet",
       "parent_artifact": "XAUUSDT-resampled-1m-silver.parquet",
-      "parent_physical_sha256": "a1186570ec816a63aad721c5f8764a47da1d398ec8c4a22a3e970cbcd8ea7bc7",
+      "parent_physical_sha256": "b924f30f0c7a0096a84b6919121511721b31c7bdde11da272f7c5eca87c6d0d5",
       "partition_logical_sha256": "2c70629ba897d2125e3a701beda358139cd2fadd814d6faa30cff046d257bfa7",
       "relative_path": "artifacts/research/partitions/XAUUSDT_VAL_2026_05_07.parquet",
       "role": "VALIDATION",

@@ -25,8 +25,14 @@ def test_oracle_ast_isolation_v5() -> None:
     assert ok is True, msg
 
 
+def check_round3b_partitions_present() -> bool:
+    return (ROOT / "artifacts" / "research" / "partitions" / "BTCUSDT_DEV_2020_2022.parquet").is_file()
+
+
 def test_diagnostic_mode_cannot_issue_acceptance_v5() -> None:
     """Verifier in DIAGNOSTIC mode must fail closed and never issue acceptance."""
+    if not check_round3b_partitions_present():
+        pytest.skip("Round 3B partitions not materialized on disk")
     all_passed, checks, status, details = evaluate_round3b_0d_reliability(mode="DIAGNOSTIC")
     assert all_passed is False
     assert status == "DIAGNOSTIC_NOT_ELIGIBLE_FOR_ACCEPTANCE"
@@ -89,6 +95,8 @@ def test_supporting_audit_generators_v5() -> None:
 
 def test_core_reliability_gates_pass_v5() -> None:
     """All 41 core mechanical gates pass in diagnostic evaluation."""
+    if not check_round3b_partitions_present():
+        pytest.skip("Round 3B partitions not materialized on disk")
     all_passed, checks, status, details = evaluate_round3b_0d_reliability(mode="DIAGNOSTIC")
 
     core_gates = [

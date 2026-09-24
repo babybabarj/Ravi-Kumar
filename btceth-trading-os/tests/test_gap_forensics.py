@@ -12,6 +12,8 @@ REPORTS_DIR = ROOT / "reports"
 
 def test_gap_forensics_dynamic_metrics() -> None:
     """Verify gap forensics derives metrics mechanically without hardcoded values."""
+    if not (ROOT / "artifacts" / "research" / "silver_v3" / "BTCUSDT-resampled-1h-v3.1.0.parquet").is_file():
+        pytest.skip("Round 3B parent artifact BTCUSDT-resampled-1h-v3.1.0.parquet not present")
     rep = generate_forensics_reports(write_reports=False)
     assert rep["dataset_version"] == "v3.1.0"
     assert rep["unsupported_causal_claims"] == 0

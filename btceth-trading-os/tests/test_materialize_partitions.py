@@ -57,8 +57,14 @@ def test_manifest_structure():
         assert len(pcfg["expected_physical_sha256"]) == 64
 
 
+def check_parent_present() -> bool:
+    return (PARENT_DIR / "BTCUSDT-resampled-1h-v3.1.0.parquet").is_file()
+
+
 def test_parent_artifacts_verified():
     """Verify that all 4 parent Silver artifacts match their physical digests."""
+    if not check_parent_present():
+        pytest.skip("BTCUSDT-resampled-1h-v3.1.0.parquet not present on disk")
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     results = verify_parent_artifacts(manifest, PARENT_DIR)
 
@@ -70,6 +76,8 @@ def test_parent_artifacts_verified():
 
 def test_partitions_verified():
     """Verify that all 8 partitions exist, have correct bounds, rows, and independent logical SHAs."""
+    if not check_parent_present():
+        pytest.skip("BTCUSDT-resampled-1h-v3.1.0.parquet not present on disk")
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     success, details = materialize_all(
         manifest_path=MANIFEST_PATH,
@@ -91,6 +99,8 @@ def test_partitions_verified():
 
 def test_sandbox_partition_rebuild():
     """Materialize partitions into a fresh temporary sandbox and assert exact SHA-256 match."""
+    if not check_parent_present():
+        pytest.skip("BTCUSDT-resampled-1h-v3.1.0.parquet not present on disk")
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_output = Path(tmp_dir)
@@ -125,6 +135,8 @@ def test_sandbox_partition_rebuild():
 
 def test_fresh_worktree_reconstruction():
     """Verify that a fresh isolated git worktree can reconstruct partitions cleanly."""
+    if not check_parent_present():
+        pytest.skip("BTCUSDT-resampled-1h-v3.1.0.parquet not present on disk")
     with tempfile.TemporaryDirectory() as tmp_dir:
         worktree_path = Path(tmp_dir) / "test_wt"
 

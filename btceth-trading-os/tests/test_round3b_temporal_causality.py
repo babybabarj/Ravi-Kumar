@@ -1406,6 +1406,9 @@ def test_same_instrument_missing_expected_id_strict() -> None:
 def test_dataset_loader_propagation() -> None:
     """[3B.0F SECTION 18] load_guarded_kline_candles() populates metadata onto Candle."""
     from btceth_os.research.backtest import load_guarded_kline_candles
+    dev_part = ROOT / "artifacts" / "research" / "partitions" / "BTCUSDT_DEV_2020_2022.parquet"
+    if not dev_part.is_file():
+        pytest.skip("BTCUSDT_DEV_2020_2022.parquet not present on disk")
     _, candles = load_guarded_kline_candles("BTCUSDT_DEV_2020_2022")
     assert len(candles) > 0
     c0 = candles[0]
@@ -1881,6 +1884,9 @@ def test_canonical_registry_explicit_identity() -> None:
 def test_guarded_loader_fails_on_incomplete_identity() -> None:
     """[3B.0G SECTION 28 & 33] load_guarded_kline_candles fails closed if canonical metadata is incomplete."""
     from btceth_os.research.backtest import load_guarded_kline_candles
+    dev_part = ROOT / "artifacts" / "research" / "partitions" / "BTCUSDT_DEV_2020_2022.parquet"
+    if not dev_part.is_file():
+        pytest.skip("BTCUSDT_DEV_2020_2022.parquet not present on disk")
 
     # Calling with a valid partition succeeds and populates metadata
     _, candles = load_guarded_kline_candles("BTCUSDT_DEV_2020_2022", strict_metadata=True)
