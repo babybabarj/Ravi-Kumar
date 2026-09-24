@@ -1,0 +1,11 @@
+{
+  "phase": "PRED_1A",
+  "budget_version": "1.0.0",
+  "status": "FROZEN",
+  "max_targets": 12,
+  "max_model_families": 6,
+  "max_feature_groups": 6,
+  "max_hyperparameter_variants": 8,
+  "max_total_experiments": 100,
+  "description": "Pre-declared experiment budget for PRED-1A predictive research foundation."
+}

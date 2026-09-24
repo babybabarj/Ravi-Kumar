@@ -24,6 +24,7 @@ import pyarrow.parquet as pq
 ROOT = Path(__file__).resolve().parents[3]
 INTEL_LEDGER_PATH = ROOT / "artifacts" / "research" / "intel_data_access_ledger.jsonl"
 INTEL_LEDGER_LOCK_PATH = ROOT / "artifacts" / "research" / "intel_data_access_ledger.lock"
+PRED_LEDGER_PATH = ROOT / "artifacts" / "research" / "pred_data_access_ledger.jsonl"
 _LEDGER_LOCK = threading.Lock()
 
 LOCKED_ROLES = {
@@ -155,6 +156,9 @@ class IntelDatasetAccessAPI:
         max_rows: Optional[int] = None,
         ledger_path: Path = INTEL_LEDGER_PATH,
     ) -> pa.Table:
+        if ledger_path == INTEL_LEDGER_PATH and phase.startswith("PRED"):
+            ledger_path = PRED_LEDGER_PATH
+
         req = IntelDataAccessRequest(
             asset=asset,
             dataset_role=dataset_role,
@@ -188,8 +192,9 @@ class IntelDatasetAccessAPI:
                 f"HOLDOUT FIREWALL: Access to {role_normalized} for {asset} is strictly forbidden. Attempt logged."
             )
 
-        # Check authorized roles
-        if role_normalized not in ("DEVELOPMENT", "VALIDATION"):
+        # Check authorized roles (PRED phases strictly limit research access to DEVELOPMENT)
+        allowed_roles = ("DEVELOPMENT",) if req.phase.startswith("PRED") else ("DEVELOPMENT", "VALIDATION")
+        if role_normalized not in allowed_roles:
             denial_entry = IntelAccessLedgerEntry(
                 timestamp_utc=req.timestamp_utc,
                 phase=req.phase,
@@ -205,7 +210,7 @@ class IntelDatasetAccessAPI:
                 denial_reason=f"Unauthorized role: {role_normalized} is not permitted for research in {phase}",
             )
             append_intel_access_ledger(denial_entry, ledger_path)
-            raise IntelAccessDeniedError(f"Role {role_normalized} is not authorized for research access.")
+            raise IntelAccessDeniedError(f"Role {role_normalized} is not authorized for research access in {phase}.")
 
         if artifact_path is None or not artifact_path.is_file():
             raise FileNotFoundError(f"Requested dataset artifact for {asset} ({role_normalized}) not found.")
