@@ -1,0 +1,24 @@
+{
+  "report_type": "PRED_1A_LEAKAGE_AUDIT",
+  "target_causality": {
+    "future_window_separation_verified": true,
+    "feature_calculation_trailing_only": true
+  },
+  "temporal_overlap_protection": {
+    "purging_active": true,
+    "embargo_active": true,
+    "adversarial_overlap_rejected": true
+  },
+  "normalization_leakage": {
+    "train_only_fit_verified": true,
+    "adversarial_test_extreme_outlier_isolated": true
+  },
+  "feature_selection_leakage": {
+    "train_only_selection_verified": true,
+    "test_label_mutation_invariant": true
+  },
+  "prediction_firewall": {
+    "execution_tokens_recursively_rejected": true,
+    "strategy_and_pnl_metrics_forbidden": true
+  }
+}

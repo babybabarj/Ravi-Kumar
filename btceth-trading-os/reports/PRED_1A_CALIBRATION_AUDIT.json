@@ -1,0 +1,61 @@
+{
+  "report_type": "PRED_1A_CALIBRATION_AUDIT",
+  "calibration_evaluations": [
+    {
+      "target_id": "future_trend_state_15m",
+      "model_id": "LOGISTIC_L2_V1",
+      "calibration": {
+        "brier_score": 0.256812,
+        "expected_calibration_error": 0.071,
+        "bins_evaluated": 5,
+        "bins": [
+          {
+            "bin_index": 1,
+            "bin_lower": 0.0,
+            "bin_upper": 0.2,
+            "count": 5,
+            "mean_predicted_probability": 0.1183,
+            "observed_positive_frequency": 0.4,
+            "calibration_error": 0.2817
+          },
+          {
+            "bin_index": 2,
+            "bin_lower": 0.2,
+            "bin_upper": 0.4,
+            "count": 1557,
+            "mean_predicted_probability": 0.3604,
+            "observed_positive_frequency": 0.4811,
+            "calibration_error": 0.1207
+          },
+          {
+            "bin_index": 3,
+            "bin_lower": 0.4,
+            "bin_upper": 0.6,
+            "count": 3750,
+            "mean_predicted_probability": 0.4841,
+            "observed_positive_frequency": 0.532,
+            "calibration_error": 0.0479
+          },
+          {
+            "bin_index": 4,
+            "bin_lower": 0.6,
+            "bin_upper": 0.8,
+            "count": 670,
+            "mean_predicted_probability": 0.6517,
+            "observed_positive_frequency": 0.5687,
+            "calibration_error": 0.0831
+          },
+          {
+            "bin_index": 5,
+            "bin_lower": 0.8,
+            "bin_upper": 1.0,
+            "count": 3,
+            "mean_predicted_probability": 0.8606,
+            "observed_positive_frequency": 0.6667,
+            "calibration_error": 0.1939
+          }
+        ]
+      }
+    }
+  ]
+}

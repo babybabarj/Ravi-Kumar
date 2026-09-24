@@ -1,0 +1,19 @@
+{
+  "report_type": "PRED_1A_SECURITY_AUDIT",
+  "TRADING_CAPABILITY": "ZERO",
+  "MAINNET_ORDER_MUTATION": "DISABLED",
+  "SHADOW": 0,
+  "PAPER": 0,
+  "LIVE": 0,
+  "VAL_ACCESS": 0,
+  "HOLDOUT_ACCESS": 0,
+  "PRISTINE_ACCESS": 0,
+  "STRATEGY_LAYER": "ABSENT",
+  "DECISION_ENGINE": "ABSENT",
+  "TRADE_BOARD": "QUARANTINED",
+  "SEPARATE_BTC_BOT_ISOLATED": true,
+  "NO_PNL_METRICS": true,
+  "NO_EXECUTION_FIELDS": true,
+  "security_scan_exit_code": 0,
+  "security_scan_clean": true
+}

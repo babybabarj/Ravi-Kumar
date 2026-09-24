@@ -1,0 +1,106 @@
+{
+  "report_type": "PRED_1A_DATASET_AUDIT",
+  "dataset_role": "DEVELOPMENT",
+  "asset": "XAUUSDT",
+  "total_bars_analyzed": 10000,
+  "source_partition": "artifacts/research/partitions/XAUUSDT_DEV_2026_01_04_V3.parquet",
+  "columns_count": 27,
+  "target_distributions": {
+    "future_log_return_5m": {
+      "count": 9995,
+      "missing": 5,
+      "mean": 1.9e-05,
+      "std": 0.000556,
+      "min": -0.003647,
+      "max": 0.003753
+    },
+    "future_log_return_15m": {
+      "count": 9985,
+      "missing": 15,
+      "mean": 5.5e-05,
+      "std": 0.000944,
+      "min": -0.005165,
+      "max": 0.006386
+    },
+    "future_log_return_1h": {
+      "count": 9940,
+      "missing": 60,
+      "mean": 0.000219,
+      "std": 0.001838,
+      "min": -0.005597,
+      "max": 0.012151
+    },
+    "future_log_return_4h": {
+      "count": 9760,
+      "missing": 240,
+      "mean": 0.000856,
+      "std": 0.003349,
+      "min": -0.00823,
+      "max": 0.016969
+    },
+    "future_realized_volatility_15m": {
+      "count": 9985,
+      "missing": 15,
+      "mean": 0.000231,
+      "std": 0.000151,
+      "min": 1e-06,
+      "max": 0.000993
+    },
+    "future_realized_volatility_1h": {
+      "count": 9940,
+      "missing": 60,
+      "mean": 0.000239,
+      "std": 0.000136,
+      "min": 2e-05,
+      "max": 0.000706
+    },
+    "future_realized_volatility_4h": {
+      "count": 9760,
+      "missing": 240,
+      "mean": 0.000246,
+      "std": 0.000121,
+      "min": 5.4e-05,
+      "max": 0.000523
+    },
+    "future_max_up_move_1h": {
+      "count": 9940,
+      "missing": 60,
+      "mean": 0.001341,
+      "std": 0.00154,
+      "min": -0.000456,
+      "max": 0.013272
+    },
+    "future_max_down_move_1h": {
+      "count": 9940,
+      "missing": 60,
+      "mean": 0.001292,
+      "std": 0.001286,
+      "min": -0.000575,
+      "max": 0.006901
+    },
+    "future_trend_state_15m": {
+      "count": 9985,
+      "missing": 15,
+      "mean": 0.512669,
+      "std": 0.499865,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "future_volatility_state_1h": {
+      "count": 9880,
+      "missing": 120,
+      "mean": 0.437955,
+      "std": 0.496161,
+      "min": 0.0,
+      "max": 1.0
+    },
+    "future_liquidity_state_15m": {
+      "count": 9925,
+      "missing": 75,
+      "mean": 0.804131,
+      "std": 0.396888,
+      "min": 0.0,
+      "max": 1.0
+    }
+  }
+}

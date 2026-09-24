@@ -1,0 +1,33 @@
+{
+  "report_type": "PRED_1A_FOUNDATION",
+  "phase": "PRED_1A",
+  "status": "GENERATED_PENDING_VERIFICATION",
+  "tested_code_sha": "3094fcb95bb8e75f008b67e96100ee902200f316",
+  "tested_tree_sha": "7ba131bd49375159ff9db461bfc664f908e1dcce",
+  "intel_1b_r3_1_evidence_sha": "656d6f90c54c884ffe279eead8e866c758b17b0a",
+  "trading_capability": "ZERO",
+  "mainnet_order_mutation": "DISABLED",
+  "shadow_promotions": 0,
+  "paper_promotions": 0,
+  "live_promotions": 0,
+  "val_accesses": 0,
+  "holdout_accesses": 0,
+  "pristine_accesses": 0,
+  "report_sha256": {
+    "PRED_1A_TARGET_REGISTRY.json": "000d70886a5d5e27a3edcd76c4e6c7a2f5ded9ef9be251421ac888d09087a5a5",
+    "PRED_1A_DATASET_AUDIT.json": "1e079c08151778dcf602aa797744aefda908ae02ffe190b4a2eac6cbe239b422",
+    "PRED_1A_TEMPORAL_SPLIT_AUDIT.json": "89a64f7f6d28c33631bd9c7e7d0f47ee72a4276b7e419cf35ea30d24ed1e2537",
+    "PRED_1A_LEAKAGE_AUDIT.json": "b7d23a190430a967b4ad8468621c15e1b9ded254d5573f742f9c85d251a40f61",
+    "PRED_1A_BASELINE_RESULTS.json": "164cbe02f27d8889db87bfe98bad5c6584819fe0dddb5c99eb2b9d49d0a25c53",
+    "PRED_1A_MODEL_RESULTS.json": "fe2e950081cb39a0a129091be287e9538edff78f9527de1b40b87de53db1c1d2",
+    "PRED_1A_CALIBRATION_AUDIT.json": "f732d74d089a00192562381ff26b9daa8869969b33664470e118fb29b64f1f92",
+    "PRED_1A_TEMPORAL_STABILITY.json": "d69311b75f040d18575cefb639f457c4fa94c7b186d054cbf6e29d3621ce27bb",
+    "PRED_1A_FEATURE_ABLATION.json": "58852b1fdd0fcaa7b65eff9ecec8ae92c6227f679fa691ab15b9fb7d84525962",
+    "PRED_1A_MULTIPLE_TESTING_AUDIT.json": "723faa5ca1b69a4de241cd80767bf0f67433753f0b668cc842ca6d7075150cb3",
+    "PRED_1A_EXPERIMENT_REGISTRY_AUDIT.json": "ed330475733737c846e39c56d7267609717607c77a58fb5f2c18c3de3d5e7b72",
+    "PRED_1A_DATA_ACCESS_AUDIT.json": "282a22cdbeafc2b50cce31f4b31469d9f988bf422e385b5360c62ae329abc3cc",
+    "PRED_1A_REPRODUCIBILITY.json": "8d33a8eb854f33e4527f8c459ca6c18bf04d563797ef6d7a3ecc4ca1e4ca8217",
+    "PRED_1A_SECURITY_AUDIT.json": "1f0f288cbfbdcb645dcd80ca7a407ee9e679744a61ff5481c21b4c963bc39b9f"
+  },
+  "next_step": "RUN_VERIFIER_FOR_ACCEPTANCE"
+}

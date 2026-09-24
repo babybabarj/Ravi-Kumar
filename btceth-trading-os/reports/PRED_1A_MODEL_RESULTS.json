@@ -1,0 +1,1401 @@
+{
+  "report_type": "PRED_1A_MODEL_RESULTS",
+  "models": [
+    {
+      "target_id": "future_log_return_5m",
+      "model_id": "LINEAR_OLS_V1",
+      "per_fold": [
+        {
+          "mae": 0.0004337031779261867,
+          "rmse": 0.0006076877192967917,
+          "r2": -0.0946768165201366,
+          "pearson_corr": 0.008016787643961453,
+          "spearman_corr": 0.03232754737927332,
+          "directional_accuracy": 0.5153333333333333
+        },
+        {
+          "mae": 0.00015715200383178586,
+          "rmse": 0.00022575501451590005,
+          "r2": -0.2903021862567987,
+          "pearson_corr": -0.05658023470606916,
+          "spearman_corr": -0.02091043047760249,
+          "directional_accuracy": 0.47733333333333333
+        },
+        {
+          "mae": 0.00015992812361170894,
+          "rmse": 0.00021746511616275383,
+          "r2": -0.39020505605622224,
+          "pearson_corr": 0.07604299046174377,
+          "spearman_corr": 0.03542370509912564,
+          "directional_accuracy": 0.41733333333333333
+        },
+        {
+          "mae": 0.0005223555653774643,
+          "rmse": 0.0007219117590283158,
+          "r2": -0.04545975361245902,
+          "pearson_corr": 0.029620589904789787,
+          "spearman_corr": 0.02005689185604767,
+          "directional_accuracy": 0.48561872909698994
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 0,
+        "evidence_classification": "NO_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.000318,
+          "median": 0.000434,
+          "min": 0.000157,
+          "max": 0.000522,
+          "std": 0.000188
+        },
+        "baseline_mean": 0.00029,
+        "overall_improvement": {
+          "absolute": -2.8e-05,
+          "relative": -0.0981
+        },
+        "per_fold": [
+          {
+            "candidate": 0.000434,
+            "baseline": 0.000417,
+            "absolute_diff": -1.7e-05,
+            "relative_diff": -0.0408,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000157,
+            "baseline": 0.00013,
+            "absolute_diff": -2.7e-05,
+            "relative_diff": -0.2096,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.00016,
+            "baseline": 0.000103,
+            "absolute_diff": -5.7e-05,
+            "relative_diff": -0.5599,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000522,
+            "baseline": 0.00051,
+            "absolute_diff": -1.2e-05,
+            "relative_diff": -0.0236,
+            "is_superior": false
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_log_return_5m",
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "per_fold": [
+        {
+          "mae": 0.0004185463148095357,
+          "rmse": 0.0005845973700745877,
+          "r2": -0.013068275269364271,
+          "pearson_corr": 0.051772292172486974,
+          "spearman_corr": 0.03768423635016916,
+          "directional_accuracy": 0.518
+        },
+        {
+          "mae": 0.000139696168806343,
+          "rmse": 0.00020797871390868853,
+          "r2": -0.09510156165383998,
+          "pearson_corr": 0.004689109789119853,
+          "spearman_corr": 0.0467079615605949,
+          "directional_accuracy": 0.5006666666666667
+        },
+        {
+          "mae": 0.00011554604620154135,
+          "rmse": 0.0001861798757121235,
+          "r2": -0.01897876445465152,
+          "pearson_corr": 0.16797750573349468,
+          "spearman_corr": 0.1359148601575062,
+          "directional_accuracy": 0.42133333333333334
+        },
+        {
+          "mae": 0.0005121290742316881,
+          "rmse": 0.0007111524668607915,
+          "r2": -0.014529146653927683,
+          "pearson_corr": -0.0103912909659519,
+          "spearman_corr": -0.0071024668158448725,
+          "directional_accuracy": 0.49297658862876254
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 0,
+        "evidence_classification": "NO_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.000296,
+          "median": 0.000419,
+          "min": 0.000116,
+          "max": 0.000512,
+          "std": 0.000199
+        },
+        "baseline_mean": 0.00029,
+        "overall_improvement": {
+          "absolute": -7e-06,
+          "relative": -0.0228
+        },
+        "per_fold": [
+          {
+            "candidate": 0.000419,
+            "baseline": 0.000417,
+            "absolute_diff": -2e-06,
+            "relative_diff": -0.0044,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.00014,
+            "baseline": 0.00013,
+            "absolute_diff": -1e-05,
+            "relative_diff": -0.0753,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000116,
+            "baseline": 0.000103,
+            "absolute_diff": -1.3e-05,
+            "relative_diff": -0.127,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000512,
+            "baseline": 0.00051,
+            "absolute_diff": -2e-06,
+            "relative_diff": -0.0036,
+            "is_superior": false
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_log_return_5m",
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "per_fold": [
+        {
+          "mae": 0.0004263569642008226,
+          "rmse": 0.0005929567888212382,
+          "r2": -0.04224805252164243,
+          "pearson_corr": -0.11095355147591048,
+          "spearman_corr": -0.08623533618464017,
+          "directional_accuracy": 0.454
+        },
+        {
+          "mae": 0.00015659389604996164,
+          "rmse": 0.0002183110919927895,
+          "r2": -0.20661362672144823,
+          "pearson_corr": 0.0,
+          "spearman_corr": 0.0,
+          "directional_accuracy": 0.4593333333333333
+        },
+        {
+          "mae": 0.00011489277173872746,
+          "rmse": 0.00019031190610868635,
+          "r2": -0.06471060385660166,
+          "pearson_corr": -0.07010264482122243,
+          "spearman_corr": -0.022456410313721507,
+          "directional_accuracy": 0.44
+        },
+        {
+          "mae": 0.0005169479039253419,
+          "rmse": 0.0007184426806097368,
+          "r2": -0.0354361801063261,
+          "pearson_corr": -0.02555032713871059,
+          "spearman_corr": -0.002784991926054035,
+          "directional_accuracy": 0.4882943143812709
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 0,
+        "evidence_classification": "NO_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.000304,
+          "median": 0.000426,
+          "min": 0.000115,
+          "max": 0.000517,
+          "std": 0.000198
+        },
+        "baseline_mean": 0.00029,
+        "overall_improvement": {
+          "absolute": -1.4e-05,
+          "relative": -0.0477
+        },
+        "per_fold": [
+          {
+            "candidate": 0.000426,
+            "baseline": 0.000417,
+            "absolute_diff": -1e-05,
+            "relative_diff": -0.0232,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000157,
+            "baseline": 0.00013,
+            "absolute_diff": -2.7e-05,
+            "relative_diff": -0.2054,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000115,
+            "baseline": 0.000103,
+            "absolute_diff": -1.2e-05,
+            "relative_diff": -0.1206,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000517,
+            "baseline": 0.00051,
+            "absolute_diff": -7e-06,
+            "relative_diff": -0.013,
+            "is_superior": false
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_log_return_15m",
+      "model_id": "LINEAR_OLS_V1",
+      "per_fold": [
+        {
+          "mae": 0.0007587823496545617,
+          "rmse": 0.0010579017488731245,
+          "r2": -0.16648028058724318,
+          "pearson_corr": 0.05529348415134759,
+          "spearman_corr": 0.04959882097154812,
+          "directional_accuracy": 0.5313333333333333
+        },
+        {
+          "mae": 0.00030327325910415714,
+          "rmse": 0.0004083599906490361,
+          "r2": -0.6485320310193492,
+          "pearson_corr": -0.14522206275890684,
+          "spearman_corr": -0.08718260438858658,
+          "directional_accuracy": 0.4806666666666667
+        },
+        {
+          "mae": 0.0003211974936361266,
+          "rmse": 0.00039904762552089125,
+          "r2": -0.743408430192213,
+          "pearson_corr": 0.18573188707184402,
+          "spearman_corr": 0.16768617044478243,
+          "directional_accuracy": 0.466
+        },
+        {
+          "mae": 0.0009820144573644855,
+          "rmse": 0.0013610242816351002,
+          "r2": -0.10063314982918392,
+          "pearson_corr": 0.05411913805147682,
+          "spearman_corr": 0.06848474100264008,
+          "directional_accuracy": 0.4754208754208754
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 0,
+        "evidence_classification": "NO_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.000591,
+          "median": 0.000759,
+          "min": 0.000303,
+          "max": 0.000982,
+          "std": 0.000335
+        },
+        "baseline_mean": 0.000515,
+        "overall_improvement": {
+          "absolute": -7.6e-05,
+          "relative": -0.1478
+        },
+        "per_fold": [
+          {
+            "candidate": 0.000759,
+            "baseline": 0.000701,
+            "absolute_diff": -5.8e-05,
+            "relative_diff": -0.0832,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000303,
+            "baseline": 0.000223,
+            "absolute_diff": -8e-05,
+            "relative_diff": -0.3593,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000321,
+            "baseline": 0.000191,
+            "absolute_diff": -0.00013,
+            "relative_diff": -0.6788,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000982,
+            "baseline": 0.000946,
+            "absolute_diff": -3.6e-05,
+            "relative_diff": -0.0383,
+            "is_superior": false
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_log_return_15m",
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "per_fold": [
+        {
+          "mae": 0.0007017640114575794,
+          "rmse": 0.0009953622278089439,
+          "r2": -0.03264023679409189,
+          "pearson_corr": 0.084206488434527,
+          "spearman_corr": 0.05553477747195128,
+          "directional_accuracy": 0.5386666666666666
+        },
+        {
+          "mae": 0.00024783467261190275,
+          "rmse": 0.0003472013063169436,
+          "r2": -0.19171860764783122,
+          "pearson_corr": -0.06608238995989513,
+          "spearman_corr": -0.05039242529021602,
+          "directional_accuracy": 0.47933333333333333
+        },
+        {
+          "mae": 0.00021688582014001492,
+          "rmse": 0.00030915543193988114,
+          "r2": -0.04641376258585406,
+          "pearson_corr": 0.3105787109784539,
+          "spearman_corr": 0.31140729626573066,
+          "directional_accuracy": 0.458
+        },
+        {
+          "mae": 0.0009474620736122107,
+          "rmse": 0.0013114653170242323,
+          "r2": -0.021937796351739536,
+          "pearson_corr": 0.004217091994318128,
+          "spearman_corr": 0.015288495726194245,
+          "directional_accuracy": 0.5117845117845118
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 0,
+        "evidence_classification": "NO_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.000528,
+          "median": 0.000702,
+          "min": 0.000217,
+          "max": 0.000947,
+          "std": 0.000357
+        },
+        "baseline_mean": 0.000515,
+        "overall_improvement": {
+          "absolute": -1.3e-05,
+          "relative": -0.0258
+        },
+        "per_fold": [
+          {
+            "candidate": 0.000702,
+            "baseline": 0.000701,
+            "absolute_diff": -1e-06,
+            "relative_diff": -0.0018,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000248,
+            "baseline": 0.000223,
+            "absolute_diff": -2.5e-05,
+            "relative_diff": -0.1108,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000217,
+            "baseline": 0.000191,
+            "absolute_diff": -2.6e-05,
+            "relative_diff": -0.1336,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000947,
+            "baseline": 0.000946,
+            "absolute_diff": -2e-06,
+            "relative_diff": -0.0018,
+            "is_superior": false
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_log_return_15m",
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "per_fold": [
+        {
+          "mae": 0.000708257657332515,
+          "rmse": 0.0009967887622567744,
+          "r2": -0.03560227902595203,
+          "pearson_corr": 0.1625053048822867,
+          "spearman_corr": 0.1429993383535565,
+          "directional_accuracy": 0.558
+        },
+        {
+          "mae": 0.00028942313285739606,
+          "rmse": 0.00037625136356333804,
+          "r2": -0.3994815732641752,
+          "pearson_corr": 0.0,
+          "spearman_corr": 0.0,
+          "directional_accuracy": 0.4553333333333333
+        },
+        {
+          "mae": 0.00019236461378598598,
+          "rmse": 0.0003018961654014339,
+          "r2": 0.0021508922248755225,
+          "pearson_corr": 0.05338023251647845,
+          "spearman_corr": 0.05954146512635862,
+          "directional_accuracy": 0.5146666666666667
+        },
+        {
+          "mae": 0.0009410520702549544,
+          "rmse": 0.0012933216141950811,
+          "r2": 0.00614297095346128,
+          "pearson_corr": 0.13281899085011775,
+          "spearman_corr": 0.11348721521949422,
+          "directional_accuracy": 0.49562289562289563
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 1,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.000533,
+          "median": 0.000708,
+          "min": 0.000192,
+          "max": 0.000941,
+          "std": 0.000352
+        },
+        "baseline_mean": 0.000515,
+        "overall_improvement": {
+          "absolute": -1.8e-05,
+          "relative": -0.0341
+        },
+        "per_fold": [
+          {
+            "candidate": 0.000708,
+            "baseline": 0.000701,
+            "absolute_diff": -8e-06,
+            "relative_diff": -0.011,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000289,
+            "baseline": 0.000223,
+            "absolute_diff": -6.6e-05,
+            "relative_diff": -0.2973,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000192,
+            "baseline": 0.000191,
+            "absolute_diff": -1e-06,
+            "relative_diff": -0.0054,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000941,
+            "baseline": 0.000946,
+            "absolute_diff": 5e-06,
+            "relative_diff": 0.005,
+            "is_superior": true
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_log_return_1h",
+      "model_id": "LINEAR_OLS_V1",
+      "per_fold": [
+        {
+          "mae": 0.0017011316587535828,
+          "rmse": 0.002277957452002624,
+          "r2": -0.4290909864159551,
+          "pearson_corr": 0.09936240639181619,
+          "spearman_corr": 0.13977047175454108,
+          "directional_accuracy": 0.506
+        },
+        {
+          "mae": 0.0008098967357834474,
+          "rmse": 0.001069445723904126,
+          "r2": -3.6022147022714677,
+          "pearson_corr": 0.12047815885561415,
+          "spearman_corr": 0.07791388436958185,
+          "directional_accuracy": 0.5106666666666667
+        },
+        {
+          "mae": 0.0008109007212163892,
+          "rmse": 0.0009690955844732774,
+          "r2": -1.6595015783956115,
+          "pearson_corr": 0.41744765316612825,
+          "spearman_corr": 0.42978424322680797,
+          "directional_accuracy": 0.4726666666666667
+        },
+        {
+          "mae": 0.0021658134568819133,
+          "rmse": 0.0030186219244448414,
+          "r2": -0.17936518261151813,
+          "pearson_corr": 0.20521604418450626,
+          "spearman_corr": 0.2469593737223678,
+          "directional_accuracy": 0.5194444444444445
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 0,
+        "evidence_classification": "NO_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.001372,
+          "median": 0.001701,
+          "min": 0.00081,
+          "max": 0.002166,
+          "std": 0.000676
+        },
+        "baseline_mean": 0.001112,
+        "overall_improvement": {
+          "absolute": -0.00026,
+          "relative": -0.2342
+        },
+        "per_fold": [
+          {
+            "candidate": 0.001701,
+            "baseline": 0.001414,
+            "absolute_diff": -0.000287,
+            "relative_diff": -0.203,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.00081,
+            "baseline": 0.000409,
+            "absolute_diff": -0.000401,
+            "relative_diff": -0.9785,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000811,
+            "baseline": 0.000482,
+            "absolute_diff": -0.000329,
+            "relative_diff": -0.6831,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.002166,
+            "baseline": 0.002141,
+            "absolute_diff": -2.5e-05,
+            "relative_diff": -0.0115,
+            "is_superior": false
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_log_return_1h",
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "per_fold": [
+        {
+          "mae": 0.0014668850509843062,
+          "rmse": 0.0020045708055718456,
+          "r2": -0.10665300106885867,
+          "pearson_corr": 0.16309117850956986,
+          "spearman_corr": 0.15616240446060148,
+          "directional_accuracy": 0.5106666666666667
+        },
+        {
+          "mae": 0.00047202635316959547,
+          "rmse": 0.000591825580833996,
+          "r2": -0.40940836530626257,
+          "pearson_corr": 0.015097824891069447,
+          "spearman_corr": 0.013979566889144344,
+          "directional_accuracy": 0.49266666666666664
+        },
+        {
+          "mae": 0.0005332241433618934,
+          "rmse": 0.0006607449492271051,
+          "r2": -0.23633090880982288,
+          "pearson_corr": 0.490170393780723,
+          "spearman_corr": 0.47722661812686745,
+          "directional_accuracy": 0.4866666666666667
+        },
+        {
+          "mae": 0.0020882527016775486,
+          "rmse": 0.0027932814899690565,
+          "r2": -0.00985789522989755,
+          "pearson_corr": 0.1668326337316918,
+          "spearman_corr": 0.13037860795963366,
+          "directional_accuracy": 0.5347222222222222
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 1,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.00114,
+          "median": 0.001467,
+          "min": 0.000472,
+          "max": 0.002088,
+          "std": 0.000779
+        },
+        "baseline_mean": 0.001112,
+        "overall_improvement": {
+          "absolute": -2.9e-05,
+          "relative": -0.0256
+        },
+        "per_fold": [
+          {
+            "candidate": 0.001467,
+            "baseline": 0.001414,
+            "absolute_diff": -5.3e-05,
+            "relative_diff": -0.0373,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000472,
+            "baseline": 0.000409,
+            "absolute_diff": -6.3e-05,
+            "relative_diff": -0.1531,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000533,
+            "baseline": 0.000482,
+            "absolute_diff": -5.1e-05,
+            "relative_diff": -0.1067,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.002088,
+            "baseline": 0.002141,
+            "absolute_diff": 5.3e-05,
+            "relative_diff": 0.0247,
+            "is_superior": true
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_log_return_1h",
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "per_fold": [
+        {
+          "mae": 0.0017347619782613227,
+          "rmse": 0.00230297057213392,
+          "r2": -0.46064757160736236,
+          "pearson_corr": 0.03369568749665071,
+          "spearman_corr": 0.12034229334770061,
+          "directional_accuracy": 0.5106666666666667
+        },
+        {
+          "mae": 0.0006605970620225363,
+          "rmse": 0.0007937972141435156,
+          "r2": -1.5355286352046593,
+          "pearson_corr": 0.0,
+          "spearman_corr": 0.0,
+          "directional_accuracy": 0.4533333333333333
+        },
+        {
+          "mae": 0.0005717482828639683,
+          "rmse": 0.0006991521471311412,
+          "r2": -0.3842368749207834,
+          "pearson_corr": 0.0,
+          "spearman_corr": 0.0,
+          "directional_accuracy": 0.4166666666666667
+        },
+        {
+          "mae": 0.0021051370335329156,
+          "rmse": 0.0027855945074489563,
+          "r2": -0.004307377935762968,
+          "pearson_corr": 0.2160041945445712,
+          "spearman_corr": 0.15263628399920318,
+          "directional_accuracy": 0.5277777777777778
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 1,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.001268,
+          "median": 0.001735,
+          "min": 0.000572,
+          "max": 0.002105,
+          "std": 0.000769
+        },
+        "baseline_mean": 0.001112,
+        "overall_improvement": {
+          "absolute": -0.000156,
+          "relative": -0.1408
+        },
+        "per_fold": [
+          {
+            "candidate": 0.001735,
+            "baseline": 0.001414,
+            "absolute_diff": -0.000321,
+            "relative_diff": -0.2267,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000661,
+            "baseline": 0.000409,
+            "absolute_diff": -0.000251,
+            "relative_diff": -0.6138,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000572,
+            "baseline": 0.000482,
+            "absolute_diff": -9e-05,
+            "relative_diff": -0.1867,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.002105,
+            "baseline": 0.002141,
+            "absolute_diff": 3.6e-05,
+            "relative_diff": 0.0168,
+            "is_superior": true
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_realized_volatility_1h",
+      "model_id": "LINEAR_OLS_V1",
+      "per_fold": [
+        {
+          "mae": 7.76181521081192e-05,
+          "rmse": 9.288552884021822e-05,
+          "r2": 0.12894469195702685,
+          "pearson_corr": 0.6434235228357382,
+          "spearman_corr": 0.5702655461456313,
+          "directional_accuracy": 1.0
+        },
+        {
+          "mae": 0.00011299333403033724,
+          "rmse": 0.00013219938094755976,
+          "r2": -12.301036294020438,
+          "pearson_corr": 0.13312897899928983,
+          "spearman_corr": 0.2895356320810356,
+          "directional_accuracy": 1.0
+        },
+        {
+          "mae": 3.930260069085453e-05,
+          "rmse": 4.9484598808129224e-05,
+          "r2": -0.24082856948637077,
+          "pearson_corr": 0.27378250415226063,
+          "spearman_corr": 0.15911210924712135,
+          "directional_accuracy": 1.0
+        },
+        {
+          "mae": 7.901448248566797e-05,
+          "rmse": 0.00011135439102881025,
+          "r2": 0.2624119589807671,
+          "pearson_corr": 0.5375659210097735,
+          "spearman_corr": 0.5177270905113266,
+          "directional_accuracy": 1.0
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 3,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 7.7e-05,
+          "median": 7.9e-05,
+          "min": 3.9e-05,
+          "max": 0.000113,
+          "std": 3e-05
+        },
+        "baseline_mean": 0.000189,
+        "overall_improvement": {
+          "absolute": 0.000111,
+          "relative": 0.5904
+        },
+        "per_fold": [
+          {
+            "candidate": 7.8e-05,
+            "baseline": 0.000266,
+            "absolute_diff": 0.000188,
+            "relative_diff": 0.7081,
+            "is_superior": true
+          },
+          {
+            "candidate": 0.000113,
+            "baseline": 9.7e-05,
+            "absolute_diff": -1.6e-05,
+            "relative_diff": -0.1645,
+            "is_superior": false
+          },
+          {
+            "candidate": 3.9e-05,
+            "baseline": 8.1e-05,
+            "absolute_diff": 4.2e-05,
+            "relative_diff": 0.5147,
+            "is_superior": true
+          },
+          {
+            "candidate": 7.9e-05,
+            "baseline": 0.00031,
+            "absolute_diff": 0.000231,
+            "relative_diff": 0.7453,
+            "is_superior": true
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_realized_volatility_1h",
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "per_fold": [
+        {
+          "mae": 7.117128181709494e-05,
+          "rmse": 8.627216768227177e-05,
+          "r2": 0.24856566360341514,
+          "pearson_corr": 0.6405851315058648,
+          "spearman_corr": 0.5564007186008553,
+          "directional_accuracy": 1.0
+        },
+        {
+          "mae": 0.0001200499300819243,
+          "rmse": 0.000129883027797775,
+          "r2": -11.839007247288166,
+          "pearson_corr": 0.242285989062483,
+          "spearman_corr": 0.4124807400560205,
+          "directional_accuracy": 1.0
+        },
+        {
+          "mae": 4.87958057914769e-05,
+          "rmse": 5.7025456559113476e-05,
+          "r2": -0.647817911181634,
+          "pearson_corr": 0.3339223899695966,
+          "spearman_corr": 0.16661515803813787,
+          "directional_accuracy": 1.0
+        },
+        {
+          "mae": 7.49886937997868e-05,
+          "rmse": 0.00010635944179114245,
+          "r2": 0.32709884942466416,
+          "pearson_corr": 0.5741469100867171,
+          "spearman_corr": 0.5297152931724731,
+          "directional_accuracy": 1.0
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 3,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 7.9e-05,
+          "median": 7.5e-05,
+          "min": 4.9e-05,
+          "max": 0.00012,
+          "std": 3e-05
+        },
+        "baseline_mean": 0.000189,
+        "overall_improvement": {
+          "absolute": 0.00011,
+          "relative": 0.5824
+        },
+        "per_fold": [
+          {
+            "candidate": 7.1e-05,
+            "baseline": 0.000266,
+            "absolute_diff": 0.000195,
+            "relative_diff": 0.7324,
+            "is_superior": true
+          },
+          {
+            "candidate": 0.00012,
+            "baseline": 9.7e-05,
+            "absolute_diff": -2.3e-05,
+            "relative_diff": -0.2373,
+            "is_superior": false
+          },
+          {
+            "candidate": 4.9e-05,
+            "baseline": 8.1e-05,
+            "absolute_diff": 3.2e-05,
+            "relative_diff": 0.3975,
+            "is_superior": true
+          },
+          {
+            "candidate": 7.5e-05,
+            "baseline": 0.00031,
+            "absolute_diff": 0.000235,
+            "relative_diff": 0.7583,
+            "is_superior": true
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_realized_volatility_1h",
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "per_fold": [
+        {
+          "mae": 8.190516725706845e-05,
+          "rmse": 0.00010199407661922685,
+          "r2": -0.05026650805831556,
+          "pearson_corr": 0.45084447690403673,
+          "spearman_corr": 0.4152713534872134,
+          "directional_accuracy": 1.0
+        },
+        {
+          "mae": 0.00013215319412426512,
+          "rmse": 0.00013643090671465393,
+          "r2": -13.166160776540554,
+          "pearson_corr": 0.3557202974826945,
+          "spearman_corr": 0.28177533743877203,
+          "directional_accuracy": 1.0
+        },
+        {
+          "mae": 3.361477026888896e-05,
+          "rmse": 4.5572088351984884e-05,
+          "r2": -0.052372615513930354,
+          "pearson_corr": 0.0,
+          "spearman_corr": 0.0,
+          "directional_accuracy": 1.0
+        },
+        {
+          "mae": 7.940194290366793e-05,
+          "rmse": 0.00011367545056019997,
+          "r2": 0.23134308123315905,
+          "pearson_corr": 0.5000305562985032,
+          "spearman_corr": 0.5470289227799977,
+          "directional_accuracy": 1.0
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 3,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 8.2e-05,
+          "median": 8.2e-05,
+          "min": 3.4e-05,
+          "max": 0.000132,
+          "std": 4e-05
+        },
+        "baseline_mean": 0.000189,
+        "overall_improvement": {
+          "absolute": 0.000107,
+          "relative": 0.5663
+        },
+        "per_fold": [
+          {
+            "candidate": 8.2e-05,
+            "baseline": 0.000266,
+            "absolute_diff": 0.000184,
+            "relative_diff": 0.692,
+            "is_superior": true
+          },
+          {
+            "candidate": 0.000132,
+            "baseline": 9.7e-05,
+            "absolute_diff": -3.5e-05,
+            "relative_diff": -0.362,
+            "is_superior": false
+          },
+          {
+            "candidate": 3.4e-05,
+            "baseline": 8.1e-05,
+            "absolute_diff": 4.7e-05,
+            "relative_diff": 0.5849,
+            "is_superior": true
+          },
+          {
+            "candidate": 7.9e-05,
+            "baseline": 0.00031,
+            "absolute_diff": 0.000231,
+            "relative_diff": 0.7441,
+            "is_superior": true
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_max_up_move_1h",
+      "model_id": "LINEAR_OLS_V1",
+      "per_fold": [
+        {
+          "mae": 0.0011478241573311507,
+          "rmse": 0.0016742339518424885,
+          "r2": -0.10523806322480822,
+          "pearson_corr": 0.19435548365345376,
+          "spearman_corr": 0.1823222658821688,
+          "directional_accuracy": 0.9793333333333333
+        },
+        {
+          "mae": 0.0006078073868947898,
+          "rmse": 0.0007534942613211001,
+          "r2": -2.9344585734073907,
+          "pearson_corr": 0.11126690300760297,
+          "spearman_corr": 0.06491089143611552,
+          "directional_accuracy": 0.934
+        },
+        {
+          "mae": 0.0006588180969100786,
+          "rmse": 0.000768417227942725,
+          "r2": -2.7339877043719865,
+          "pearson_corr": 0.34922488882623637,
+          "spearman_corr": 0.3329548750740447,
+          "directional_accuracy": 0.20266666666666666
+        },
+        {
+          "mae": 0.0016595948512168575,
+          "rmse": 0.002656931311990753,
+          "r2": -0.26818903935083616,
+          "pearson_corr": 0.12680673201657636,
+          "spearman_corr": 0.16504330984415894,
+          "directional_accuracy": 0.9569444444444445
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 2,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.001019,
+          "median": 0.001148,
+          "min": 0.000608,
+          "max": 0.00166,
+          "std": 0.000492
+        },
+        "baseline_mean": 0.001207,
+        "overall_improvement": {
+          "absolute": 0.000189,
+          "relative": 0.1564
+        },
+        "per_fold": [
+          {
+            "candidate": 0.001148,
+            "baseline": 0.001684,
+            "absolute_diff": 0.000537,
+            "relative_diff": 0.3186,
+            "is_superior": true
+          },
+          {
+            "candidate": 0.000608,
+            "baseline": 0.000436,
+            "absolute_diff": -0.000172,
+            "relative_diff": -0.3954,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000659,
+            "baseline": 0.000393,
+            "absolute_diff": -0.000266,
+            "relative_diff": -0.6779,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.00166,
+            "baseline": 0.002316,
+            "absolute_diff": 0.000657,
+            "relative_diff": 0.2836,
+            "is_superior": true
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_max_up_move_1h",
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "per_fold": [
+        {
+          "mae": 0.0010960957026465532,
+          "rmse": 0.0015545130872230031,
+          "r2": 0.047176831056749524,
+          "pearson_corr": 0.2772993378887943,
+          "spearman_corr": 0.21437749504727852,
+          "directional_accuracy": 0.986
+        },
+        {
+          "mae": 0.000634678496573487,
+          "rmse": 0.0007329508085868768,
+          "r2": -2.72284311918365,
+          "pearson_corr": 0.1561865646635352,
+          "spearman_corr": 0.1067127248051922,
+          "directional_accuracy": 0.9406666666666667
+        },
+        {
+          "mae": 0.00027908862609366935,
+          "rmse": 0.0003994439060248063,
+          "r2": -0.008997980273508288,
+          "pearson_corr": 0.3941011908326552,
+          "spearman_corr": 0.3400787097371107,
+          "directional_accuracy": 0.874
+        },
+        {
+          "mae": 0.001564106402934707,
+          "rmse": 0.00244617258180574,
+          "r2": -0.07497293353691514,
+          "pearson_corr": 0.16513540635162702,
+          "spearman_corr": 0.2412583551081891,
+          "directional_accuracy": 0.9770833333333333
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 3,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.000893,
+          "median": 0.001096,
+          "min": 0.000279,
+          "max": 0.001564,
+          "std": 0.000558
+        },
+        "baseline_mean": 0.001207,
+        "overall_improvement": {
+          "absolute": 0.000314,
+          "relative": 0.2599
+        },
+        "per_fold": [
+          {
+            "candidate": 0.001096,
+            "baseline": 0.001684,
+            "absolute_diff": 0.000588,
+            "relative_diff": 0.3493,
+            "is_superior": true
+          },
+          {
+            "candidate": 0.000635,
+            "baseline": 0.000436,
+            "absolute_diff": -0.000199,
+            "relative_diff": -0.4571,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000279,
+            "baseline": 0.000393,
+            "absolute_diff": 0.000114,
+            "relative_diff": 0.2892,
+            "is_superior": true
+          },
+          {
+            "candidate": 0.001564,
+            "baseline": 0.002316,
+            "absolute_diff": 0.000752,
+            "relative_diff": 0.3248,
+            "is_superior": true
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_max_up_move_1h",
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "per_fold": [
+        {
+          "mae": 0.0011341529250571071,
+          "rmse": 0.0016820750114088607,
+          "r2": -0.11561478636319733,
+          "pearson_corr": 0.19921174160205296,
+          "spearman_corr": 0.28009956132122776,
+          "directional_accuracy": 0.986
+        },
+        {
+          "mae": 0.000605202093191507,
+          "rmse": 0.0006678367658326009,
+          "r2": -2.090763161230117,
+          "pearson_corr": 0.0,
+          "spearman_corr": 0.0,
+          "directional_accuracy": 0.9406666666666667
+        },
+        {
+          "mae": 0.00045346560770059835,
+          "rmse": 0.0005003210053109986,
+          "r2": -0.5829827059032862,
+          "pearson_corr": 0.0,
+          "spearman_corr": 0.0,
+          "directional_accuracy": 0.9246666666666666
+        },
+        {
+          "mae": 0.0016414367161966903,
+          "rmse": 0.0024543820289952088,
+          "r2": -0.08220034013786348,
+          "pearson_corr": 0.3025283495162579,
+          "spearman_corr": 0.24113870255498118,
+          "directional_accuracy": 0.9770833333333333
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "mae",
+        "higher_is_better": false,
+        "n_folds": 4,
+        "superior_folds": 2,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.000959,
+          "median": 0.001134,
+          "min": 0.000453,
+          "max": 0.001641,
+          "std": 0.000541
+        },
+        "baseline_mean": 0.001207,
+        "overall_improvement": {
+          "absolute": 0.000249,
+          "relative": 0.206
+        },
+        "per_fold": [
+          {
+            "candidate": 0.001134,
+            "baseline": 0.001684,
+            "absolute_diff": 0.00055,
+            "relative_diff": 0.3267,
+            "is_superior": true
+          },
+          {
+            "candidate": 0.000605,
+            "baseline": 0.000436,
+            "absolute_diff": -0.00017,
+            "relative_diff": -0.3895,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.000453,
+            "baseline": 0.000393,
+            "absolute_diff": -6.1e-05,
+            "relative_diff": -0.1549,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.001641,
+            "baseline": 0.002316,
+            "absolute_diff": 0.000675,
+            "relative_diff": 0.2914,
+            "is_superior": true
+          }
+        ]
+      }
+    },
+    {
+      "target_id": "future_trend_state_15m",
+      "model_id": "LOGISTIC_L2_V1",
+      "per_fold": [
+        {
+          "accuracy": 0.5426666666666666,
+          "balanced_accuracy": 0.5424880755343565,
+          "precision": 0.5573770491803278,
+          "recall": 0.40854472630173566,
+          "f1": 0.4714946070878274,
+          "brier_score": 0.2546012433925564,
+          "log_loss": 0.7031099497181537
+        },
+        {
+          "accuracy": 0.4886666666666667,
+          "balanced_accuracy": 0.4750792810426059,
+          "precision": 0.5096491228070176,
+          "recall": 0.7363751584283904,
+          "f1": 0.6023846552617936,
+          "brier_score": 0.2604790874369049,
+          "log_loss": 0.7159921545868406
+        },
+        {
+          "accuracy": 0.5106666666666667,
+          "balanced_accuracy": 0.5212704838574841,
+          "precision": 0.8367346938775511,
+          "recall": 0.05345501955671447,
+          "f1": 0.10049019607843136,
+          "brier_score": 0.25529450222241906,
+          "log_loss": 0.704265290993029
+        },
+        {
+          "accuracy": 0.48282828282828283,
+          "balanced_accuracy": 0.5152763905820836,
+          "precision": 0.5915032679738562,
+          "recall": 0.2196601941747573,
+          "f1": 0.320353982300885,
+          "brier_score": 0.25687393241352413,
+          "log_loss": 0.7071168163973107
+        }
+      ],
+      "summary_stability": {
+        "primary_metric": "balanced_accuracy",
+        "higher_is_better": true,
+        "n_folds": 4,
+        "superior_folds": 3,
+        "evidence_classification": "WEAK_INCONSISTENT_EVIDENCE",
+        "candidate_summary": {
+          "mean": 0.513529,
+          "median": 0.52127,
+          "min": 0.475079,
+          "max": 0.542488,
+          "std": 0.028166
+        },
+        "baseline_mean": 0.5,
+        "overall_improvement": {
+          "absolute": 0.013529,
+          "relative": 0.0271
+        },
+        "per_fold": [
+          {
+            "candidate": 0.542488,
+            "baseline": 0.5,
+            "absolute_diff": 0.042488,
+            "relative_diff": 0.085,
+            "is_superior": true
+          },
+          {
+            "candidate": 0.475079,
+            "baseline": 0.5,
+            "absolute_diff": -0.024921,
+            "relative_diff": -0.0498,
+            "is_superior": false
+          },
+          {
+            "candidate": 0.52127,
+            "baseline": 0.5,
+            "absolute_diff": 0.02127,
+            "relative_diff": 0.0425,
+            "is_superior": true
+          },
+          {
+            "candidate": 0.515276,
+            "baseline": 0.5,
+            "absolute_diff": 0.015276,
+            "relative_diff": 0.0306,
+            "is_superior": true
+          }
+        ]
+      }
+    }
+  ]
+}

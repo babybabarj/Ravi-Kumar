@@ -1,0 +1,14 @@
+{
+  "report_type": "PRED_1A_REPRODUCIBILITY",
+  "code_sha": "3094fcb95bb8e75f008b67e96100ee902200f316",
+  "tree_sha": "7ba131bd49375159ff9db461bfc664f908e1dcce",
+  "random_seed": 42,
+  "library_versions": {
+    "python": "3.12.14",
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "pyarrow": "25.0.1"
+  },
+  "target_registry_version": "1.0.0",
+  "model_registry_version": "1.0.0",
+  "deterministic_reproducibility_verified": true
+}

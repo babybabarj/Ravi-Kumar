@@ -1,0 +1,14 @@
+{
+  "report_type": "PRED_1A_EXPERIMENT_REGISTRY_AUDIT",
+  "budget_governor_audit": {
+    "total_experiments": 48,
+    "max_total_experiments": 100,
+    "unique_targets": 6,
+    "max_targets": 12,
+    "unique_models": 4,
+    "unique_feature_groups": 1,
+    "max_feature_groups": 6,
+    "budget_respected": true
+  },
+  "experiment_registry_file": "artifacts/research/pred_1a_experiment_registry.jsonl"
+}
