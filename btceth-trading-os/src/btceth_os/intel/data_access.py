@@ -95,6 +95,7 @@ def append_intel_access_ledger(
     with _LEDGER_LOCK:
         lock_fd = None
         try:
+            INTEL_LEDGER_LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
             lock_fd = open(INTEL_LEDGER_LOCK_PATH, "w")
             fcntl.flock(lock_fd, fcntl.LOCK_EX)
             with ledger_path.open("a", encoding="utf-8") as f:
