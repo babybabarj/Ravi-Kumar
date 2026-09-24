@@ -1,0 +1,13 @@
+{
+  "ambiguous_generic_funding_rate_absent": true,
+  "discrete_event_rows": 1589,
+  "admitted_events_visible_in_bars": 1559,
+  "bars_with_single_funding_event": 1559,
+  "no_double_count": true,
+  "event_timestamp_causal": true,
+  "first_bar_last_realized_null": true,
+  "source_interval_mismatches_in_admitted_events": 0,
+  "pre_admission_interval_unverifiable": 30,
+  "epoch_transition_correction": "Index component change effective 2026-01-29T08:00:00Z per primary page",
+  "all_passed": true
+}

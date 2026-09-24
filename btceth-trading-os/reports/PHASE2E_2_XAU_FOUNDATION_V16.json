@@ -1,0 +1,79 @@
+{
+  "status": "VERIFIED",
+  "tested_code_sha": "d394be5496cf8aa909830cf12a5af349f24499ab",
+  "tested_tree_sha": "6c4b6467d26ecd270e7353abf9c60abf9c1702a4",
+  "canonical_baseline_sha": "fb2d2c1f25f199ea040212fe683e64776754b805",
+  "v15_evidence_parent_sha": "3170c2a608b66be171e8da39d4a0e8eae75f8e96",
+  "wip_safety_sha": "11d6e370db0d27cd635528a3c530286b28c60416",
+  "source_manifest_v3_sha256": "069cb4848f76e4ca30154e6ccabdc7715e9851309cb777cdbcdba1d49bf486c0",
+  "partition_manifest_v3_sha256": "113bb0477b529961b1f5e382d5948194a0e9b033194dcf312057a04bd4bfa9a9",
+  "silver_v3": {
+    "relative_path": "artifacts/research/silver_xau/XAUUSDT-resampled-1m-silver-v3.parquet",
+    "physical_sha256": "dc67e639db1d0132c5288a1f05d7ac34efaf0db0a45cade285213e7ab41961e8",
+    "logical_sha256": "f35423265b21a190052fda001cc5e2ce0a9551a7f17f915b8d44f4f001ce8654",
+    "rows": 374400
+  },
+  "partitions_v3": {
+    "XAUUSDT_DEV_2026_01_04_V3": {
+      "dataset_id": "XAUUSDT_DEV_2026_01_04_V3",
+      "role": "DEVELOPMENT",
+      "relative_path": "artifacts/research/partitions/XAUUSDT_DEV_2026_01_04_V3.parquet",
+      "start_ts_ns": 1767657600000000000,
+      "end_ts_ns": 1777593599999999000,
+      "rows": 165600,
+      "physical_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "logical_sha256": "6ef211d74966adf74490598696327bcbb9977319077e10ba540774728fdeaeb9",
+      "parent_physical_sha256": "dc67e639db1d0132c5288a1f05d7ac34efaf0db0a45cade285213e7ab41961e8"
+    },
+    "XAUUSDT_VAL_2026_05_07_V3": {
+      "dataset_id": "XAUUSDT_VAL_2026_05_07_V3",
+      "role": "VALIDATION",
+      "relative_path": "artifacts/research/partitions/XAUUSDT_VAL_2026_05_07_V3.parquet",
+      "start_ts_ns": 1777593600000000000,
+      "end_ts_ns": 1785542399999999000,
+      "rows": 132480,
+      "physical_sha256": "bf0acbf6332872f47a63ddf2110a33e21e7be272771bd5471595c02a24d644ac",
+      "logical_sha256": "cad677a4d24403c1dac1aa141ac0f8d91edd1c4f1eded851652d1afeaca58194",
+      "parent_physical_sha256": "dc67e639db1d0132c5288a1f05d7ac34efaf0db0a45cade285213e7ab41961e8"
+    },
+    "XAUUSDT_HOLDOUT_2026_08_09_V3": {
+      "dataset_id": "XAUUSDT_HOLDOUT_2026_08_09_V3",
+      "role": "LOCKED_HOLDOUT",
+      "relative_path": "artifacts/research/partitions/XAUUSDT_HOLDOUT_2026_08_09_V3.parquet",
+      "start_ts_ns": 1785542400000000000,
+      "end_ts_ns": 1789505999999999000,
+      "rows": 66060,
+      "physical_sha256": "9642eefffb6da8ca72a89696922b6db6c31f51fad116f4d45d3d08c3a9149c84",
+      "logical_sha256": "d726cb2e03183b0e823312991e42e09ddb868f27c18c82f5695f32848fdbfacd",
+      "parent_physical_sha256": "dc67e639db1d0132c5288a1f05d7ac34efaf0db0a45cade285213e7ab41961e8"
+    },
+    "XAUUSDT_PROSPECTIVE_PRISTINE_V3": {
+      "dataset_id": "XAUUSDT_PROSPECTIVE_PRISTINE_V3",
+      "role": "LOCKED_PROSPECTIVE_PRISTINE",
+      "relative_path": "artifacts/research/partitions/XAUUSDT_PROSPECTIVE_PRISTINE_V3.parquet",
+      "start_ts_ns": 1789506000000000000,
+      "end_ts_ns": 1790121599999999000,
+      "rows": 10260,
+      "physical_sha256": "7507b861c890e4228ef4a8ae1ab2ccdbc40efb2f02e57b22b7ca942121a4b5f1",
+      "logical_sha256": "7393789e9efc8ee5a9456148dc7b3252465db4ecdffd56841bcd09ca9186ed0a",
+      "parent_physical_sha256": "dc67e639db1d0132c5288a1f05d7ac34efaf0db0a45cade285213e7ab41961e8"
+    }
+  },
+  "report_sha256": {
+    "XAU_AGGTRADE_RECONCILIATION_V16.json": "ee8ced5f15c3b086100c8b808d1f9d030b612753bf76bb7043adc7b871acaf10",
+    "XAU_PRIMARY_SOURCE_REPRODUCIBILITY_V16.json": "644d00714d8912a52fce5fb84f56731972c4f0caac9d80e91f37040667a49901",
+    "XAU_PRIMARY_SOURCE_METADATA_V16.json": "22023afe7dcce24b0d2d0a9ed6b528ce1e0dd2c83bf7e0853b4a9d4c87beeab5",
+    "XAU_FUNDING_SEMANTICS_V16.json": "669fc291b7881d5c568cb1ec28a457024ee1b4322d5196bfa68985475f4ad850",
+    "XAU_SESSION_CERTAINTY_V16.json": "bf164901b35bbbe98bbbe035cdbff1a1159bbbd264ea5169608e54d27170261d",
+    "XAU_LOGICAL_HASH_AUDIT_V16.json": "552dc3338c5b150fef7d5c1bdf9ee3aaf38245a2b2e6cad0e511543df76a7c03",
+    "XAU_TRADES_AGGTRADES_AUDIT_V16.json": "12a13ee57c72bb1ac68cfaea10ec23d4fa94a1870f531cf6b6a2d86ec27ed446",
+    "XAU_SERIES_ALIGNMENT_AUDIT_V16.json": "cce503227c8ae583d45145fdac8647ebc798491ea6ddc68f47d5d3b3f723e192",
+    "XAU_JUNE_TRADES_REPLACEMENT_V16.json": "66127f18d28cffccb76b4c530d2052c2172b40b665e7e580aa1a1d5cfb5b573d",
+    "XAU_DECIMAL_SCHEMA_AUDIT_V16.json": "c7b32b7f0676c308630727e3c3815310188053aa9cbecca874473b9757018989"
+  },
+  "security_scan_zero": true,
+  "trading_capability": "ZERO",
+  "separate_btc_bot_reuse_status": "QUARANTINED_NOT_RESEARCH_SAFE",
+  "june_monthly_trades_status": "FAILED_QUARANTINED_REPLACED_BY_30_DAILY_ARCHIVES",
+  "next_step": "STOP_FOR_INDEPENDENT_REVIEW"
+}

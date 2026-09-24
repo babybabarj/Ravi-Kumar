@@ -1,0 +1,61 @@
+{
+  "trade_count": 898169,
+  "aggregate_count": 376915,
+  "trades_volume": "440003.061",
+  "aggregate_volume": "439970.220",
+  "uncovered_trade_count": 99,
+  "uncovered_trade_volume": "32.841",
+  "uncovered_first_trade_id": 76956094,
+  "uncovered_last_trade_id": 77797387,
+  "aggregate_group_quantity_mismatches": 0,
+  "covered_constituent_exact": true,
+  "calendar_day_volume_exact": false,
+  "policy": "SOURCE_SEMANTICALLY_CONSISTENT",
+  "uncovered_trade_subtype": "UNKNOWN",
+  "boundary_analysis": {
+    "previous_day_last_agg_id": 40673575,
+    "may15_first_agg_id": 40673576,
+    "may15_last_agg_id": 41050490,
+    "following_day_first_agg_id": 41050491,
+    "agg_ids_continuous_across_days": true,
+    "previous_day_last_constituent_trade_id": 76938935,
+    "may15_first_trade_id": 76938936,
+    "may15_last_trade_id": 77843004,
+    "following_day_first_constituent_trade_id": 77843005,
+    "trade_ids_continuous_across_days": true,
+    "first_trade_timestamp_ms": 1778803200247,
+    "last_trade_timestamp_ms": 1778889598113,
+    "first_aggregate_timestamp_ms": 1778803200247,
+    "last_aggregate_timestamp_ms": 1778889598113
+  },
+  "neighbor_sources": [
+    {
+      "url": "https://data.binance.vision/data/futures/um/daily/aggTrades/XAUUSDT/XAUUSDT-aggTrades-2026-05-14.zip",
+      "physical_sha256": "99c4d4aadef38f9c04390229a99e89d63e2f7b764cc99a45c083b841a88ef0e7"
+    },
+    {
+      "url": "https://data.binance.vision/data/futures/um/daily/aggTrades/XAUUSDT/XAUUSDT-aggTrades-2026-05-16.zip",
+      "physical_sha256": "ec2957089a28957729b1af84c4ce50447fa8b1c76b0af2fea244520aa4c9ae01"
+    }
+  ],
+  "monthly_archive_comparison": {
+    "url": "https://data.binance.vision/data/futures/um/monthly/aggTrades/XAUUSDT/XAUUSDT-aggTrades-2026-05.zip",
+    "physical_sha256": "3c98cc19345d4e81331e427b26bd88a7bf9118a3e84ed4e6b2b3b72e9f909833",
+    "may15_rows": 376915,
+    "may15_volume": "439970.220",
+    "first_agg_id": 40673576,
+    "last_agg_id": 41050490
+  },
+  "monthly_daily_match": true,
+  "benchmark_day": "2026-05-15",
+  "trades_source": {
+    "url": "https://data.binance.vision/data/futures/um/daily/trades/XAUUSDT/XAUUSDT-trades-2026-05-15.zip",
+    "physical_sha256": "dfdf431c682c949c46c26b35801364b0cbcfb21277697cee070c3302772108a1"
+  },
+  "aggtrades_source": {
+    "url": "https://data.binance.vision/data/futures/um/daily/aggTrades/XAUUSDT/XAUUSDT-aggTrades-2026-05-15.zip",
+    "physical_sha256": "32b9c8c1a9792a62a54ea15d6b232cbeae3c9e338ad9ca23d4596b218007b915"
+  },
+  "source_semantics_url": "https://developers.binance.com/en/docs/catalog/core-trading-derivatives-trading-usd-s-m-futures/api/rest-api/market-data",
+  "explanation": "Binance documents aggregate trades as market trades only. The exact subtype of uncovered archival trades is not exposed by these CSVs."
+}

@@ -1,0 +1,117 @@
+{
+  "status": "SOURCE_METADATA_CONFLICT",
+  "details": "SOURCE_METADATA_CONFLICT: Binance announcement published January 8 says XAUUSDT available January 5, while checksum-verified January archive has trades January 1; exact listing timestamp unknown.",
+  "official_listing_or_availability_timestamp": "UNKNOWN",
+  "official_listing_or_availability_date": "2026-01-05",
+  "first_observable_official_archive_timestamp": "2026-01-01T00:01:00Z",
+  "research_admission_timestamp": "2026-01-06T00:00:00Z",
+  "research_admission_reason": "Exclude pre-announced archive observations January 1-4 and the partial January 5 availability day; retain first full UTC day after stated availability. Archive data predating stated availability remains quarantined.",
+  "sources": {
+    "ecf7318c0d434c339e80878588e700d0": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/ecf7318c0d434c339e80878588e700d0",
+      "title": "Binance Futures Launches TradFi Perpetual Contracts",
+      "page_publication_time": "2026-01-08T08:00:00Z",
+      "rule_effective_time": null,
+      "contract_availability_date": "2026-01-05",
+      "research_admission_time": "2026-01-06T00:00:00Z",
+      "physical_sha256": "7aaf4eb5870b647ec35d07afcdbcecd7f630d04c96f9cf12dc2d1c7fd5e82218",
+      "logical_sha256": "f89887a55b36dc26feec0d77160978f5488de6f6398ec057b0d57aef5507b2dd",
+      "claims": {
+        "contract_availability_date": "made available to all eligible markets on 2026-01-05",
+        "contract_24_7": "TradFi perpetual contracts trade 24/7"
+      }
+    },
+    "4636922abdba4e5787c5f7643f8170d7": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/4636922abdba4e5787c5f7643f8170d7",
+      "title": "Important Updates on the Funding Rate of USDⓈ-M XAUUSDT and XAGUSDT Perpetual Contracts (2026-01-23)",
+      "page_publication_time": "2026-01-22T11:57:00Z",
+      "rule_effective_time": "2026-01-23T08:00:00Z",
+      "contract_availability_date": null,
+      "research_admission_time": null,
+      "physical_sha256": "891fcf3a96a98039ca70656a3e7768448a95cdf7c292cf8d5ce2e441f7c15e9d",
+      "logical_sha256": "50250b816b9cb8544fd06a586f3be69c402e7adc7fd920ba6d344004ad9d44d2",
+      "claims": {
+        "interest_component_zero": "the interest rate of XAUUSDT and XAGUSDT Perpetual Contracts in the funding rate components will be set to 0%"
+      }
+    },
+    "9c9e956d5dae412fadcd62c88b3d7849": {
+      "canonical_url": "https://www.binance.com/en-AE/support/announcement/detail/9c9e956d5dae412fadcd62c88b3d7849",
+      "title": "Binance Futures Will Update the Price Index Components of USDⓈ-Margined XAUUSDT Perpetual Contract (2026-01-29)",
+      "page_publication_time": "2026-01-26T06:45:00Z",
+      "rule_effective_time": "2026-01-29T08:00:00Z",
+      "contract_availability_date": null,
+      "research_admission_time": null,
+      "physical_sha256": "d1020f1f6bf3bdbf2b1dbe597808c8674a7d853634e4cca472c966895f87bce8",
+      "logical_sha256": "e7717c146f8c709c7feb53769b54f7efcae3605f3cb70c0c506ff513b8709fb4",
+      "claims": {
+        "price_index_components": "Binance Futures will update the price index components"
+      }
+    },
+    "db04567123a44a89b112b9ae403a9c7d": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/db04567123a44a89b112b9ae403a9c7d",
+      "title": "Important Updates on the Funding Rate of TradFi Perpetual Contracts (2026-01-30)",
+      "page_publication_time": "2026-01-30T06:30:00Z",
+      "rule_effective_time": "2026-01-30T12:15:00Z",
+      "contract_availability_date": null,
+      "research_admission_time": null,
+      "physical_sha256": "b5fc65f3ae8e4b49a1f58ac46b0858c59988e396ca116f4ab5aeb1cacb0b0013",
+      "logical_sha256": "8685540a193018144fdaf596a886dc72a1e78c7b7fc54a438adc4dd3c997f79c",
+      "claims": {
+        "funding_interval_eight_hours": "from every four hours to every eight hours"
+      }
+    },
+    "55bd3594394a46daa910df5746355ff4": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/55bd3594394a46daa910df5746355ff4",
+      "title": "Important Updates on the Funding Rate of XAUUSDT, XAGUSDT, XPTUSDT and XPDUSDT Perpetual Contracts (2026-01-30)",
+      "page_publication_time": "2026-01-30T18:03:00Z",
+      "rule_effective_time": "2026-01-30T18:15:00Z",
+      "contract_availability_date": null,
+      "research_admission_time": null,
+      "physical_sha256": "c0b5cd58b1e1db643a2f151dd77c106e3cfecc94bcf7008f3a88f7caf05e0ecc",
+      "logical_sha256": "ec613f89a8173c9be034129caef49123bc847856df2a4285031a20de8edfb87a",
+      "claims": {
+        "funding_interval_four_hours": "from every eight hours to every four hours"
+      }
+    },
+    "319824740830977": {
+      "canonical_url": "https://www.binance.com/en/square/post/319824740830977",
+      "title": "Important Updates on Price Index Calculation Mode of Commodity-Based TradFi Perpetual Contracts (2026-05-08)",
+      "page_publication_time": "2026-05-05T09:30:12.000Z",
+      "rule_effective_time": "2026-05-08T21:00:00Z",
+      "contract_availability_date": null,
+      "research_admission_time": null,
+      "physical_sha256": "ea9936aa00723b6b6ce5f4eda01e87916d74f2b0743674cfe7c0c85f93a951a7",
+      "logical_sha256": "7117bab8556fce4b93588880e7579b5627cafad9c4978da9aa245a192475b0a6",
+      "claims": {
+        "orderbook_ewma": "introduce Orderbook EWMA price index calculation mode"
+      }
+    },
+    "f69c05ebdba7422e9c614685abe84dc5": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/f69c05ebdba7422e9c614685abe84dc5",
+      "title": "Important Updates on Trading Hours and Price Index Calculation Mode of Commodity-Based TradFi Perpetual Contracts (2026-09-15)",
+      "page_publication_time": "2026-09-15T02:15:00Z",
+      "rule_effective_time": "2026-09-15T21:00:00Z",
+      "contract_availability_date": null,
+      "research_admission_time": null,
+      "physical_sha256": "3ef1b80e16f2cdface79defdded465908bb30fed80be96abc9c15ec4121b31f3",
+      "logical_sha256": "6869a8a7db51499af9dabba3d67fa6fecbc66291bf3437891654cf37e8a629a3",
+      "claims": {
+        "trading_schedule": "every Sunday 18:00 (ET) to every Friday 17:00 (ET)",
+        "weekend_index_mode": "Weekends and public holidays"
+      }
+    },
+    "BINANCE_REST_EXCHANGE_INFO_SNAPSHOT_20260923": {
+      "canonical_url": "https://fapi.binance.com/fapi/v1/exchangeInfo",
+      "title": "Binance USD-M exchangeInfo XAUUSDT",
+      "page_publication_time": null,
+      "rule_effective_time": null,
+      "contract_availability_date": null,
+      "research_admission_time": null,
+      "physical_sha256": "c4b52556e6b03d179e4a02fc2a9758a0c40312945ca5ba1bc4f68ff07a1ae8ec",
+      "logical_sha256": "3ee1d2adda24c8cf9e77a16c8f77ee5ebb350ce04069420b03f590a697762211",
+      "claims": {
+        "symbol_identity": "\"symbol\": \"XAUUSDT\""
+      }
+    }
+  }
+}

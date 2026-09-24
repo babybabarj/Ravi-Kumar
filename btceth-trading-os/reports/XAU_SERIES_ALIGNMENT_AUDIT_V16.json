@@ -1,0 +1,11 @@
+{
+  "rows": 374400,
+  "quality_flag_nonzero_rows": 0,
+  "null_counts": {
+    "mark_price": 0,
+    "index_price": 0,
+    "premium_index": 0
+  },
+  "silent_fallback": "DISABLED",
+  "all_passed": true
+}

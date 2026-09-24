@@ -1,0 +1,94 @@
+{
+  "manifest_version": "3.0.0",
+  "source_mode": "snapshot",
+  "sources_requested": 8,
+  "sources_fetched": 0,
+  "sources_restored_from_committed_snapshot": 8,
+  "sources": {
+    "ecf7318c0d434c339e80878588e700d0": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/ecf7318c0d434c339e80878588e700d0",
+      "parser_version": "xau-source-extraction-3.0.0",
+      "physical_sha256": "7aaf4eb5870b647ec35d07afcdbcecd7f630d04c96f9cf12dc2d1c7fd5e82218",
+      "logical_sha256": "f89887a55b36dc26feec0d77160978f5488de6f6398ec057b0d57aef5507b2dd",
+      "logical_sha_match": true,
+      "published_at": "2026-01-08T08:00:00Z",
+      "title": "Binance Futures Launches TradFi Perpetual Contracts",
+      "status": "PASS"
+    },
+    "4636922abdba4e5787c5f7643f8170d7": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/4636922abdba4e5787c5f7643f8170d7",
+      "parser_version": "xau-source-extraction-3.0.0",
+      "physical_sha256": "891fcf3a96a98039ca70656a3e7768448a95cdf7c292cf8d5ce2e441f7c15e9d",
+      "logical_sha256": "50250b816b9cb8544fd06a586f3be69c402e7adc7fd920ba6d344004ad9d44d2",
+      "logical_sha_match": true,
+      "published_at": "2026-01-22T11:57:00Z",
+      "title": "Important Updates on the Funding Rate of USD\u24c8-M XAUUSDT and XAGUSDT Perpetual Contracts (2026-01-23)",
+      "status": "PASS"
+    },
+    "9c9e956d5dae412fadcd62c88b3d7849": {
+      "canonical_url": "https://www.binance.com/en-AE/support/announcement/detail/9c9e956d5dae412fadcd62c88b3d7849",
+      "parser_version": "xau-source-extraction-3.0.0",
+      "physical_sha256": "d1020f1f6bf3bdbf2b1dbe597808c8674a7d853634e4cca472c966895f87bce8",
+      "logical_sha256": "e7717c146f8c709c7feb53769b54f7efcae3605f3cb70c0c506ff513b8709fb4",
+      "logical_sha_match": true,
+      "published_at": "2026-01-26T06:45:00Z",
+      "title": "Binance Futures Will Update the Price Index Components of USD\u24c8-Margined XAUUSDT Perpetual Contract (2026-01-29)",
+      "status": "PASS"
+    },
+    "db04567123a44a89b112b9ae403a9c7d": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/db04567123a44a89b112b9ae403a9c7d",
+      "parser_version": "xau-source-extraction-3.0.0",
+      "physical_sha256": "b5fc65f3ae8e4b49a1f58ac46b0858c59988e396ca116f4ab5aeb1cacb0b0013",
+      "logical_sha256": "8685540a193018144fdaf596a886dc72a1e78c7b7fc54a438adc4dd3c997f79c",
+      "logical_sha_match": true,
+      "published_at": "2026-01-30T06:30:00Z",
+      "title": "Important Updates on the Funding Rate of TradFi Perpetual Contracts (2026-01-30)",
+      "status": "PASS"
+    },
+    "55bd3594394a46daa910df5746355ff4": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/55bd3594394a46daa910df5746355ff4",
+      "parser_version": "xau-source-extraction-3.0.0",
+      "physical_sha256": "c0b5cd58b1e1db643a2f151dd77c106e3cfecc94bcf7008f3a88f7caf05e0ecc",
+      "logical_sha256": "ec613f89a8173c9be034129caef49123bc847856df2a4285031a20de8edfb87a",
+      "logical_sha_match": true,
+      "published_at": "2026-01-30T18:03:00Z",
+      "title": "Important Updates on the Funding Rate of XAUUSDT, XAGUSDT, XPTUSDT and XPDUSDT Perpetual Contracts (2026-01-30)",
+      "status": "PASS"
+    },
+    "319824740830977": {
+      "canonical_url": "https://www.binance.com/en/square/post/319824740830977",
+      "parser_version": "xau-source-extraction-3.0.0",
+      "physical_sha256": "ea9936aa00723b6b6ce5f4eda01e87916d74f2b0743674cfe7c0c85f93a951a7",
+      "logical_sha256": "7117bab8556fce4b93588880e7579b5627cafad9c4978da9aa245a192475b0a6",
+      "logical_sha_match": true,
+      "published_at": "2026-05-05T09:30:12.000Z",
+      "title": "Important Updates on Price Index Calculation Mode of Commodity-Based TradFi Perpetual Contracts (2026-05-08)",
+      "status": "PASS"
+    },
+    "f69c05ebdba7422e9c614685abe84dc5": {
+      "canonical_url": "https://www.binance.com/en/support/announcement/detail/f69c05ebdba7422e9c614685abe84dc5",
+      "parser_version": "xau-source-extraction-3.0.0",
+      "physical_sha256": "3ef1b80e16f2cdface79defdded465908bb30fed80be96abc9c15ec4121b31f3",
+      "logical_sha256": "6869a8a7db51499af9dabba3d67fa6fecbc66291bf3437891654cf37e8a629a3",
+      "logical_sha_match": true,
+      "published_at": "2026-09-15T02:15:00Z",
+      "title": "Important Updates on Trading Hours and Price Index Calculation Mode of Commodity-Based TradFi Perpetual Contracts (2026-09-15)",
+      "status": "PASS"
+    },
+    "BINANCE_REST_EXCHANGE_INFO_SNAPSHOT_20260923": {
+      "canonical_url": "https://fapi.binance.com/fapi/v1/exchangeInfo",
+      "parser_version": "xau-source-extraction-3.0.0",
+      "physical_sha256": "c4b52556e6b03d179e4a02fc2a9758a0c40312945ca5ba1bc4f68ff07a1ae8ec",
+      "logical_sha256": "3ee1d2adda24c8cf9e77a16c8f77ee5ebb350ce04069420b03f590a697762211",
+      "logical_sha_match": true,
+      "published_at": null,
+      "title": "Binance USD-M exchangeInfo XAUUSDT",
+      "status": "PASS"
+    }
+  },
+  "source_failures": [],
+  "all_passed": true,
+  "fresh_worktree": "/tmp/xau-v16-code-acceptance-final",
+  "fresh_worktree_head_sha": "d394be5496cf8aa909830cf12a5af349f24499ab",
+  "fresh_worktree_artifact_directory_initially_absent": true
+}

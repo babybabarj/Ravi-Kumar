@@ -1,0 +1,3 @@
+# Phase 2E.2 XAU foundation V16
+
+The evidence JSON files in this directory contain the source, archive, funding, session, and hash checks. May 15 has 99 trade IDs totaling 32.841 XAU outside the aggregate series; the included groups reconcile exactly. Their precise trade subtype is unknown. The checksum-valid June monthly trades archive fails ordering and duplicate-ID checks; 30 official daily files replace it. The January archive predates the availability date stated on Binance's January 8 page, so listing time remains unknown and pre-admission data stays quarantined. No strategy research, shadow, paper, or live trading was enabled. Stop for independent review.

@@ -1,0 +1,80 @@
+{
+  "holiday_calendar_implemented": false,
+  "samples": {
+    "ordinary_weekday": {
+      "timestamp_utc": "2026-07-06T14:00:00+00:00",
+      "underlying_state": "UNDERLYING_OPEN",
+      "contract_state": "CONTRACT_TRADING",
+      "is_contract_tradable": true,
+      "price_index_regime": "STANDARD_OR_EWMA",
+      "holiday_status": "NOT_IMPLEMENTED",
+      "underlying_session_certainty": "WEEKDAY_RULE_ONLY",
+      "price_index_mode": "REGULAR_SCHEDULE_INFERRED",
+      "price_index_mode_certainty": "HOLIDAY_UNKNOWN"
+    },
+    "weekend": {
+      "timestamp_utc": "2026-07-05T14:00:00+00:00",
+      "underlying_state": "UNDERLYING_OFF_HOURS_INDEX_MODE",
+      "contract_state": "CONTRACT_TRADING",
+      "is_contract_tradable": true,
+      "price_index_regime": "STANDARD_OR_EWMA",
+      "holiday_status": "NOT_IMPLEMENTED",
+      "underlying_session_certainty": "VERIFIED_WEEKEND_RULE",
+      "price_index_mode": "ORDERBOOK_EWMA_SCHEDULE_INFERRED",
+      "price_index_mode_certainty": "VERIFIED_EWMA"
+    },
+    "pre_september_daily_break": {
+      "timestamp_utc": "2026-07-06T21:30:00+00:00",
+      "underlying_state": "UNDERLYING_OFF_HOURS_INDEX_MODE",
+      "contract_state": "CONTRACT_TRADING",
+      "is_contract_tradable": true,
+      "price_index_regime": "STANDARD_OR_EWMA",
+      "holiday_status": "NOT_IMPLEMENTED",
+      "underlying_session_certainty": "WEEKDAY_RULE_ONLY",
+      "price_index_mode": "ORDERBOOK_EWMA_SCHEDULE_INFERRED",
+      "price_index_mode_certainty": "HOLIDAY_UNKNOWN"
+    },
+    "post_september_continuous": {
+      "timestamp_utc": "2026-09-16T21:30:00+00:00",
+      "underlying_state": "UNDERLYING_OPEN",
+      "contract_state": "CONTRACT_TRADING",
+      "is_contract_tradable": true,
+      "price_index_regime": "STANDARD_OR_EWMA",
+      "holiday_status": "NOT_IMPLEMENTED",
+      "underlying_session_certainty": "WEEKDAY_RULE_ONLY",
+      "price_index_mode": "REGULAR_SCHEDULE_INFERRED",
+      "price_index_mode_certainty": "HOLIDAY_UNKNOWN"
+    },
+    "dst_before": {
+      "timestamp_utc": "2026-03-08T06:30:00+00:00",
+      "underlying_state": "UNDERLYING_OFF_HOURS_INDEX_MODE",
+      "contract_state": "CONTRACT_TRADING",
+      "is_contract_tradable": true,
+      "price_index_regime": "STANDARD_OR_EWMA",
+      "holiday_status": "NOT_IMPLEMENTED",
+      "underlying_session_certainty": "VERIFIED_WEEKEND_RULE",
+      "price_index_mode": "ORDERBOOK_EWMA_SCHEDULE_INFERRED",
+      "price_index_mode_certainty": "VERIFIED_EWMA"
+    },
+    "dst_after": {
+      "timestamp_utc": "2026-03-08T07:30:00+00:00",
+      "underlying_state": "UNDERLYING_OFF_HOURS_INDEX_MODE",
+      "contract_state": "CONTRACT_TRADING",
+      "is_contract_tradable": true,
+      "price_index_regime": "STANDARD_OR_EWMA",
+      "holiday_status": "NOT_IMPLEMENTED",
+      "underlying_session_certainty": "VERIFIED_WEEKEND_RULE",
+      "price_index_mode": "ORDERBOOK_EWMA_SCHEDULE_INFERRED",
+      "price_index_mode_certainty": "VERIFIED_EWMA"
+    }
+  },
+  "weekday_certainty_not_verified": true,
+  "weekday_index_holiday_unknown": true,
+  "contract_tradability_separate": true,
+  "timezone": "America/New_York; ZoneInfo construction fails closed",
+  "timezone_failure_fail_closed": true,
+  "dst_eastern_local_times": {
+    "dst_before": "2026-03-08T01:30:00-05:00",
+    "dst_after": "2026-03-08T03:30:00-04:00"
+  }
+}

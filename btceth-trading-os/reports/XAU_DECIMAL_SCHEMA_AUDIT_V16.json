@@ -1,0 +1,33 @@
+{
+  "fields": {
+    "ts_event_ns": "int64",
+    "open": "decimal128(18, 4)",
+    "high": "decimal128(18, 4)",
+    "low": "decimal128(18, 4)",
+    "close": "decimal128(18, 4)",
+    "volume": "decimal128(28, 8)",
+    "quote_volume": "decimal128(28, 8)",
+    "trade_count": "int64",
+    "taker_buy_volume": "decimal128(28, 8)",
+    "taker_buy_quote_volume": "decimal128(28, 8)",
+    "mark_price": "decimal128(18, 8)",
+    "index_price": "decimal128(18, 8)",
+    "premium_index": "decimal128(18, 8)",
+    "is_funding_event": "bool",
+    "funding_event_rate": "decimal128(18, 8)",
+    "last_realized_funding_event_ts_ns": "int64",
+    "last_realized_funding_rate": "decimal128(18, 8)",
+    "contract_rule_epoch_id": "string",
+    "underlying_session_state": "string",
+    "is_contract_tradable": "bool",
+    "series_quality_flags": "int32",
+    "instrument_id": "string",
+    "funding_event_ts_ns": "int64",
+    "underlying_session_certainty": "string",
+    "holiday_status": "string",
+    "price_index_mode": "string",
+    "price_index_mode_certainty": "string"
+  },
+  "financial_fields_decimal128": true,
+  "float_financial_fields": []
+}
