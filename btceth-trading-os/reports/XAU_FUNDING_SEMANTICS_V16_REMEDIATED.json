@@ -1,0 +1,82 @@
+{
+  "report_type": "XAU_FUNDING_SEMANTICS_V16_REMEDIATED",
+  "remediation_reason": "Independent review found phrase 1589 discrete 8-hour settlement events is factually incorrect. Funding events have epoch-specific intervals: primarily 4h, with 1 event in the temporary 8h epoch (4A on 2026-01-30). Code and data were already correct; this report corrects the wording.",
+  "ambiguous_generic_funding_rate_absent": true,
+  "discrete_event_rows": 1589,
+  "pre_admission_unverifiable_events": 30,
+  "admitted_events": 1559,
+  "admitted_events_visible_in_bars": 1559,
+  "bars_with_single_funding_event": 1559,
+  "no_double_count": true,
+  "event_timestamp_causal": true,
+  "first_bar_last_realized_null": true,
+  "source_interval_mismatches_in_admitted_events": 0,
+  "total_interval_distribution": {
+    "4h": 1588,
+    "8h": 1
+  },
+  "admitted_interval_distribution": {
+    "4h": 1558,
+    "8h": 1
+  },
+  "per_epoch_interval_breakdown": {
+    "XAU_EPOCH_0_QUARANTINED_PRE_ADMISSION": {
+      "4h": 30
+    },
+    "XAU_EPOCH_1_LAUNCH_DISCOVERY": {
+      "4h": 104
+    },
+    "XAU_EPOCH_2_ZERO_INTEREST_COMPONENT": {
+      "4h": 36
+    },
+    "XAU_EPOCH_3_INDEX_WEIGHT_REBALANCE": {
+      "4h": 8
+    },
+    "XAU_EPOCH_4A_8H_TEMPORARY_FUNDING": {
+      "8h": 1
+    },
+    "XAU_EPOCH_4B_4H_FUNDING_AND_CAP_EXPANSION": {
+      "4h": 589
+    },
+    "XAU_EPOCH_5_ORDERBOOK_EWMA_INDEX_MODE": {
+      "4h": 779
+    },
+    "XAU_EPOCH_6_ET_SESSION_CALENDAR_REGIME": {
+      "4h": 42
+    }
+  },
+  "jan30_4h_8h_4h_sequence": {
+    "epoch_3_last_event": {
+      "timestamp_utc": "2026-01-30T12:00:00.001000+00:00",
+      "epoch": "XAU_EPOCH_3_INDEX_WEIGHT_REBALANCE",
+      "interval_hours": 4
+    },
+    "epoch_4a_single_event": {
+      "timestamp_utc": "2026-01-30T16:00:00.001000+00:00",
+      "epoch": "XAU_EPOCH_4A_8H_TEMPORARY_FUNDING",
+      "interval_hours": 8,
+      "delta_from_prev_h": 4.0
+    },
+    "epoch_4b_first_event": {
+      "timestamp_utc": "2026-01-30T20:00:00.001000+00:00",
+      "epoch": "XAU_EPOCH_4B_4H_FUNDING_AND_CAP_EXPANSION",
+      "interval_hours": 4,
+      "delta_from_4a_h": 4.0
+    },
+    "epoch_4b_continuation": [
+      "2026-01-30T20:00:00.001000+00:00",
+      "2026-01-31T00:00:00.001000+00:00",
+      "2026-01-31T04:00:00.002000+00:00",
+      "2026-01-31T08:00:00.001000+00:00"
+    ]
+  },
+  "first_admitted_event_utc": "2026-01-06T00:00:00.001000+00:00",
+  "last_admitted_event_utc": "2026-09-22T20:00:00.001000+00:00",
+  "funding_description": "Discrete funding settlement events with epoch-specific intervals: epoch 1-3 and 4B-6 are 4h settlements; epoch 4A (2026-01-30 12:15Z to 18:15Z) is a single 8h settlement; epoch 0 pre-admission events are quarantined and unverifiable.",
+  "incorrect_prior_phrase": "1589 discrete 8-hour settlement events",
+  "correct_phrase": "1589 discrete funding settlement events with epoch-specific intervals (primarily 4h, 1 event in 8h epoch 4A)",
+  "epoch_transition_correction": "Index component change effective 2026-01-29T08:00:00Z per primary page",
+  "jan30_transition_proven": true,
+  "pre_admission_interval_unverifiable": 30,
+  "all_passed": true
+}

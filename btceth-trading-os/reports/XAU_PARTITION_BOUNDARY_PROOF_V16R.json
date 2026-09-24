@@ -1,0 +1,52 @@
+{
+  "report_type": "XAU_PARTITION_RESEARCH_ADMISSION_PROOF_V16R",
+  "research_admission_ns": 1767657600000000000,
+  "research_admission_utc": "2026-01-06T00:00:00+00:00",
+  "partition_name_note": "XAUUSDT_DEV_2026_01_04_V3 name reflects epoch range (epochs 1-4), NOT a Jan-4 start date. Actual first bar is 2026-01-06 00:00:00 UTC.",
+  "partitions": {
+    "XAUUSDT_DEV_2026_01_04_V3": {
+      "role": "DEVELOPMENT",
+      "rows": 165600,
+      "min_ts_ns": 1767657600000000000,
+      "min_ts_utc": "2026-01-06T00:00:00+00:00",
+      "max_ts_ns": 1777593540000000000,
+      "max_ts_utc": "2026-04-30T23:59:00+00:00",
+      "no_row_before_research_admission": true,
+      "pre_admission_funding_leaked": false
+    },
+    "XAUUSDT_VAL_2026_05_07_V3": {
+      "role": "VALIDATION",
+      "rows": 132480,
+      "min_ts_ns": 1777593600000000000,
+      "min_ts_utc": "2026-05-01T00:00:00+00:00",
+      "max_ts_ns": 1785542340000000000,
+      "max_ts_utc": "2026-07-31T23:59:00+00:00",
+      "no_row_before_research_admission": true,
+      "pre_admission_funding_leaked": false
+    },
+    "XAUUSDT_HOLDOUT_2026_08_09_V3": {
+      "role": "LOCKED_HOLDOUT",
+      "rows": 66060,
+      "min_ts_ns": 1785542400000000000,
+      "min_ts_utc": "2026-08-01T00:00:00+00:00",
+      "max_ts_ns": 1789505940000000000,
+      "max_ts_utc": "2026-09-15T20:59:00+00:00",
+      "no_row_before_research_admission": null,
+      "pre_admission_funding_leaked": false
+    },
+    "XAUUSDT_PROSPECTIVE_PRISTINE_V3": {
+      "role": "LOCKED_PROSPECTIVE_PRISTINE",
+      "rows": 10260,
+      "min_ts_ns": 1789506000000000000,
+      "min_ts_utc": "2026-09-15T21:00:00+00:00",
+      "max_ts_ns": 1790121540000000000,
+      "max_ts_utc": "2026-09-22T23:59:00+00:00",
+      "no_row_before_research_admission": null,
+      "pre_admission_funding_leaked": false
+    }
+  },
+  "all_dev_val_above_admission": true,
+  "pre_admission_funding_leak": false,
+  "holdout_locked": true,
+  "pristine_locked": true
+}

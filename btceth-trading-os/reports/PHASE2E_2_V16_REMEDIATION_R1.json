@@ -1,0 +1,63 @@
+{
+  "report_type": "PHASE2E_2_V16_REMEDIATION_R1",
+  "remediation_version": "R1",
+  "parent_code_commit": "d394be5496cf8aa909830cf12a5af349f24499ab",
+  "parent_evidence_commit": "ab624ac5066d9b98b893b291fb3ee2c95c0426d1",
+  "remediation_trigger": "Independent review identified factual error: phrase 1589 discrete 8-hour settlement events incorrectly implies all events are 8-hour settlements.",
+  "case": "CASE_A",
+  "case_description": "Code and data are correct. The funding epoch model (epochs 0-6) was already implemented correctly. The single event in epoch 4A (2026-01-30 16:00 UTC) has funding_interval_hours=8 correctly. All other events are 4h. The error was purely in wording.",
+  "silver_v3_changed": false,
+  "partition_hashes_changed": false,
+  "new_code_committed": true,
+  "new_code_description": "Added 3 regression tests: Jan 30 4h->8h->4h epoch transition, partition research-admission boundary proof, pre-admission funding non-leakage",
+  "funding_root_cause": "Report wording said 8-hour settlement events implying all 1589 events are 8-hour. Actual distribution: 1588 events with 4h epoch-expected interval, 1 event (epoch 4A) with 8h epoch-expected interval.",
+  "exact_interval_distribution": {
+    "total_events": 1589,
+    "admitted_events": 1559,
+    "pre_admission_quarantined": 30,
+    "total_4h_events": 1588,
+    "total_8h_events": 1,
+    "epoch_4a_8h_events": 1,
+    "epoch_4a_event_utc": "2026-01-30T16:00:00.001+00:00"
+  },
+  "jan30_chronology": {
+    "epoch_3_last_event": "2026-01-30T12:00:00.001+00:00",
+    "epoch_4a_effective_from": "2026-01-30T12:15:00+00:00",
+    "epoch_4a_single_event": "2026-01-30T16:00:00.001+00:00",
+    "epoch_4a_effective_to": "2026-01-30T18:15:00+00:00",
+    "epoch_4b_first_event": "2026-01-30T20:00:00.001+00:00",
+    "epoch_4b_continuation": [
+      "2026-01-31T00:00:00.001+00:00",
+      "2026-01-31T04:00:00.002+00:00",
+      "2026-01-31T08:00:00.001+00:00"
+    ],
+    "jan30_sequence_verified": true
+  },
+  "partition_boundary_proof": {
+    "DEV_min_ts_utc": "2026-01-06T00:00:00+00:00",
+    "DEV_no_pre_admission_rows": true,
+    "VAL_min_ts_utc": "2026-05-01T00:00:00+00:00",
+    "VAL_no_pre_admission_rows": true,
+    "pre_admission_funding_leak": false,
+    "partition_name_explanation": "XAUUSDT_DEV_2026_01_04_V3 name reflects epoch range 1-4, not a Jan-4 start date"
+  },
+  "aggtrade_wording_note": "May 15 aggTrade gap (99 trades, 32.841 XAU) subtype remains UNKNOWN. Binance documentation (current as of V16) notes insurance-fund and ADL trades are not aggregated. RPI orders are aggregated without special tags. The committed primary-source snapshot date predates current documentation; archive evidence only proves the 99 trade IDs are absent from aggTrades without proving their subtype.",
+  "new_reports": {
+    "XAU_FUNDING_SEMANTICS_V16_REMEDIATED.json": "21f2a693285adfa882a563d870f90415aab5a013d3e8c48be4ffb6e7c95958ea",
+    "XAU_PARTITION_BOUNDARY_PROOF_V16R.json": "e76bf5c809a5b0958e3e9c0c3d3df64946d45363eddb1f9916d58b68b0ac7071"
+  },
+  "git_state": {
+    "immutable_baseline": "fb2d2c1f25f199ea040212fe683e64776754b805 (origin/btceth-phase1b)",
+    "v15_evidence_commit": "3170c2a608b66be171e8da39d4a0e8eae75f8e96",
+    "v16_code_commit_g": "d394be5496cf8aa909830cf12a5af349f24499ab",
+    "v16_evidence_commit_h": "ab624ac5066d9b98b893b291fb3ee2c95c0426d1",
+    "g_is_ancestor_of_h": true,
+    "h_pushed_to_origin": true,
+    "remediation_strategy": "additive commits on top of H; no force-push; no rewrite of G or H",
+    "remote_branch": "origin/btceth-phase2-multiasset"
+  },
+  "v16_status_prior": "VERIFIED",
+  "v16_status_remediated": "VERIFIED",
+  "remediation_status": "CASE_A_WORDING_ONLY_DATA_CODE_CORRECT",
+  "phase2e_2_v16_status": "VERIFIED"
+}
