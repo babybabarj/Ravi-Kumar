@@ -106,12 +106,12 @@ class FeaturePreprocessor:
         self.cat_indices = [
             i
             for i, fn in enumerate(feature_names)
-            if feature_registry.get_feature(fn).family == "session_context"
+            if feature_registry.get(fn) is not None and feature_registry.get(fn).family == "session_context"
         ]
         self.num_indices = [
             i
             for i, fn in enumerate(feature_names)
-            if feature_registry.get_feature(fn).family != "session_context"
+            if feature_registry.get(fn) is None or feature_registry.get(fn).family != "session_context"
         ]
         self.scaler = TrainOnlyStandardScaler() if self.num_indices else None
         self.cat_encoder = (
