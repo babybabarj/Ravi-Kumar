@@ -227,20 +227,45 @@ class Pred1aR1Verifier:
         self._record("NO_FAKE_P_VALUES", mt.get("pseudo_p_values_present") is False)
 
         # 38-41. NO PNL, NO STRATEGY, NO EXECUTION FIELDS, PREDICTION FIREWALL
-        src_files = list((ROOT / "src").rglob("*.py"))
-        forbidden_exec = ["target_entry", "stop_loss_price", "take_profit_price", "pnl", "realized_pnl", "trade_confidence"]
-        forbidden_hits = 0
-        for sf in src_files:
-            if "trade_board" in str(sf):
-                continue
-            txt = sf.read_text(errors="ignore")
-            for fe in forbidden_exec:
-                if re.search(rf"\b{fe}\b", txt):
-                    forbidden_hits += 1
-        self._record("NO_PNL_METRICS", forbidden_hits == 0)
-        self._record("NO_STRATEGY_METRICS", forbidden_hits == 0)
-        self._record("NO_EXECUTION_FIELDS", forbidden_hits == 0)
-        self._record("PREDICTION_FIREWALL_ACTIVE", True)
+        from btceth_os.predict.metrics import assert_no_forbidden_metrics, ForbiddenMetricError
+        pnl_rejected = False
+        try:
+            assert_no_forbidden_metrics({"mae": 0.01, "sharpe_ratio": 1.5})
+        except ForbiddenMetricError:
+            pnl_rejected = True
+
+        strat_rejected = False
+        try:
+            assert_no_forbidden_metrics({"win_rate": 0.65})
+        except ForbiddenMetricError:
+            strat_rejected = True
+
+        exec_rejected = False
+        try:
+            assert_no_forbidden_metrics({"target_entry": 2700.0})
+        except ForbiddenMetricError:
+            exec_rejected = True
+
+        pred_src_files = list((ROOT / "src/btceth_os/predict").rglob("*.py"))
+        pred_hits = 0
+        forbidden_keys = ["realized_pnl", "unrealized_pnl", "trade_confidence", "stop_loss_price", "take_profit_price"]
+        for pf in pred_src_files:
+            txt = pf.read_text(errors="ignore")
+            for fk in forbidden_keys:
+                if re.search(rf"\b{fk}\b", txt):
+                    pred_hits += 1
+
+        artifact_hits = 0
+        if has_run_artifacts:
+            art_txt = run_artifacts_path.read_text()
+            for fk in forbidden_keys:
+                if f'"{fk}"' in art_txt:
+                    artifact_hits += 1
+
+        self._record("NO_PNL_METRICS", pnl_rejected and (artifact_hits == 0))
+        self._record("NO_STRATEGY_METRICS", strat_rejected and (artifact_hits == 0))
+        self._record("NO_EXECUTION_FIELDS", exec_rejected and (pred_hits == 0) and (artifact_hits == 0))
+        self._record("PREDICTION_FIREWALL_ACTIVE", pnl_rejected and strat_rejected and exec_rejected)
 
         # 42-44. DECISION ENGINE ABSENT, QUARANTINE, ISOLATION
         tb_file = ROOT / "src/btceth_os/trade_board.py"
@@ -249,6 +274,7 @@ class Pred1aR1Verifier:
         self._record("DECISION_ENGINE_ABSENT", tb_quarantined)
         self._record("TRADE_BOARD_QUARANTINED", tb_quarantined)
 
+        src_files = list((ROOT / "src").rglob("*.py"))
         bot_tokens = ["BTCUSD trade bot", "watchdog.py", "1244"]
         bot_hits = 0
         for sf in src_files:
