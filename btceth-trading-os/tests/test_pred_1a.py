@@ -184,7 +184,7 @@ def test_embargo_buffer_enforced():
     splitter = PurgedTemporalSplitter(n_splits=3, purge_window=4, embargo_window=3)
     folds = splitter.split(90)
     for fold in folds:
-        assert fold.embargo_applied == 3
+        assert fold.embargo_count == 3
         # Ensure chronological order within train and test
         assert_chronological(fold.train_indices)
         assert_chronological(fold.test_indices)

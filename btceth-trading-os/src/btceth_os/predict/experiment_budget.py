@@ -42,6 +42,11 @@ class ExperimentRecord:
     seed: int
     status: str  # "COMPLETED", "FAILED"
     artifact_paths: List[str]
+    code_tree_sha: Optional[str] = None
+    dataset_artifact_sha256: Optional[str] = None
+    dataset_logical_hash: Optional[str] = None
+    phase: str = "PRED_1A"
+    research_run_id: str = "PRED_1A_RUN_001"
 
 
 class ExperimentBudgetGovernor:
@@ -132,8 +137,11 @@ class ExperimentBudgetGovernor:
         }
 
     def check_and_log_experiment(self, record: ExperimentRecord) -> None:
-        """Verifies budget before appending experiment record to the audit ledger."""
+        """Verifies budget and uniqueness before appending experiment record to the audit ledger."""
         records = self.load_registry()
+        existing_ids = {r.get("experiment_id") for r in records}
+        if record.experiment_id in existing_ids:
+            raise ValueError(f"DUPLICATE EXPERIMENT ID: {record.experiment_id} already exists in registry.")
         if len(records) >= self.max_total_experiments:
             raise ExperimentBudgetExceededError(
                 f"BUDGET EXCEEDED: total experiments ({len(records)}) reached maximum ({self.max_total_experiments})."

@@ -34,14 +34,12 @@ class TemporalSplitFold:
     purged_count: int
     embargo_count: int
     future_window_bars: int
+    embargo_applied: int = 0
+    embargo_semantics: str = "EXPANDING_WINDOW_TRAIN_PRE_TEST_NO_POST_TEST_TRAIN"
 
     @property
     def purge_applied(self) -> int:
         return self.purged_count
-
-    @property
-    def embargo_applied(self) -> int:
-        return self.embargo_count
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -54,6 +52,8 @@ class TemporalSplitFold:
             "test_end_idx": self.test_end_idx,
             "purged_count": self.purged_count,
             "embargo_count": self.embargo_count,
+            "embargo_applied": self.embargo_applied,
+            "embargo_semantics": self.embargo_semantics,
             "future_window_bars": self.future_window_bars,
         }
 
@@ -166,6 +166,8 @@ class PurgedTemporalSplitter:
                 test_end_idx=final_test[-1],
                 purged_count=purged_count,
                 embargo_count=self.embargo,
+                embargo_applied=0,
+                embargo_semantics="EXPANDING_WINDOW_TRAIN_PRE_TEST_NO_POST_TEST_TRAIN",
                 future_window_bars=self.future_window,
             )
             folds.append(fold)

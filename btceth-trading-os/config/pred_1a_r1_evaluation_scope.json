@@ -1,0 +1,24 @@
+{
+  "phase": "PRED_1A_R1",
+  "status": "FROZEN",
+  "evaluation_scope_version": "1.0.0",
+  "registered_targets_count": 12,
+  "empirically_evaluated_targets_count": 6,
+  "empirically_evaluated_targets": [
+    "future_log_return_5m",
+    "future_log_return_15m",
+    "future_log_return_1h",
+    "future_realized_volatility_1h",
+    "future_max_up_move_1h",
+    "future_trend_state_15m"
+  ],
+  "registered_only_targets": [
+    "future_log_return_4h",
+    "future_realized_volatility_15m",
+    "future_realized_volatility_4h",
+    "future_max_up_move_15m",
+    "future_max_down_move_1h",
+    "future_volatility_expansion_1h"
+  ],
+  "rationale": "Preregistered representative cross-section of forecast horizons (5m, 15m, 1h) across continuous return, volatility, maximum favorable excursion, and discrete regime classification."
+}

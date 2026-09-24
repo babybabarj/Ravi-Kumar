@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[3]
 INTEL_LEDGER_PATH = ROOT / "artifacts" / "research" / "intel_data_access_ledger.jsonl"
 INTEL_LEDGER_LOCK_PATH = ROOT / "artifacts" / "research" / "intel_data_access_ledger.lock"
 PRED_LEDGER_PATH = ROOT / "artifacts" / "research" / "pred_data_access_ledger.jsonl"
+PRED_1A_R1_LEDGER_PATH = ROOT / "artifacts" / "research" / "pred_1a_r1_data_access_ledger.jsonl"
 _LEDGER_LOCK = threading.Lock()
 
 LOCKED_ROLES = {
@@ -156,8 +157,11 @@ class IntelDatasetAccessAPI:
         max_rows: Optional[int] = None,
         ledger_path: Path = INTEL_LEDGER_PATH,
     ) -> pa.Table:
-        if ledger_path == INTEL_LEDGER_PATH and phase.startswith("PRED"):
-            ledger_path = PRED_LEDGER_PATH
+        if ledger_path == INTEL_LEDGER_PATH:
+            if phase.startswith("PRED_1A_R1"):
+                ledger_path = PRED_1A_R1_LEDGER_PATH
+            elif phase.startswith("PRED"):
+                ledger_path = PRED_LEDGER_PATH
 
         req = IntelDataAccessRequest(
             asset=asset,

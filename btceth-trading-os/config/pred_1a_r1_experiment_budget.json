@@ -1,0 +1,22 @@
+{
+  "phase": "PRED_1A_R1",
+  "budget_version": "1.0.0",
+  "status": "FROZEN",
+  "max_targets": 12,
+  "max_model_families": 6,
+  "max_feature_groups": 6,
+  "allowed_feature_groups": [
+    "ALL_FEATURES",
+    "PRICE_TREND_ONLY",
+    "VOLATILITY_ONLY",
+    "ACTIVITY_LIQUIDITY_ONLY",
+    "FUNDING_ONLY",
+    "SESSION_CONTEXT_ONLY"
+  ],
+  "disallowed_feature_groups": [
+    "CROSS_ASSET_ONLY"
+  ],
+  "max_hyperparameter_variants": 8,
+  "max_total_experiments": 100,
+  "description": "Pre-declared experiment budget for PRED-1A R1 remediation."
+}

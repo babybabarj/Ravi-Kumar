@@ -150,3 +150,65 @@ class TrainOnlyRobustScaler:
             scaled_row = [(row[j] - self.medians_[j]) / self.iqrs_[j] for j in range(self.n_features_)]
             scaled.append(scaled_row)
         return scaled
+
+
+class TrainOnlyCategoricalEncoder:
+    """Encodes categorical string features strictly using vocabularies learned from training fold data.
+    
+    Guarantees:
+      1. Vocabularies can fit ONLY on training fold data.
+      2. Index 0 is strictly reserved for 'UNKNOWN'.
+      3. Observed categories in train are assigned deterministic integer indices 1..K (sorted alphabetically).
+      4. Test-only categories are mapped safely to 0 (UNKNOWN) without mutating the train vocabulary.
+      5. Explicit error raised if transform is attempted before fit.
+    """
+
+    def __init__(self):
+        self.vocabularies_: Optional[List[Dict[str, int]]] = None
+        self.n_features_: Optional[int] = None
+        self.fitted_on_rows_: int = 0
+
+    def fit(self, X: Sequence[Sequence[Any]]) -> TrainOnlyCategoricalEncoder:
+        if not X or not X[0]:
+            raise ValueError("Cannot fit on empty dataset.")
+        n_samples = len(X)
+        n_features = len(X[0])
+        self.n_features_ = n_features
+        self.fitted_on_rows_ = n_samples
+
+        vocabularies: List[Dict[str, int]] = []
+        for j in range(n_features):
+            unique_cats = sorted({str(X[i][j]) for i in range(n_samples) if X[i][j] is not None})
+            vocab = {"UNKNOWN": 0}
+            for idx, cat in enumerate(unique_cats, start=1):
+                vocab[cat] = idx
+            vocabularies.append(vocab)
+
+        self.vocabularies_ = vocabularies
+        return self
+
+    def transform(self, X: Sequence[Sequence[Any]]) -> List[List[float]]:
+        if self.vocabularies_ is None:
+            raise ScalerNotFittedError("TrainOnlyCategoricalEncoder must be fitted before transforming.")
+        n_features = self.n_features_
+        encoded: List[List[float]] = []
+        for row in X:
+            encoded_row = [0.0] * n_features
+            for j in range(n_features):
+                val_str = str(row[j]) if row[j] is not None else "UNKNOWN"
+                code = self.vocabularies_[j].get(val_str, 0)
+                encoded_row[j] = float(code)
+            encoded.append(encoded_row)
+        return encoded
+
+    def fit_transform(self, X: Sequence[Sequence[Any]]) -> List[List[float]]:
+        return self.fit(X).transform(X)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "encoder_type": "TrainOnlyCategoricalEncoder",
+            "fitted_on_rows": self.fitted_on_rows_,
+            "n_features": self.n_features_,
+            "vocabularies": self.vocabularies_,
+        }
+
