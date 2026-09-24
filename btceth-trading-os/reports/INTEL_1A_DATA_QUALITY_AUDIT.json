@@ -1,0 +1,14 @@
+{
+  "report_type": "INTEL_1A_DATA_QUALITY_AUDIT",
+  "evaluated_dataset": "XAUUSDT_DEV_2026_01_04_V3 (sample 5000 bars)",
+  "bars_assessed": 5000,
+  "counts_by_status": {
+    "GOOD": 0,
+    "DEGRADED": 5000,
+    "UNRELIABLE": 0,
+    "UNKNOWN": 0
+  },
+  "zero_unreliable_bars": true,
+  "degraded_reasons_audit": "Session unproven holiday state correctly tagged as DEGRADED (HOLIDAY_STATE_UNPROVEN)",
+  "data_quality_gate_verified": true
+}

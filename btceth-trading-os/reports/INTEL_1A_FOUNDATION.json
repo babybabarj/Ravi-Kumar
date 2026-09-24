@@ -1,0 +1,25 @@
+{
+  "report_type": "INTEL_1A_FOUNDATION",
+  "status": "VERIFIED",
+  "phase": "INTEL_1A",
+  "tested_code_sha": "b2ad824fc077d1b99d30e277b703af49e3dd4a72",
+  "tested_tree_sha": "d982f7c95d9a67dffae1eef5c3ac1a4772ba7fc6",
+  "v16_baseline_sha": "8df25bc8e949219be77faba1a48c095852c0a1d5",
+  "canonical_baseline_sha": "fb2d2c1f25f199ea040212fe683e64776754b805",
+  "feature_set_id": "INTEL_FEATURESET_V1",
+  "total_features": 39,
+  "trading_capability": "ZERO",
+  "mainnet_order_mutation": "DISABLED",
+  "successful_holdout_accesses": 0,
+  "successful_pristine_accesses": 0,
+  "report_sha256": {
+    "INTEL_1A_FEATURE_REGISTRY.json": "d1d8183db36233477b7934272c906bed8957c4c0e3a3b2128bf0a3336134f34b",
+    "INTEL_1A_CAUSALITY_AUDIT.json": "689f12a621340c0b29c5728f5c32ee3ee278307df678550fe8e3b0d0a9ce46fd",
+    "INTEL_1A_DATA_ACCESS_AUDIT.json": "247dcb4f94add241dbbc00fca9fabcbaaea77fc5f83029c0f5f468d4ac4da080",
+    "INTEL_1A_DATA_QUALITY_AUDIT.json": "d5ffe43a15a182e4821a82dbe9f00e6ada95cce206de1f5fa0067b569e005f78",
+    "INTEL_1A_CROSS_ASSET_FOUNDATION.json": "e6aef1fc93167ff510fd3e59c6f4e17edae6164ff7f98023ba49e3b80e930e2d",
+    "INTEL_1A_REPRODUCIBILITY.json": "5024da297bc7d8eefff663d80761d74168109b1fd2e583811f4ffd44758a8300",
+    "INTEL_1A_SECURITY_AUDIT.json": "6da3a382443a526bcfd6cc50ff16aaddcbbde19b84b59b225f4b083b6ac458d2"
+  },
+  "next_step": "STOP_FOR_INDEPENDENT_REVIEW"
+}

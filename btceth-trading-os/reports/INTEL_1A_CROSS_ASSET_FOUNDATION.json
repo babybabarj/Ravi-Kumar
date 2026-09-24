@@ -1,0 +1,21 @@
+{
+  "report_type": "INTEL_1A_CROSS_ASSET_FOUNDATION",
+  "supported_assets": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "XAUUSDT"
+  ],
+  "metrics_implemented": [
+    "trailing_return_correlation",
+    "rolling_covariance",
+    "beta_estimate",
+    "relative_volatility_ratio",
+    "lead_lag_cross_correlation",
+    "cross_asset_dispersion",
+    "regime_agreement"
+  ],
+  "descriptive_only": true,
+  "trading_signals_emitted": false,
+  "lead_lag_return_optimization": false,
+  "cross_asset_engine_verified": true
+}

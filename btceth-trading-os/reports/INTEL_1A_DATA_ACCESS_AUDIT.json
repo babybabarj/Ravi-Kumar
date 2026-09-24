@@ -1,0 +1,12 @@
+{
+  "report_type": "INTEL_1A_DATA_ACCESS_AUDIT",
+  "ledger_path": "artifacts/research/intel_data_access_ledger.jsonl",
+  "successful_holdout_accesses": 0,
+  "successful_pristine_accesses": 0,
+  "total_access_attempts": 0,
+  "granted_accesses": 0,
+  "denied_accesses": 0,
+  "accesses_by_role": {},
+  "accesses_by_asset": {},
+  "audit_passed": true
+}

@@ -1,0 +1,9 @@
+{
+  "report_type": "INTEL_1A_REPRODUCIBILITY",
+  "benchmark_dataset": "XAUUSDT_DEV_2026_01_04_V3 (1000 bars)",
+  "run1_logical_hash": "d4e77bafe910c5125e076b7855eb104232975591091196a3671a89e2591062e5",
+  "run2_logical_hash": "d4e77bafe910c5125e076b7855eb104232975591091196a3671a89e2591062e5",
+  "deterministic_hashes_match": true,
+  "compression_independent": true,
+  "reproducibility_verified": true
+}

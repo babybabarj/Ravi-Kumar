@@ -1,0 +1,15 @@
+{
+  "report_type": "INTEL_1A_CAUSALITY_AUDIT",
+  "feature_set_id": "INTEL_FEATURESET_V1",
+  "causality_contract": "feature_at_time_t uses ONLY observations at or before time t",
+  "checks": {
+    "no_future_bar_leakage": true,
+    "warmup_bounds_respected": true,
+    "resampling_period_closure_enforced": true,
+    "funding_event_delay_causal": true,
+    "trailing_normalization_only": true,
+    "cross_asset_future_isolation": true,
+    "session_uncertainty_preserved": true
+  },
+  "all_causality_checks_passed": true
+}

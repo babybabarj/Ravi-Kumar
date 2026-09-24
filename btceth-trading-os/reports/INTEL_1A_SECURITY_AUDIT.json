@@ -1,0 +1,12 @@
+{
+  "report_type": "INTEL_1A_SECURITY_AUDIT",
+  "trading_capability": "ZERO",
+  "mainnet_order_mutation": "DISABLED",
+  "approved_for_shadow": 0,
+  "approved_for_paper": 0,
+  "approved_for_live": false,
+  "security_scan_hits_count": 0,
+  "security_scan_hits": [],
+  "separate_btc_bot_interaction": false,
+  "security_audit_passed": true
+}
