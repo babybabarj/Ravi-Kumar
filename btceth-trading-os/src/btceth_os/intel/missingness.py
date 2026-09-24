@@ -37,6 +37,14 @@ class MissingValue:
     reason: MissingReason
     details: Optional[str] = None
 
+    @property
+    def is_missing(self) -> bool:
+        return True
+
+    @property
+    def is_valid(self) -> bool:
+        return False
+
     def to_dict(self) -> dict[str, Any]:
         d: dict[str, Any] = {"is_missing": True, "reason": self.reason.value}
         if self.details:

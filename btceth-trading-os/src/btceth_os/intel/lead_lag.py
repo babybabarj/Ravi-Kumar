@@ -172,6 +172,20 @@ class LeadLagSafetyGate:
                 f"CATEGORY_INELIGIBLE: Metric category '{spec.metric_category}' is not live-eligible."
             )
 
+    @staticmethod
+    def validate_lag(lag: int) -> bool:
+        """Returns True if lag is causally eligible (>= 0), False if negative."""
+        return lag >= 0
+
+    @staticmethod
+    def is_live_eligible(metric_name: str, lag: int = 0) -> bool:
+        """Returns True if both metric and lag are causally live eligible."""
+        if lag < 0:
+            return False
+        if metric_name in RETROSPECTIVE_RESEARCH_ONLY_METRICS:
+            return False
+        return metric_name in CAUSAL_LIVE_ELIGIBLE_METRICS
+
 
 class LeadLagEngine:
     """Computes cross-asset lead/lag metrics with machine-enforced causal boundaries."""
