@@ -520,7 +520,10 @@ class Pred1aR11Verifier:
         self._record("R1_1_REPORT_DIGESTS_MATCH", digests_ok and all_present, is_evidence=True)
 
         diff_files = git("diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").splitlines()
-        ev_only = (len(diff_files) > 0) and all(f.startswith("reports/") for f in diff_files)
+        ev_only = (len(diff_files) > 0) and all(
+            (f.startswith("btceth-trading-os/reports/PRED_1A_R1_1_") or f.startswith("reports/PRED_1A_R1_1_"))
+            for f in diff_files if f.strip()
+        )
         self._record("EVIDENCE_ONLY_FINAL_COMMIT", ev_only, is_evidence=True)
 
         local_head = git("rev-parse", "HEAD")
