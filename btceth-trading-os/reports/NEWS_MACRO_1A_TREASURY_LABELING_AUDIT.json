@@ -1,0 +1,40 @@
+{
+  "report_id": "NEWS_MACRO_1A_TREASURY_LABELING_AUDIT",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "labeling_rules": {
+    "CURRENT_OFFICIAL_OBSERVATION": "Today's official Treasury yield \u2014 available after official publication time",
+    "DAILY_OFFICIAL": "A prior-day official Treasury yield \u2014 not today's data",
+    "STALE": "Treasury yield older than the staleness_days_limit"
+  },
+  "prohibited_labels": [
+    "live yield",
+    "real-time yield",
+    "intraday yield",
+    "live Treasury yield"
+  ],
+  "supported_series": [
+    "US_TREASURY_2Y (FRED DGS2)",
+    "US_TREASURY_5Y (FRED DGS5)",
+    "US_TREASURY_10Y (FRED DGS10)",
+    "US_TREASURY_30Y (FRED DGS30)",
+    "US_TIPS_10Y (FRED DFII10)"
+  ],
+  "implementation_status": "NOT_IMPLEMENTED (all return MacroDataQuality.NOT_IMPLEMENTED in this phase)",
+  "verifier_gate": "GATE-24",
+  "tests": [
+    "test_treasury_current_official_observation",
+    "test_treasury_daily_official",
+    "test_treasury_stale",
+    "test_treasury_label_is_not_live_yield"
+  ],
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  }
+}

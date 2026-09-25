@@ -1,0 +1,67 @@
+{
+  "report_id": "NEWS_MACRO_1A_EVIDENCE",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "phase": "NEWS_MACRO_1A",
+  "status": "VERIFIED",
+  "commit_m_sha": "0b84c32",
+  "commit_m_description": "docs(intel): freeze PRE-MACRO real-data analytical baseline",
+  "commit_n_sha": "3dd5d15",
+  "commit_n_description": "feat(macro): NEWS/MACRO-1A causal point-in-time macro intelligence foundation",
+  "verifier_result": {
+    "mode": "FINAL_EVIDENCE_ACCEPTANCE",
+    "gates_passed": 35,
+    "gates_total": 35,
+    "verdict": "NEWS_MACRO_1A_VERIFIED"
+  },
+  "test_result": {
+    "nm1a_tests_passed": 56,
+    "nm1a_tests_skipped": 1,
+    "nm1a_tests_failed": 0,
+    "full_suite_passed": 605,
+    "full_suite_skipped": 13,
+    "full_suite_failed": 0
+  },
+  "security_scan": {
+    "trading_capability": "ZERO",
+    "hits": []
+  },
+  "macro_intelligence_capabilities": {
+    "types": "IMPLEMENTED",
+    "availability_contract": "IMPLEMENTED",
+    "event_registry": "IMPLEMENTED",
+    "data_quality": "IMPLEMENTED",
+    "snapshot_with_firewall": "IMPLEMENTED",
+    "bls_adapter": "STUB_NOT_IMPLEMENTED",
+    "bea_adapter": "STUB_NOT_IMPLEMENTED",
+    "fed_adapter": "STUB_NOT_IMPLEMENTED",
+    "treasury_adapter": "STUB_NOT_IMPLEMENTED",
+    "alfred_adapter": "STUB_NOT_IMPLEMENTED",
+    "dxy_adapter": "NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+    "breaking_news_adapter": "NOT_IMPLEMENTED_PROVIDER_REQUIRED"
+  },
+  "limitations": [
+    "All data source adapters are stubs in this phase \u2014 data returned is MacroDataQuality.NOT_IMPLEMENTED",
+    "DXY = NOT_IMPLEMENTED_PROVIDER_REQUIRED (ICE DXY provider not configured)",
+    "BREAKING_NEWS = NOT_IMPLEMENTED_PROVIDER_REQUIRED (point-in-time news provider not configured)",
+    "ALFRED_RUNTIME_STATUS = NOT_CONFIGURED (no ALFRED_API_KEY in environment)",
+    "No NLP/hawkish-dovish scoring (out of scope for NEWS/MACRO-1A)",
+    "Strategy = NOT_AUTHORIZED",
+    "Validation / Holdout / Pristine = LOCKED"
+  ],
+  "partition_firewall": {
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  },
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  },
+  "NEWS_MACRO_1A_STATUS": "VERIFIED"
+}

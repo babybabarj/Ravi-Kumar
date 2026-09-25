@@ -1,0 +1,53 @@
+{
+  "report_id": "NEWS_MACRO_1A_CAUSAL_AVAILABILITY_AUDIT",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "availability_states": [
+    {
+      "state": "AVAILABLE",
+      "meaning": "published_at_utc <= snapshot_time_utc, within recency window"
+    },
+    {
+      "state": "NOT_YET_RELEASED",
+      "meaning": "published_at_utc > snapshot_time_utc \u2014 future data, blocked"
+    },
+    {
+      "state": "STALE",
+      "meaning": "available but older than recency window"
+    },
+    {
+      "state": "PROVIDER_NOT_CONFIGURED",
+      "meaning": "credentials absent"
+    },
+    {
+      "state": "PROVIDER_NOT_IMPLEMENTED",
+      "meaning": "integration not yet built"
+    }
+  ],
+  "causal_violation_handling": {
+    "rule": "If published_at_utc > snapshot_time_utc: MacroDataQuality.CAUSAL_VIOLATION",
+    "snapshot_enforcement": "MacroIntelligenceSnapshot.__post_init__ raises ValueError on any causal violation",
+    "value_returned": null
+  },
+  "staleness_default_limit_seconds": 604800,
+  "tests_covering_causal_contract": [
+    "test_availability_checker_available",
+    "test_availability_checker_not_yet_released",
+    "test_availability_checker_stale",
+    "test_availability_checker_causal_violation",
+    "test_availability_checker_event_available",
+    "test_availability_checker_event_not_yet_released",
+    "test_vintage_latest_value_at",
+    "test_vintage_latest_value_none_if_all_future",
+    "test_alfred_build_vintage_list_causal_filter"
+  ],
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  }
+}

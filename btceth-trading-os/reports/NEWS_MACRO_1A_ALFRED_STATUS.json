@@ -1,0 +1,35 @@
+{
+  "report_id": "NEWS_MACRO_1A_ALFRED_STATUS",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "ALFRED_RUNTIME_STATUS": "NOT_CONFIGURED",
+  "alfred_key_env_var": "ALFRED_API_KEY",
+  "behaviour_when_not_configured": {
+    "raises": false,
+    "quality_returned": "MacroDataQuality.NOT_CONFIGURED",
+    "availability_returned": "MacroAvailabilityStatus.PROVIDER_NOT_CONFIGURED",
+    "description": "ALFREDAdapter.runtime_status = NOT_CONFIGURED. Fetch methods return NOT_CONFIGURED quality without raising."
+  },
+  "behaviour_when_configured_but_not_implemented": {
+    "quality_returned": "MacroDataQuality.NOT_IMPLEMENTED",
+    "availability_returned": "MacroAvailabilityStatus.PROVIDER_NOT_IMPLEMENTED",
+    "description": "Full ALFRED API integration is not yet built. Returns NOT_IMPLEMENTED."
+  },
+  "vintage_list_causal_filter": {
+    "rule": "build_vintage_list() excludes any vintage where published_at_utc > snapshot_time_utc",
+    "test": "test_alfred_build_vintage_list_causal_filter"
+  },
+  "verifier_gates": [
+    "GATE-16",
+    "GATE-17"
+  ],
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  }
+}

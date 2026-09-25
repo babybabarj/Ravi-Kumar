@@ -1,0 +1,39 @@
+{
+  "report_id": "NEWS_MACRO_1A_SECURITY_AUDIT",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "trading_capability": "ZERO",
+  "security_scan_result": {
+    "trading_capability": "ZERO",
+    "hits": []
+  },
+  "no_hardcoded_api_keys": true,
+  "api_key_env_vars": {
+    "BLS_API_KEY": "read from os.environ.get \u2014 never hardcoded",
+    "BEA_API_KEY": "read from os.environ.get \u2014 never hardcoded",
+    "ALFRED_API_KEY": "read from os.environ.get \u2014 never hardcoded",
+    "FRED_API_KEY": "read from os.environ.get \u2014 never hardcoded",
+    "NEWS_API_KEY": "read from os.environ.get \u2014 never hardcoded"
+  },
+  "execution_firewall": {
+    "class": "MacroIntelligenceSnapshot",
+    "guard": "trading_capability must == 0 in __post_init__",
+    "causal_guard": "events and news_items with published_at_utc > snapshot_time_utc are rejected"
+  },
+  "partition_firewall": {
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  },
+  "verifier_gate": "GATE-25",
+  "test": "test_no_api_keys_in_macro_source",
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  }
+}

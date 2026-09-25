@@ -1,0 +1,207 @@
+{
+  "report_id": "NEWS_MACRO_1A_VERIFIER_AUDIT",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "verifier_path": "tools/verify_news_macro_1a.py",
+  "modes_supported": [
+    "REPOSITORY_ACCEPTANCE",
+    "FINAL_EVIDENCE_ACCEPTANCE"
+  ],
+  "gates_total": 35,
+  "gates_passed": 35,
+  "gates_failed": 0,
+  "pytest_result": {
+    "tests_passed": 56,
+    "tests_skipped": 1,
+    "tests_failed": 0,
+    "full_suite_passed": 605,
+    "full_suite_skipped": 13,
+    "full_suite_failed": 0
+  },
+  "gate_summary": [
+    {
+      "gate": 0,
+      "description": "Macro package imports without error",
+      "status": "PASS"
+    },
+    {
+      "gate": 1,
+      "description": "MacroEvent is frozen",
+      "status": "PASS"
+    },
+    {
+      "gate": 2,
+      "description": "MacroSeriesObservation is frozen with vintages",
+      "status": "PASS"
+    },
+    {
+      "gate": 3,
+      "description": "MacroNewsItem is frozen",
+      "status": "PASS"
+    },
+    {
+      "gate": 4,
+      "description": "MacroDataQuality has CAUSAL_VIOLATION",
+      "status": "PASS"
+    },
+    {
+      "gate": 5,
+      "description": "MacroDataQuality has all required states",
+      "status": "PASS"
+    },
+    {
+      "gate": 6,
+      "description": "MacroAvailabilityStatus has all required states",
+      "status": "PASS"
+    },
+    {
+      "gate": 7,
+      "description": "consensus_value defaults to None",
+      "status": "PASS"
+    },
+    {
+      "gate": 8,
+      "description": "MacroSurprise validates magnitude",
+      "status": "PASS"
+    },
+    {
+      "gate": 9,
+      "description": "PointInTimeAvailabilityChecker causal contract",
+      "status": "PASS"
+    },
+    {
+      "gate": 10,
+      "description": "Snapshot trading_capability firewall",
+      "status": "PASS"
+    },
+    {
+      "gate": 11,
+      "description": "Snapshot rejects future events (causal violation)",
+      "status": "PASS"
+    },
+    {
+      "gate": 12,
+      "description": "MacroIntelligenceSnapshot is frozen",
+      "status": "PASS"
+    },
+    {
+      "gate": 13,
+      "description": "DXY adapter NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+      "status": "PASS"
+    },
+    {
+      "gate": 14,
+      "description": "DXY refuses FRED broad dollar substitute",
+      "status": "PASS"
+    },
+    {
+      "gate": 15,
+      "description": "DXY refuses synthetic basket",
+      "status": "PASS"
+    },
+    {
+      "gate": 16,
+      "description": "ALFRED returns NOT_CONFIGURED when key absent",
+      "status": "PASS"
+    },
+    {
+      "gate": 17,
+      "description": "ALFRED build_vintage_list excludes future vintages",
+      "status": "PASS"
+    },
+    {
+      "gate": 18,
+      "description": "Event registry contains all required families",
+      "status": "PASS"
+    },
+    {
+      "gate": 19,
+      "description": "DXY and BREAKING_NEWS have NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+      "status": "PASS"
+    },
+    {
+      "gate": 20,
+      "description": "DST: September = EDT (UTC-4)",
+      "status": "PASS"
+    },
+    {
+      "gate": 21,
+      "description": "DST: January = EST (UTC-5)",
+      "status": "PASS"
+    },
+    {
+      "gate": 22,
+      "description": "aggregate_quality: CAUSAL_VIOLATION dominates",
+      "status": "PASS"
+    },
+    {
+      "gate": 23,
+      "description": "aggregate_quality: empty returns MISSING",
+      "status": "PASS"
+    },
+    {
+      "gate": 24,
+      "description": "Treasury labels: no 'live yield'",
+      "status": "PASS"
+    },
+    {
+      "gate": 25,
+      "description": "No hardcoded API keys in source",
+      "status": "PASS"
+    },
+    {
+      "gate": 26,
+      "description": "No macro-to-trade mapping in executable source",
+      "status": "PASS"
+    },
+    {
+      "gate": 27,
+      "description": "TRADING_CAPABILITY=ZERO comment in snapshot module",
+      "status": "PASS"
+    },
+    {
+      "gate": 28,
+      "description": "BLS adapter includes CPI, NFP, UNEMPLOYMENT",
+      "status": "PASS"
+    },
+    {
+      "gate": 29,
+      "description": "Breaking news adapter NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+      "status": "PASS"
+    },
+    {
+      "gate": 30,
+      "description": "PRE_MACRO_REAL_DATA_BASELINE.json valid",
+      "status": "PASS"
+    },
+    {
+      "gate": 31,
+      "description": "All required reports exist (evidence mode)",
+      "status": "PASS"
+    },
+    {
+      "gate": 32,
+      "description": "SECURITY_AUDIT reports trading_capability=ZERO (evidence mode)",
+      "status": "PASS"
+    },
+    {
+      "gate": 33,
+      "description": "VERIFIER_AUDIT confirms all gates passed (evidence mode)",
+      "status": "PASS"
+    },
+    {
+      "gate": 34,
+      "description": "CONTRACT_AUDIT confirms no hardcoded consensus (evidence mode)",
+      "status": "PASS"
+    }
+  ],
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  }
+}

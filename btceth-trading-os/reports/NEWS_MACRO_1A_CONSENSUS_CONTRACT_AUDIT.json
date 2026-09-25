@@ -1,0 +1,42 @@
+{
+  "report_id": "NEWS_MACRO_1A_CONSENSUS_CONTRACT_AUDIT",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "consensus_hardcoded": false,
+  "consensus_default_value": null,
+  "consensus_status_default": "NOT_AVAILABLE",
+  "rules": [
+    "consensus_value is OPTIONAL \u2014 defaults to None",
+    "consensus_status defaults to NOT_AVAILABLE",
+    "consensus_value must only be non-None when an authorised provider supplies it",
+    "Do NOT scrape economic calendars for consensus",
+    "Do NOT infer consensus from prior_value",
+    "Do NOT backfill consensus retrospectively",
+    "MacroSurprise must only be created when BOTH actual and consensus are legitimately available",
+    "MacroSurprise validates: surprise_magnitude == actual_value - consensus_value"
+  ],
+  "macrosurprise_validation": {
+    "magnitude_check": "actual_value - consensus_value must equal surprise_magnitude",
+    "direction_allowed": [
+      "BEAT",
+      "MISS",
+      "IN_LINE"
+    ]
+  },
+  "tests": [
+    "test_consensus_defaults_to_none",
+    "test_macro_surprise_requires_both_actual_and_consensus",
+    "test_macro_surprise_valid",
+    "test_macro_surprise_invalid_direction"
+  ],
+  "verifier_gate": "GATE-07, GATE-08",
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  }
+}

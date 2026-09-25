@@ -1,0 +1,76 @@
+{
+  "report_id": "NEWS_MACRO_1A_MODULE_INVENTORY",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "modules": [
+    {
+      "path": "src/btceth_os/macro/__init__.py",
+      "purpose": "Package init \u2014 exports all public macro types and interfaces."
+    },
+    {
+      "path": "src/btceth_os/macro/types.py",
+      "purpose": "Core frozen dataclasses: MacroEvent, MacroSeriesObservation (append-only vintage model), MacroNewsItem, MacroSurprise, MacroDataQuality, MacroAvailabilityStatus."
+    },
+    {
+      "path": "src/btceth_os/macro/availability.py",
+      "purpose": "PointInTimeAvailabilityChecker \u2014 causal contract enforcement (published_at_utc <= snapshot_time_utc)."
+    },
+    {
+      "path": "src/btceth_os/macro/event_registry.py",
+      "purpose": "Canonical MacroEventFamily registry (CPI, PPI, PCE, NFP, FOMC, FED_SPEECH, TREASURY, DXY, BREAKING_NEWS, etc.)."
+    },
+    {
+      "path": "src/btceth_os/macro/data_quality.py",
+      "purpose": "Fail-closed quality states: aggregate_quality(), is_usable(), is_causal_violation()."
+    },
+    {
+      "path": "src/btceth_os/macro/snapshot.py",
+      "purpose": "MacroIntelligenceSnapshot \u2014 frozen dataclass with execution firewall and causal contract in __post_init__."
+    },
+    {
+      "path": "src/btceth_os/macro/sources/bls.py",
+      "purpose": "BLS Data API adapter stub (CPI, PPI, NFP, unemployment, JOLTS). NOT_IMPLEMENTED in this phase."
+    },
+    {
+      "path": "src/btceth_os/macro/sources/bea.py",
+      "purpose": "BEA API adapter stub (PCE, GDP). NOT_IMPLEMENTED in this phase."
+    },
+    {
+      "path": "src/btceth_os/macro/sources/fed.py",
+      "purpose": "Federal Reserve adapter stub (FOMC statements, minutes, speeches). No NLP/sentiment. NOT_IMPLEMENTED."
+    },
+    {
+      "path": "src/btceth_os/macro/sources/treasury.py",
+      "purpose": "US Treasury yield adapter stub (2Y, 5Y, 10Y, 30Y, TIPS 10Y). DAILY_OFFICIAL labeling. NOT_IMPLEMENTED."
+    },
+    {
+      "path": "src/btceth_os/macro/sources/alfred.py",
+      "purpose": "ALFRED vintage adapter. Returns NOT_CONFIGURED when ALFRED_API_KEY absent. Build_vintage_list with causal filter."
+    },
+    {
+      "path": "src/btceth_os/macro/sources/dxy.py",
+      "purpose": "DXY (ICE U.S. Dollar Index) adapter. Status NOT_IMPLEMENTED_PROVIDER_REQUIRED. Refuses all substitutes."
+    },
+    {
+      "path": "src/btceth_os/macro/sources/breaking_news.py",
+      "purpose": "Breaking news adapter. Status NOT_IMPLEMENTED_PROVIDER_REQUIRED. Refuses scraping."
+    },
+    {
+      "path": "tests/test_news_macro_1a.py",
+      "purpose": "56-test suite (1 skipped smoke test). Covers all contracts, causal availability, firewall, DST, DXY refusal."
+    },
+    {
+      "path": "tools/verify_news_macro_1a.py",
+      "purpose": "35-gate verifier supporting REPOSITORY_ACCEPTANCE and FINAL_EVIDENCE_ACCEPTANCE modes."
+    }
+  ],
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  }
+}

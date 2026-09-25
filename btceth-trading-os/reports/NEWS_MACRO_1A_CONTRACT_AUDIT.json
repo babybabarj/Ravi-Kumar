@@ -1,0 +1,37 @@
+{
+  "report_id": "NEWS_MACRO_1A_CONTRACT_AUDIT",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "consensus_hardcoded": false,
+  "causal_contract": {
+    "rule": "observation.published_at_utc <= snapshot_time_utc",
+    "enforcement": "PointInTimeAvailabilityChecker.check_vintage_availability() and MacroIntelligenceSnapshot.__post_init__()",
+    "causal_violation_quality": "MacroDataQuality.CAUSAL_VIOLATION",
+    "causal_violation_blocks_value": true
+  },
+  "consensus_contract": {
+    "consensus_hardcoded": false,
+    "consensus_default": null,
+    "consensus_status_default": "NOT_AVAILABLE",
+    "rule": "consensus_value is None unless an authorised provider supplies it. No scraping, inference, or backfilling."
+  },
+  "vintage_model": {
+    "type": "append_only",
+    "rule": "Vintages are a tuple of (published_at_utc, value) pairs. New revisions are appended. Existing entries are never overwritten.",
+    "query": "max(v for v in vintages if v.published_at_utc <= snapshot_time_utc)"
+  },
+  "execution_firewall": {
+    "class": "MacroIntelligenceSnapshot",
+    "enforcement": "__post_init__ raises ValueError if trading_capability != 0",
+    "trading_capability_required": 0
+  },
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  }
+}

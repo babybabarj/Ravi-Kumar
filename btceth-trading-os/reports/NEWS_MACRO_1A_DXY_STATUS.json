@@ -1,0 +1,42 @@
+{
+  "report_id": "NEWS_MACRO_1A_DXY_STATUS",
+  "generated_at_utc": "2026-09-25T22:16:55.678673+00:00",
+  "head_sha": "3dd5d15e3dbda374b43b88ca4ad3fc00963a463b",
+  "DXY_STATUS": "NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+  "dxy_definition": {
+    "canonical_name": "ICE U.S. Dollar Index",
+    "ticker": "DX-Y.NYB",
+    "published_by": "Intercontinental Exchange (ICE)",
+    "component_currencies": {
+      "EUR": 0.576,
+      "JPY": 0.136,
+      "GBP": 0.119,
+      "CAD": 0.091,
+      "SEK": 0.042,
+      "CHF": 0.036
+    }
+  },
+  "refused_substitutes": [
+    "FRED DTWEXBGS (broad trade-weighted dollar index)",
+    "Federal Reserve broad dollar index",
+    "Synthetic FX basket",
+    "Homemade EUR/JPY/GBP basket",
+    "Any index other than the ICE U.S. Dollar Index"
+  ],
+  "enforcement": "DXYAdapter.validate_not_substitute() raises ValueError for any substitute label",
+  "verifier_gates": [
+    "GATE-13",
+    "GATE-14",
+    "GATE-15"
+  ],
+  "implementation_path": "Requires authorised ICE DXY data provider configuration",
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0
+  }
+}
