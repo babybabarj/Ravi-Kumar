@@ -1,0 +1,36 @@
+{
+  "phase": "PRED_1A_R1",
+  "registered_targets_count": 12,
+  "empirically_evaluated_targets_count": 6,
+  "empirically_evaluated_targets": [
+    "future_log_return_5m",
+    "future_log_return_15m",
+    "future_log_return_1h",
+    "future_realized_volatility_1h",
+    "future_max_up_move_1h",
+    "future_trend_state_15m"
+  ],
+  "registered_only_targets": [
+    "future_log_return_4h",
+    "future_realized_volatility_15m",
+    "future_realized_volatility_4h",
+    "future_max_down_move_1h",
+    "future_volatility_state_1h",
+    "future_liquidity_state_15m"
+  ],
+  "all_registered_targets": [
+    "future_log_return_5m",
+    "future_log_return_15m",
+    "future_log_return_1h",
+    "future_log_return_4h",
+    "future_realized_volatility_15m",
+    "future_realized_volatility_1h",
+    "future_realized_volatility_4h",
+    "future_max_up_move_1h",
+    "future_max_down_move_1h",
+    "future_trend_state_15m",
+    "future_volatility_state_1h",
+    "future_liquidity_state_15m"
+  ],
+  "scope_rationale": "Representative cross-section across horizons (5m, 15m, 1h) and continuous/classification types."
+}

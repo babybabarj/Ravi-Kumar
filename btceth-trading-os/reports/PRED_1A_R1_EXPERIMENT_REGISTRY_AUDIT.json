@@ -1,0 +1,26 @@
+{
+  "phase": "PRED_1A_R1",
+  "registry_file": "artifacts/research/pred_1a_r1_experiment_registry.jsonl",
+  "total_experiment_records": 16,
+  "unique_experiment_ids_count": 16,
+  "all_experiment_ids_unique": true,
+  "unique_targets_count": 6,
+  "unique_models_count": 4,
+  "unique_feature_groups_count": 1,
+  "unique_code_shas": [
+    "c29520e78da9d4d5a49b6fa775bf828e61d823c2"
+  ],
+  "tested_code_sha_matches": true,
+  "stale_sha_present": false,
+  "definition_of_experiment": "ONE_CANDIDATE_MODEL_EVALUATED_ON_ONE_TARGET_ACROSS_WALK_FORWARD_SPLITS",
+  "budget_audit": {
+    "total_experiments": 16,
+    "max_total_experiments": 100,
+    "unique_targets": 6,
+    "max_targets": 12,
+    "unique_models": 4,
+    "unique_feature_groups": 1,
+    "max_feature_groups": 6,
+    "budget_respected": true
+  }
+}

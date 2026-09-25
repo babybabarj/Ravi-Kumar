@@ -1,0 +1,11 @@
+{
+  "phase": "PRED_1A_R1",
+  "research_run_id": "PRED_1A_R1_RUN_001",
+  "tested_code_sha": "c29520e78da9d4d5a49b6fa775bf828e61d823c2",
+  "tested_tree_sha": "faa7972521271f479a4fc332546b5c67df6e086e",
+  "status": "COMPLETED",
+  "sample_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+  "source_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+  "targets_evaluated_count": 6,
+  "experiments_count": 16
+}

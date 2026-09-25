@@ -1,0 +1,335 @@
+[
+  {
+    "feature_group": "ALL_FEATURES",
+    "features_count": 39,
+    "features": [
+      "abnormal_activity_score_60m",
+      "candle_body_to_range_ratio",
+      "directional_persistence_20m",
+      "distance_from_high_20m",
+      "distance_from_low_20m",
+      "efficiency_ratio_20m",
+      "funding_rate_trailing_average_24h",
+      "funding_sign_persistence",
+      "holiday_status",
+      "latest_realized_funding_rate",
+      "log_return_1m",
+      "medium_horizon_vol_60m",
+      "order_flow_imbalance_20m",
+      "parkinson_volatility_20m",
+      "price_displacement_20m",
+      "price_index_mode",
+      "price_index_mode_certainty",
+      "quote_volume_raw",
+      "range_expansion_contraction_ratio_20m",
+      "range_location_20m",
+      "relative_activity_20m",
+      "return_15m",
+      "return_1h",
+      "return_5m",
+      "rolling_autocorrelation_20m",
+      "rolling_high_20m",
+      "rolling_low_20m",
+      "rolling_slope_20m",
+      "short_horizon_vol_10m",
+      "taker_buy_volume_ratio",
+      "time_since_last_funding_minutes",
+      "trade_count_raw",
+      "trade_intensity_per_volume_20m",
+      "traded_volume_raw",
+      "underlying_session_certainty",
+      "underlying_session_state",
+      "volatility_percentile_trailing_1440m",
+      "volatility_ratio_10m_60m",
+      "volume_percentile_trailing_1440m"
+    ],
+    "mean_mae": 0.001196,
+    "mean_rmse": 0.001566,
+    "mean_pearson_corr": 0.227375,
+    "per_fold": [
+      {
+        "mae": 0.0014792669521540998,
+        "rmse": 0.0020046162534925463,
+        "r2": -0.10670318203312745,
+        "pearson_corr": 0.15663964495221544,
+        "spearman_corr": 0.13220864257562057,
+        "directional_accuracy": 0.5106666666666667
+      },
+      {
+        "mae": 0.0006097483298838663,
+        "rmse": 0.0007382003324048232,
+        "r2": -1.1927940882644505,
+        "pearson_corr": 0.10344368351960924,
+        "spearman_corr": 0.09110887472242453,
+        "directional_accuracy": 0.4573333333333333
+      },
+      {
+        "mae": 0.0006019130968164026,
+        "rmse": 0.0007313441920446735,
+        "r2": -0.5146443056341259,
+        "pearson_corr": 0.4841331699237778,
+        "spearman_corr": 0.4801284882603024,
+        "directional_accuracy": 0.43733333333333335
+      },
+      {
+        "mae": 0.0020928170435249196,
+        "rmse": 0.002790974573902191,
+        "r2": -0.008190540612700081,
+        "pearson_corr": 0.16528200890585032,
+        "spearman_corr": 0.10801083288849818,
+        "directional_accuracy": 0.5104166666666666
+      }
+    ]
+  },
+  {
+    "feature_group": "PRICE_TREND_ONLY",
+    "features_count": 16,
+    "features": [
+      "log_return_1m",
+      "return_5m",
+      "return_15m",
+      "return_1h",
+      "rolling_high_20m",
+      "rolling_low_20m",
+      "distance_from_high_20m",
+      "distance_from_low_20m",
+      "range_location_20m",
+      "parkinson_volatility_20m",
+      "candle_body_to_range_ratio",
+      "rolling_slope_20m",
+      "directional_persistence_20m",
+      "efficiency_ratio_20m",
+      "price_displacement_20m",
+      "rolling_autocorrelation_20m"
+    ],
+    "mean_mae": 0.001158,
+    "mean_rmse": 0.00152,
+    "mean_pearson_corr": 0.157546,
+    "per_fold": [
+      {
+        "mae": 0.001403547897358573,
+        "rmse": 0.0019174475723024974,
+        "r2": -0.012548093441642427,
+        "pearson_corr": 0.26821419396041296,
+        "spearman_corr": 0.24402272131155286,
+        "directional_accuracy": 0.5333333333333333
+      },
+      {
+        "mae": 0.0006117122239397782,
+        "rmse": 0.0007407442630847536,
+        "r2": -1.207933414808258,
+        "pearson_corr": -0.1471576460526317,
+        "spearman_corr": -0.19683263054604375,
+        "directional_accuracy": 0.46066666666666667
+      },
+      {
+        "mae": 0.0005108971651776211,
+        "rmse": 0.000630640568932481,
+        "r2": -0.12623970356661474,
+        "pearson_corr": 0.35224487894745354,
+        "spearman_corr": 0.3019533971781879,
+        "directional_accuracy": 0.4493333333333333
+      },
+      {
+        "mae": 0.0021057836304003955,
+        "rmse": 0.0027895870260238372,
+        "r2": -0.0071883352037052095,
+        "pearson_corr": 0.15688385594207915,
+        "spearman_corr": 0.14377926029325205,
+        "directional_accuracy": 0.525
+      }
+    ]
+  },
+  {
+    "feature_group": "VOLATILITY_ONLY",
+    "features_count": 5,
+    "features": [
+      "short_horizon_vol_10m",
+      "medium_horizon_vol_60m",
+      "volatility_ratio_10m_60m",
+      "volatility_percentile_trailing_1440m",
+      "range_expansion_contraction_ratio_20m"
+    ],
+    "mean_mae": 0.00117,
+    "mean_rmse": 0.001535,
+    "mean_pearson_corr": 0.13996,
+    "per_fold": [
+      {
+        "mae": 0.0014228888197185005,
+        "rmse": 0.001961867448256789,
+        "r2": -0.060005177874965954,
+        "pearson_corr": 0.19382556690894984,
+        "spearman_corr": 0.15389085499446456,
+        "directional_accuracy": 0.5133333333333333
+      },
+      {
+        "mae": 0.0006337000086880076,
+        "rmse": 0.0007548204107831567,
+        "r2": -1.2926441385655094,
+        "pearson_corr": -0.004581049494324297,
+        "spearman_corr": -0.03711887159503418,
+        "directional_accuracy": 0.4553333333333333
+      },
+      {
+        "mae": 0.0005061051109877228,
+        "rmse": 0.0006271677336582243,
+        "r2": -0.11386981851229172,
+        "pearson_corr": 0.256695464960927,
+        "spearman_corr": 0.24860066431713412,
+        "directional_accuracy": 0.4693333333333333
+      },
+      {
+        "mae": 0.0021159371739902914,
+        "rmse": 0.002797940366405684,
+        "r2": -0.013229361162082842,
+        "pearson_corr": 0.11390177547840885,
+        "spearman_corr": 0.09016911776002784,
+        "directional_accuracy": 0.5090277777777777
+      }
+    ]
+  },
+  {
+    "feature_group": "ACTIVITY_LIQUIDITY_ONLY",
+    "features_count": 6,
+    "features": [
+      "traded_volume_raw",
+      "quote_volume_raw",
+      "trade_count_raw",
+      "relative_activity_20m",
+      "volume_percentile_trailing_1440m",
+      "abnormal_activity_score_60m"
+    ],
+    "mean_mae": 0.001125,
+    "mean_rmse": 0.001525,
+    "mean_pearson_corr": 0.016677,
+    "per_fold": [
+      {
+        "mae": 0.001404281000486559,
+        "rmse": 0.0019315380941429662,
+        "r2": -0.02748435930067017,
+        "pearson_corr": 0.12064817690822258,
+        "spearman_corr": 0.08311588271701036,
+        "directional_accuracy": 0.5026666666666667
+      },
+      {
+        "mae": 0.00048423241147445154,
+        "rmse": 0.0007434985495707839,
+        "r2": -1.224383321719284,
+        "pearson_corr": -0.14071568583212385,
+        "spearman_corr": 0.01714742861010947,
+        "directional_accuracy": 0.5533333333333333
+      },
+      {
+        "mae": 0.00047277473335478285,
+        "rmse": 0.0005913323412458026,
+        "r2": 0.009783207158645668,
+        "pearson_corr": 0.10545147930666235,
+        "spearman_corr": 0.048170736659098067,
+        "directional_accuracy": 0.5786666666666667
+      },
+      {
+        "mae": 0.002139169093817739,
+        "rmse": 0.0028334008124490688,
+        "r2": -0.03907497746233002,
+        "pearson_corr": -0.018674570221201905,
+        "spearman_corr": -0.011265626459381436,
+        "directional_accuracy": 0.5451388888888888
+      }
+    ]
+  },
+  {
+    "feature_group": "FUNDING_ONLY",
+    "features_count": 4,
+    "features": [
+      "latest_realized_funding_rate",
+      "time_since_last_funding_minutes",
+      "funding_rate_trailing_average_24h",
+      "funding_sign_persistence"
+    ],
+    "mean_mae": 0.001114,
+    "mean_rmse": 0.001484,
+    "mean_pearson_corr": 0.111459,
+    "per_fold": [
+      {
+        "mae": 0.0014245759523286209,
+        "rmse": 0.0019703289000839964,
+        "r2": -0.06916841121290851,
+        "pearson_corr": -0.1213614918545297,
+        "spearman_corr": -0.135439403139856,
+        "directional_accuracy": 0.498
+      },
+      {
+        "mae": 0.0004399832886961819,
+        "rmse": 0.0005394331456842183,
+        "r2": -0.17091302090598326,
+        "pearson_corr": 0.2407448033976332,
+        "spearman_corr": 0.18204660443897305,
+        "directional_accuracy": 0.5346666666666666
+      },
+      {
+        "mae": 0.00045486704020146897,
+        "rmse": 0.0005683621283394724,
+        "r2": 0.08521868219101103,
+        "pearson_corr": 0.33470168466481265,
+        "spearman_corr": 0.3577588114026274,
+        "directional_accuracy": 0.658
+      },
+      {
+        "mae": 0.0021366752877901808,
+        "rmse": 0.002856027841503442,
+        "r2": -0.05573697432934166,
+        "pearson_corr": -0.008247678228225577,
+        "spearman_corr": -0.01753464836392607,
+        "directional_accuracy": 0.54375
+      }
+    ]
+  },
+  {
+    "feature_group": "SESSION_CONTEXT_ONLY",
+    "features_count": 5,
+    "features": [
+      "underlying_session_state",
+      "underlying_session_certainty",
+      "holiday_status",
+      "price_index_mode",
+      "price_index_mode_certainty"
+    ],
+    "mean_mae": 0.001106,
+    "mean_rmse": 0.001473,
+    "mean_pearson_corr": -0.074994,
+    "per_fold": [
+      {
+        "mae": 0.001407525421907966,
+        "rmse": 0.0019491240416879914,
+        "r2": -0.04627927017479716,
+        "pearson_corr": -0.013572662063622213,
+        "spearman_corr": 0.02969849156789251,
+        "directional_accuracy": 0.5573333333333333
+      },
+      {
+        "mae": 0.00040908358140174145,
+        "rmse": 0.0005064765598449193,
+        "r2": -0.03221004271718764,
+        "pearson_corr": -0.14922436805657843,
+        "spearman_corr": -0.1417771959103686,
+        "directional_accuracy": 0.5426666666666666
+      },
+      {
+        "mae": 0.0004739585867838511,
+        "rmse": 0.0005948070160780663,
+        "r2": -0.00188803037455898,
+        "pearson_corr": 0.0,
+        "spearman_corr": 0.0,
+        "directional_accuracy": 0.5806666666666667
+      },
+      {
+        "mae": 0.00213337318106763,
+        "rmse": 0.0028432935758427084,
+        "r2": -0.04634346406842127,
+        "pearson_corr": -0.13717956422337674,
+        "spearman_corr": -0.19492341135652924,
+        "directional_accuracy": 0.5451388888888888
+      }
+    ]
+  }
+]

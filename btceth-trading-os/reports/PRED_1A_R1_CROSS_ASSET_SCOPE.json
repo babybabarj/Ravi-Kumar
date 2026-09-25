@@ -1,0 +1,6 @@
+{
+  "cross_asset_predictive_features": "NOT_IMPLEMENTED",
+  "cross_asset_features_in_input_vector": 0,
+  "cross_asset_status": "NOT_AVAILABLE_IN_INTEL_FEATURESET_V1",
+  "session_context_clarification": "The 5 session_context features (underlying_session_state, underlying_session_certainty, holiday_status, price_index_mode, price_index_mode_certainty) represent market calendar and index schedule states for XAU, not cross-asset BTC/ETH metrics."
+}

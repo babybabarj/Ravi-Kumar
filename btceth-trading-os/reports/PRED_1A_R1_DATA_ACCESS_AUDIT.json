@@ -1,0 +1,19 @@
+{
+  "phase": "PRED_1A_R1",
+  "ledger_file": "artifacts/research/pred_1a_r1_data_access_ledger.jsonl",
+  "ledger_sha256": "7221b8136368db68bd3fb2e5b98a24ddac885ab17732c196dd4ae318f538ef83",
+  "total_attempts": 4,
+  "total_granted": 1,
+  "total_denied": 3,
+  "dev_granted": 1,
+  "val_granted": 0,
+  "holdout_granted": 0,
+  "pristine_granted": 0,
+  "dev_denied": 0,
+  "val_denied": 1,
+  "holdout_denied": 1,
+  "pristine_denied": 1,
+  "unrecognized_entries": 0,
+  "accounting_reconciled": true,
+  "firewall_intact": true
+}

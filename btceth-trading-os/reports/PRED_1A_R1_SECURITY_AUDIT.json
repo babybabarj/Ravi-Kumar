@@ -1,0 +1,8 @@
+{
+  "phase": "PRED_1A_R1",
+  "security_scan_returncode": 0,
+  "trading_capability": "ZERO",
+  "mainnet_mutation": "DISABLED",
+  "quarantine_status": "AIRTIGHT",
+  "separate_btc_bot_isolation": "VERIFIED"
+}

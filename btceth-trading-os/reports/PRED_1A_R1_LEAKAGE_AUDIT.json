@@ -1,0 +1,9 @@
+{
+  "phase": "PRED_1A_R1",
+  "normalization_leakage": "ZERO (TrainOnlyStandardScaler fitted strictly on train fold)",
+  "categorical_encoding_leakage": "ZERO (TrainOnlyCategoricalEncoder learned strictly from train vocabulary)",
+  "feature_selection_leakage": "ZERO (Fixed pre-declared 39 causal features, no post-hoc screening)",
+  "temporal_overlap_leakage": "ZERO (PurgedTemporalSplitter verified on each target horizon)",
+  "future_mutation_divergence": "ZERO (Point-in-time causal verification test verified in INTEL-1B)",
+  "data_guard_holdout_leakage": "ZERO (Val=0, Holdout=0, Pristine=0 accesses granted)"
+}

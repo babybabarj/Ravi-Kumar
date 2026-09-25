@@ -1,0 +1,20 @@
+{
+  "phase": "PRED_1A_R1",
+  "timestamp_utc": "2026-09-25T13:36:01.549709+00:00",
+  "accepted_intel_1b_r3_1_evidence": "656d6f90c54c884ffe279eead8e866c758b17b0a",
+  "historical_unaccepted_pred_1a_commits": {
+    "code_sha": "3094fcb95bb8e75f008b67e96100ee902200f316",
+    "evidence_sha": "2464840731daab09ab2e5786609c916b77a0eeec"
+  },
+  "remediation_objectives": [
+    "Rebind experiment code SHA to actual tested Git commit",
+    "Replace row-count string hash with authoritative parquet and slice content hash",
+    "Remove false CROSS_ASSET_ONLY feature group label and report truthfully",
+    "Reconcile experiment registry counts and separate research execution from evidence generation",
+    "Remove fake p-values and implement Option A descriptive multiple-testing reporting",
+    "Distinguish 12 registered targets from 6 empirically evaluated targets",
+    "Target-specific temporal split contracts and truthful expanding-window embargo reporting",
+    "Replace categorical string hashing with train-only categorical encoding",
+    "Report exploratory baseline comparisons and remove premature predictive edge claims"
+  ]
+}

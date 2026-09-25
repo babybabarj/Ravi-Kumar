@@ -1,0 +1,8 @@
+{
+  "inferential_multiple_testing": "NOT_EVALUATED",
+  "methodology_option": "OPTION_A_DESCRIPTIVE_ONLY",
+  "number_of_hypotheses": 16,
+  "total_model_target_fold_comparisons": 64,
+  "pseudo_p_values_present": false,
+  "rationale": "Inferential multiple-testing adjustments (Bonferroni / Benjamini-Hochberg) require exchangeable and independent p-values. Standard normal approximations derived from overlapping serial time-series fold correlations violate these assumptions. PRED-1A R1 reports descriptive fold-level metrics and baseline differences only."
+}
