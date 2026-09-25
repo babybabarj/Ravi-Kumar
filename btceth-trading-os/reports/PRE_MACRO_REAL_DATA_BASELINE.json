@@ -1,0 +1,175 @@
+{
+  "report_id": "PRE_MACRO_REAL_DATA_BASELINE",
+  "report_version": "1.0.0",
+  "phase": "NEWS_MACRO_1A_ENTRY_BASELINE",
+  "purpose": "Freeze read-only analytical dry-run baseline on real market data before NEWS/MACRO-1A development begins. No trading decisions. No repository mutation. Evidence of pre-macro intelligence capability only.",
+  "run_timestamp_utc": "2026-09-25T21:49:16Z",
+  "data_window": {
+    "earliest_utc": "2026-09-23T21:48:00Z",
+    "latest_utc": "2026-09-25T21:47:00Z",
+    "duration_hours": 47.98,
+    "bars_per_asset": 2880,
+    "bar_interval": "1m"
+  },
+  "data_sources": {
+    "venue": "BINANCE_USD_M_FUTURES",
+    "rest_base": "https://fapi.binance.com",
+    "endpoint": "/fapi/v1/klines",
+    "authentication": "NONE_PUBLIC_API",
+    "symbols": ["BTCUSDT", "ETHUSDT", "XAUUSDT"]
+  },
+  "data_integrity": {
+    "BTCUSDT": {
+      "sha256": "448cad8a6d8b75f1c454a851c0f736d9eaeb1ea3a7b72de50c21bc02cdcc7e69",
+      "row_count": 2880,
+      "missing_bars": 0,
+      "duplicate_timestamps": 0,
+      "impossible_ohlc": 0,
+      "negative_volume": 0,
+      "zero_invalid_prices": 0,
+      "data_quality": "GOOD",
+      "freshness": "CURRENT",
+      "funding_available": true
+    },
+    "ETHUSDT": {
+      "sha256": "5782b64d4efb8e4b2fa19d28bbaffb62e42b8ca076d9ff8341f93ed14d961091",
+      "row_count": 2880,
+      "missing_bars": 0,
+      "duplicate_timestamps": 0,
+      "impossible_ohlc": 0,
+      "negative_volume": 0,
+      "zero_invalid_prices": 0,
+      "data_quality": "GOOD",
+      "freshness": "CURRENT",
+      "funding_available": true
+    },
+    "XAUUSDT": {
+      "sha256": "5d92fa9724b5652e8333b9810714de0d1570e8a894ecb474cdc07e40584a671e",
+      "row_count": 2880,
+      "missing_bars": 0,
+      "duplicate_timestamps": 0,
+      "impossible_ohlc": 0,
+      "negative_volume": 0,
+      "zero_invalid_prices": 0,
+      "data_quality": "GOOD",
+      "freshness": "CURRENT",
+      "funding_available": true
+    }
+  },
+  "warmup_audit": {
+    "volatility_warmup_required_bars": 1440,
+    "BTCUSDT_warmup_complete": true,
+    "ETHUSDT_warmup_complete": true,
+    "XAUUSDT_warmup_complete": true
+  },
+  "latest_market_states": {
+    "BTCUSDT": {
+      "trend_state": "RANGE",
+      "volatility_state": "LOW",
+      "activity_state": "THIN",
+      "funding_state": "NEUTRAL",
+      "market_quality_state": "HEALTHY",
+      "uncertainties": ["SESSION_HOLIDAY_STATUS_UNPROVEN"],
+      "close_price": 83778.4
+    },
+    "ETHUSDT": {
+      "trend_state": "RANGE",
+      "volatility_state": "LOW",
+      "activity_state": "THIN",
+      "funding_state": "NEUTRAL",
+      "market_quality_state": "HEALTHY",
+      "uncertainties": ["SESSION_HOLIDAY_STATUS_UNPROVEN"],
+      "close_price": 2679.94
+    },
+    "XAUUSDT": {
+      "trend_state": "UNCERTAIN",
+      "volatility_state": "LOW",
+      "activity_state": "THIN",
+      "funding_state": "NEUTRAL",
+      "market_quality_state": "HEALTHY",
+      "uncertainties": ["DISCORDANT_DIRECTIONAL_SIGNALS", "SESSION_HOLIDAY_STATUS_UNPROVEN"],
+      "close_price": 4297.89
+    }
+  },
+  "observational_summaries": {
+    "BTCUSDT": "RANGE_STRUCTURE",
+    "ETHUSDT": "RANGE_STRUCTURE",
+    "XAUUSDT": "MIXED"
+  },
+  "observational_summary_notes": {
+    "XAUUSDT": "Engine returned UNCERTAIN trend state due to DISCORDANT_DIRECTIONAL_SIGNALS. Observational summary recorded as MIXED (discordant directional signals, not a structured range or directional trend).",
+    "XAUUSDT_activity": "very low activity at this timestamp"
+  },
+  "cross_asset_context": {
+    "BTC_ETH": {
+      "return_correlation_60m": 0.8418,
+      "beta_btc_to_eth": 0.79,
+      "relative_volatility_ratio": 0.9384,
+      "interpretation": "high co-movement in the 48h observation window"
+    },
+    "BTC_XAU": {
+      "return_correlation_60m": 0.0935,
+      "beta_btc_to_xau": 0.2609,
+      "relative_volatility_ratio": 2.7891,
+      "interpretation": "near-zero 60-minute contemporaneous correlation"
+    },
+    "ETH_XAU": {
+      "return_correlation_60m": 0.2007,
+      "beta_eth_to_xau": 0.5966,
+      "relative_volatility_ratio": 2.9721,
+      "interpretation": "weak 60-minute contemporaneous correlation"
+    },
+    "XAU_DXY": "NOT_IMPLEMENTED",
+    "XAU_TREASURY_YIELDS": "NOT_IMPLEMENTED",
+    "XAU_REAL_YIELDS": "NOT_IMPLEMENTED"
+  },
+  "pred_1a_research_context": {
+    "note": "DEV-set informational predictability evidence only. Strictly NOT trade signals.",
+    "future_log_return_5m": {
+      "best_folds_beating_baseline": 0,
+      "generic_evidence_classification": "NO_EVIDENCE"
+    },
+    "future_log_return_15m": {
+      "best_folds_beating_baseline": 1,
+      "generic_evidence_classification": "NO_EVIDENCE"
+    },
+    "future_log_return_1h": {
+      "best_folds_beating_baseline": 1,
+      "generic_evidence_classification": "NO_EVIDENCE"
+    },
+    "future_realized_volatility_1h": {
+      "best_folds_beating_baseline": 3,
+      "generic_evidence_classification": "WEAK_INCONSISTENT_DEV_EVIDENCE"
+    },
+    "future_max_up_move_1h": {
+      "best_folds_beating_baseline": 3,
+      "generic_evidence_classification": "WEAK_INCONSISTENT_DEV_EVIDENCE"
+    },
+    "future_trend_state_15m": {
+      "best_folds_beating_baseline": 4,
+      "generic_evidence_classification": "CONSISTENT_DEV_EVIDENCE",
+      "presentation_label": "SMALL_CONSISTENT_DEV_IMPROVEMENT"
+    }
+  },
+  "limitations": [
+    "NEWS/MACRO-1A = NOT_IMPLEMENTED",
+    "XAU-DXY/yields layer = NOT_IMPLEMENTED",
+    "Delta XAUUSDT venue layer = NOT_IMPLEMENTED",
+    "transaction-cost model = NOT_IMPLEMENTED",
+    "risk engine = NOT_IMPLEMENTED",
+    "strategy = NOT_AUTHORIZED"
+  ],
+  "safety": {
+    "trading_capability": 0,
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED",
+    "repository_mutated": false,
+    "canonical_data_mutated": false
+  },
+  "pre_macro_dry_run_verdict": "PASS"
+}
