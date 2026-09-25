@@ -1,0 +1,42 @@
+{
+  "phase": "PRED_1A_R1_1",
+  "document_type": "METADATA_AND_TRUTH_SCOPE_CORRECTION",
+  "original_scope_config": "config/pred_1a_r1_evaluation_scope.json",
+  "original_scope_config_sha256": "4772a9a5deaa5f3e7e248dc2694b8ad44880b445a01a90033bd7fb0f7224809d",
+  "original_error": "In config/pred_1a_r1_evaluation_scope.json, registered_only_targets mistakenly listed 'future_max_up_move_15m' and 'future_volatility_expansion_1h' which do not exist in TargetRegistry, omitting 'future_volatility_state_1h' and 'future_liquidity_state_15m'.",
+  "correction_notice": "THIS IS A METADATA/TRUTH CORRECTION. NO TARGETS ADDED. NO TARGETS REMOVED FROM EMPIRICAL RUN. NO MODEL RESULTS CHANGED.",
+  "canonical_target_registry_count": 12,
+  "canonical_target_registry_set": [
+    "future_liquidity_state_15m",
+    "future_log_return_15m",
+    "future_log_return_1h",
+    "future_log_return_4h",
+    "future_log_return_5m",
+    "future_max_down_move_1h",
+    "future_max_up_move_1h",
+    "future_realized_volatility_15m",
+    "future_realized_volatility_1h",
+    "future_realized_volatility_4h",
+    "future_trend_state_15m",
+    "future_volatility_state_1h"
+  ],
+  "empirically_evaluated_count": 6,
+  "empirically_evaluated_set": [
+    "future_log_return_15m",
+    "future_log_return_1h",
+    "future_log_return_5m",
+    "future_max_up_move_1h",
+    "future_realized_volatility_1h",
+    "future_trend_state_15m"
+  ],
+  "derived_registered_only_count": 6,
+  "derived_registered_only_set": [
+    "future_liquidity_state_15m",
+    "future_log_return_4h",
+    "future_max_down_move_1h",
+    "future_realized_volatility_15m",
+    "future_realized_volatility_4h",
+    "future_volatility_state_1h"
+  ],
+  "derivation_rule": "derived_registered_only_set = canonical_target_registry_set - empirically_evaluated_set"
+}
