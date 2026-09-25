@@ -29,6 +29,23 @@
       "subject": "docs(predict): update PRED-1A R1 evidence reports for c2a8c7e"
     }
   ],
+  "r1_1_commits": [
+    {
+      "commit": "935226a",
+      "type": "CODE",
+      "subject": "feat(predict): PRED-1A R1.1 scope correction, verifier hardening, and snapshot tooling"
+    },
+    {
+      "commit": "3276c56",
+      "type": "EVIDENCE",
+      "subject": "docs(predict): record PRED-1A R1.1 truthful evidence reports and snapshots"
+    },
+    {
+      "commit": "8d4e7f8",
+      "type": "CODE",
+      "subject": "fix(predict): correct git path prefix for evidence-only commit check in R1.1 verifier"
+    }
+  ],
   "research_code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
   "research_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
   "entry_head_sha": "5d7264fdb414eb50e024547753dbbf17178ba838",
