@@ -1,0 +1,98 @@
+{
+  "manifest_version": "1.0.0",
+  "phase": "PRED_1A_R1_2",
+  "timestamp_utc": "2026-09-25T19:00:00Z",
+  "total_files_covered": 18,
+  "entries": [
+    {
+      "path": "reports/PRED_1A_R1_1_CLEAN_CLONE_REPRODUCIBILITY.json",
+      "sha256": "d52cbfcf323fbc2c14d0ca3e36c14c74840cefd54e4817daf35872f588ccc0ff",
+      "size_bytes": 1082
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_DATA_ACCESS_LEDGER_SNAPSHOT.json",
+      "sha256": "557debf546e97c59c4c26823dc87be114d4b0bbe9fc7b6ee00073c81b588f803",
+      "size_bytes": 998
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_DATA_PROVENANCE.json",
+      "sha256": "d027bfa2a8a37ce556c2342eb4828ccf2f520dea72f979367eb09977016fc471",
+      "size_bytes": 926
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_EXPERIMENT_REGISTRY_SNAPSHOT.json",
+      "sha256": "ad14188ff52302e33df22cc3815c164fce71befea6023c3f17c2e0a617d75602",
+      "size_bytes": 17171
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_FOUNDATION.json",
+      "sha256": "30391a3e2296b931fbf4341048e1d59d2a253fab2d5831b764eb0f00651f5998",
+      "size_bytes": 1149
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_GIT_PROVENANCE.json",
+      "sha256": "bd9925fee191bb1a4fee8ccda94ab56aa2f65bacf7d24e4df8adb78483e21610",
+      "size_bytes": 1866
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_LEAKAGE_GATE_AUDIT.json",
+      "sha256": "ab8d3055a6e90f8969d602543b6fde6903dac887dd8b1db0fd2205f69c9ec3e5",
+      "size_bytes": 1336
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_RUN_ARTIFACT_SNAPSHOT.json",
+      "sha256": "adc5353d92a3722625fb2d9774da65966ec995c170e92ba733ebb87969d11278",
+      "size_bytes": 91293
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_SAMPLE_HASH_AUDIT.json",
+      "sha256": "01aeb0583884695f4d6a8ce9eb679458bcccc064f9a33b834befa1af0949f0c5",
+      "size_bytes": 785
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_SCOPE_CORRECTION.json",
+      "sha256": "b9a76b9792dfeed6a97947d123cfde89d1cf54dcd27b2460aa00af6a76656aa5",
+      "size_bytes": 1840
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_SECURITY_AUDIT.json",
+      "sha256": "3235abe02a9f9a8ff2da91b831c5e0e74546a13ab28bfe5e975d8a73c0934249",
+      "size_bytes": 194
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_VERIFIER_AUDIT.json",
+      "sha256": "25633dddb6b665ffd437acf5ae632395941ca7685edc6c98b864c404f1b32a12",
+      "size_bytes": 320
+    },
+    {
+      "path": "reports/PRED_1A_R1_1_VERIFIER_SELF_AUDIT.json",
+      "sha256": "2583bd8f15de8f819cd8843f605c6d38c3d199d462a3a32a0d837c3f426abe96",
+      "size_bytes": 233
+    },
+    {
+      "path": "reports/PRED_1A_R1_2_CLEAN_WORKTREE_AUDIT.json",
+      "sha256": "bd112c9cf95696517344670929b437c2977a4e6bbc1c254a7f2e4c2026a65db2",
+      "size_bytes": 773
+    },
+    {
+      "path": "reports/PRED_1A_R1_2_FOUNDATION.json",
+      "sha256": "56ba5f8f401cdd77723a7d2dc7e85ffa1fda75ac09aa98ade9a29c7b1b3463c2",
+      "size_bytes": 1252
+    },
+    {
+      "path": "reports/PRED_1A_R1_2_PREDICTIVE_FINDINGS_TRUTH.json",
+      "sha256": "c66c6bc4a732cfeab6571ac0564c13d844f7c2d94bc76abf09d04057f26bb232",
+      "size_bytes": 17541
+    },
+    {
+      "path": "reports/PRED_1A_R1_2_SECURITY_AUDIT.json",
+      "sha256": "20ebbd4a6f05dcae7c03729bbd9e0fa9ac39caed65a6f568511dbfd8eec15d1c",
+      "size_bytes": 194
+    },
+    {
+      "path": "reports/PRED_1A_R1_2_VERIFIER_AUDIT.json",
+      "sha256": "0a3f0e098a745ae936a63969f6b430d268b16bda9081ca974aca1e336cd25c56",
+      "size_bytes": 320
+    }
+  ]
+}
