@@ -1,0 +1,19 @@
+{
+  "phase": "PRED_1A_R1_3",
+  "timestamp_utc": "2026-09-25T19:00:00Z",
+  "security_scan": {
+    "trading_capability": "ZERO",
+    "hits": []
+  },
+  "safety_locks": {
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "strategy_discovery": "NOT_AUTHORIZED",
+    "trade_board_status": "QUARANTINED",
+    "external_btc_bot": "ISOLATED"
+  }
+}

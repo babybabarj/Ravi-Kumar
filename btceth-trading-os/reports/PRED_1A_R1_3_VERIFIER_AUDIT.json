@@ -1,0 +1,21 @@
+{
+  "phase": "PRED_1A_R1_3",
+  "timestamp_utc": "2026-09-25T19:00:00Z",
+  "verifier_tool": "tools/verify_pred_1a_r1_3.py",
+  "acceptance_status": "VERIFIED",
+  "independent_reconciliation_performed": true,
+  "r1_3_reports_digests": {
+    "PRED_1A_R1_3_FINDINGS_TRUTH.json": {
+      "sha256": "908ecd0abaa847ed7a6c75a6ef2c8785e382352851154661325f68a719999ba7",
+      "size_bytes": 20093
+    },
+    "PRED_1A_R1_3_SECURITY_AUDIT.json": {
+      "sha256": "972430cfabb60aa239f109e3b9cc7f979604a9093ca575424aab9314f121a472",
+      "size_bytes": 416
+    },
+    "PRED_1A_R1_3_VERIFIER_AUDIT.json": {
+      "sha256": "6cd69914a137890bff008cf39a980c6336124751b058e1076e4ede4f3925e3eb",
+      "size_bytes": 555
+    }
+  }
+}

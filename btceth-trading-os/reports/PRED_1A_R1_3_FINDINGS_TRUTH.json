@@ -1,0 +1,615 @@
+{
+  "phase": "PRED_1A_R1_3",
+  "timestamp_utc": "2026-09-25T19:00:00Z",
+  "derivation_source": "reports/PRED_1A_R1_1_RUN_ARTIFACT_SNAPSHOT.json",
+  "generic_classification_rule": {
+    "description": "Evidence classification derives strictly from empirical fold win counts across 4 walk-forward folds without target-name hardcoding.",
+    "rule": {
+      "0_or_1_of_4": "NO_EVIDENCE",
+      "2_or_3_of_4": "WEAK_INCONSISTENT_DEV_EVIDENCE",
+      "4_of_4": "CONSISTENT_DEV_EVIDENCE"
+    }
+  },
+  "registered_models_in_run": [
+    "LINEAR_OLS_V1",
+    "LOGISTIC_L2_V1",
+    "RIDGE_ALPHA_1_V1",
+    "SHALLOW_TREE_D2_V1"
+  ],
+  "findings": {
+    "future_log_return_5m": {
+      "target_id": "future_log_return_5m",
+      "max_folds_beating": 0,
+      "best_folds_beating_baseline": 0,
+      "best_candidate_model": "LINEAR_OLS_V1",
+      "generic_evidence_classification": "NO_EVIDENCE",
+      "presentation_label": "NO_EVIDENCE",
+      "target_level_label": "NO_EVIDENCE",
+      "classification": "NO_EVIDENCE",
+      "models": [
+        {
+          "model_id": "LINEAR_OLS_V1",
+          "folds_beating_baseline": 0,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": 1.7e-05,
+              "rmse_diff": 2.575e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 2.724e-05,
+              "rmse_diff": 2.683e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 5.74e-05,
+              "rmse_diff": 3.293e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": 1.206e-05,
+              "rmse_diff": 1.301e-05,
+              "candidate_beat_baseline": false
+            }
+          ],
+          "model_evidence_label": "NO_EVIDENCE"
+        },
+        {
+          "model_id": "RIDGE_ALPHA_1_V1",
+          "folds_beating_baseline": 0,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": 5.8e-07,
+              "rmse_diff": 1.99e-06,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 1.644e-05,
+              "rmse_diff": 1.067e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 1.708e-05,
+              "rmse_diff": 3.82e-06,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": 1.55e-06,
+              "rmse_diff": 2.1e-06,
+              "candidate_beat_baseline": false
+            }
+          ],
+          "model_evidence_label": "NO_EVIDENCE"
+        },
+        {
+          "model_id": "SHALLOW_TREE_D2_V1",
+          "folds_beating_baseline": 0,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": 9.65e-06,
+              "rmse_diff": 1.102e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 2.668e-05,
+              "rmse_diff": 1.939e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 1.237e-05,
+              "rmse_diff": 5.78e-06,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": 6.66e-06,
+              "rmse_diff": 9.54e-06,
+              "candidate_beat_baseline": false
+            }
+          ],
+          "model_evidence_label": "NO_EVIDENCE"
+        }
+      ]
+    },
+    "future_log_return_15m": {
+      "target_id": "future_log_return_15m",
+      "max_folds_beating": 1,
+      "best_folds_beating_baseline": 1,
+      "best_candidate_model": "RIDGE_ALPHA_1_V1",
+      "generic_evidence_classification": "NO_EVIDENCE",
+      "presentation_label": "NO_EVIDENCE",
+      "target_level_label": "NO_EVIDENCE",
+      "classification": "NO_EVIDENCE",
+      "models": [
+        {
+          "model_id": "LINEAR_OLS_V1",
+          "folds_beating_baseline": 0,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": 5.825e-05,
+              "rmse_diff": 7.248e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 8.017e-05,
+              "rmse_diff": 8.937e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 0.00012987,
+              "rmse_diff": 9.637e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": 3.623e-05,
+              "rmse_diff": 5.006e-05,
+              "candidate_beat_baseline": false
+            }
+          ],
+          "model_evidence_label": "NO_EVIDENCE"
+        },
+        {
+          "model_id": "RIDGE_ALPHA_1_V1",
+          "folds_beating_baseline": 1,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": -2.08e-06,
+              "rmse_diff": 7.81e-06,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 5.583e-05,
+              "rmse_diff": 4.685e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 4.152e-05,
+              "rmse_diff": 1.809e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": 1.12e-06,
+              "rmse_diff": 1e-08,
+              "candidate_beat_baseline": false
+            }
+          ],
+          "model_evidence_label": "NO_EVIDENCE"
+        },
+        {
+          "model_id": "SHALLOW_TREE_D2_V1",
+          "folds_beating_baseline": 1,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": 7.73e-06,
+              "rmse_diff": 1.137e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 6.632e-05,
+              "rmse_diff": 5.726e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 1.04e-06,
+              "rmse_diff": -7.8e-07,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": -4.74e-06,
+              "rmse_diff": -1.765e-05,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "NO_EVIDENCE"
+        }
+      ]
+    },
+    "future_log_return_1h": {
+      "target_id": "future_log_return_1h",
+      "max_folds_beating": 1,
+      "best_folds_beating_baseline": 1,
+      "best_candidate_model": "RIDGE_ALPHA_1_V1",
+      "generic_evidence_classification": "NO_EVIDENCE",
+      "presentation_label": "NO_EVIDENCE",
+      "target_level_label": "NO_EVIDENCE",
+      "classification": "NO_EVIDENCE",
+      "models": [
+        {
+          "model_id": "LINEAR_OLS_V1",
+          "folds_beating_baseline": 0,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": 0.000287,
+              "rmse_diff": 0.00031411,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 0.00040049,
+              "rmse_diff": 0.0005644,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 0.00032911,
+              "rmse_diff": 0.00036997,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": 2.47e-05,
+              "rmse_diff": 0.00014401,
+              "candidate_beat_baseline": false
+            }
+          ],
+          "model_evidence_label": "NO_EVIDENCE"
+        },
+        {
+          "model_id": "RIDGE_ALPHA_1_V1",
+          "folds_beating_baseline": 1,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": 6.514e-05,
+              "rmse_diff": 4.078e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 0.00020039,
+              "rmse_diff": 0.00023319,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 0.00012011,
+              "rmse_diff": 0.00013222,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": -4.829e-05,
+              "rmse_diff": -8.363e-05,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "NO_EVIDENCE"
+        },
+        {
+          "model_id": "SHALLOW_TREE_D2_V1",
+          "folds_beating_baseline": 1,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": 0.00032064,
+              "rmse_diff": 0.00033913,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 0.00025124,
+              "rmse_diff": 0.00028879,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 8.995e-05,
+              "rmse_diff": 0.00010002,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": -3.597e-05,
+              "rmse_diff": -8.901e-05,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "NO_EVIDENCE"
+        }
+      ]
+    },
+    "future_realized_volatility_1h": {
+      "target_id": "future_realized_volatility_1h",
+      "max_folds_beating": 3,
+      "best_folds_beating_baseline": 3,
+      "best_candidate_model": "LINEAR_OLS_V1",
+      "generic_evidence_classification": "WEAK_INCONSISTENT_DEV_EVIDENCE",
+      "presentation_label": "WEAK_INCONSISTENT_DEV_EVIDENCE",
+      "target_level_label": "WEAK_INCONSISTENT_DEV_EVIDENCE",
+      "classification": "WEAK_INCONSISTENT_DEV_EVIDENCE",
+      "models": [
+        {
+          "model_id": "LINEAR_OLS_V1",
+          "folds_beating_baseline": 3,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": -0.00018832,
+              "rmse_diff": -0.00019106,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 1.596e-05,
+              "rmse_diff": 2.862e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": -4.168e-05,
+              "rmse_diff": -4.289e-05,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": -0.00023127,
+              "rmse_diff": -0.00022493,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "WEAK_INCONSISTENT_DEV_EVIDENCE"
+        },
+        {
+          "model_id": "RIDGE_ALPHA_1_V1",
+          "folds_beating_baseline": 3,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": -0.00019592,
+              "rmse_diff": -0.00019862,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 2.68e-05,
+              "rmse_diff": 2.996e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": -4.1e-06,
+              "rmse_diff": -6.93e-06,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": -0.00023938,
+              "rmse_diff": -0.00023351,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "WEAK_INCONSISTENT_DEV_EVIDENCE"
+        },
+        {
+          "model_id": "SHALLOW_TREE_D2_V1",
+          "folds_beating_baseline": 3,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": -0.00018403,
+              "rmse_diff": -0.00018195,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 3.512e-05,
+              "rmse_diff": 3.285e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": -4.737e-05,
+              "rmse_diff": -4.68e-05,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": -0.00023088,
+              "rmse_diff": -0.00022261,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "WEAK_INCONSISTENT_DEV_EVIDENCE"
+        }
+      ]
+    },
+    "future_max_up_move_1h": {
+      "target_id": "future_max_up_move_1h",
+      "max_folds_beating": 3,
+      "best_folds_beating_baseline": 3,
+      "best_candidate_model": "RIDGE_ALPHA_1_V1",
+      "generic_evidence_classification": "WEAK_INCONSISTENT_DEV_EVIDENCE",
+      "presentation_label": "WEAK_INCONSISTENT_DEV_EVIDENCE",
+      "target_level_label": "WEAK_INCONSISTENT_DEV_EVIDENCE",
+      "classification": "WEAK_INCONSISTENT_DEV_EVIDENCE",
+      "models": [
+        {
+          "model_id": "LINEAR_OLS_V1",
+          "folds_beating_baseline": 2,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": -0.00053666,
+              "rmse_diff": -0.00064332,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 0.0001722,
+              "rmse_diff": 0.00017689,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 0.00026617,
+              "rmse_diff": 0.00021129,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": -0.00065687,
+              "rmse_diff": -0.00064754,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "WEAK_INCONSISTENT_DEV_EVIDENCE"
+        },
+        {
+          "model_id": "RIDGE_ALPHA_1_V1",
+          "folds_beating_baseline": 3,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": -0.00058491,
+              "rmse_diff": -0.00076366,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 0.00014722,
+              "rmse_diff": 0.00010599,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": -9.258e-05,
+              "rmse_diff": -0.00017905,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": -0.00076048,
+              "rmse_diff": -0.0008569,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "WEAK_INCONSISTENT_DEV_EVIDENCE"
+        },
+        {
+          "model_id": "SHALLOW_TREE_D2_V1",
+          "folds_beating_baseline": 2,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "mae_diff": -0.00055033,
+              "rmse_diff": -0.00063548,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 2,
+              "mae_diff": 0.00016964,
+              "rmse_diff": 9.128e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 3,
+              "mae_diff": 6.082e-05,
+              "rmse_diff": -5.68e-05,
+              "candidate_beat_baseline": false
+            },
+            {
+              "fold_id": 4,
+              "mae_diff": -0.00067503,
+              "rmse_diff": -0.00085008,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "WEAK_INCONSISTENT_DEV_EVIDENCE"
+        }
+      ]
+    },
+    "future_trend_state_15m": {
+      "target_id": "future_trend_state_15m",
+      "max_folds_beating": 4,
+      "best_folds_beating_baseline": 4,
+      "best_candidate_model": "LOGISTIC_L2_V1",
+      "generic_evidence_classification": "CONSISTENT_DEV_EVIDENCE",
+      "presentation_label": "SMALL_CONSISTENT_DEV_IMPROVEMENT",
+      "target_level_label": "SMALL_CONSISTENT_DEV_IMPROVEMENT",
+      "classification": "CONSISTENT_DEV_EVIDENCE",
+      "models": [
+        {
+          "model_id": "LOGISTIC_L2_V1",
+          "folds_beating_baseline": 4,
+          "total_folds": 4,
+          "per_fold_baseline_difference": [
+            {
+              "fold_id": 1,
+              "balanced_acc_diff": 0.047809,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 2,
+              "balanced_acc_diff": 0.01241,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 3,
+              "balanced_acc_diff": 0.033505,
+              "candidate_beat_baseline": true
+            },
+            {
+              "fold_id": 4,
+              "balanced_acc_diff": 0.02378,
+              "candidate_beat_baseline": true
+            }
+          ],
+          "model_evidence_label": "CONSISTENT_DEV_EVIDENCE"
+        }
+      ]
+    }
+  },
+  "summary_table": {
+    "future_log_return_5m": "NO DEV EVIDENCE THAT TESTED MODELS OUTPERFORM THE ZERO-RETURN BASELINE (best: 0/4 folds; LINEAR_OLS_V1 0/4, RIDGE_ALPHA_1_V1 0/4, SHALLOW_TREE_D2_V1 0/4)",
+    "future_log_return_15m": "NO_EVIDENCE (best: 1/4 folds; LINEAR_OLS_V1 0/4, RIDGE_ALPHA_1_V1 1/4, SHALLOW_TREE_D2_V1 1/4)",
+    "future_log_return_1h": "NO_EVIDENCE (best: 1/4 folds; LINEAR_OLS_V1 0/4, RIDGE_ALPHA_1_V1 1/4, SHALLOW_TREE_D2_V1 1/4)",
+    "future_realized_volatility_1h": "WEAK_INCONSISTENT_DEV_EVIDENCE (best: 3/4 folds; LINEAR_OLS_V1 3/4, RIDGE_ALPHA_1_V1 3/4, SHALLOW_TREE_D2_V1 3/4; fold 2 loses across all models)",
+    "future_max_up_move_1h": "WEAK_INCONSISTENT_DEV_EVIDENCE (best: 3/4 folds; RIDGE_ALPHA_1_V1 3/4, LINEAR_OLS_V1 2/4, SHALLOW_TREE_D2_V1 2/4; fold 2 loses across all models)",
+    "future_trend_state_15m": "CONSISTENT_DEV_EVIDENCE [Presentation: SMALL_CONSISTENT_DEV_IMPROVEMENT] (best: 4/4 folds; LOGISTIC_L2_V1 4/4; mean balanced accuracy ~0.529 vs 0.500 majority baseline, +0.029 absolute improvement; NOT a trade signal, NOT alpha, NOT tradeable)"
+  },
+  "reporting_corrections": {
+    "lightgbm_removed": true,
+    "lightgbm_explanation": "LightGBM was not evaluated in PRED-1A and references to LightGBM or LGBM in draft walkthrough notes were erroneous and have been excised.",
+    "pure_noise_removed": true,
+    "pure_noise_explanation": "The phrase 'pure noise' has been removed and replaced with the empirical truth: no dev evidence that tested models outperform the zero-return baseline."
+  }
+}
