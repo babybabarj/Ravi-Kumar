@@ -139,7 +139,7 @@ def test_evidence_generation_is_idempotent():
 
 
 # 8. test_val_access_denied_pred_1a_r1
-def test_val_access_denied_pred_1a_r1():
+def test_val_access_denied_pred_1a_r1(tmp_path):
     # Attempting to access VALIDATION must fail closed or be denied
     with pytest.raises((IntelAccessDeniedError, PermissionError, ValueError)):
         # VALIDATION is not allowed during PRED-1A R1
@@ -149,13 +149,14 @@ def test_val_access_denied_pred_1a_r1():
             purpose="UNAUTHORIZED_VAL_TEST",
             caller="tests/test_pred_1a_r1.py",
             phase="PRED_1A_R1",
+            ledger_path=tmp_path / "test_ledger.jsonl",
         )
         # If it didn't raise, ensure it's not permitted
         raise PermissionError("VALIDATION access granted unexpectedly")
 
 
 # 9. test_holdout_access_denied_pred_1a_r1
-def test_holdout_access_denied_pred_1a_r1():
+def test_holdout_access_denied_pred_1a_r1(tmp_path):
     with pytest.raises(IntelAccessDeniedError):
         IntelDatasetAccessAPI.request_dataset(
             asset="XAU",
@@ -163,11 +164,12 @@ def test_holdout_access_denied_pred_1a_r1():
             purpose="UNAUTHORIZED_HOLDOUT_TEST",
             caller="tests/test_pred_1a_r1.py",
             phase="PRED_1A_R1",
+            ledger_path=tmp_path / "test_ledger.jsonl",
         )
 
 
 # 10. test_pristine_access_denied_pred_1a_r1
-def test_pristine_access_denied_pred_1a_r1():
+def test_pristine_access_denied_pred_1a_r1(tmp_path):
     with pytest.raises(IntelAccessDeniedError):
         IntelDatasetAccessAPI.request_dataset(
             asset="XAU",
@@ -175,6 +177,7 @@ def test_pristine_access_denied_pred_1a_r1():
             purpose="UNAUTHORIZED_PRISTINE_TEST",
             caller="tests/test_pred_1a_r1.py",
             phase="PRED_1A_R1",
+            ledger_path=tmp_path / "test_ledger.jsonl",
         )
 
 

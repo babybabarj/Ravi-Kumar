@@ -63,11 +63,12 @@ def main() -> None:
         registry_path=registry_path,
     )
     exp_records = budget_gov.load_registry()
+    run_timestamp = study.get("timestamp_utc", "2026-09-25T13:30:00Z")
 
     # 1. PRED_1A_R1_REMEDIATION_BASELINE.json
     baseline_info = {
         "phase": "PRED_1A_R1",
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": run_timestamp,
         "accepted_intel_1b_r3_1_evidence": "656d6f90c54c884ffe279eead8e866c758b17b0a",
         "historical_unaccepted_pred_1a_commits": {
             "code_sha": "3094fcb95bb8e75f008b67e96100ee902200f316",
@@ -313,7 +314,7 @@ def main() -> None:
     foundation = {
         "phase": "PRED_1A_R1",
         "status": "GENERATED_PENDING_VERIFICATION",
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": run_timestamp,
         "research_run_id": study["research_run_id"],
         "tested_code_sha": study["tested_code_sha"],
         "tested_tree_sha": study["tested_tree_sha"],
