@@ -1,7 +1,7 @@
 {
   "phase": "PRED_1A_R1",
   "verifier_script": "tools/verify_pred_1a_r1.py",
-  "expected_code_sha": "c29520e78da9d4d5a49b6fa775bf828e61d823c2",
-  "expected_tree_sha": "faa7972521271f479a4fc332546b5c67df6e086e",
+  "expected_code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+  "expected_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
   "status": "READY_FOR_VERIFICATION"
 }
