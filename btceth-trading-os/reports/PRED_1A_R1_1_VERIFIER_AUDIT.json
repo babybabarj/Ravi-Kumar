@@ -1,0 +1,12 @@
+{
+  "phase": "PRED_1A_R1_1",
+  "timestamp_utc": "2026-09-25T14:40:00Z",
+  "verifier_script": "tools/verify_pred_1a_r1_1.py",
+  "supported_modes": [
+    "REPOSITORY_ACCEPTANCE",
+    "RAW_DATA_ACCEPTANCE",
+    "FINAL_EVIDENCE_ACCEPTANCE"
+  ],
+  "hardcoded_pass_shortcuts_present": false,
+  "all_gates_fail_closed": true
+}

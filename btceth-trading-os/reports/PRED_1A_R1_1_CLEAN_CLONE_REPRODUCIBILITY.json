@@ -1,0 +1,17 @@
+{
+  "phase": "PRED_1A_R1_1",
+  "timestamp_utc": "2026-09-25T14:40:00Z",
+  "reproducibility_levels": {
+    "LEVEL_1_REPOSITORY_EVIDENCE_REPRODUCIBILITY": {
+      "description": "Verification of git ancestry, code/evidence commit separation, report hashes, snapshot integrity, experiment accounting, access accounting, target scope, code/tree binding, safety, and result consistency using ONLY committed files in a fresh clone.",
+      "clean_clone_status": "SUPPORTED_VIA_COMMITTED_SNAPSHOTS"
+    },
+    "LEVEL_2_RAW_DATA_RECOMPUTATION": {
+      "description": "Verification of source artifact row count (165,600) and byte-exact PyArrow IPC sample hash recomputation (0e6264c...) from the canonical raw DEV parquet partition.",
+      "canonical_dev_parquet": "artifacts/research/partitions/XAUUSDT_DEV_2026_01_04_V3.parquet",
+      "canonical_dev_parquet_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "local_status_when_source_available": "VERIFIED",
+      "clean_clone_status_without_raw_data": "NOT_RUN_SOURCE_ARTIFACT_UNAVAILABLE"
+    }
+  }
+}

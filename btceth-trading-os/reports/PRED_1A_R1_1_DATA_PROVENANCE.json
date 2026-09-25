@@ -1,0 +1,15 @@
+{
+  "phase": "PRED_1A_R1_1",
+  "timestamp_utc": "2026-09-25T14:40:00Z",
+  "research_run_id": "PRED_1A_R1_RUN_001",
+  "source_dataset_id": "XAUUSDT_DEV_V3",
+  "source_artifact": "artifacts/research/partitions/XAUUSDT_DEV_2026_01_04_V3.parquet",
+  "source_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+  "source_artifact_rows": 165600,
+  "research_sample_start": 0,
+  "research_sample_end_exclusive": 10000,
+  "research_sample_rows": 10000,
+  "reported_sample_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+  "sample_hash_method": "SHA256_PYARROW_IPC_STREAM",
+  "provenance_clarification": "The full canonical DEV partition contains 165,600 rows. PRED-1A R1 evaluates rows [0:10000] (10,000 observations). Previous report incorrectly stated source_total_rows = 10000; this is now truthfully distinguished as partition rows = 165600 and sample rows = 10000."
+}

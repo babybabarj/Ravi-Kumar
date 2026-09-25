@@ -1,0 +1,431 @@
+{
+  "snapshot_phase": "PRED_1A_R1_1",
+  "snapshot_type": "IMMUTABLE_EXPERIMENT_REGISTRY_SNAPSHOT",
+  "source_file": "artifacts/research/pred_1a_r1_experiment_registry.jsonl",
+  "source_file_sha256": "5e7807142f0e9fa9c0db73c4364811ab225846e2813d1e9ddd57291dacfb0180",
+  "total_records": 16,
+  "unique_experiment_ids_count": 16,
+  "unique_experiment_ids": [
+    "EXP_R1_future_log_return_15m_LINEAR_OLS_V1",
+    "EXP_R1_future_log_return_15m_RIDGE_ALPHA_1_V1",
+    "EXP_R1_future_log_return_15m_SHALLOW_TREE_D2_V1",
+    "EXP_R1_future_log_return_1h_LINEAR_OLS_V1",
+    "EXP_R1_future_log_return_1h_RIDGE_ALPHA_1_V1",
+    "EXP_R1_future_log_return_1h_SHALLOW_TREE_D2_V1",
+    "EXP_R1_future_log_return_5m_LINEAR_OLS_V1",
+    "EXP_R1_future_log_return_5m_RIDGE_ALPHA_1_V1",
+    "EXP_R1_future_log_return_5m_SHALLOW_TREE_D2_V1",
+    "EXP_R1_future_max_up_move_1h_LINEAR_OLS_V1",
+    "EXP_R1_future_max_up_move_1h_RIDGE_ALPHA_1_V1",
+    "EXP_R1_future_max_up_move_1h_SHALLOW_TREE_D2_V1",
+    "EXP_R1_future_realized_volatility_1h_LINEAR_OLS_V1",
+    "EXP_R1_future_realized_volatility_1h_RIDGE_ALPHA_1_V1",
+    "EXP_R1_future_realized_volatility_1h_SHALLOW_TREE_D2_V1",
+    "EXP_R1_future_trend_state_15m_LOGISTIC_L2_V1"
+  ],
+  "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+  "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+  "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+  "records": [
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_log_return_5m_LINEAR_OLS_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "5m",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "LINEAR_OLS_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_log_return_5m",
+      "timestamp_utc": "2026-09-25T13:38:31.095459+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_log_return_5m_RIDGE_ALPHA_1_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "5m",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_log_return_5m",
+      "timestamp_utc": "2026-09-25T13:38:32.965150+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_log_return_5m_SHALLOW_TREE_D2_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "5m",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_log_return_5m",
+      "timestamp_utc": "2026-09-25T13:38:34.793155+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_log_return_15m_LINEAR_OLS_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "15m",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "LINEAR_OLS_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_log_return_15m",
+      "timestamp_utc": "2026-09-25T13:38:37.062287+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_log_return_15m_RIDGE_ALPHA_1_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "15m",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_log_return_15m",
+      "timestamp_utc": "2026-09-25T13:38:38.886581+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_log_return_15m_SHALLOW_TREE_D2_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "15m",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_log_return_15m",
+      "timestamp_utc": "2026-09-25T13:38:40.688845+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_log_return_1h_LINEAR_OLS_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "1h",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "LINEAR_OLS_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_log_return_1h",
+      "timestamp_utc": "2026-09-25T13:38:42.852888+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_log_return_1h_RIDGE_ALPHA_1_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "1h",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_log_return_1h",
+      "timestamp_utc": "2026-09-25T13:38:44.675430+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_log_return_1h_SHALLOW_TREE_D2_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "1h",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_log_return_1h",
+      "timestamp_utc": "2026-09-25T13:38:46.492739+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_realized_volatility_1h_LINEAR_OLS_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "1h",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "LINEAR_OLS_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_realized_volatility_1h",
+      "timestamp_utc": "2026-09-25T13:38:48.731699+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_realized_volatility_1h_RIDGE_ALPHA_1_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "1h",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_realized_volatility_1h",
+      "timestamp_utc": "2026-09-25T13:38:50.655186+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_realized_volatility_1h_SHALLOW_TREE_D2_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "1h",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_realized_volatility_1h",
+      "timestamp_utc": "2026-09-25T13:38:52.407437+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_max_up_move_1h_LINEAR_OLS_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "1h",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "LINEAR_OLS_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_max_up_move_1h",
+      "timestamp_utc": "2026-09-25T13:38:54.527877+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_max_up_move_1h_RIDGE_ALPHA_1_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "1h",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "RIDGE_ALPHA_1_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_max_up_move_1h",
+      "timestamp_utc": "2026-09-25T13:38:56.334598+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_max_up_move_1h_SHALLOW_TREE_D2_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "1h",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "SHALLOW_TREE_D2_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_max_up_move_1h",
+      "timestamp_utc": "2026-09-25T13:38:58.139442+00:00"
+    },
+    {
+      "artifact_paths": [
+        "reports/PRED_1A_R1_MODEL_RESULTS.json"
+      ],
+      "code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+      "code_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+      "dataset_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "dataset_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+      "dataset_id": "XAUUSDT_DEV_V3",
+      "dataset_logical_hash": null,
+      "experiment_id": "EXP_R1_future_trend_state_15m_LOGISTIC_L2_V1",
+      "feature_set": "ALL_FEATURES",
+      "horizon": "15m",
+      "hyperparameters": {
+        "seed": 42
+      },
+      "model_id": "LOGISTIC_L2_V1",
+      "phase": "PRED_1A_R1",
+      "research_run_id": "PRED_1A_R1_RUN_001",
+      "seed": 42,
+      "split_id": "PURGED_CHRONO_4FOLD",
+      "status": "COMPLETED",
+      "target_id": "future_trend_state_15m",
+      "timestamp_utc": "2026-09-25T13:39:06.757530+00:00"
+    }
+  ]
+}

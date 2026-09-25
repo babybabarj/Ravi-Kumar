@@ -1,0 +1,29 @@
+{
+  "snapshot_phase": "PRED_1A_R1_1",
+  "snapshot_type": "IMMUTABLE_DATA_ACCESS_LEDGER_SNAPSHOT",
+  "source_file": "artifacts/research/pred_1a_r1_data_access_ledger.jsonl",
+  "source_file_sha256": "f3a36eb4f2d83e7bd5c71d68ed4f706f8b596bbebf269bcb0aafd569c04527e4",
+  "total_access_attempts": 1,
+  "total_granted": 1,
+  "total_denied": 0,
+  "dev_granted": 1,
+  "val_granted": 0,
+  "holdout_granted": 0,
+  "pristine_granted": 0,
+  "records": [
+    {
+      "access_result": "GRANTED",
+      "artifact": "artifacts/research/partitions/XAUUSDT_DEV_2026_01_04_V3.parquet",
+      "artifact_hash": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+      "asset": "XAU",
+      "caller": "tools/run_pred_1a_r1_research.py",
+      "dataset_role": "DEVELOPMENT",
+      "denial_reason": null,
+      "phase": "PRED_1A_R1",
+      "purpose": "PRED_1A_R1_RESEARCH",
+      "rows_requested": 10000,
+      "rows_returned": 10000,
+      "timestamp_utc": "2026-09-25T13:38:21.405928+00:00"
+    }
+  ]
+}

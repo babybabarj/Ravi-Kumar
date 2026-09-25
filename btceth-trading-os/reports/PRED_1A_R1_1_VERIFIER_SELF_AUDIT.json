@@ -1,0 +1,8 @@
+{
+  "phase": "PRED_1A_R1_1",
+  "timestamp_utc": "2026-09-25T14:40:00Z",
+  "audited_file": "tools/verify_pred_1a_r1_1.py",
+  "hardcoded_pass_gate_count": 0,
+  "substantive_gates_empirically_derived": true,
+  "audit_verdict": "PASS"
+}

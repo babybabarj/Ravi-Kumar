@@ -1,0 +1,33 @@
+{
+  "phase": "PRED_1A_R1_1",
+  "timestamp_utc": "2026-09-25T14:40:00Z",
+  "train_only_normalization": {
+    "method": "TrainOnlyStandardScaler",
+    "adversarial_test": "Fit on train, record mean/scale. Mutate test with extreme values (+-1e12). Refit/transform. Verify train mean/scale unchanged.",
+    "train_scaler_mean_unchanged": true,
+    "train_scaler_scale_unchanged": true,
+    "leakage_status": "PROVEN_ZERO"
+  },
+  "categorical_encoding": {
+    "method": "TrainOnlyCategoricalEncoder",
+    "adversarial_test": "Fit on train ['REGULAR', 'CLOSED']. Transform test with unseen category 'SURPRISE_CATEGORY'. Verify unseen category not in vocabulary, train vocabulary unchanged, and test maps to UNKNOWN (0.0).",
+    "surprise_category_in_train_vocab": false,
+    "train_vocab_mapping_unchanged": true,
+    "test_unknown_bucket_code": 0.0,
+    "pseudo_ordinal_modulo_hash_used": false,
+    "leakage_status": "PROVEN_ZERO"
+  },
+  "feature_selection": {
+    "supervised_feature_selection_used": false,
+    "selection_strategy": "FIXED_PREDECLARED_ALL_FEATURES",
+    "leakage_status": "PROVEN_ZERO"
+  },
+  "future_mutation_causality": {
+    "method": "CausalFeatureEngine",
+    "anchor_index": 50,
+    "mutation_start_index": 50,
+    "total_bars": 80,
+    "past_feature_divergence_count": 0,
+    "leakage_status": "PROVEN_ZERO"
+  }
+}

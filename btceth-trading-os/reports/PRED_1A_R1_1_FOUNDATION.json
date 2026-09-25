@@ -1,0 +1,31 @@
+{
+  "phase": "PRED_1A_R1_1",
+  "timestamp_utc": "2026-09-25T14:40:00Z",
+  "purpose": "Final Acceptance-Truth, Verifier & Reproducibility Patch for PRED-1A R1",
+  "accepted_milestones": {
+    "PHASE2E_2_V16_STATUS": "VERIFIED",
+    "INTEL_1A_STATUS": "VERIFIED",
+    "INTEL_1B_STATUS": "VERIFIED",
+    "INTEL_1B_R3_1_EVIDENCE_HEAD": "656d6f90c54c884ffe279eead8e866c758b17b0a"
+  },
+  "historical_pred_1a": {
+    "original_code_sha": "3094fcb95bb8e75f008b67e96100ee902200f316",
+    "original_evidence_sha": "2464840731daab09ab2e5786609c916b77a0eeec",
+    "r1_accepted_candidate_code": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+    "r1_actual_pushed_remote_head": "5d7264fdb414eb50e024547753dbbf17178ba838",
+    "r1_walkthrough_sha_defect_retracted": "5d7264f33b1e7790b50346a06900f074d6cce41a"
+  },
+  "hard_safety_state": {
+    "trading_capability": 0,
+    "mainnet_order_mutation": "DISABLED",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "strategy_discovery": "NOT_AUTHORIZED",
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_board_status": "QUARANTINED",
+    "external_btc_bot_status": "ISOLATED"
+  }
+}

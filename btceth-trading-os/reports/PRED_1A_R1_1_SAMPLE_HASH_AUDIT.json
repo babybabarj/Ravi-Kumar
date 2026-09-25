@@ -1,0 +1,20 @@
+{
+  "phase": "PRED_1A_R1_1",
+  "timestamp_utc": "2026-09-25T14:40:00Z",
+  "source_artifact": "artifacts/research/partitions/XAUUSDT_DEV_2026_01_04_V3.parquet",
+  "source_artifact_sha256": "61cc3d0ccca666e320817ac9b526bc23e8018e240609c66b5b704718e53ee084",
+  "sample_slice_bounds": [
+    0,
+    10000
+  ],
+  "reported_sample_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+  "recomputed_sample_hash": "0e6264c58011a1649f92c08e169e6f1646d0f7fb9a3a2682221a9e9ab41ac576",
+  "recomputed_sample_hash_matches": true,
+  "adversarial_slice_bounds": [
+    10000,
+    20000
+  ],
+  "adversarial_slice_hash": "10385333552bb9e71606a90f1f2e2f05bd7bbda519e3d0b23f66660c85e15598",
+  "adversarial_hashes_differ": true,
+  "sample_hash_algorithm": "SHA256_PYARROW_IPC_STREAM"
+}

@@ -1,0 +1,37 @@
+{
+  "phase": "PRED_1A_R1_1",
+  "timestamp_utc": "2026-09-25T14:40:00Z",
+  "branch": "btceth-phase2-multiasset",
+  "accepted_intel_1b_r3_1_baseline": "656d6f90c54c884ffe279eead8e866c758b17b0a",
+  "r1_historical_commits": [
+    {
+      "commit": "f7c407a",
+      "subject": "feat(predict): PRED-1A R1 code and empirical research remediation"
+    },
+    {
+      "commit": "87f0a1d",
+      "subject": "fix(predict): correct feature lookup method in FeaturePreprocessor"
+    },
+    {
+      "commit": "c29520e",
+      "subject": "fix(predict): enforce execution keyword rejection and finalize empirical verifier"
+    },
+    {
+      "commit": "763fe57",
+      "subject": "docs(predict): record PRED-1A R1 truthful evidence reports"
+    },
+    {
+      "commit": "c2a8c7e",
+      "subject": "fix(predict): freeze report generation timestamps and isolate test denial ledgers"
+    },
+    {
+      "commit": "5d7264f",
+      "subject": "docs(predict): update PRED-1A R1 evidence reports for c2a8c7e"
+    }
+  ],
+  "research_code_sha": "c2a8c7e1b77e0bb73a9526b7f05dd14c2e68df50",
+  "research_tree_sha": "f111f7c4443ff1930513a132de9a72f2bc5bf19c",
+  "entry_head_sha": "5d7264fdb414eb50e024547753dbbf17178ba838",
+  "walkthrough_erroneous_sha_retracted": "5d7264f33b1e7790b50346a06900f074d6cce41a",
+  "history_policy": "STRICTLY_ADDITIVE_NO_FORCE_PUSH_NO_REBASE"
+}
