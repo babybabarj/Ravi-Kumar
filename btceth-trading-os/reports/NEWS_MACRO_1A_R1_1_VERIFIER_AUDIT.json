@@ -1,0 +1,311 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_1_VERIFIER_AUDIT",
+  "verified_at_utc": "2026-09-26T08:28:17.261763+00:00",
+  "mode": "FINAL_EVIDENCE_ACCEPTANCE",
+  "all_gates_passed": true,
+  "total_gates": 50,
+  "passed_count": 50,
+  "failed_count": 0,
+  "gates": {
+    "ENTRY_HEAD_VALID": {
+      "gate_number": 1,
+      "gate_name": "ENTRY_HEAD_VALID",
+      "status": "PASS",
+      "detail": "ancestor of a1a5bc707e"
+    },
+    "R1_HISTORICAL_EVIDENCE_UNCHANGED": {
+      "gate_number": 2,
+      "gate_name": "R1_HISTORICAL_EVIDENCE_UNCHANGED",
+      "status": "PASS",
+      "detail": "historical R1 reports intact"
+    },
+    "NO_GUESSED_BLS_RELEASE_TIMESTAMP": {
+      "gate_number": 3,
+      "gate_name": "NO_GUESSED_BLS_RELEASE_TIMESTAMP",
+      "status": "PASS",
+      "detail": "found: []"
+    },
+    "BLS_RELEASE_SCHEDULE_REAL_PARSER": {
+      "gate_number": 4,
+      "gate_name": "BLS_RELEASE_SCHEDULE_REAL_PARSER",
+      "status": "PASS",
+      "detail": "parsed 35 CPI release dates"
+    },
+    "BLS_RELEASE_TIME_DST_VALID": {
+      "gate_number": 5,
+      "gate_name": "BLS_RELEASE_TIME_DST_VALID",
+      "status": "PASS",
+      "detail": "summer=12:30 UTC, winter=13:30 UTC"
+    },
+    "BLS_VALUE_AVAILABILITY_SOURCE_SEPARATED": {
+      "gate_number": 6,
+      "gate_name": "BLS_VALUE_AVAILABILITY_SOURCE_SEPARATED",
+      "status": "PASS",
+      "detail": "distinct value & schedule sources"
+    },
+    "CURRENT_BLS_FETCH_DYNAMIC_YEAR": {
+      "gate_number": 7,
+      "gate_name": "CURRENT_BLS_FETCH_DYNAMIC_YEAR",
+      "status": "PASS",
+      "detail": "dynamic years: ('2025', '2026')"
+    },
+    "CURRENT_BLS_VALUES_NOT_2024_FIXTURE": {
+      "gate_number": 8,
+      "gate_name": "CURRENT_BLS_VALUES_NOT_2024_FIXTURE",
+      "status": "PASS",
+      "detail": "snapshot ref_period: 2026-08"
+    },
+    "BLS_VINTAGE_PROVENANCE_VALID": {
+      "gate_number": 9,
+      "gate_name": "BLS_VINTAGE_PROVENANCE_VALID",
+      "status": "PASS",
+      "detail": "['ORIGINAL_RELEASE_PROVEN', 'REVISION_RELEASE_PROVEN', 'LATEST_CURRENT_VALUE_ONLY', 'VINTAGE_UNKNOWN']"
+    },
+    "CURRENT_REVISED_VALUE_NOT_BACKDATED": {
+      "gate_number": 10,
+      "gate_name": "CURRENT_REVISED_VALUE_NOT_BACKDATED",
+      "status": "PASS",
+      "detail": "blocked historical query before first_seen"
+    },
+    "HISTORICAL_UNKNOWN_VINTAGE_FAILS_CLOSED": {
+      "gate_number": 11,
+      "gate_name": "HISTORICAL_UNKNOWN_VINTAGE_FAILS_CLOSED",
+      "status": "PASS",
+      "detail": "fails closed in intraday query"
+    },
+    "REVISION_ZERO_LEAKAGE": {
+      "gate_number": 12,
+      "gate_name": "REVISION_ZERO_LEAKAGE",
+      "status": "PASS",
+      "detail": "between t1 and t2 returns 150.0, not 155.0"
+    },
+    "CPI_SCHEDULE_NOT_HARDCODED": {
+      "gate_number": 13,
+      "gate_name": "CPI_SCHEDULE_NOT_HARDCODED",
+      "status": "PASS",
+      "detail": "next CPI: 2026-10-14 12:30:00+00:00"
+    },
+    "NFP_SCHEDULE_NOT_HARDCODED": {
+      "gate_number": 14,
+      "gate_name": "NFP_SCHEDULE_NOT_HARDCODED",
+      "status": "PASS",
+      "detail": "next NFP: 2026-10-02 12:30:00+00:00"
+    },
+    "FED_MONETARY_FEED_REAL": {
+      "gate_number": 15,
+      "gate_name": "FED_MONETARY_FEED_REAL",
+      "status": "PASS",
+      "detail": "https://www.federalreserve.gov/feeds/press_monetary.xml"
+    },
+    "FED_SPEECH_FEED_REAL": {
+      "gate_number": 16,
+      "gate_name": "FED_SPEECH_FEED_REAL",
+      "status": "PASS",
+      "detail": "https://www.federalreserve.gov/feeds/speeches.xml"
+    },
+    "FED_FEEDS_SEPARATED": {
+      "gate_number": 17,
+      "gate_name": "FED_FEEDS_SEPARATED",
+      "status": "PASS",
+      "detail": "independent URLs"
+    },
+    "FED_STATEMENT_CLASSIFICATION_VALID": {
+      "gate_number": 18,
+      "gate_name": "FED_STATEMENT_CLASSIFICATION_VALID",
+      "status": "PASS",
+      "detail": "FOMC_STATEMENT"
+    },
+    "FED_MINUTES_CLASSIFICATION_VALID": {
+      "gate_number": 19,
+      "gate_name": "FED_MINUTES_CLASSIFICATION_VALID",
+      "status": "PASS",
+      "detail": "FOMC_MINUTES"
+    },
+    "FED_SPEECH_CLASSIFICATION_VALID": {
+      "gate_number": 20,
+      "gate_name": "FED_SPEECH_CLASSIFICATION_VALID",
+      "status": "PASS",
+      "detail": "FED_SPEECH"
+    },
+    "FED_ITEM_IDS_UNIQUE": {
+      "gate_number": 21,
+      "gate_name": "FED_ITEM_IDS_UNIQUE",
+      "status": "PASS",
+      "detail": "FOMC_STATEMENT_202609161800_46819f08 != FOMC_SEP_202609161800_98c27adf"
+    },
+    "FOMC_CALENDAR_REAL_PARSER": {
+      "gate_number": 22,
+      "gate_name": "FOMC_CALENDAR_REAL_PARSER",
+      "status": "PASS",
+      "detail": "parsed: 2026-01-28"
+    },
+    "NEXT_FOMC_NOT_HARDCODED": {
+      "gate_number": 23,
+      "gate_name": "NEXT_FOMC_NOT_HARDCODED",
+      "status": "PASS",
+      "detail": "scheduled: 2026-10-28"
+    },
+    "FOMC_TIME_CERTAINTY_TRUTHFUL": {
+      "gate_number": 24,
+      "gate_name": "FOMC_TIME_CERTAINTY_TRUTHFUL",
+      "status": "PASS",
+      "detail": "TimestampCertainty.DATE_ONLY"
+    },
+    "TREASURY_OBSERVATION_TYPE_DERIVED": {
+      "gate_number": 25,
+      "gate_name": "TREASURY_OBSERVATION_TYPE_DERIVED",
+      "status": "PASS",
+      "detail": "prior=DAILY_OFFICIAL, today=CURRENT_OFFICIAL_OBSERVATION"
+    },
+    "PRIOR_DAY_TREASURY_NOT_CURRENT": {
+      "gate_number": 26,
+      "gate_name": "PRIOR_DAY_TREASURY_NOT_CURRENT",
+      "status": "PASS",
+      "detail": "not CURRENT_OFFICIAL_OBSERVATION"
+    },
+    "TREASURY_SOURCE_DATE_PRECISION_VALID": {
+      "gate_number": 27,
+      "gate_name": "TREASURY_SOURCE_DATE_PRECISION_VALID",
+      "status": "PASS",
+      "detail": "DATE_ONLY"
+    },
+    "TREASURY_LIVE_FIRST_SEEN_BOUND_VALID": {
+      "gate_number": 28,
+      "gate_name": "TREASURY_LIVE_FIRST_SEEN_BOUND_VALID",
+      "status": "PASS",
+      "detail": "LIVE_FIRST_SEEN"
+    },
+    "REAL_SOURCE_FRESH_VERIFICATION_PASS": {
+      "gate_number": 29,
+      "gate_name": "REAL_SOURCE_FRESH_VERIFICATION_PASS",
+      "status": "PASS",
+      "detail": "all 5 live official endpoints reachable"
+    },
+    "REAL_CURRENT_SNAPSHOT_VALID": {
+      "gate_number": 30,
+      "gate_name": "REAL_CURRENT_SNAPSHOT_VALID",
+      "status": "PASS",
+      "detail": "snapshot exists with 3 upcoming events"
+    },
+    "CURRENT_SNAPSHOT_PROVENANCE_COMPLETE": {
+      "gate_number": 31,
+      "gate_name": "CURRENT_SNAPSHOT_PROVENANCE_COMPLETE",
+      "status": "PASS",
+      "detail": "all upcoming events have complete provenance"
+    },
+    "CURRENT_SNAPSHOT_FRESHNESS_TRUTHFUL": {
+      "gate_number": 32,
+      "gate_name": "CURRENT_SNAPSHOT_FRESHNESS_TRUTHFUL",
+      "status": "PASS",
+      "detail": "cadence-aware observation types"
+    },
+    "SOURCE_CONFLICT_DIFFERING_VALUES_RETAINED": {
+      "gate_number": 33,
+      "gate_name": "SOURCE_CONFLICT_DIFFERING_VALUES_RETAINED",
+      "status": "PASS",
+      "detail": "primary=317.6, secondary=317.5, conflict_detected=true"
+    },
+    "CONSENSUS_FAIL_CLOSED": {
+      "gate_number": 34,
+      "gate_name": "CONSENSUS_FAIL_CLOSED",
+      "status": "PASS",
+      "detail": "NOT_AVAILABLE"
+    },
+    "DXY_FAIL_CLOSED": {
+      "gate_number": 35,
+      "gate_name": "DXY_FAIL_CLOSED",
+      "status": "PASS",
+      "detail": "NOT_IMPLEMENTED_PROVIDER_REQUIRED"
+    },
+    "BREAKING_NEWS_FAIL_CLOSED": {
+      "gate_number": 36,
+      "gate_name": "BREAKING_NEWS_FAIL_CLOSED",
+      "status": "PASS",
+      "detail": "NOT_IMPLEMENTED_PROVIDER_REQUIRED"
+    },
+    "VAL_GRANTED_ZERO": {
+      "gate_number": 37,
+      "gate_name": "VAL_GRANTED_ZERO",
+      "status": "PASS",
+      "detail": "val_granted=0"
+    },
+    "HOLDOUT_GRANTED_ZERO": {
+      "gate_number": 38,
+      "gate_name": "HOLDOUT_GRANTED_ZERO",
+      "status": "PASS",
+      "detail": "holdout_granted=0"
+    },
+    "PRISTINE_GRANTED_ZERO": {
+      "gate_number": 39,
+      "gate_name": "PRISTINE_GRANTED_ZERO",
+      "status": "PASS",
+      "detail": "pristine_granted=0"
+    },
+    "ZERO_SHADOW_EMPIRICALLY_PROVEN": {
+      "gate_number": 40,
+      "gate_name": "ZERO_SHADOW_EMPIRICALLY_PROVEN",
+      "status": "PASS",
+      "detail": "persistent=0, runtime=0"
+    },
+    "ZERO_PAPER_EMPIRICALLY_PROVEN": {
+      "gate_number": 41,
+      "gate_name": "ZERO_PAPER_EMPIRICALLY_PROVEN",
+      "status": "PASS",
+      "detail": "persistent=0, runtime=0"
+    },
+    "ZERO_LIVE_EMPIRICALLY_PROVEN": {
+      "gate_number": 42,
+      "gate_name": "ZERO_LIVE_EMPIRICALLY_PROVEN",
+      "status": "PASS",
+      "detail": "trading_capability=0"
+    },
+    "TRADING_CAPABILITY_ZERO": {
+      "gate_number": 43,
+      "gate_name": "TRADING_CAPABILITY_ZERO",
+      "status": "PASS",
+      "detail": "capability=0"
+    },
+    "SECURITY_SCAN_ZERO": {
+      "gate_number": 44,
+      "gate_name": "SECURITY_SCAN_ZERO",
+      "status": "PASS",
+      "detail": "exit code 0"
+    },
+    "FULL_TEST_SUITE_REAL_PASS": {
+      "gate_number": 45,
+      "gate_name": "FULL_TEST_SUITE_REAL_PASS",
+      "status": "PASS",
+      "detail": "genuine standalone test suite execution passed"
+    },
+    "R1_1_REPORT_DIGESTS_RECOMPUTED_MATCH": {
+      "gate_number": 46,
+      "gate_name": "R1_1_REPORT_DIGESTS_RECOMPUTED_MATCH",
+      "status": "PASS",
+      "detail": "12 reports verified"
+    },
+    "DIGEST_MUTATION_CAUGHT": {
+      "gate_number": 47,
+      "gate_name": "DIGEST_MUTATION_CAUGHT",
+      "status": "PASS",
+      "detail": "1-byte mutation successfully detected"
+    },
+    "WALKTHROUGH_FACTS_MATCH_REPORTS": {
+      "gate_number": 48,
+      "gate_name": "WALKTHROUGH_FACTS_MATCH_REPORTS",
+      "status": "PASS",
+      "detail": "walkthrough facts reconcile with snapshot"
+    },
+    "EVIDENCE_ONLY_FINAL_COMMIT": {
+      "gate_number": 49,
+      "gate_name": "EVIDENCE_ONLY_FINAL_COMMIT",
+      "status": "PASS",
+      "detail": "14 files modified in HEAD"
+    },
+    "LOCAL_HEAD_EQUALS_REMOTE_HEAD": {
+      "gate_number": 50,
+      "gate_name": "LOCAL_HEAD_EQUALS_REMOTE_HEAD",
+      "status": "PASS",
+      "detail": "local=67640e6231, remote=67640e6231"
+    }
+  }
+}

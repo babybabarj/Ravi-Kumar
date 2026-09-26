@@ -3,7 +3,7 @@
   "git_state": {
     "entry_head": "a1a5bc707e21ae570d7369b155bd724b364f680f",
     "parent_code_commit": "8cba9a05158e2d0077ecc245a8e5be996f547523",
-    "current_head": "247afa54f789456a5225bfca2d283c44f8b3f191"
+    "current_head": "e115234d50bba4646d26427e04efd395c44de561"
   },
   "test_counts": {
     "r1_1_suite_passed": 35,
