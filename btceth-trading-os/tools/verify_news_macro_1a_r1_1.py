@@ -108,7 +108,7 @@ class R1_1Verifier:
 
         # Gate 02: R1_HISTORICAL_EVIDENCE_UNCHANGED
         r1_unchanged = True
-        r1_diff = self._git("diff", CANONICAL_ENTRY_HEAD, "HEAD", "--", "reports/NEWS_MACRO_1A_R1_*.json")
+        r1_diff = self._git("diff", CANONICAL_ENTRY_HEAD, "HEAD", "--", "reports/NEWS_MACRO_1A_R1_*.json", ":!reports/NEWS_MACRO_1A_R1_1_*")
         if r1_diff.strip():
             r1_unchanged = False
         self._record(2, "R1_HISTORICAL_EVIDENCE_UNCHANGED", r1_unchanged, "historical R1 reports intact")

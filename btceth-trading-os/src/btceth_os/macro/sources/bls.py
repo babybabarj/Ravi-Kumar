@@ -316,9 +316,9 @@ class BLSAdapter:
             family=family,
             is_live_current_snapshot=is_live_current_snapshot,
         )
-        quality = MacroDataQuality.GOOD if vintages else MacroDataQuality.MISSING
+        quality = MacroDataQuality.GOOD if vintages else MacroDataQuality.NOT_IMPLEMENTED
         avail_status = (
-            MacroAvailabilityStatus.AVAILABLE if vintages else MacroAvailabilityStatus.NOT_YET_RELEASED
+            MacroAvailabilityStatus.AVAILABLE if vintages else MacroAvailabilityStatus.PROVIDER_NOT_IMPLEMENTED
         )
 
         return MacroSeriesObservation(
