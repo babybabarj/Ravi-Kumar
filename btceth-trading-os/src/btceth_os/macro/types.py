@@ -172,9 +172,14 @@ class ArchivedEvidenceValidationError(ValueError):
     pass
 
 
-def validate_archived_bls_vintage_evidence(evidence: Any) -> bool:
+def validate_archived_bls_vintage_evidence(
+    evidence: Any,
+    target_series_id: Optional[str] = None,
+    target_reference_period: Optional[str] = None,
+    expected_archive_type: Optional[BLSArchiveType] = None,
+) -> bool:
     """
-    Validate all structural requirements for archived BLS vintage evidence (§16).
+    Validate all structural requirements for archived BLS vintage evidence (§13-§19).
     Raises ArchivedEvidenceValidationError if any requirement is not met.
     """
     if evidence is None:
@@ -191,26 +196,38 @@ def validate_archived_bls_vintage_evidence(evidence: Any) -> bool:
     series_id = getattr(evidence, "series_id", None)
     if not series_id or not isinstance(series_id, str):
         raise ArchivedEvidenceValidationError("Archived evidence series_id must be non-empty string.")
+    if target_series_id is not None and series_id != target_series_id:
+        raise ArchivedEvidenceValidationError(
+            f"Archived evidence series_id {series_id!r} does not match target series_id {target_series_id!r}."
+        )
 
     ref_period = getattr(evidence, "reference_period", None)
     if not ref_period or not isinstance(ref_period, str):
         raise ArchivedEvidenceValidationError("Archived evidence reference_period must be non-empty string.")
+    if target_reference_period is not None and ref_period != target_reference_period:
+        raise ArchivedEvidenceValidationError(
+            f"Archived evidence reference_period {ref_period!r} does not match target reference_period {target_reference_period!r}."
+        )
 
     official_url = getattr(evidence, "official_source_url", None)
     if not official_url or not isinstance(official_url, str):
         raise ArchivedEvidenceValidationError("Archived evidence official_source_url must be non-empty string.")
 
-    # Official source URL must use official BLS domain
+    # Official source URL must use https and official BLS domain (§18)
     from urllib.parse import urlparse
 
     parsed_url = urlparse(official_url)
-    netloc = parsed_url.netloc.lower()
+    if parsed_url.scheme != "https":
+        raise ArchivedEvidenceValidationError(
+            f"Archived evidence URL must use https scheme; got {parsed_url.scheme!r} in {official_url!r}"
+        )
+    netloc = parsed_url.netloc.lower().split(":")[0]
     if not (netloc == "bls.gov" or netloc.endswith(".bls.gov")):
         raise ArchivedEvidenceValidationError(
             f"Archived evidence URL must use official BLS domain (*.bls.gov); got {official_url!r}"
         )
 
-    # Source raw sha256: exactly 64 lowercase or uppercase hex characters
+    # Source raw sha256: exactly 64 lowercase or uppercase hex characters (§19)
     sha = getattr(evidence, "source_raw_sha256", None)
     if not sha or not isinstance(sha, str) or len(sha) != 64 or not all(c in "0123456789abcdefABCDEF" for c in sha):
         raise ArchivedEvidenceValidationError(
@@ -224,31 +241,44 @@ def validate_archived_bls_vintage_evidence(evidence: Any) -> bool:
             "Archived evidence official_published_at_utc must be a timezone-aware datetime."
         )
 
-    # Retrieved at timestamp must be timezone-aware if present
+    # Retrieved at timestamp is mandatory and must be timezone-aware (§16, §28)
     ret_utc = getattr(evidence, "retrieved_at_utc", None)
-    if ret_utc is not None:
-        if not isinstance(ret_utc, datetime) or ret_utc.tzinfo is None:
-            raise ArchivedEvidenceValidationError(
-                "Archived evidence retrieved_at_utc must be a timezone-aware datetime."
-            )
+    if ret_utc is None:
+        raise ArchivedEvidenceValidationError(
+            "Archived evidence retrieved_at_utc is mandatory and must not be None."
+        )
+    if not isinstance(ret_utc, datetime) or ret_utc.tzinfo is None:
+        raise ArchivedEvidenceValidationError(
+            "Archived evidence retrieved_at_utc must be a timezone-aware datetime."
+        )
+
+    # Chronology validation: publication <= retrieval (§17, §28)
+    pub_norm = pub_utc if pub_utc.tzinfo == timezone.utc else pub_utc.astimezone(timezone.utc)
+    ret_norm = ret_utc if ret_utc.tzinfo == timezone.utc else ret_utc.astimezone(timezone.utc)
+    if ret_norm < pub_norm:
+        raise ArchivedEvidenceValidationError(
+            f"Archived evidence retrieved_at_utc ({ret_norm.isoformat()}) cannot be "
+            f"before official_published_at_utc ({pub_norm.isoformat()})."
+        )
 
     arch_type = getattr(evidence, "archive_type", None)
     if not isinstance(arch_type, BLSArchiveType):
         try:
-            BLSArchiveType(arch_type)
+            arch_type = BLSArchiveType(arch_type)
         except (ValueError, TypeError):
             raise ArchivedEvidenceValidationError(
                 f"Archived evidence archive_type must be a valid BLSArchiveType; got {arch_type!r}"
             )
+    if expected_archive_type is not None and arch_type != expected_archive_type:
+        raise ArchivedEvidenceValidationError(
+            f"Archived evidence archive_type {arch_type!r} does not match expected {expected_archive_type!r}."
+        )
 
     certainty = getattr(evidence, "timestamp_certainty", None)
-    if certainty not in (
-        TimestampCertainty.EXACT,
-        TimestampCertainty.DATE_ONLY,
-        TimestampCertainty.TIME_UNCERTAIN,
-        TimestampCertainty.UNKNOWN,
-    ):
-        raise ArchivedEvidenceValidationError("Invalid timestamp_certainty.")
+    if certainty != TimestampCertainty.EXACT:
+        raise ArchivedEvidenceValidationError(
+            f"Archived evidence timestamp_certainty must be EXACT; got {certainty!r}"
+        )
 
     return True
 
@@ -267,14 +297,53 @@ class BLSArchivedVintageEvidence:
     official_source_url: str
     source_raw_sha256: str
     official_published_at_utc: datetime
+    retrieved_at_utc: datetime
     timestamp_certainty: TimestampCertainty = TimestampCertainty.EXACT
-    retrieved_at_utc: Optional[datetime] = None
     revision_number: int = 0
     revision_label: Optional[str] = None
     raw_fragment_hash: Optional[str] = None
 
     def __post_init__(self) -> None:
         validate_archived_bls_vintage_evidence(self)
+
+
+def is_verified_historical_bls_vintage(v: Any) -> bool:
+    """
+    Canonical proof predicate for BLS historical intraday research usability (§8, §9, §21).
+    True requires ALL:
+    1. vintage_provenance in (ORIGINAL_RELEASE_PROVEN, REVISION_RELEASE_PROVEN)
+    2. source_evidence_type is matching ARCHIVED_BLS_* type
+    3. archived_evidence is not None and validates successfully
+    4. timestamp_certainty == TimestampCertainty.EXACT
+    5. available_at_utc is not None
+    FROZEN_TEST_FIXTURE, CURRENT_BLS_API, and VINTAGE_UNKNOWN are strictly FALSE.
+    """
+    if v is None:
+        return False
+    src_type = getattr(v, "source_evidence_type", None)
+    if src_type not in (
+        BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE,
+        BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE,
+    ):
+        return False
+    prov = getattr(v, "vintage_provenance", None)
+    if prov not in (
+        BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
+        BLSVintageProvenance.REVISION_RELEASE_PROVEN,
+    ):
+        return False
+    arch_ev = getattr(v, "archived_evidence", None)
+    if arch_ev is None:
+        return False
+    try:
+        validate_archived_bls_vintage_evidence(arch_ev)
+    except Exception:
+        return False
+    if getattr(v, "timestamp_certainty", None) != TimestampCertainty.EXACT:
+        return False
+    if getattr(v, "available_at_utc", None) is None:
+        return False
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -482,8 +551,43 @@ class MacroVintage:
         object.__setattr__(self, "revision_label", eff_lbl)
         object.__setattr__(self, "vintage_label", eff_lbl)
 
+        # Section 5, 6, 7, 22, 23: Direct provenance bypass prevention
+        if self.vintage_provenance == BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN:
+            if (
+                self.source_evidence_type != BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE
+                or self.archived_evidence is None
+            ):
+                raise ArchivedEvidenceValidationError(
+                    "Direct ORIGINAL_RELEASE_PROVEN without validated ARCHIVED_BLS_INITIAL_RELEASE "
+                    "evidence is strictly forbidden."
+                )
+            validate_archived_bls_vintage_evidence(self.archived_evidence)
+            if self.archived_evidence.archive_type != BLSArchiveType.INITIAL_RELEASE:
+                raise ArchivedEvidenceValidationError(
+                    "ARCHIVED_BLS_INITIAL_RELEASE requires archive_type=INITIAL_RELEASE"
+                )
+
+        elif self.vintage_provenance == BLSVintageProvenance.REVISION_RELEASE_PROVEN:
+            if (
+                self.source_evidence_type != BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE
+                or self.archived_evidence is None
+            ):
+                raise ArchivedEvidenceValidationError(
+                    "Direct REVISION_RELEASE_PROVEN without validated ARCHIVED_BLS_REVISION_RELEASE "
+                    "evidence is strictly forbidden."
+                )
+            validate_archived_bls_vintage_evidence(self.archived_evidence)
+            if self.archived_evidence.archive_type != BLSArchiveType.REVISION_RELEASE:
+                raise ArchivedEvidenceValidationError(
+                    "ARCHIVED_BLS_REVISION_RELEASE requires archive_type=REVISION_RELEASE"
+                )
+
+        # Frozen test fixture safety (§9, §24)
+        if self.source_evidence_type == BLSSourceEvidenceType.FROZEN_TEST_FIXTURE:
+            object.__setattr__(self, "vintage_provenance", BLSVintageProvenance.VINTAGE_UNKNOWN)
+
         # Section 12, 13, 14: CURRENT_BLS_API causal availability
-        if self.source_evidence_type == BLSSourceEvidenceType.CURRENT_BLS_API:
+        elif self.source_evidence_type == BLSSourceEvidenceType.CURRENT_BLS_API:
             # Descriptive metadata can preserve reference scheduled release date if provided
             eff_pub = self.official_published_at_utc or self.published_at_utc
             object.__setattr__(self, "official_published_at_utc", eff_pub)
@@ -545,39 +649,13 @@ class MacroVintage:
             object.__setattr__(self, "available_at_utc", eff_avail)
             object.__setattr__(self, "published_at_utc", eff_pub or eff_avail)
 
-            if self.vintage_provenance is None:
-                if self.source_evidence_type == BLSSourceEvidenceType.FROZEN_TEST_FIXTURE:
-                    eff_prov = (
-                        BLSVintageProvenance.REVISION_RELEASE_PROVEN
-                        if self.revision_number > 0
-                        else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
-                    )
-                else:
-                    eff_prov = (
-                        BLSVintageProvenance.REVISION_RELEASE_PROVEN
-                        if self.revision_number > 0
-                        else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
-                    )
-                object.__setattr__(self, "vintage_provenance", eff_prov)
-
     @property
     def historical_intraday_usable(self) -> bool:
         """
-        Historical intraday usable requires proven vintage and EXACT timestamp certainty (§15, §18).
-        LATEST_CURRENT_VALUE_ONLY and VINTAGE_UNKNOWN are strictly FALSE.
+        Historical intraday usable requires proven vintage and EXACT timestamp certainty (§8, §9, §21).
+        LATEST_CURRENT_VALUE_ONLY, VINTAGE_UNKNOWN, and FROZEN_TEST_FIXTURE are strictly FALSE.
         """
-        if self.vintage_provenance in (
-            BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY,
-            BLSVintageProvenance.VINTAGE_UNKNOWN,
-        ):
-            return False
-        return (
-            self.vintage_provenance in (
-                BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
-                BLSVintageProvenance.REVISION_RELEASE_PROVEN,
-            )
-            and self.timestamp_certainty == TimestampCertainty.EXACT
-        )
+        return is_verified_historical_bls_vintage(self)
 
 
 @dataclass(frozen=True)

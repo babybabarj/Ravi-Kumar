@@ -341,7 +341,7 @@ class BLSAdapter:
         family: str = "CPI",
         evidence_type: Optional[BLSSourceEvidenceType] = None,
         source_evidence_type: Optional[BLSSourceEvidenceType] = None,
-        archived_vintages_evidence: Optional[dict[str, dict[str, Any]]] = None,
+        archived_vintages_evidence: Optional[dict[str, BLSArchivedVintageEvidence]] = None,
         is_live_current_snapshot: bool = False,
     ) -> tuple[MacroVintage, ...]:
         """
@@ -356,6 +356,20 @@ class BLSAdapter:
         eff_evidence_type = source_evidence_type or evidence_type or BLSSourceEvidenceType.CURRENT_BLS_API
         snap_t = _ensure_utc(snapshot_time_utc)
         vintages: list[MacroVintage] = []
+
+        # Reject plain dicts and require validated proof objects (§10, §11)
+        if archived_vintages_evidence:
+            for k, arch_val in archived_vintages_evidence.items():
+                if isinstance(arch_val, dict):
+                    raise ArchivedEvidenceValidationError(
+                        f"Plain dictionary archive evidence for {k!r} is strictly rejected. "
+                        "Must provide validated BLSArchivedVintageEvidence object."
+                    )
+                if not isinstance(arch_val, BLSArchivedVintageEvidence):
+                    raise ArchivedEvidenceValidationError(
+                        f"Invalid archived evidence object type for {k!r}: {type(arch_val)}. "
+                        "Must provide validated BLSArchivedVintageEvidence object."
+                    )
 
         if eff_evidence_type in (
             BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE,
@@ -393,82 +407,65 @@ class BLSAdapter:
             )
 
             if archived_item is not None:
-                if isinstance(archived_item, BLSArchivedVintageEvidence):
-                    arch_ev = archived_item
-                elif isinstance(archived_item, dict):
-                    is_rev = archived_item.get("is_revision", False)
-                    default_arch_type = (
-                        BLSArchiveType.REVISION_RELEASE
-                        if is_rev
-                        else BLSArchiveType.INITIAL_RELEASE
-                    )
-                    arch_type_raw = archived_item.get("archive_type", default_arch_type)
-                    arch_type = (
-                        BLSArchiveType(arch_type_raw)
-                        if isinstance(arch_type_raw, str)
-                        else arch_type_raw
-                    )
-
-                    arch_ev = BLSArchivedVintageEvidence(
-                        series_id=archived_item.get("series_id", series_id),
-                        reference_period=archived_item.get("reference_period", ref_period),
-                        value=float(archived_item.get("value", val)),
-                        archive_type=arch_type,
-                        official_source_url=archived_item.get("official_source_url")
-                        or archived_item.get(
-                            "source_reference",
-                            f"https://www.bls.gov/news.release/archives/{series_id.lower()}_{ref_period}.htm",
-                        ),
-                        source_raw_sha256=archived_item.get("source_raw_sha256")
-                        or archived_item.get("source_hash", ""),
-                        official_published_at_utc=archived_item.get("official_published_at_utc")
-                        or archived_item.get("published_at_utc")
-                        or rel_date_utc
-                        or snap_t,
-                        timestamp_certainty=archived_item.get(
-                            "timestamp_certainty", TimestampCertainty.EXACT
-                        ),
-                        retrieved_at_utc=archived_item.get("retrieved_at_utc", snap_t),
-                        revision_number=archived_item.get("revision_number", 1 if is_rev else 0),
-                        revision_label=archived_item.get("revision_label"),
-                    )
-                else:
+                if isinstance(archived_item, dict):
                     raise ArchivedEvidenceValidationError(
-                        f"Invalid archived evidence object type: {type(archived_item)}"
+                        "Plain dictionary archive evidence is strictly rejected. "
+                        "Must provide validated BLSArchivedVintageEvidence object."
+                    )
+                if not isinstance(archived_item, BLSArchivedVintageEvidence):
+                    raise ArchivedEvidenceValidationError(
+                        f"Invalid archived evidence object type: {type(archived_item)}. "
+                        "Must provide validated BLSArchivedVintageEvidence object."
                     )
 
-                validate_archived_bls_vintage_evidence(arch_ev)
+                # Bindings: exact series, exact reference period, valid proof (§13, §14, §15)
+                validate_archived_bls_vintage_evidence(
+                    archived_item,
+                    target_series_id=series_id,
+                    target_reference_period=ref_period,
+                )
 
-                pub_t = arch_ev.official_published_at_utc
+                if eff_evidence_type == BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE:
+                    if archived_item.archive_type != BLSArchiveType.INITIAL_RELEASE:
+                        raise ArchivedEvidenceValidationError(
+                            f"ARCHIVED_BLS_INITIAL_RELEASE requires archive_type=INITIAL_RELEASE; got {archived_item.archive_type.value}"
+                        )
+                elif eff_evidence_type == BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE:
+                    if archived_item.archive_type != BLSArchiveType.REVISION_RELEASE:
+                        raise ArchivedEvidenceValidationError(
+                            f"ARCHIVED_BLS_REVISION_RELEASE requires archive_type=REVISION_RELEASE; got {archived_item.archive_type.value}"
+                        )
+
+                pub_t = archived_item.official_published_at_utc
                 if pub_t is not None and pub_t <= snap_t:
                     v = MacroVintage(
                         vintage_id=f"BLS_{series_id}_{ref_period}"
                         + (
                             "_REV"
-                            if arch_ev.archive_type == BLSArchiveType.REVISION_RELEASE
+                            if archived_item.archive_type == BLSArchiveType.REVISION_RELEASE
                             else ""
                         ),
-                        value=arch_ev.value,  # Section 20, 38: must come from proof, not current API
+                        value=archived_item.value,  # Section 20, 38: must come from proof, not current API
                         official_published_at_utc=pub_t,
                         available_at_utc=pub_t,
                         first_seen_at_utc=snap_t,
-                        timestamp_certainty=arch_ev.timestamp_certainty,
+                        timestamp_certainty=archived_item.timestamp_certainty,
                         availability_basis=AvailabilityBasis.OFFICIAL_EXACT_PUBLICATION_TIME,
                         source_id="BLS_ARCHIVE",
-                        source_reference=arch_ev.official_source_url,
-                        source_hash=arch_ev.source_raw_sha256,
-                        revision_number=arch_ev.revision_number,
+                        source_reference=archived_item.official_source_url,
+                        source_hash=archived_item.source_raw_sha256,
+                        revision_number=archived_item.revision_number,
                         vintage_provenance=(
                             BLSVintageProvenance.REVISION_RELEASE_PROVEN
-                            if arch_ev.archive_type == BLSArchiveType.REVISION_RELEASE
+                            if archived_item.archive_type == BLSArchiveType.REVISION_RELEASE
                             else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
                         ),
                         source_evidence_type=(
                             BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE
-                            if arch_ev.archive_type == BLSArchiveType.REVISION_RELEASE
+                            if archived_item.archive_type == BLSArchiveType.REVISION_RELEASE
                             else BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE
                         ),
-                        archived_evidence=arch_ev,
+                        archived_evidence=archived_item,
                     )
                     vintages.append(v)
 
@@ -517,7 +514,7 @@ class BLSAdapter:
         snapshot_time_utc: datetime,
         use_cached_raw: Optional[dict[str, Any]] = None,
         evidence_type: BLSSourceEvidenceType = BLSSourceEvidenceType.CURRENT_BLS_API,
-        archived_vintages_evidence: Optional[dict[str, dict[str, Any]]] = None,
+        archived_vintages_evidence: Optional[dict[str, BLSArchivedVintageEvidence]] = None,
         is_live_current_snapshot: bool = False,
     ) -> MacroSeriesObservation:
         """

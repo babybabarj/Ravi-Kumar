@@ -263,7 +263,6 @@ class TreasuryAdapter:
                         source_id="US_TREASURY",
                         source_reference=f"home.treasury.gov daily yield curve ({field_name})",
                         revision_number=0,
-                        vintage_provenance=BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
                     )
                     vintages.append(v)
 

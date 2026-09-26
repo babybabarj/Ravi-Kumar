@@ -268,6 +268,7 @@ def test_archived_evidence_missing_hash_rejected():
     must be rejected by validate_archived_bls_vintage_evidence (§36).
     """
     t_pub = datetime(2026, 9, 11, 12, 30, tzinfo=timezone.utc)
+    t_ret = datetime(2026, 9, 11, 13, 0, tzinfo=timezone.utc)
 
     # Empty hash
     with pytest.raises(ArchivedEvidenceValidationError):
@@ -279,6 +280,7 @@ def test_archived_evidence_missing_hash_rejected():
             official_source_url="https://www.bls.gov/news.release/archives/cpi_09112026.htm",
             source_raw_sha256="",
             official_published_at_utc=t_pub,
+            retrieved_at_utc=t_ret,
         )
 
     # Non-64 length hash
@@ -291,6 +293,7 @@ def test_archived_evidence_missing_hash_rejected():
             official_source_url="https://www.bls.gov/news.release/archives/cpi_09112026.htm",
             source_raw_sha256="abc123not64chars",
             official_published_at_utc=t_pub,
+            retrieved_at_utc=t_ret,
         )
 
     # Non-hex characters
@@ -303,6 +306,7 @@ def test_archived_evidence_missing_hash_rejected():
             official_source_url="https://www.bls.gov/news.release/archives/cpi_09112026.htm",
             source_raw_sha256="z" * 64,
             official_published_at_utc=t_pub,
+            retrieved_at_utc=t_ret,
         )
 
 
@@ -317,6 +321,7 @@ def test_archived_evidence_non_bls_url_rejected():
     """
     valid_sha = hashlib.sha256(b"dummy").hexdigest()
     t_pub = datetime(2026, 9, 11, 12, 30, tzinfo=timezone.utc)
+    t_ret = datetime(2026, 9, 11, 13, 0, tzinfo=timezone.utc)
 
     with pytest.raises(ArchivedEvidenceValidationError):
         BLSArchivedVintageEvidence(
@@ -327,6 +332,7 @@ def test_archived_evidence_non_bls_url_rejected():
             official_source_url="https://example.com/cpi_release.htm",
             source_raw_sha256=valid_sha,
             official_published_at_utc=t_pub,
+            retrieved_at_utc=t_ret,
         )
 
 
@@ -346,6 +352,7 @@ def test_archived_evidence_value_used_not_current_api_value():
     t_snap = datetime(2026, 9, 26, tzinfo=timezone.utc)
     valid_sha = hashlib.sha256(b"archived_cpi_150_bytes").hexdigest()
     t_pub = datetime(2026, 9, 11, 12, 30, tzinfo=timezone.utc)
+    t_ret = datetime(2026, 9, 11, 13, 0, tzinfo=timezone.utc)
 
     proof = BLSArchivedVintageEvidence(
         series_id="CUSR0000SA0",
@@ -355,6 +362,7 @@ def test_archived_evidence_value_used_not_current_api_value():
         official_source_url="https://www.bls.gov/news.release/archives/cpi_09112026.htm",
         source_raw_sha256=valid_sha,
         official_published_at_utc=t_pub,
+        retrieved_at_utc=t_ret,
         timestamp_certainty=TimestampCertainty.EXACT,
     )
 

@@ -23,6 +23,9 @@ import pytest
 
 from btceth_os.macro.types import (
     AvailabilityBasis,
+    BLSArchiveType,
+    BLSArchivedVintageEvidence,
+    BLSSourceEvidenceType,
     BLSVintageProvenance,
     EventReleaseStatus,
     MacroAvailabilityStatus,
@@ -109,6 +112,17 @@ def test_bls_availability_adversarial_zero_leakage():
     adversarial_query_time = datetime(2026, 7, 13, 10, 0, 0, tzinfo=timezone.utc)
 
     # R1.1 Schedule-proven vintage
+    proof = BLSArchivedVintageEvidence(
+        series_id="CUSR0000SA0",
+        reference_period="2026-06",
+        value=318.5,
+        archive_type=BLSArchiveType.INITIAL_RELEASE,
+        official_source_url="https://www.bls.gov/news.release/archives/cpi_07142026.htm",
+        source_raw_sha256="a" * 64,
+        official_published_at_utc=actual_release_utc,
+        retrieved_at_utc=actual_release_utc,
+        timestamp_certainty=TimestampCertainty.EXACT,
+    )
     v_r1_1 = MacroVintage(
         vintage_id="CPI_2026_06_OFFICIAL",
         value=318.5,
@@ -116,9 +130,10 @@ def test_bls_availability_adversarial_zero_leakage():
         available_at_utc=actual_release_utc,
         timestamp_certainty=TimestampCertainty.EXACT,
         availability_basis=AvailabilityBasis.OFFICIAL_EXACT_PUBLICATION_TIME,
-        vintage_provenance=BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
         source_id="BLS",
-        source_reference="bls.gov schedule",
+        source_reference="https://www.bls.gov/news.release/archives/cpi_07142026.htm",
+        source_evidence_type=BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE,
+        archived_evidence=proof,
     )
     obs = MacroSeriesObservation(
         series_id="US_CPI_HEADLINE",
@@ -156,15 +171,40 @@ def test_revision_leakage_adversarial_prevention():
     t2 = datetime(2026, 3, 6, 13, 30, 0, tzinfo=timezone.utc)
     between_t = datetime(2026, 2, 20, 12, 0, 0, tzinfo=timezone.utc)
 
+    proof_init = BLSArchivedVintageEvidence(
+        series_id="CES0000000001",
+        reference_period="2026-01",
+        value=150.0,
+        archive_type=BLSArchiveType.INITIAL_RELEASE,
+        official_source_url="https://www.bls.gov/news.release/archives/empsit_02062026.htm",
+        source_raw_sha256="a" * 64,
+        official_published_at_utc=t1,
+        retrieved_at_utc=t1,
+        timestamp_certainty=TimestampCertainty.EXACT,
+    )
+    proof_rev = BLSArchivedVintageEvidence(
+        series_id="CES0000000001",
+        reference_period="2026-01",
+        value=155.0,
+        archive_type=BLSArchiveType.REVISION_RELEASE,
+        official_source_url="https://www.bls.gov/news.release/archives/empsit_03062026.htm",
+        source_raw_sha256="b" * 64,
+        official_published_at_utc=t2,
+        retrieved_at_utc=t2,
+        timestamp_certainty=TimestampCertainty.EXACT,
+        revision_number=1,
+    )
+
     v_initial = MacroVintage(
         vintage_id="NFP_2026_01_INITIAL",
         value=150.0,
         official_published_at_utc=t1,
         available_at_utc=t1,
         revision_number=0,
-        vintage_provenance=BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
         source_id="BLS",
-        source_reference="BLS initial press release",
+        source_reference="https://www.bls.gov/news.release/archives/empsit_02062026.htm",
+        source_evidence_type=BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE,
+        archived_evidence=proof_init,
     )
     v_revised = MacroVintage(
         vintage_id="NFP_2026_01_REV1",
@@ -172,9 +212,10 @@ def test_revision_leakage_adversarial_prevention():
         official_published_at_utc=t2,
         available_at_utc=t2,
         revision_number=1,
-        vintage_provenance=BLSVintageProvenance.REVISION_RELEASE_PROVEN,
         source_id="BLS",
-        source_reference="BLS revised press release",
+        source_reference="https://www.bls.gov/news.release/archives/empsit_03062026.htm",
+        source_evidence_type=BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE,
+        archived_evidence=proof_rev,
     )
     obs = MacroSeriesObservation(
         series_id="US_NFP_TOTAL",

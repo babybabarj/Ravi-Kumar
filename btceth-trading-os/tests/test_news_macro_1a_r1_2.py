@@ -35,6 +35,8 @@ from btceth_os.macro.sources.bls_schedule import (
 )
 from btceth_os.macro.types import (
     AvailabilityBasis,
+    BLSArchiveType,
+    BLSArchivedVintageEvidence,
     BLSSourceEvidenceType,
     BLSVintageProvenance,
     EventReleaseStatus,
@@ -289,14 +291,21 @@ def test_archived_original_can_be_original_release_proven():
     adapter = BLSAdapter()
     raw_rows = [{"period": "M08", "year": "2026", "value": "334.131"}]
     t_snap = datetime(2026, 9, 26, tzinfo=timezone.utc)
+    t_pub = datetime(2026, 9, 11, 12, 30, 0, tzinfo=timezone.utc)
+    t_ret = datetime(2026, 9, 11, 13, 0, 0, tzinfo=timezone.utc)
     archived_evidence = {
-        "2026-08": {
-            "value": 334.131,
-            "published_at_utc": datetime(2026, 9, 11, 12, 30, 0, tzinfo=timezone.utc),
-            "source_reference": "https://www.bls.gov/news.release/archives/cpi_09112026.htm",
-            "source_hash": hashlib.sha256(b"cpi_orig_hash_123").hexdigest(),
-            "is_revision": False,
-        }
+        "2026-08": BLSArchivedVintageEvidence(
+            series_id="CUSR0000SA0",
+            reference_period="2026-08",
+            value=334.131,
+            archive_type=BLSArchiveType.INITIAL_RELEASE,
+            official_published_at_utc=t_pub,
+            retrieved_at_utc=t_ret,
+            official_source_url="https://www.bls.gov/news.release/archives/cpi_09112026.htm",
+            source_raw_sha256=hashlib.sha256(b"cpi_orig_hash_123").hexdigest(),
+            timestamp_certainty=TimestampCertainty.EXACT,
+            revision_number=0,
+        )
     }
     vintages = adapter.parse_series_vintages(
         raw_rows, "CUSR0000SA0", t_snap, archived_vintages_evidence=archived_evidence
@@ -311,14 +320,21 @@ def test_archived_revision_can_be_revision_release_proven():
     adapter = BLSAdapter()
     raw_rows = [{"period": "M08", "year": "2026", "value": "334.500"}]
     t_snap = datetime(2026, 10, 26, tzinfo=timezone.utc)
+    t_pub = datetime(2026, 10, 14, 12, 30, 0, tzinfo=timezone.utc)
+    t_ret = datetime(2026, 10, 14, 13, 0, 0, tzinfo=timezone.utc)
     archived_evidence = {
-        "2026-08": {
-            "value": 334.500,
-            "published_at_utc": datetime(2026, 10, 14, 12, 30, 0, tzinfo=timezone.utc),
-            "source_reference": "https://www.bls.gov/news.release/archives/cpi_10142026.htm",
-            "source_hash": hashlib.sha256(b"cpi_rev_hash_456").hexdigest(),
-            "is_revision": True,
-        }
+        "2026-08": BLSArchivedVintageEvidence(
+            series_id="CUSR0000SA0",
+            reference_period="2026-08",
+            value=334.500,
+            archive_type=BLSArchiveType.REVISION_RELEASE,
+            official_published_at_utc=t_pub,
+            retrieved_at_utc=t_ret,
+            official_source_url="https://www.bls.gov/news.release/archives/cpi_10142026.htm",
+            source_raw_sha256=hashlib.sha256(b"cpi_rev_hash_456").hexdigest(),
+            timestamp_certainty=TimestampCertainty.EXACT,
+            revision_number=1,
+        )
     }
     vintages = adapter.parse_series_vintages(
         raw_rows, "CUSR0000SA0", t_snap, archived_vintages_evidence=archived_evidence

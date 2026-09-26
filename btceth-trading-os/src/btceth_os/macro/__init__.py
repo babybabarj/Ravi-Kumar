@@ -32,6 +32,8 @@ from btceth_os.macro.availability import (
 )
 from btceth_os.macro.event_registry import MACRO_EVENT_REGISTRY, MacroEventFamily
 
+from btceth_os.macro.status import aggregate_macro_status
+
 __all__ = [
     "MacroEvent",
     "MacroSeriesObservation",
@@ -54,4 +56,5 @@ __all__ = [
     "news_view_as_of",
     "series_value_as_of",
     "upcoming_events_as_of",
+    "aggregate_macro_status",
 ]
