@@ -36,6 +36,7 @@ from zoneinfo import ZoneInfo
 from btceth_os.macro.availability import PointInTimeAvailabilityChecker, _ensure_utc
 from btceth_os.macro.types import (
     AvailabilityBasis,
+    BLSSourceEvidenceType,
     BLSVintageProvenance,
     MacroAvailabilityStatus,
     MacroDataQuality,
@@ -203,12 +204,21 @@ class BLSAdapter:
         series_id: str,
         snapshot_time_utc: datetime,
         family: str = "CPI",
+        evidence_type: Optional[BLSSourceEvidenceType] = None,
+        source_evidence_type: Optional[BLSSourceEvidenceType] = None,
+        archived_vintages_evidence: Optional[dict[str, dict[str, Any]]] = None,
         is_live_current_snapshot: bool = False,
     ) -> tuple[MacroVintage, ...]:
         """
         Parse raw BLS API observations into MacroVintage instances using VERIFIED release calendars.
         ZERO guessed release days or fixed UTC offsets.
+
+        SAFE PROVENANCE RULE (§13, §14, §15, §24, §25):
+        Any value obtained from CURRENT BLS Data API defaults to LATEST_CURRENT_VALUE_ONLY.
+        Knowing the official release date does NOT prove the current API value is the original release value!
+        ZERO entries become ORIGINAL_RELEASE_PROVEN unless explicit archived vintage evidence is provided.
         """
+        eff_evidence_type = source_evidence_type or evidence_type or BLSSourceEvidenceType.CURRENT_BLS_API
         snap_t = _ensure_utc(snapshot_time_utc)
         vintages: list[MacroVintage] = []
 
@@ -231,32 +241,94 @@ class BLSAdapter:
             sched_family = "CPI" if "CPI" in family else "EMPLOYMENT_SITUATION"
             rel_date_utc = BLSScheduleAdapter.get_release_datetime_utc(sched_family, ref_period)
 
-            if rel_date_utc is not None:
-                # Calendar-verified release timestamp
-                if rel_date_utc <= snap_t:
-                    prov = (
-                        BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY
-                        if is_live_current_snapshot
-                        else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+            # Check if explicit archived evidence exists for this vintage (§16, §17)
+            archived_info = archived_vintages_evidence.get(ref_period) if archived_vintages_evidence else None
+
+            if archived_info is not None:
+                # Explicit archived vintage artifact proves provenance (§16, §17)
+                is_revision = archived_info.get("is_revision", False)
+                prov = (
+                    BLSVintageProvenance.REVISION_RELEASE_PROVEN
+                    if is_revision
+                    else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+                )
+                pub_t = archived_info.get("published_at_utc", rel_date_utc)
+                if pub_t is not None and pub_t <= snap_t:
+                    v = MacroVintage(
+                        vintage_id=f"BLS_{series_id}_{ref_period}" + ("_REV" if is_revision else ""),
+                        value=float(archived_info.get("value", val)),
+                        official_published_at_utc=pub_t,
+                        available_at_utc=pub_t,
+                        first_seen_at_utc=snap_t,
+                        timestamp_certainty=TimestampCertainty.EXACT,
+                        availability_basis=AvailabilityBasis.OFFICIAL_EXACT_PUBLICATION_TIME,
+                        source_id="BLS_ARCHIVE",
+                        source_reference=archived_info.get("source_reference", f"BLS Archive {series_id} {ref_period}"),
+                        source_hash=archived_info.get("source_hash"),
+                        revision_number=1 if is_revision else 0,
+                        vintage_provenance=prov,
+                        source_evidence_type=(
+                            BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE
+                            if is_revision
+                            else BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE
+                        ),
                     )
+                    vintages.append(v)
+            elif eff_evidence_type == BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE:
+                if rel_date_utc is not None and rel_date_utc <= snap_t:
                     v = MacroVintage(
                         vintage_id=f"BLS_{series_id}_{ref_period}",
                         value=val,
                         official_published_at_utc=rel_date_utc,
                         available_at_utc=rel_date_utc,
-                        first_seen_at_utc=snap_t if is_live_current_snapshot else None,
+                        first_seen_at_utc=snap_t,
                         timestamp_certainty=TimestampCertainty.EXACT,
                         availability_basis=AvailabilityBasis.OFFICIAL_EXACT_PUBLICATION_TIME,
-                        source_id="BLS",
-                        source_reference=f"BLS API {series_id} reconciled with official schedule",
+                        source_id="BLS_ARCHIVE",
+                        source_reference=f"BLS Archived Initial Release {series_id} {ref_period}",
                         revision_number=0,
-                        vintage_provenance=prov,
+                        vintage_provenance=BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
+                        source_evidence_type=BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE,
+                    )
+                    vintages.append(v)
+            elif eff_evidence_type == BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE:
+                if rel_date_utc is not None and rel_date_utc <= snap_t:
+                    v = MacroVintage(
+                        vintage_id=f"BLS_{series_id}_{ref_period}_REV",
+                        value=val,
+                        official_published_at_utc=rel_date_utc,
+                        available_at_utc=rel_date_utc,
+                        first_seen_at_utc=snap_t,
+                        timestamp_certainty=TimestampCertainty.EXACT,
+                        availability_basis=AvailabilityBasis.OFFICIAL_EXACT_PUBLICATION_TIME,
+                        source_id="BLS_ARCHIVE",
+                        source_reference=f"BLS Archived Revision Release {series_id} {ref_period}",
+                        revision_number=1,
+                        vintage_provenance=BLSVintageProvenance.REVISION_RELEASE_PROVEN,
+                        source_evidence_type=BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE,
                     )
                     vintages.append(v)
             else:
-                # If release datetime is not verified in official schedule:
-                # Do NOT invent day 12 or 13:30! Mark as VINTAGE_UNKNOWN or LATEST_CURRENT_VALUE_ONLY
-                if is_live_current_snapshot:
+                # Default path (CURRENT_BLS_API):
+                # All values obtained from CURRENT BLS Data API default to LATEST_CURRENT_VALUE_ONLY (§13, §14, §15).
+                # availability_basis = LIVE_FIRST_SEEN, historical_intraday_usable = FALSE.
+                if rel_date_utc is not None and rel_date_utc <= snap_t:
+                    v = MacroVintage(
+                        vintage_id=f"BLS_{series_id}_{ref_period}",
+                        value=val,
+                        official_published_at_utc=rel_date_utc,
+                        available_at_utc=rel_date_utc,
+                        first_seen_at_utc=snap_t,
+                        timestamp_certainty=TimestampCertainty.EXACT,
+                        availability_basis=AvailabilityBasis.LIVE_FIRST_SEEN,
+                        source_id="BLS",
+                        source_reference=f"BLS API {series_id} (current API observation)",
+                        revision_number=0,
+                        vintage_provenance=BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY,
+                        source_evidence_type=BLSSourceEvidenceType.CURRENT_BLS_API,
+                    )
+                    vintages.append(v)
+                else:
                     v = MacroVintage(
                         vintage_id=f"BLS_{series_id}_{ref_period}_UNVERIFIED_CADENCE",
                         value=val,
@@ -269,6 +341,7 @@ class BLSAdapter:
                         source_reference=f"BLS API {series_id} (schedule unverified)",
                         revision_number=0,
                         vintage_provenance=BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY,
+                        source_evidence_type=BLSSourceEvidenceType.CURRENT_BLS_API,
                     )
                     vintages.append(v)
 
@@ -280,11 +353,14 @@ class BLSAdapter:
         series_key: str,
         snapshot_time_utc: datetime,
         use_cached_raw: Optional[dict[str, Any]] = None,
+        evidence_type: BLSSourceEvidenceType = BLSSourceEvidenceType.CURRENT_BLS_API,
+        archived_vintages_evidence: Optional[dict[str, dict[str, Any]]] = None,
         is_live_current_snapshot: bool = False,
     ) -> MacroSeriesObservation:
         """
         Fetch and causally filter a BLS series observation as of snapshot_time_utc.
         Dynamically derives requested year range from snapshot_time_utc (§13).
+        Defaults to LATEST_CURRENT_VALUE_ONLY provenance for current API values (§15).
         """
         canonical_key = _KEY_ALIASES.get(series_key, series_key)
         if canonical_key not in BLS_SERIES_SEMANTICS:
@@ -314,6 +390,8 @@ class BLSAdapter:
             series_id,
             snapshot_time_utc,
             family=family,
+            evidence_type=evidence_type,
+            archived_vintages_evidence=archived_vintages_evidence,
             is_live_current_snapshot=is_live_current_snapshot,
         )
         quality = MacroDataQuality.GOOD if vintages else MacroDataQuality.NOT_IMPLEMENTED
@@ -351,6 +429,44 @@ class BLSAdapter:
         return round(((current_val / past_val) - 1.0) * 100.0, 4)
 
     @staticmethod
+    def derive_cpi_yoy_provenance(vintages: tuple[MacroVintage, ...]) -> dict[str, Any]:
+        """
+        Derive YoY CPI percentage change with provenance tracking (§20).
+        If inputs are current API values with LATEST_CURRENT_VALUE_ONLY,
+        the derived metric inherits CURRENT_DESCRIPTIVE_ONLY and
+        derived_metric_historical_intraday_usable = False.
+        """
+        val = BLSAdapter.derive_cpi_yoy(vintages)
+        if val is None or len(vintages) < 13:
+            return {
+                "value": None,
+                "derived_yoy": None,
+                "provenance": "NOT_AVAILABLE",
+                "derived_metric_provenance": "NOT_AVAILABLE",
+                "derived_metric_historical_intraday_usable": False,
+                "historical_intraday_usable": False,
+            }
+        required_vintages = [vintages[-1], vintages[-13]]
+        all_proven = all(
+            v.vintage_provenance in (
+                BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
+                BLSVintageProvenance.REVISION_RELEASE_PROVEN,
+            )
+            and v.timestamp_certainty == TimestampCertainty.EXACT
+            for v in required_vintages
+        )
+        prov = "HISTORICAL_CAUSAL_PROVEN" if all_proven else "CURRENT_DESCRIPTIVE_ONLY"
+        usable = bool(all_proven)
+        return {
+            "value": val,
+            "derived_yoy": val,
+            "provenance": prov,
+            "derived_metric_provenance": prov,
+            "derived_metric_historical_intraday_usable": usable,
+            "historical_intraday_usable": usable,
+        }
+
+    @staticmethod
     def derive_nfp_mom_change(vintages: tuple[MacroVintage, ...]) -> Optional[float]:
         """
         Derive MoM NFP change in thousands of jobs:
@@ -362,3 +478,41 @@ class BLSAdapter:
         current_val = vintages[-1].value
         past_val = vintages[-2].value
         return round(current_val - past_val, 1)
+
+    @staticmethod
+    def derive_nfp_mom_provenance(vintages: tuple[MacroVintage, ...]) -> dict[str, Any]:
+        """
+        Derive MoM NFP change with provenance tracking (§20).
+        If inputs are current API values with LATEST_CURRENT_VALUE_ONLY,
+        the derived metric inherits CURRENT_DESCRIPTIVE_ONLY and
+        derived_metric_historical_intraday_usable = False.
+        """
+        val = BLSAdapter.derive_nfp_mom_change(vintages)
+        if val is None or len(vintages) < 2:
+            return {
+                "value": None,
+                "derived_mom_change_thousands": None,
+                "provenance": "NOT_AVAILABLE",
+                "derived_metric_provenance": "NOT_AVAILABLE",
+                "derived_metric_historical_intraday_usable": False,
+                "historical_intraday_usable": False,
+            }
+        required_vintages = [vintages[-1], vintages[-2]]
+        all_proven = all(
+            v.vintage_provenance in (
+                BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
+                BLSVintageProvenance.REVISION_RELEASE_PROVEN,
+            )
+            and v.timestamp_certainty == TimestampCertainty.EXACT
+            for v in required_vintages
+        )
+        prov = "HISTORICAL_CAUSAL_PROVEN" if all_proven else "CURRENT_DESCRIPTIVE_ONLY"
+        usable = bool(all_proven)
+        return {
+            "value": val,
+            "derived_mom_change_thousands": val,
+            "provenance": prov,
+            "derived_metric_provenance": prov,
+            "derived_metric_historical_intraday_usable": usable,
+            "historical_intraday_usable": usable,
+        }

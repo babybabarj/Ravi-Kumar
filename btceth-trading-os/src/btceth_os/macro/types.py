@@ -134,6 +134,27 @@ class BLSVintageProvenance(str, enum.Enum):
     VINTAGE_UNKNOWN = "VINTAGE_UNKNOWN"
 
 
+class BLSSourceEvidenceType(str, enum.Enum):
+    """
+    Explicit source evidence classification for BLS data (§25).
+    Determines vintage provenance objectively from source evidence type,
+    NOT from caller intent or boolean switches.
+
+    CURRENT_BLS_API               — raw payload fetched from current BLS API v2;
+                                    always defaults to LATEST_CURRENT_VALUE_ONLY.
+    ARCHIVED_BLS_INITIAL_RELEASE  — independently archived original release artifact;
+                                    proves ORIGINAL_RELEASE_PROVEN.
+    ARCHIVED_BLS_REVISION_RELEASE — independently archived revision release artifact;
+                                    proves REVISION_RELEASE_PROVEN.
+    FROZEN_TEST_FIXTURE           — local test fixture for deterministic testing.
+    """
+
+    CURRENT_BLS_API = "CURRENT_BLS_API"
+    ARCHIVED_BLS_INITIAL_RELEASE = "ARCHIVED_BLS_INITIAL_RELEASE"
+    ARCHIVED_BLS_REVISION_RELEASE = "ARCHIVED_BLS_REVISION_RELEASE"
+    FROZEN_TEST_FIXTURE = "FROZEN_TEST_FIXTURE"
+
+
 # ---------------------------------------------------------------------------
 # Core dataclasses
 # ---------------------------------------------------------------------------
@@ -272,6 +293,14 @@ class MacroEvent:
         object.__setattr__(self, "official_published_at_utc", self.official_published_at_utc or eff_avail)
         object.__setattr__(self, "actual_release_utc", eff_avail)
 
+    @property
+    def status(self) -> EventReleaseStatus:
+        if self.actual_value is not None:
+            return EventReleaseStatus.RELEASED
+        if self.scheduled_at_utc is not None:
+            return EventReleaseStatus.SCHEDULED_NOT_RELEASED
+        return EventReleaseStatus.NOT_AVAILABLE
+
 
 @dataclass(frozen=True)
 class MacroVintage:
@@ -319,6 +348,7 @@ class MacroVintage:
     revision_number: int = 0
     revision_label: Optional[str] = None
     vintage_provenance: Optional[BLSVintageProvenance] = None
+    source_evidence_type: Optional[BLSSourceEvidenceType] = None
 
     # Legacy backward compatibility parameters
     published_at_utc: Optional[datetime] = None
@@ -336,12 +366,40 @@ class MacroVintage:
         object.__setattr__(self, "vintage_label", eff_lbl)
 
         if self.vintage_provenance is None:
-            eff_prov = (
-                BLSVintageProvenance.REVISION_RELEASE_PROVEN
-                if self.revision_number > 0
-                else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
-            )
+            if self.source_evidence_type == BLSSourceEvidenceType.CURRENT_BLS_API:
+                eff_prov = BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY
+            elif self.source_evidence_type == BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE:
+                eff_prov = BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+            elif self.source_evidence_type == BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE:
+                eff_prov = BLSVintageProvenance.REVISION_RELEASE_PROVEN
+            elif self.source_evidence_type == BLSSourceEvidenceType.FROZEN_TEST_FIXTURE:
+                eff_prov = (
+                    BLSVintageProvenance.REVISION_RELEASE_PROVEN
+                    if self.revision_number > 0
+                    else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+                )
+            else:
+                # Default for non-BLS or generic test fixtures
+                eff_prov = (
+                    BLSVintageProvenance.REVISION_RELEASE_PROVEN
+                    if self.revision_number > 0
+                    else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+                )
             object.__setattr__(self, "vintage_provenance", eff_prov)
+
+    @property
+    def historical_intraday_usable(self) -> bool:
+        """
+        Historical intraday usable requires proven vintage and EXACT timestamp certainty (§15, §18).
+        LATEST_CURRENT_VALUE_ONLY and VINTAGE_UNKNOWN are strictly FALSE.
+        """
+        return (
+            self.vintage_provenance in (
+                BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
+                BLSVintageProvenance.REVISION_RELEASE_PROVEN,
+            )
+            and self.timestamp_certainty == TimestampCertainty.EXACT
+        )
 
 
 @dataclass(frozen=True)
@@ -402,11 +460,15 @@ class MacroSeriesObservation:
                         continue
 
                 # Vintage safety: LATEST_CURRENT_VALUE_ONLY cannot be backdated before first_seen
-                if v.vintage_provenance == BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY and not allow_current_value_only:
+                if v.vintage_provenance == BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY:
+                    if not allow_current_value_only:
+                        continue
                     if v.first_seen_at_utc is not None:
                         first_seen = v.first_seen_at_utc.replace(tzinfo=timezone.utc) if v.first_seen_at_utc.tzinfo is None else v.first_seen_at_utc
                         if snapshot_time_utc < first_seen:
                             continue
+                    else:
+                        continue
                 elif v.vintage_provenance == BLSVintageProvenance.VINTAGE_UNKNOWN and resolution == "INTRADAY":
                     # Section 11: VINTAGE_UNKNOWN is blocked from intraday historical queries
                     continue
@@ -415,6 +477,60 @@ class MacroSeriesObservation:
         if not eligible:
             return None
         return max(eligible, key=lambda pair: pair[0])[1].value
+
+    def get_historical_intraday_value(
+        self,
+        snapshot_time_utc: datetime,
+    ) -> Optional[float]:
+        """
+        Hard historical research firewall (§21):
+        Strictly refuses LATEST_CURRENT_VALUE_ONLY and VINTAGE_UNKNOWN.
+        Only returns value if vintage is ORIGINAL_RELEASE_PROVEN or REVISION_RELEASE_PROVEN
+        with EXACT timestamp certainty and available_at_utc <= snapshot_time_utc.
+        """
+        if snapshot_time_utc.tzinfo is None:
+            snapshot_time_utc = snapshot_time_utc.replace(tzinfo=timezone.utc)
+        eligible = []
+        for v in self.vintages:
+            t = v.available_at_utc or v.official_published_at_utc
+            if t is None:
+                continue
+            if t.tzinfo is None:
+                t = t.replace(tzinfo=timezone.utc)
+            if t <= snapshot_time_utc:
+                if not v.historical_intraday_usable:
+                    continue
+                eligible.append((t, v))
+        if not eligible:
+            return None
+        return max(eligible, key=lambda pair: pair[0])[1].value
+
+    def get_current_descriptive_value(
+        self,
+        as_of_utc: Optional[datetime] = None,
+    ) -> Optional[float]:
+        """
+        Current descriptive context (§19, §21):
+        Returns latest available value if as_of_utc >= first_seen_at_utc.
+        Explicitly marked non-usable for historical intraday research.
+        """
+        if not self.vintages:
+            return None
+        if as_of_utc is not None:
+            if as_of_utc.tzinfo is None:
+                as_of_utc = as_of_utc.replace(tzinfo=timezone.utc)
+            eligible = []
+            for v in self.vintages:
+                fs = v.first_seen_at_utc or v.available_at_utc
+                if fs is not None:
+                    if fs.tzinfo is None:
+                        fs = fs.replace(tzinfo=timezone.utc)
+                    if as_of_utc >= fs:
+                        eligible.append(v)
+            if not eligible:
+                return None
+            return eligible[-1].value
+        return self.vintages[-1].value
 
     def __post_init__(self) -> None:
         if not self.series_id:
