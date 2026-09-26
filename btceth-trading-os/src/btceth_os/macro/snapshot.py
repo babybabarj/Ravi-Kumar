@@ -47,23 +47,6 @@ _FORBIDDEN_FIELD_PATTERNS: list[re.Pattern] = [
 ]
 
 
-def _assert_no_execution_fields(snapshot: "MacroIntelligenceSnapshot") -> None:
-    """
-    Validate that no execution-level fields or descriptions have been injected
-    into the snapshot.  Fail-closed: raises on any match.
-    """
-    # Check each news item headline for forbidden content
-    for item in snapshot.news_items:
-        for pattern in _FORBIDDEN_FIELD_PATTERNS:
-            # Only scan clearly problematic combinations, not the item_type field
-            # which legitimately contains words like "FOMC_STATEMENT" (not a trade order).
-            pass  # News headlines are descriptive; no content-level scan needed here.
-
-    # The key enforcement is that the snapshot object itself carries no
-    # execution-related fields.  This is guaranteed by the frozen dataclass
-    # definition below.
-
-
 @dataclass(frozen=True)
 class MacroIntelligenceSnapshot:
     """
@@ -73,14 +56,14 @@ class MacroIntelligenceSnapshot:
     ----------
     snapshot_time_utc:
         The exact UTC time at which this snapshot was constructed.
-        All observations must have published_at_utc <= snapshot_time_utc.
     snapshot_id:
-        Unique identifier for this snapshot (e.g. UUID or ISO timestamp).
+        Unique identifier for this snapshot.
     trading_capability:
-        MUST be 0.  Firewall raises ValueError if any other value is supplied.
+        MUST be 0. Firewall raises ValueError if any other value is supplied.
     macro_events:
-        Tuple of MacroEvent instances that are causally available at
-        snapshot_time_utc.
+        Tuple of MacroEvent instances visible at snapshot_time_utc.
+        Can include upcoming scheduled events (with actual_value=None)
+        and causally released events.
     series_observations:
         Tuple of MacroSeriesObservation instances, each with vintage history.
     news_items:
@@ -92,13 +75,10 @@ class MacroIntelligenceSnapshot:
         Aggregate quality across all observations (fail-closed).
     dxy_status:
         Explicit status for DXY availability.
-        If no authorised ICE DXY provider: "NOT_IMPLEMENTED_PROVIDER_REQUIRED".
     breaking_news_status:
         Explicit status for breaking news availability.
-        If no authorised provider: "NOT_IMPLEMENTED_PROVIDER_REQUIRED".
     alfred_runtime_status:
-        ALFRED (FRED real-time vintages API) runtime status.
-        "CONFIGURED" or "NOT_CONFIGURED".
+        ALFRED runtime status.
     limitations:
         List of capability limitations active for this snapshot.
     """
@@ -133,27 +113,48 @@ class MacroIntelligenceSnapshot:
         if not self.snapshot_id:
             raise ValueError("MacroIntelligenceSnapshot.snapshot_id must not be empty.")
 
-        # --- Causal contract: all events must have release <= snapshot_time ---
+        # --- Causal contract enforcement ---
         from btceth_os.macro.availability import _ensure_utc
 
         snap_t = _ensure_utc(self.snapshot_time_utc)
+
         for event in self.macro_events:
-            release_t = _ensure_utc(event.actual_release_utc)
-            if release_t > snap_t:
-                raise ValueError(
-                    f"Causal violation: MacroEvent {event.event_id!r} has "
-                    f"actual_release_utc={event.actual_release_utc.isoformat()} "
-                    f"which is after snapshot_time_utc={self.snapshot_time_utc.isoformat()}."
-                )
+            # 1. Schedule knowledge causality
+            if event.schedule_known_at_utc is not None:
+                sched_known = _ensure_utc(event.schedule_known_at_utc)
+                if sched_known > snap_t:
+                    raise ValueError(
+                        f"Causal violation: MacroEvent {event.event_id!r} schedule was not known "
+                        f"until {event.schedule_known_at_utc.isoformat()} which is after "
+                        f"snapshot_time_utc={self.snapshot_time_utc.isoformat()}."
+                    )
+
+            # 2. Actual value release causality
+            if event.actual_value is not None:
+                avail_t = event.available_at_utc or event.official_published_at_utc or event.actual_release_utc
+                if avail_t is None:
+                    raise ValueError(
+                        f"Causal violation: MacroEvent {event.event_id!r} has actual_value={event.actual_value} "
+                        f"without an availability timestamp."
+                    )
+                avail_t = _ensure_utc(avail_t)
+                if avail_t > snap_t:
+                    raise ValueError(
+                        f"Causal violation: MacroEvent {event.event_id!r} has actual_value={event.actual_value} "
+                        f"with release time={avail_t.isoformat()} which is after "
+                        f"snapshot_time_utc={self.snapshot_time_utc.isoformat()}."
+                    )
 
         for item in self.news_items:
-            pub_t = _ensure_utc(item.published_at_utc)
-            if pub_t > snap_t:
-                raise ValueError(
-                    f"Causal violation: MacroNewsItem {item.item_id!r} has "
-                    f"published_at_utc={item.published_at_utc.isoformat()} "
-                    f"which is after snapshot_time_utc={self.snapshot_time_utc.isoformat()}."
-                )
+            pub_t = item.available_at_utc or item.official_published_at_utc or item.published_at_utc
+            if pub_t is not None:
+                pub_t = _ensure_utc(pub_t)
+                if pub_t > snap_t:
+                    raise ValueError(
+                        f"Causal violation: MacroNewsItem {item.item_id!r} has "
+                        f"published_at_utc={pub_t.isoformat()} "
+                        f"which is after snapshot_time_utc={self.snapshot_time_utc.isoformat()}."
+                    )
 
     def compute_overall_quality(self) -> MacroDataQuality:
         """
@@ -161,9 +162,11 @@ class MacroIntelligenceSnapshot:
         Returns MISSING if no observations are present.
         """
         qualities = [obs.quality for obs in self.series_observations]
-        qualities += [event.actual_value is not None and MacroDataQuality.GOOD
-                      or MacroDataQuality.MISSING
-                      for event in self.macro_events]
+        qualities += [
+            MacroDataQuality.GOOD if event.actual_value is not None or event.scheduled_at_utc is not None
+            else MacroDataQuality.MISSING
+            for event in self.macro_events
+        ]
         return aggregate_quality([q for q in qualities if isinstance(q, MacroDataQuality)])
 
     @property
@@ -181,3 +184,9 @@ class MacroIntelligenceSnapshot:
             1 for obs in self.series_observations
             if obs.quality == MacroDataQuality.CAUSAL_VIOLATION
         )
+
+    @property
+    def upcoming_events(self) -> list[MacroEvent]:
+        """Return scheduled events occurring after snapshot_time_utc."""
+        from btceth_os.macro.availability import upcoming_events_as_of
+        return upcoming_events_as_of(self.macro_events, self.snapshot_time_utc)

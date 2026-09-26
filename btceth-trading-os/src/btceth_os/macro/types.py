@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import enum
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Optional
+from datetime import datetime, timezone
+from typing import Any, Optional
 
 
 # ---------------------------------------------------------------------------
@@ -61,6 +61,62 @@ class MacroAvailabilityStatus(str, enum.Enum):
     STALE = "STALE"
 
 
+class TimestampCertainty(str, enum.Enum):
+    """
+    Certainty of the publication timestamp.
+
+    EXACT           — exact verified publication time (e.g. 08:30:00 US/Eastern).
+                      Potentially usable for intraday historical reconstruction.
+    DATE_ONLY       — only the calendar date is known; exact intraday time is unverified.
+                      BLOCKED_FROM_INTRADAY_HISTORICAL_USE.
+    TIME_UNCERTAIN  — release window is known but precise second/minute is uncertain.
+                      BLOCKED_FROM_INTRADAY_HISTORICAL_USE.
+    UNKNOWN         — publication timestamp is unknown or unverifiable.
+                      BLOCKED_FROM_INTRADAY_HISTORICAL_USE.
+    """
+
+    EXACT = "EXACT"
+    DATE_ONLY = "DATE_ONLY"
+    TIME_UNCERTAIN = "TIME_UNCERTAIN"
+    UNKNOWN = "UNKNOWN"
+
+
+class AvailabilityBasis(str, enum.Enum):
+    """
+    Provenance basis for the availability timestamp.
+
+    OFFICIAL_EXACT_PUBLICATION_TIME — from official releasing agency publication metadata.
+    LIVE_FIRST_SEEN                — from live observation collector receipt timestamp.
+    OFFICIAL_DATE_ONLY             — from official daily observation release date.
+    SCHEDULE_METADATA              — from scheduled announcement metadata.
+    UNKNOWN                        — unknown availability basis.
+    """
+
+    OFFICIAL_EXACT_PUBLICATION_TIME = "OFFICIAL_EXACT_PUBLICATION_TIME"
+    LIVE_FIRST_SEEN = "LIVE_FIRST_SEEN"
+    OFFICIAL_DATE_ONLY = "OFFICIAL_DATE_ONLY"
+    SCHEDULE_METADATA = "SCHEDULE_METADATA"
+    UNKNOWN = "UNKNOWN"
+
+
+class EventReleaseStatus(str, enum.Enum):
+    """
+    Release status of a macro event as of a specific point in time.
+
+    SCHEDULED_NOT_RELEASED — schedule is known, but actual release has not yet occurred.
+    RELEASED               — release has occurred and actual value is available.
+    NOT_YET_KNOWN          — event schedule was not known at snapshot time.
+    TIMESTAMP_UNCERTAIN    — timestamp certainty insufficient for requested resolution.
+    NOT_AVAILABLE          — data or schedule unavailable.
+    """
+
+    SCHEDULED_NOT_RELEASED = "SCHEDULED_NOT_RELEASED"
+    RELEASED = "RELEASED"
+    NOT_YET_KNOWN = "NOT_YET_KNOWN"
+    TIMESTAMP_UNCERTAIN = "TIMESTAMP_UNCERTAIN"
+    NOT_AVAILABLE = "NOT_AVAILABLE"
+
+
 # ---------------------------------------------------------------------------
 # Core dataclasses
 # ---------------------------------------------------------------------------
@@ -71,76 +127,195 @@ class MacroEvent:
     """
     A single official macro data release or scheduled event.
 
+    Separates scheduled event metadata from released actual values.
+    Upcoming scheduled events can exist prior to release with actual_value=None.
+
     Parameters
     ----------
     event_id:
         Unique identifier, e.g. "CPI_US_MONTHLY_2026_09".
-    family:
+    event_family:
         Logical grouping, e.g. "CPI", "NFP", "FOMC".
-    description:
-        Human-readable label.
+    event_name:
+        Human-readable label / title.
     reference_period:
         The period the data describes (ISO 8601 date string, e.g. "2026-09").
-    scheduled_release_utc:
+    source_id:
+        Official releasing agency or provider ID, e.g. "BLS", "BEA", "FOMC".
+    source_type:
+        Origin type, e.g. "OFFICIAL_AGENCY", "CENTRAL_BANK".
+    source_reference:
+        Canonical URL or official publication title.
+    source_hash:
+        SHA-256 digest of the source announcement/table if available.
+    scheduled_at_utc:
         The time the release was scheduled in advance (if known).
-    actual_release_utc:
-        The time the release actually became public.
+    schedule_known_at_utc:
+        The time at which the release schedule itself became publicly known.
+    official_published_at_utc:
+        The time the release actually became public according to official agency.
+    first_seen_at_utc:
+        The time our system first ingested or received the release.
+    available_at_utc:
+        Causal point-in-time availability timestamp for actual_value.
     actual_value:
-        The headline value as officially reported.
-    prior_value:
+        The headline value as officially reported (None before release).
+    previous_value:
         The previously reported value for the preceding period.
+    revised_previous_value:
+        The revised value for the preceding period reported concurrently.
     consensus_value:
-        Analyst consensus estimate.  MUST be None if no authorised provider
+        Analyst consensus estimate. MUST be None if no authorised provider
         supplies it — do not scrape, infer, or backfill.
     consensus_status:
-        Describes the consensus availability. "NOT_AVAILABLE" if no authorised
-        provider is configured.
+        Describes consensus availability ("NOT_AVAILABLE" if none).
+    revision_number:
+        0 for initial release, 1+ for subsequent revisions.
+    vintage_id:
+        Identifier of the vintage if applicable.
     unit:
-        Unit string, e.g. "percent_yoy", "thousands_jobs", "index_points".
-    source_agency:
-        Official releasing agency, e.g. "BLS", "BEA", "FOMC".
+        Unit string, e.g. "index_1982_84_100", "percent_yoy", "thousands_jobs".
+    timestamp_certainty:
+        Certainty of release timing (EXACT, DATE_ONLY, etc.).
+    availability_basis:
+        Basis for available_at_utc (OFFICIAL_EXACT, LIVE_FIRST_SEEN, etc.).
+    data_quality_status:
+        Quality state (GOOD, STALE, etc.).
     """
 
     event_id: str
-    family: str
-    description: str
-    reference_period: str
-    actual_release_utc: datetime
-    actual_value: Optional[float]
-    prior_value: Optional[float]
-    unit: str
-    source_agency: str
-    scheduled_release_utc: Optional[datetime] = None
+    event_family: str = ""
+    event_name: str = ""
+    reference_period: str = ""
+    source_id: str = ""
+    source_type: str = "OFFICIAL_AGENCY"
+    source_reference: str = ""
+    source_hash: Optional[str] = None
+    scheduled_at_utc: Optional[datetime] = None
+    schedule_known_at_utc: Optional[datetime] = None
+    official_published_at_utc: Optional[datetime] = None
+    first_seen_at_utc: Optional[datetime] = None
+    available_at_utc: Optional[datetime] = None
+    actual_value: Optional[float] = None
+    previous_value: Optional[float] = None
+    revised_previous_value: Optional[float] = None
     consensus_value: Optional[float] = None
     consensus_status: str = "NOT_AVAILABLE"
+    revision_number: int = 0
+    vintage_id: Optional[str] = None
+    unit: str = ""
+    timestamp_certainty: TimestampCertainty = TimestampCertainty.UNKNOWN
+    availability_basis: AvailabilityBasis = AvailabilityBasis.UNKNOWN
+    data_quality_status: MacroDataQuality = MacroDataQuality.GOOD
+
+    # Legacy backward compatibility parameters
+    family: Optional[str] = None
+    description: Optional[str] = None
+    source_agency: Optional[str] = None
+    actual_release_utc: Optional[datetime] = None
+    scheduled_release_utc: Optional[datetime] = None
+    prior_value: Optional[float] = None
 
     def __post_init__(self) -> None:
         if not self.event_id:
             raise ValueError("MacroEvent.event_id must not be empty.")
-        if not self.family:
-            raise ValueError("MacroEvent.family must not be empty.")
-        if not self.source_agency:
-            raise ValueError("MacroEvent.source_agency must not be empty.")
+
+        # Reconcile family / event_family
+        eff_family = self.event_family or self.family or ""
+        if not eff_family:
+            raise ValueError("MacroEvent.event_family / family must not be empty.")
+        object.__setattr__(self, "event_family", eff_family)
+        object.__setattr__(self, "family", eff_family)
+
+        # Reconcile source_id / source_agency
+        eff_source = self.source_id or self.source_agency or ""
+        if not eff_source:
+            raise ValueError("MacroEvent.source_id / source_agency must not be empty.")
+        object.__setattr__(self, "source_id", eff_source)
+        object.__setattr__(self, "source_agency", eff_source)
+
+        # Reconcile description / event_name
+        eff_name = self.event_name or self.description or ""
+        object.__setattr__(self, "event_name", eff_name)
+        object.__setattr__(self, "description", eff_name)
+
+        # Reconcile prior_value / previous_value
+        eff_prev = self.previous_value if self.previous_value is not None else self.prior_value
+        object.__setattr__(self, "previous_value", eff_prev)
+        object.__setattr__(self, "prior_value", eff_prev)
+
+        # Reconcile scheduled release
+        eff_sched = self.scheduled_at_utc or self.scheduled_release_utc
+        object.__setattr__(self, "scheduled_at_utc", eff_sched)
+        object.__setattr__(self, "scheduled_release_utc", eff_sched)
+
+        # Reconcile actual / official release / available_at
+        eff_avail = self.available_at_utc or self.official_published_at_utc or self.actual_release_utc
+        object.__setattr__(self, "available_at_utc", eff_avail)
+        object.__setattr__(self, "official_published_at_utc", self.official_published_at_utc or eff_avail)
+        object.__setattr__(self, "actual_release_utc", eff_avail)
 
 
 @dataclass(frozen=True)
 class MacroVintage:
     """
-    A single revision of a macro series value.
+    A single revision of a macro series value with point-in-time provenance.
 
     Parameters
     ----------
-    published_at_utc:
-        The UTC datetime at which this vintage became publicly available.
+    vintage_id:
+        Unique identifier for this vintage revision.
     value:
         The numeric value as published in this vintage.
-    vintage_label:
-        Optional human-readable label, e.g. "initial", "first_revision".
+    official_published_at_utc:
+        The UTC datetime when the official agency published this vintage.
+    first_seen_at_utc:
+        The UTC datetime when our system first ingested this vintage.
+    available_at_utc:
+        The point-in-time causal availability timestamp for this vintage.
+    timestamp_certainty:
+        Precision/certainty of the availability timestamp.
+    availability_basis:
+        Provenance basis (OFFICIAL_EXACT, LIVE_FIRST_SEEN, etc.).
+    source_id:
+        Releasing provider or agency identifier.
+    source_reference:
+        Canonical URL or source table reference.
+    source_hash:
+        SHA-256 digest of the source response if recorded.
+    revision_number:
+        0 for initial publication, 1 for first revision, etc.
+    revision_label:
+        Human-readable revision label (e.g. "advance", "preliminary", "final").
     """
 
-    published_at_utc: datetime
     value: float
+    vintage_id: str = ""
+    official_published_at_utc: Optional[datetime] = None
+    first_seen_at_utc: Optional[datetime] = None
+    available_at_utc: Optional[datetime] = None
+    timestamp_certainty: TimestampCertainty = TimestampCertainty.EXACT
+    availability_basis: AvailabilityBasis = AvailabilityBasis.OFFICIAL_EXACT_PUBLICATION_TIME
+    source_id: str = ""
+    source_reference: str = ""
+    source_hash: Optional[str] = None
+    revision_number: int = 0
+    revision_label: Optional[str] = None
+
+    # Legacy backward compatibility parameters
+    published_at_utc: Optional[datetime] = None
     vintage_label: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        eff_pub = self.official_published_at_utc or self.available_at_utc or self.published_at_utc
+        eff_avail = self.available_at_utc or eff_pub
+        object.__setattr__(self, "official_published_at_utc", eff_pub)
+        object.__setattr__(self, "available_at_utc", eff_avail)
+        object.__setattr__(self, "published_at_utc", eff_pub or eff_avail)
+
+        eff_lbl = self.revision_label or self.vintage_label
+        object.__setattr__(self, "revision_label", eff_lbl)
+        object.__setattr__(self, "vintage_label", eff_lbl)
 
 
 @dataclass(frozen=True)
@@ -148,32 +323,9 @@ class MacroSeriesObservation:
     """
     A point-in-time observation of a macro data series with vintage history.
 
-    Vintage model: append-only list of (published_at_utc, value) pairs.
-    Query: max(v for v in vintages if v.published_at_utc <= snapshot_time_utc).
+    Vintage model: append-only tuple of MacroVintage instances.
+    Query: max(v for v in vintages if v.available_at_utc <= snapshot_time_utc).
     Never overwrite vintages; always append new revisions.
-
-    Parameters
-    ----------
-    series_id:
-        Unique series identifier, e.g. "US_CPI_YOY", "US_10Y_TREASURY_YIELD".
-    family:
-        Logical family grouping, e.g. "CPI", "TREASURY".
-    reference_period:
-        The period the data covers (ISO 8601 date string).
-    vintages:
-        Chronological list of published vintages.  Must be non-empty if quality
-        is GOOD.  Must be append-only; never mutate existing entries.
-    quality:
-        Data quality state at the time of snapshot construction.
-    availability_status:
-        Point-in-time availability verdict.
-    unit:
-        Unit of the value, e.g. "percent_yoy", "percent_annualized".
-    source_agency:
-        Official releasing agency.
-    staleness_seconds:
-        Age of the most recently available vintage at snapshot_time, in seconds.
-        None if no vintage is available.
     """
 
     series_id: str
@@ -185,17 +337,38 @@ class MacroSeriesObservation:
     unit: str
     source_agency: str
     staleness_seconds: Optional[float] = None
+    native_semantic_type: str = "UNKNOWN"
+    transformation: Optional[str] = None
 
-    def latest_value_at(self, snapshot_time_utc: datetime) -> Optional[float]:
+    def latest_value_at(
+        self,
+        snapshot_time_utc: datetime,
+        required_certainty: Optional[TimestampCertainty] = None,
+    ) -> Optional[float]:
         """
         Return the latest value causally available at snapshot_time_utc.
 
-        Returns None if no vintage is available at or before snapshot_time_utc.
+        Returns None if no vintage is available at or before snapshot_time_utc
+        or if timestamp certainty is insufficient.
         """
-        eligible = [v for v in self.vintages if v.published_at_utc <= snapshot_time_utc]
+        if snapshot_time_utc.tzinfo is None:
+            snapshot_time_utc = snapshot_time_utc.replace(tzinfo=timezone.utc)
+
+        eligible = []
+        for v in self.vintages:
+            t = v.available_at_utc or v.published_at_utc
+            if t is None:
+                continue
+            if t.tzinfo is None:
+                t = t.replace(tzinfo=timezone.utc)
+            if t <= snapshot_time_utc:
+                if required_certainty is not None and v.timestamp_certainty != required_certainty:
+                    continue
+                eligible.append((t, v))
+
         if not eligible:
             return None
-        return max(eligible, key=lambda v: v.published_at_utc).value
+        return max(eligible, key=lambda pair: pair[0])[1].value
 
     def __post_init__(self) -> None:
         if not self.series_id:
@@ -207,44 +380,40 @@ class MacroNewsItem:
     """
     A single official news item or policy communication.
 
-    IMPORTANT: This type does NOT carry hawkish/dovish NLP scores, sentiment
-    ratings, or LLM-generated interpretations.  NEWS/MACRO-1A is strictly
-    a data foundation phase.
-
-    Parameters
-    ----------
-    item_id:
-        Unique item identifier.
-    source:
-        Originating body, e.g. "FEDERAL_RESERVE", "US_TREASURY".
-    item_type:
-        Classification, e.g. "FOMC_STATEMENT", "FED_SPEECH", "PRESS_RELEASE".
-    published_at_utc:
-        UTC datetime when the item was publicly released.
-    headline:
-        Official headline or short title.
-    url:
-        Canonical source URL if known; None otherwise.
-    quality:
-        Data quality state.
-    availability_status:
-        Point-in-time availability verdict.
+    IMPORTANT: Does NOT carry hawkish/dovish NLP scores, sentiment ratings,
+    or LLM-generated interpretations. Strictly a data foundation object.
+    Placeholder or status items do NOT carry fake publication timestamps.
     """
 
     item_id: str
     source: str
     item_type: str
-    published_at_utc: datetime
     headline: str
     quality: MacroDataQuality
     availability_status: MacroAvailabilityStatus
     url: Optional[str] = None
+    official_published_at_utc: Optional[datetime] = None
+    first_seen_at_utc: Optional[datetime] = None
+    available_at_utc: Optional[datetime] = None
+    timestamp_certainty: TimestampCertainty = TimestampCertainty.UNKNOWN
+    availability_basis: AvailabilityBasis = AvailabilityBasis.UNKNOWN
+    source_reference: Optional[str] = None
+    source_hash: Optional[str] = None
+
+    # Legacy backward compatibility parameter
+    published_at_utc: Optional[datetime] = None
 
     def __post_init__(self) -> None:
         if not self.item_id:
             raise ValueError("MacroNewsItem.item_id must not be empty.")
         if not self.headline:
             raise ValueError("MacroNewsItem.headline must not be empty.")
+
+        eff_pub = self.official_published_at_utc or self.published_at_utc
+        eff_avail = self.available_at_utc or eff_pub
+        object.__setattr__(self, "official_published_at_utc", eff_pub)
+        object.__setattr__(self, "available_at_utc", eff_avail)
+        object.__setattr__(self, "published_at_utc", eff_pub or eff_avail)
 
 
 @dataclass(frozen=True)
@@ -253,23 +422,7 @@ class MacroSurprise:
     Computed surprise for a macro release.
 
     MUST only be created when BOTH actual and consensus values are legitimately
-    available from authorised providers.  Do NOT infer consensus from prior
-    values or economic calendars of unknown provenance.
-
-    Parameters
-    ----------
-    event_id:
-        References MacroEvent.event_id.
-    actual_value:
-        The officially released value.
-    consensus_value:
-        The authorised consensus estimate.
-    surprise_magnitude:
-        actual_value - consensus_value (in the unit of the series).
-    surprise_direction:
-        "BEAT", "MISS", or "IN_LINE" (within tolerance).
-    in_line_tolerance:
-        The absolute tolerance used for IN_LINE classification.
+    available from authorised providers.
     """
 
     event_id: str
@@ -291,3 +444,59 @@ class MacroSurprise:
             raise ValueError(
                 "surprise_magnitude must equal actual_value - consensus_value."
             )
+
+
+@dataclass(frozen=True)
+class MacroSourceConflict:
+    """
+    Explicit record of disagreement between primary and secondary macro data sources.
+
+    Both values are retained to preserve evidence truth.
+    """
+
+    field: str
+    primary_source: str
+    primary_value: Any
+    secondary_source: str
+    secondary_value: Any
+    detected_at_utc: datetime
+    resolution_policy: str = "PRIMARY_WINS"
+    resolved_display_value: Any = None
+    conflict_retained: bool = True
+
+
+@dataclass(frozen=True)
+class MacroEventView:
+    """
+    Point-in-time perspective of a MacroEvent as of snapshot_time.
+    """
+
+    event_id: str
+    event_family: str
+    event_name: str
+    reference_period: str
+    status: EventReleaseStatus
+    scheduled_at_utc: Optional[datetime]
+    available_at_utc: Optional[datetime]
+    actual_value: Optional[float]
+    consensus_value: Optional[float]
+    unit: str
+    timestamp_certainty: TimestampCertainty
+    availability_basis: AvailabilityBasis
+    data_quality: MacroDataQuality
+
+
+@dataclass(frozen=True)
+class MacroNewsView:
+    """
+    Point-in-time perspective of a MacroNewsItem as of snapshot_time.
+    """
+
+    item_id: str
+    source: str
+    item_type: str
+    headline: str
+    status: EventReleaseStatus
+    available_at_utc: Optional[datetime]
+    url: Optional[str]
+    data_quality: MacroDataQuality

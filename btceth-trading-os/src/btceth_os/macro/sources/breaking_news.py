@@ -1,5 +1,5 @@
 """
-NEWS/MACRO-1A: Breaking news source adapter.
+NEWS/MACRO-1A R1: Breaking news source adapter.
 
 IMPORTANT RULE:
   If no authorised point-in-time news provider is configured:
@@ -10,12 +10,7 @@ IMPORTANT RULE:
   - Infer past news from current article timestamps.
   - Use RSS feeds of unknown provenance as authorised real-time news.
   - Claim any scraped content is point-in-time verified.
-
-An authorised point-in-time news provider must:
-  1. Provide a machine-readable API with exact publication timestamps.
-  2. Guarantee that historical queries return only the information that
-     was available at the queried timestamp (no future-leaking content).
-  3. Have an explicit data license permitting commercial use.
+  - Fabricate publication timestamps for status placeholders.
 
 TRADING_CAPABILITY = ZERO
 """
@@ -26,13 +21,13 @@ from datetime import datetime
 from typing import Optional
 
 from btceth_os.macro.types import (
-    MacroDataQuality,
+    AvailabilityBasis,
     MacroAvailabilityStatus,
+    MacroDataQuality,
     MacroNewsItem,
+    TimestampCertainty,
 )
 
-
-# Status constant
 BREAKING_NEWS_STATUS_NOT_IMPLEMENTED = "NOT_IMPLEMENTED_PROVIDER_REQUIRED"
 
 
@@ -44,15 +39,12 @@ class BreakingNewsAdapter:
 
     No authorised point-in-time news provider is configured.
     All methods return MacroDataQuality.PROVIDER_REQUIRED.
-
-    This adapter explicitly refuses to scrape or reconstruct news
-    retrospectively.
+    Does NOT fabricate publication timestamps.
     """
 
     def __init__(self) -> None:
-        # Env var for a future authorised provider API key
         self._api_key: Optional[str] = os.environ.get("NEWS_API_KEY")
-        self._configured: bool = False  # stub: NOT_IMPLEMENTED_PROVIDER_REQUIRED
+        self._configured: bool = False
 
     @property
     def status(self) -> str:
@@ -71,15 +63,14 @@ class BreakingNewsAdapter:
         """
         Return breaking news items available at snapshot_time_utc.
 
-        Returns a single NOT_IMPLEMENTED_PROVIDER_REQUIRED item.
-        Does NOT scrape, reconstruct, or infer news from any source.
+        Returns a single NOT_IMPLEMENTED_PROVIDER_REQUIRED status item
+        without any fabricated publication timestamp.
         """
         return [
             MacroNewsItem(
                 item_id="BREAKING_NEWS_NOT_IMPLEMENTED",
                 source="NOT_CONFIGURED",
                 item_type="BREAKING_NEWS",
-                published_at_utc=snapshot_time_utc,
                 headline=(
                     "NOT_IMPLEMENTED_PROVIDER_REQUIRED: "
                     "No authorised point-in-time news provider configured. "
@@ -88,5 +79,11 @@ class BreakingNewsAdapter:
                 quality=MacroDataQuality.PROVIDER_REQUIRED,
                 availability_status=MacroAvailabilityStatus.PROVIDER_NOT_IMPLEMENTED,
                 url=None,
+                official_published_at_utc=None,
+                first_seen_at_utc=None,
+                available_at_utc=None,
+                timestamp_certainty=TimestampCertainty.UNKNOWN,
+                availability_basis=AvailabilityBasis.UNKNOWN,
+                published_at_utc=None,
             )
         ]
