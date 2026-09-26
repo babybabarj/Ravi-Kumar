@@ -1,0 +1,22 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_VERIFIER_AUDIT",
+  "generated_at_utc": "2026-09-26T07:58:15.215139+00:00",
+  "head_sha": "8cba9a05158e2d0077ecc245a8e5be996f547523",
+  "verifier_script": "tools/verify_news_macro_1a_r1.py",
+  "gates_evaluated": 47,
+  "gates_passed": 47,
+  "gates_failed": 0,
+  "outer_test_suite_status": "PASS",
+  "security_scan_status": "PASS",
+  "verdict": "NEWS_MACRO_1A_R1_VERIFIED",
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED"
+  }
+}

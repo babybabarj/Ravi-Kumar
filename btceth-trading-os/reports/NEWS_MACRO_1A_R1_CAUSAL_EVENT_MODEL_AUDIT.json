@@ -1,0 +1,69 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_CAUSAL_EVENT_MODEL_AUDIT",
+  "generated_at_utc": "2026-09-26T07:58:15.215139+00:00",
+  "head_sha": "8cba9a05158e2d0077ecc245a8e5be996f547523",
+  "event_model_redesign": {
+    "defect_repaired": "Previous implementation required actual_release_utc and rejected upcoming events. Repaired model decouples scheduled metadata from released values.",
+    "schema_fields": [
+      "event_id",
+      "event_family",
+      "event_name",
+      "reference_period",
+      "source_id",
+      "source_type",
+      "source_reference",
+      "source_hash",
+      "scheduled_at_utc",
+      "schedule_known_at_utc",
+      "official_published_at_utc",
+      "first_seen_at_utc",
+      "available_at_utc",
+      "actual_value",
+      "previous_value",
+      "revised_previous_value",
+      "consensus_value",
+      "consensus_status",
+      "revision_number",
+      "vintage_id",
+      "unit",
+      "timestamp_certainty",
+      "availability_basis",
+      "data_quality_status"
+    ],
+    "upcoming_event_rules": {
+      "schedule_knowledge_causality": "schedule_known_at_utc <= snapshot_time_utc required for visibility",
+      "unreleased_actual_rule": "actual_value must be null when available_at_utc > snapshot_time_utc",
+      "causal_violation_rule": "actual_value != null with future available_at raises CAUSAL_VIOLATION and fails closed"
+    },
+    "timestamp_certainty_enum": [
+      "EXACT",
+      "DATE_ONLY",
+      "TIME_UNCERTAIN",
+      "UNKNOWN"
+    ],
+    "availability_basis_enum": [
+      "OFFICIAL_EXACT_PUBLICATION_TIME",
+      "LIVE_FIRST_SEEN",
+      "OFFICIAL_DATE_ONLY",
+      "SCHEDULE_METADATA",
+      "UNKNOWN"
+    ],
+    "intraday_usability": {
+      "EXACT": "Potentially usable for intraday historical reconstruction",
+      "DATE_ONLY": "BLOCKED_FROM_INTRADAY_HISTORICAL_USE (descriptive only)",
+      "TIME_UNCERTAIN": "BLOCKED_FROM_INTRADAY_HISTORICAL_USE",
+      "UNKNOWN": "BLOCKED_FROM_INTRADAY_HISTORICAL_USE"
+    },
+    "live_first_seen_rule": "available_at_utc must not precede first_seen_at_utc unless verified exact official publication timestamp is declared under historical reconstruction mode with source_reference and source_hash."
+  },
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED"
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_SOURCE_SEMANTICS_AUDIT",
+  "generated_at_utc": "2026-09-26T07:58:15.215139+00:00",
+  "head_sha": "8cba9a05158e2d0077ecc245a8e5be996f547523",
+  "audit_rationale": "Prevent mislabeling index levels as percentage changes, or employment totals as monthly net changes. All derived metrics must have explicit, causally available mathematical transformations.",
+  "series": {
+    "US_CPI_HEADLINE": {
+      "provider": "BLS",
+      "series_id": "CUSR0000SA0",
+      "official_title": "Consumer Price Index for All Urban Consumers: All Items",
+      "native_unit": "index_1982_84_100",
+      "frequency": "MONTHLY",
+      "seasonal_adjustment": "SEASONALLY_ADJUSTED",
+      "native_semantic_type": "INDEX_LEVEL",
+      "transformation_available": true,
+      "derived_metric": "YoY_CPI",
+      "transformation_formula": "YoY = ((Index_t / Index_{t-12}) - 1.0) * 100.0",
+      "source_inputs": [
+        "CUSR0000SA0_t",
+        "CUSR0000SA0_{t-12}"
+      ],
+      "lookback_period_months": 12,
+      "causal_availability_verified": true
+    },
+    "US_CPI_CORE": {
+      "provider": "BLS",
+      "series_id": "CUSR0000SA0L1E",
+      "official_title": "Consumer Price Index for All Urban Consumers: All Items Less Food and Energy",
+      "native_unit": "index_1982_84_100",
+      "frequency": "MONTHLY",
+      "seasonal_adjustment": "SEASONALLY_ADJUSTED",
+      "native_semantic_type": "INDEX_LEVEL",
+      "transformation_available": true,
+      "derived_metric": "YoY_Core_CPI",
+      "transformation_formula": "YoY = ((Index_t / Index_{t-12}) - 1.0) * 100.0",
+      "source_inputs": [
+        "CUSR0000SA0L1E_t",
+        "CUSR0000SA0L1E_{t-12}"
+      ],
+      "lookback_period_months": 12,
+      "causal_availability_verified": true
+    },
+    "US_NFP_TOTAL": {
+      "provider": "BLS",
+      "series_id": "CES0000000001",
+      "official_title": "All Employees, Total Nonfarm",
+      "native_unit": "thousands_of_jobs",
+      "frequency": "MONTHLY",
+      "seasonal_adjustment": "SEASONALLY_ADJUSTED",
+      "native_semantic_type": "EMPLOYMENT_LEVEL_THOUSANDS",
+      "transformation_available": true,
+      "derived_metric": "NFP_Monthly_Net_Change",
+      "transformation_formula": "MoM_Change = Level_t - Level_{t-1}",
+      "source_inputs": [
+        "CES0000000001_t",
+        "CES0000000001_{t-1}"
+      ],
+      "lookback_period_months": 1,
+      "causal_availability_verified": true
+    },
+    "US_UNEMPLOYMENT_RATE": {
+      "provider": "BLS",
+      "series_id": "LNS14000000",
+      "official_title": "Unemployment Rate - Civilian Labor Force",
+      "native_unit": "percent",
+      "frequency": "MONTHLY",
+      "seasonal_adjustment": "SEASONALLY_ADJUSTED",
+      "native_semantic_type": "RATE_PERCENT",
+      "transformation_available": false,
+      "derived_metric": "NONE_DIRECT_RATE",
+      "transformation_formula": "None (direct rate)",
+      "causal_availability_verified": true
+    },
+    "US_TREASURY_10Y": {
+      "provider": "US_TREASURY",
+      "series_id": "BC_10YEAR",
+      "official_title": "10-Year Treasury Constant Maturity Nominal Yield",
+      "native_unit": "percent_annualized",
+      "frequency": "DAILY",
+      "seasonal_adjustment": "NOT_APPLICABLE",
+      "native_semantic_type": "YIELD_PERCENT",
+      "transformation_available": false,
+      "derived_metric": "NONE_DIRECT_YIELD",
+      "transformation_formula": "None (direct yield)",
+      "causal_availability_verified": true
+    },
+    "US_TIPS_10Y": {
+      "provider": "US_TREASURY",
+      "series_id": "TC_10YEAR",
+      "official_title": "10-Year TIPS Constant Maturity Real Yield",
+      "native_unit": "percent_annualized",
+      "frequency": "DAILY",
+      "seasonal_adjustment": "NOT_APPLICABLE",
+      "native_semantic_type": "YIELD_PERCENT",
+      "transformation_available": false,
+      "derived_metric": "NONE_DIRECT_REAL_YIELD",
+      "transformation_formula": "None (direct real yield)",
+      "causal_availability_verified": true
+    },
+    "US_PCE_PRICE_INDEX": {
+      "provider": "BEA",
+      "series_id": "T20804_Line1",
+      "official_title": "Personal Consumption Expenditures (PCE) Price Index",
+      "native_unit": "index_2017_100",
+      "frequency": "MONTHLY",
+      "seasonal_adjustment": "SEASONALLY_ADJUSTED",
+      "native_semantic_type": "INDEX_LEVEL",
+      "transformation_available": true,
+      "derived_metric": "YoY_PCE",
+      "transformation_formula": "YoY = ((Index_t / Index_{t-12}) - 1.0) * 100.0",
+      "causal_availability_verified": true
+    }
+  },
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED"
+  }
+}

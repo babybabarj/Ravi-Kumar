@@ -1,0 +1,129 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_REAL_SNAPSHOT",
+  "snapshot_id": "REAL-SNAP-20260926T075811Z",
+  "snapshot_time_utc": "2026-09-26T07:58:11.751776+00:00",
+  "trading_capability": 0,
+  "upcoming_official_events": [
+    {
+      "event_id": "CPI_US_SCHEDULED_NEXT",
+      "event_family": "CPI",
+      "event_name": "Consumer Price Index (CPI) Headline & Core",
+      "status": "SCHEDULED_NOT_RELEASED",
+      "scheduled_at_utc": "2026-11-12T13:30:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T07:58:11.751776+00:00",
+      "actual_value": null,
+      "previous_value": 317.604,
+      "unit": "index_1982_84_100",
+      "timestamp_certainty": "EXACT",
+      "availability_basis": "SCHEDULE_METADATA",
+      "source": "BLS"
+    },
+    {
+      "event_id": "FOMC_MEETING_20261105",
+      "event_family": "FOMC",
+      "event_name": "FOMC Rate Decision & Policy Statement",
+      "status": "SCHEDULED_NOT_RELEASED",
+      "scheduled_at_utc": "2026-11-05T19:00:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T07:58:11.751776+00:00",
+      "actual_value": null,
+      "previous_value": null,
+      "unit": "target_rate_percent",
+      "timestamp_certainty": "EXACT",
+      "availability_basis": "SCHEDULE_METADATA",
+      "source": "FEDERAL_RESERVE"
+    }
+  ],
+  "recent_official_releases": {
+    "CPI_HEADLINE": {
+      "series_id": "US_CPI_HEADLINE",
+      "latest_value": 317.604,
+      "native_unit": "index_1982_84_100",
+      "semantic_type": "INDEX_LEVEL",
+      "derived_yoy": null,
+      "vintages_count": 12,
+      "source": "BLS",
+      "quality": "GOOD"
+    },
+    "NFP_TOTAL": {
+      "series_id": "US_NFP_TOTAL",
+      "latest_level_thousands": 158316.0,
+      "derived_mom_change_thousands": 237.0,
+      "native_unit": "thousands_of_jobs",
+      "semantic_type": "EMPLOYMENT_LEVEL_THOUSANDS",
+      "source": "BLS",
+      "quality": "GOOD"
+    }
+  },
+  "rates_context": {
+    "US_TREASURY_10Y": {
+      "latest_yield_percent": 4.19,
+      "unit": "percent_annualized",
+      "observation_type": "CURRENT_OFFICIAL_OBSERVATION",
+      "timestamp_certainty": "EXACT",
+      "availability_basis": "LIVE_FIRST_SEEN",
+      "source": "US_TREASURY"
+    },
+    "US_TREASURY_2Y": {
+      "latest_yield_percent": 3.47,
+      "unit": "percent_annualized",
+      "observation_type": "CURRENT_OFFICIAL_OBSERVATION",
+      "timestamp_certainty": "EXACT",
+      "availability_basis": "LIVE_FIRST_SEEN",
+      "source": "US_TREASURY"
+    }
+  },
+  "policy_communications": [
+    {
+      "item_id": "FOMC_STATEMENT_20260916",
+      "item_type": "FOMC_STATEMENT",
+      "headline": "Federal Reserve issues FOMC statement",
+      "published_at_utc": "2026-09-16T18:00:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+      "source": "FEDERAL_RESERVE"
+    },
+    {
+      "item_id": "FED_SPEECH_202609161800",
+      "item_type": "FED_SPEECH",
+      "headline": "Federal Reserve issues FOMC statement",
+      "published_at_utc": "2026-09-16T18:00:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+      "source": "FEDERAL_RESERVE"
+    },
+    {
+      "item_id": "FED_SPEECH_202609161800",
+      "item_type": "FED_SPEECH",
+      "headline": "Federal Reserve Board and Federal Open Market Committee release economic projections from the September 15-16 FOMC meeting",
+      "published_at_utc": "2026-09-16T18:00:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916b.htm",
+      "source": "FEDERAL_RESERVE"
+    },
+    {
+      "item_id": "FED_SPEECH_202608251800",
+      "item_type": "FED_SPEECH",
+      "headline": "Minutes of the Board's discount rate meetings on July 20 and July 29, 2026",
+      "published_at_utc": "2026-08-25T18:00:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260825a.htm",
+      "source": "FEDERAL_RESERVE"
+    }
+  ],
+  "limitations": [
+    "TRADING_CAPABILITY=ZERO",
+    "DXY=NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+    "BREAKING_NEWS=NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+    "BEA=PARTIAL_STRUCTURED_NOT_CONFIGURED"
+  ],
+  "safety": {
+    "trading_capability": 0,
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED"
+  }
+}

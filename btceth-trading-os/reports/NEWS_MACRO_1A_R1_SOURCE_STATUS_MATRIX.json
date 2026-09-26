@@ -1,0 +1,39 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_SOURCE_STATUS_MATRIX",
+  "generated_at_utc": "2026-09-26T07:58:11.751776+00:00",
+  "matrix": {
+    "BLS": {
+      "status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "evidence": "api.bls.gov live fetch succeeded with non-zero records and verified semantics"
+    },
+    "FEDERAL_RESERVE": {
+      "status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "evidence": "federalreserve.gov live RSS monetary policy and speeches feeds parsed"
+    },
+    "US_TREASURY": {
+      "status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "evidence": "home.treasury.gov daily yield curve XML feed parsed with DATE_ONLY certainty"
+    },
+    "BEA": {
+      "status": "PARTIAL",
+      "evidence": "bea.gov release schedule operational; structured API requires BEA_API_KEY (NOT_CONFIGURED)"
+    },
+    "FRED": {
+      "status": "NOT_CONFIGURED",
+      "evidence": "Secondary reconciler source; optional in R1"
+    },
+    "ALFRED": {
+      "status": "NOT_CONFIGURED",
+      "evidence": "ALFRED_API_KEY absent; returns NOT_CONFIGURED without failing"
+    },
+    "DXY": {
+      "status": "NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+      "evidence": "Requires authorised ICE U.S. Dollar Index provider; substitutes strictly prohibited"
+    },
+    "BREAKING_NEWS_PROVIDER": {
+      "status": "NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+      "evidence": "Requires authorised real-time financial wire provider; scraping prohibited"
+    }
+  },
+  "all_required_sources_verified": true
+}

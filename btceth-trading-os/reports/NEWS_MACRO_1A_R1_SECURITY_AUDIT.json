@@ -1,0 +1,35 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_SECURITY_AUDIT",
+  "generated_at_utc": "2026-09-26T07:58:15.215139+00:00",
+  "head_sha": "8cba9a05158e2d0077ecc245a8e5be996f547523",
+  "trading_capability": "ZERO",
+  "security_scan_result": {
+    "trading_capability": "ZERO",
+    "hits": []
+  },
+  "data_firewall_verification": {
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "ledger_verified": true,
+    "firewall_intact": true
+  },
+  "api_key_safety": {
+    "hardcoded_keys_in_source": 0,
+    "mechanism": "All API keys read dynamically via os.environ.get with zero hardcoded defaults"
+  },
+  "execution_firewall": {
+    "snapshot_guard": "MacroIntelligenceSnapshot.__post_init__ enforces trading_capability == 0",
+    "forbidden_fields_checked": true
+  },
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED"
+  }
+}

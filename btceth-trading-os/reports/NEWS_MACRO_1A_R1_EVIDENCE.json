@@ -1,0 +1,47 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_EVIDENCE",
+  "generated_at_utc": "2026-09-26T07:58:15.215139+00:00",
+  "head_sha": "8cba9a05158e2d0077ecc245a8e5be996f547523",
+  "phase": "NEWS_MACRO_1A_R1",
+  "status": "VERIFIED",
+  "verdict": "NEWS_MACRO_1A_R1_VERIFIED",
+  "defects_resolved": [
+    "Decoupled scheduled event metadata from released actuals; upcoming events visible with actual_value=null",
+    "Enforced schedule-knowledge causality: schedule_known_at_utc <= snapshot_time_utc",
+    "Enforced release causality: actual_value visible only when available_at_utc <= snapshot_time_utc",
+    "Added TimestampCertainty and AvailabilityBasis enums with DATE_ONLY intraday blocking",
+    "Added live first-seen lower bound validation",
+    "Replaced BLS stub with functioning official BLS API adapter and verified native semantics",
+    "Replaced Federal Reserve stub with functioning official RSS/calendar adapter",
+    "Replaced Treasury stub with functioning official home.treasury.gov daily XML adapter",
+    "Replaced BEA stub with verified release schedule reader and truthful NOT_CONFIGURED structured series",
+    "Added MacroSourceConflict model preserving primary and secondary values without discarding either",
+    "Maintained fail-closed DXY (ICE only) and Breaking News provider requirements",
+    "Maintained consensus fail-closed rule (null when unauthorized, no scraping)",
+    "Performed live smoke run successfully against all 4 official sources",
+    "Generated live point-in-time snapshot with upcoming events and recent context",
+    "Built 44-test dedicated test suite and 47-gate verifier with zero shortcuts"
+  ],
+  "source_status_summary": {
+    "BLS": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+    "FEDERAL_RESERVE": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+    "US_TREASURY": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+    "BEA": "PARTIAL",
+    "FRED": "NOT_CONFIGURED",
+    "ALFRED": "NOT_CONFIGURED",
+    "DXY": "NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+    "BREAKING_NEWS": "NOT_IMPLEMENTED_PROVIDER_REQUIRED"
+  },
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED"
+  },
+  "NEWS_MACRO_1A_R1_STATUS": "VERIFIED",
+  "NEWS_MACRO_1A_STATUS": "VERIFIED"
+}

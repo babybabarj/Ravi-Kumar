@@ -1,0 +1,69 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_REAL_SOURCE_SMOKE_TEST",
+  "generated_at_utc": "2026-09-26T07:58:11.751776+00:00",
+  "trading_capability": "ZERO",
+  "sources": {
+    "BLS": {
+      "source_name": "Bureau of Labor Statistics (BLS Data API)",
+      "official_url_or_endpoint": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+      "fetch_time_utc": "2026-09-26T07:58:11.751776+00:00",
+      "http_status": 200,
+      "response_content_type": "application/json",
+      "raw_byte_count": 2266,
+      "raw_sha256": "5fa74c6292fda61a234f87ddc22537a47adcfa0b059f574d3a705bdd0901e9a5",
+      "parsed_record_count": 24,
+      "earliest_observation_or_event": "2024-M01",
+      "latest_observation_or_event": "2024-M12",
+      "timestamp_precision": "MONTH_LEVEL_WITH_OFFICIAL_RELEASE_TIME",
+      "adapter_status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "source_health": "HEALTHY"
+    },
+    "FEDERAL_RESERVE": {
+      "source_name": "Federal Reserve (Monetary Policy Press Releases RSS)",
+      "official_url_or_endpoint": "https://www.federalreserve.gov/feeds/press_monetary.xml",
+      "fetch_time_utc": "2026-09-26T07:58:11.751776+00:00",
+      "http_status": 200,
+      "response_content_type": "application/rss+xml",
+      "raw_byte_count": 9645,
+      "raw_sha256": "6ef9f8ee2019c031b583ee3a64eec38170840e2ff4229ec92e43f49702857855",
+      "parsed_record_count": 15,
+      "earliest_observation_or_event": "2026-04-08T18:00:00+00:00",
+      "latest_observation_or_event": "2026-09-16T18:00:00+00:00",
+      "timestamp_precision": "EXACT_SECOND_RFC822",
+      "adapter_status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "source_health": "HEALTHY"
+    },
+    "US_TREASURY": {
+      "source_name": "U.S. Department of the Treasury (Daily Treasury Yield Curve)",
+      "official_url_or_endpoint": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026",
+      "fetch_time_utc": "2026-09-26T07:58:11.751776+00:00",
+      "http_status": 200,
+      "response_content_type": "application/atom+xml",
+      "raw_byte_count": 286498,
+      "raw_sha256": "19af1f429399240d9ac6c97dc0970beda7dcd213183f5308ec93f0e73b3bd903",
+      "parsed_record_count": 185,
+      "earliest_observation_or_event": "2026-01-02T00:00:00",
+      "latest_observation_or_event": "2026-09-25T00:00:00",
+      "timestamp_precision": "DATE_ONLY_OFFICIAL",
+      "adapter_status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "source_health": "HEALTHY"
+    },
+    "BEA": {
+      "source_name": "Bureau of Economic Analysis (BEA Official Release Schedule)",
+      "official_url_or_endpoint": "https://www.bea.gov/news/schedule",
+      "fetch_time_utc": "2026-09-26T07:58:11.751776+00:00",
+      "http_status": 200,
+      "response_content_type": "text/html",
+      "raw_byte_count": 74360,
+      "raw_sha256": "e6627a6688b2d7032c2c4dd32a2832b2e31a58896b5066690714c3596696122f",
+      "parsed_record_count": 9,
+      "earliest_observation_or_event": "September 30",
+      "latest_observation_or_event": "December 23",
+      "timestamp_precision": "DATE_AND_SCHEDULED_TIME",
+      "adapter_status": "PARTIAL",
+      "structured_api_status": "NOT_CONFIGURED",
+      "source_health": "HEALTHY"
+    }
+  },
+  "overall_smoke_verdict": "PASS"
+}

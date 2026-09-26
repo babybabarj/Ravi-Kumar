@@ -1,0 +1,29 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_TIMEZONE_AUDIT",
+  "generated_at_utc": "2026-09-26T07:58:15.215139+00:00",
+  "head_sha": "8cba9a05158e2d0077ecc245a8e5be996f547523",
+  "timezone_policy": {
+    "canonical_timezone": "America/New_York (ZoneInfo)",
+    "rules": [
+      "Never use fixed UTC offsets for US official agency releases",
+      "BLS releases: 08:30 US/Eastern -> 12:30 UTC during EDT, 13:30 UTC during EST",
+      "Federal Reserve releases: 14:00 US/Eastern -> 18:00 UTC during EDT, 19:00 UTC during EST",
+      "Treasury daily yields: 17:00 US/Eastern -> 21:00 UTC during EDT, 22:00 UTC during EST"
+    ],
+    "verified_transitions": {
+      "winter_est_to_utc": "2026-01-15 08:30 EST == 13:30 UTC (UTC-5)",
+      "summer_edt_to_utc": "2026-09-15 08:30 EDT == 12:30 UTC (UTC-4)",
+      "dst_spring_forward": "2026-03-08 01:59 EST -> 03:00 EDT handled seamlessly"
+    }
+  },
+  "safety": {
+    "trading_capability": "ZERO",
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED"
+  }
+}
