@@ -1,0 +1,9 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_1_DATA_FIREWALL_AUDIT",
+  "generated_at_utc": "2026-09-26T08:25:20.485473+00:00",
+  "ledgers_scanned": 4,
+  "val_granted": 0,
+  "holdout_granted": 0,
+  "pristine_granted": 0,
+  "firewall_intact": true
+}

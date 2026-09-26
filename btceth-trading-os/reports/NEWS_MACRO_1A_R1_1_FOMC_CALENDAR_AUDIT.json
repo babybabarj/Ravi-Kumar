@@ -1,0 +1,18 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_1_FOMC_CALENDAR_AUDIT",
+  "generated_at_utc": "2026-09-26T08:25:20.485473+00:00",
+  "calendar_source_url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm",
+  "calendar_source_sha256": "fe422063191014b8d70e1511590a4da0df63439874e06ea345f130d6e1c50f48",
+  "total_meetings_parsed": 54,
+  "upcoming_meeting": {
+    "event_id": "FOMC_MEETING_20261028",
+    "event_name": "FOMC Rate Decision & Policy Statement",
+    "scheduled_date": "2026-10-28",
+    "timestamp_certainty": "DATE_ONLY",
+    "availability_basis": "SCHEDULE_METADATA",
+    "first_seen_at_utc": "2026-09-26T08:25:20.485473+00:00",
+    "actual_value": null
+  },
+  "hardcoding_removed": true,
+  "manufactured_1400_et_removed": true
+}

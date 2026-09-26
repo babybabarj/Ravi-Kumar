@@ -1,0 +1,29 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_1_BLS_AVAILABILITY_AUDIT",
+  "generated_at_utc": "2026-09-26T08:25:20.485473+00:00",
+  "eradication_of_guessed_timestamps": {
+    "prohibited_patterns_removed": [
+      "day 12 approximation",
+      "around the 10th-15th",
+      "month + 1 generic inference",
+      "fixed 13:30 UTC offset"
+    ],
+    "zero_guessed_timestamps_verified": true
+  },
+  "schedule_adapter": {
+    "adapter_class": "BLSScheduleAdapter",
+    "cpi_schedule_source": "https://www.bls.gov/schedule/news_release/cpi.htm",
+    "empsit_schedule_source": "https://www.bls.gov/schedule/news_release/empsit.htm",
+    "timezone_source": "ZoneInfo('America/New_York')",
+    "dst_aware_handling": true,
+    "summer_edt_offset": "12:30:00+00:00",
+    "winter_est_offset": "13:30:00+00:00"
+  },
+  "adversarial_test_proof": {
+    "test_name": "test_bls_availability_adversarial_zero_leakage",
+    "scenario": "Observation month 2026-06, official release 2026-07-14 12:30 UTC. Old approx assumed day 12.",
+    "query_at_day_13": "None (UNAVAILABLE)",
+    "leakage_count": 0,
+    "verdict": "PASS_ZERO_LEAKAGE"
+  }
+}

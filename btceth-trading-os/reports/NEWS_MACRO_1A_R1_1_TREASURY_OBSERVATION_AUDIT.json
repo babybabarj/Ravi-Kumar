@@ -1,0 +1,26 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_1_TREASURY_OBSERVATION_AUDIT",
+  "generated_at_utc": "2026-09-26T08:25:20.485473+00:00",
+  "snapshot_date": "2026-09-26",
+  "latest_nominal_observation_date": "2026-09-25",
+  "latest_real_tips_observation_date": "2026-09-25",
+  "derived_observation_type": {
+    "US_TREASURY_10Y": "DAILY_OFFICIAL",
+    "US_TREASURY_2Y": "DAILY_OFFICIAL",
+    "US_TIPS_10Y": "DAILY_OFFICIAL",
+    "hardcoding_observation_type_current_removed": true,
+    "prior_day_labeled_daily_official": true
+  },
+  "precision_separation": {
+    "source_timestamp_certainty": "DATE_ONLY",
+    "availability_timestamp_certainty": "EXACT",
+    "availability_basis": "LIVE_FIRST_SEEN",
+    "intraday_historical_backfill_blocked": true
+  },
+  "real_yield_support": {
+    "series": "US_TIPS_10Y",
+    "field_name": "TC_10YEAR",
+    "status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+    "latest_real_yield_percent": 1.94
+  }
+}

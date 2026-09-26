@@ -1,0 +1,160 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_1_REAL_SNAPSHOT",
+  "snapshot_id": "REAL-SNAP-20260926T082520Z",
+  "snapshot_time_utc": "2026-09-26T08:25:20.485473+00:00",
+  "trading_capability": 0,
+  "upcoming_official_events": [
+    {
+      "event_id": "CPI_SCHEDULED_2026_09",
+      "event_family": "CPI",
+      "event_name": "Consumer Price Index (CPI) Headline & Core",
+      "status": "SCHEDULED_NOT_RELEASED",
+      "scheduled_at_utc": "2026-10-14T12:30:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T08:25:20.485473+00:00",
+      "actual_value": null,
+      "previous_value": 334.131,
+      "unit": "index_1982_84_100",
+      "timestamp_certainty": "EXACT",
+      "availability_basis": "SCHEDULE_METADATA",
+      "source": "BLS"
+    },
+    {
+      "event_id": "EMPLOYMENT_SITUATION_SCHEDULED_2026_09",
+      "event_family": "EMPLOYMENT_SITUATION",
+      "event_name": "The Employment Situation (Nonfarm Payrolls & Unemployment)",
+      "status": "SCHEDULED_NOT_RELEASED",
+      "scheduled_at_utc": "2026-10-02T12:30:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T08:25:20.485473+00:00",
+      "actual_value": null,
+      "previous_value": 159075.0,
+      "unit": "thousands_of_jobs",
+      "timestamp_certainty": "EXACT",
+      "availability_basis": "SCHEDULE_METADATA",
+      "source": "BLS"
+    },
+    {
+      "event_id": "FOMC_MEETING_20261028",
+      "event_family": "FOMC",
+      "event_name": "FOMC Rate Decision & Policy Statement",
+      "status": "SCHEDULED_NOT_RELEASED",
+      "scheduled_at_utc": "2026-10-28T00:00:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T08:25:20.485473+00:00",
+      "actual_value": null,
+      "previous_value": null,
+      "unit": "target_rate_percent",
+      "timestamp_certainty": "DATE_ONLY",
+      "availability_basis": "SCHEDULE_METADATA",
+      "source": "FEDERAL_RESERVE"
+    }
+  ],
+  "recent_official_releases": {
+    "CPI_HEADLINE": {
+      "series_id": "US_CPI_HEADLINE",
+      "reference_period": "2026-08",
+      "latest_value": 334.131,
+      "native_unit": "index_1982_84_100",
+      "semantic_type": "INDEX_LEVEL",
+      "derived_yoy": 3.713,
+      "vintages_count": 19,
+      "source": "BLS",
+      "quality": "GOOD"
+    },
+    "NFP_TOTAL": {
+      "series_id": "US_NFP_TOTAL",
+      "reference_period": "2026-08",
+      "latest_level_thousands": 159075.0,
+      "derived_mom_change_thousands": 162.0,
+      "native_unit": "thousands_of_jobs",
+      "semantic_type": "EMPLOYMENT_LEVEL_THOUSANDS",
+      "vintages_count": 20,
+      "source": "BLS",
+      "quality": "GOOD"
+    }
+  },
+  "rates_context": {
+    "US_TREASURY_10Y": {
+      "latest_yield_percent": 4.19,
+      "observation_date": "2026-09-25",
+      "snapshot_date": "2026-09-26",
+      "observation_type": "DAILY_OFFICIAL",
+      "unit": "percent_annualized",
+      "source_timestamp_certainty": "DATE_ONLY",
+      "availability_basis": "LIVE_FIRST_SEEN",
+      "source": "US_TREASURY"
+    },
+    "US_TREASURY_2Y": {
+      "latest_yield_percent": 3.47,
+      "observation_date": "2026-09-25",
+      "snapshot_date": "2026-09-26",
+      "observation_type": "DAILY_OFFICIAL",
+      "unit": "percent_annualized",
+      "source_timestamp_certainty": "DATE_ONLY",
+      "availability_basis": "LIVE_FIRST_SEEN",
+      "source": "US_TREASURY"
+    },
+    "US_TIPS_10Y": {
+      "latest_real_yield_percent": 1.94,
+      "observation_date": "2026-09-25",
+      "snapshot_date": "2026-09-26",
+      "observation_type": "DAILY_OFFICIAL",
+      "unit": "percent_annualized",
+      "source_timestamp_certainty": "DATE_ONLY",
+      "availability_basis": "LIVE_FIRST_SEEN",
+      "source": "US_TREASURY"
+    }
+  },
+  "policy_communications": [
+    {
+      "item_id": "FOMC_STATEMENT_202609161800_689fc777",
+      "item_type": "FOMC_STATEMENT",
+      "headline": "Federal Reserve issues FOMC statement",
+      "published_at_utc": "2026-09-16T18:00:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+      "source": "FEDERAL_RESERVE"
+    },
+    {
+      "item_id": "FED_SPEECH_202609231405_7663ca88",
+      "item_type": "FED_SPEECH",
+      "headline": "Barr, A Long-Term View on the Costs of Shelter",
+      "published_at_utc": "2026-09-23T14:05:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/speech/barr20260923a.htm",
+      "source": "FEDERAL_RESERVE"
+    },
+    {
+      "item_id": "FED_SPEECH_202609221420_9e73d2f2",
+      "item_type": "FED_SPEECH",
+      "headline": "Jefferson, Discount Window Modernization and Treasury Market Functioning",
+      "published_at_utc": "2026-09-22T14:20:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/speech/jefferson20260922a.htm",
+      "source": "FEDERAL_RESERVE"
+    },
+    {
+      "item_id": "FED_SPEECH_202609181330_4d8e264f",
+      "item_type": "FED_SPEECH",
+      "headline": "Bowman, The Final Chapter on Modernizing Bank Regulatory Stress Testing",
+      "published_at_utc": "2026-09-18T13:30:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/speech/bowman20260918a.htm",
+      "source": "FEDERAL_RESERVE"
+    }
+  ],
+  "limitations": [
+    "TRADING_CAPABILITY=ZERO",
+    "DXY=NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+    "BREAKING_NEWS=NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+    "BEA=PARTIAL_STRUCTURED_NOT_CONFIGURED"
+  ],
+  "safety": {
+    "trading_capability": 0,
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED"
+  }
+}

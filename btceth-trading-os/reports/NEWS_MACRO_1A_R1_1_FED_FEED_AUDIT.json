@@ -1,0 +1,30 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_1_FED_FEED_AUDIT",
+  "generated_at_utc": "2026-09-26T08:25:20.485473+00:00",
+  "feed_separation": {
+    "monetary_feed_url": "https://www.federalreserve.gov/feeds/press_monetary.xml",
+    "speeches_feed_url": "https://www.federalreserve.gov/feeds/speeches.xml",
+    "monetary_feed_sha256": "6ef9f8ee2019c031b583ee3a64eec38170840e2ff4229ec92e43f49702857855",
+    "speeches_feed_sha256": "11746c31ef2516bbb78578ea2e2de0ac3debb51c2214cd2731326c21234d6aeb",
+    "decoupled_datasets": true,
+    "monetary_passed_to_speeches_strictly_filtered": true
+  },
+  "classification_truth": {
+    "FOMC_STATEMENT": "FOMC monetary policy statements",
+    "FOMC_MINUTES": "FOMC meeting minutes (excluding discount-rate minutes)",
+    "FED_SPEECH": "Official governor speeches and remarks",
+    "FED_TESTIMONY": "Congressional testimonies",
+    "FOMC_SEP": "Summary of Economic Projections",
+    "FED_OFFICIAL_OTHER": "Discount-rate minutes, regulatory announcements"
+  },
+  "item_id_uniqueness": {
+    "id_format": "{TYPE}_{YYYYMMDDHHMM}_{HASH8}",
+    "collision_prevention": "Guaranteed distinct IDs even for same-minute releases",
+    "sample_statement_id": "FOMC_STATEMENT_202609161800_689fc777",
+    "sample_speech_ids": [
+      "FED_SPEECH_202609231405_7663ca88",
+      "FED_SPEECH_202609221420_9e73d2f2",
+      "FED_SPEECH_202609181330_4d8e264f"
+    ]
+  }
+}

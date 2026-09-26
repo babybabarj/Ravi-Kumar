@@ -1,0 +1,15 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_1_SOURCE_CONFLICT_AUDIT",
+  "generated_at_utc": "2026-09-26T08:25:20.485473+00:00",
+  "differing_values_evidence": {
+    "field": "US_CPI_HEADLINE_2024_12",
+    "primary_source": "BLS_NATIVE_API",
+    "primary_value": 317.6,
+    "secondary_source": "FRED_RECONCILER",
+    "secondary_value": 317.5,
+    "conflict_detected": true,
+    "resolved_display_value": 317.6,
+    "conflict_retained": true,
+    "values_differ": true
+  }
+}

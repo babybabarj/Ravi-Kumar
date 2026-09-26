@@ -1,0 +1,66 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_1_REPORT_DIGESTS",
+  "algorithm": "SHA-256",
+  "manifest": {
+    "NEWS_MACRO_1A_R1_1_BLS_AVAILABILITY_AUDIT.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_BLS_AVAILABILITY_AUDIT.json",
+      "size_bytes": 1112,
+      "sha256": "f3eb9ecd57665f06ec275b3d094495d3f009668830730fa24c40681ea03b0b86"
+    },
+    "NEWS_MACRO_1A_R1_1_DATA_FIREWALL_AUDIT.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_DATA_FIREWALL_AUDIT.json",
+      "size_bytes": 238,
+      "sha256": "5afcd0573c1d8c7fd72105436884969c3fb8b1f6a855c818304aea7eaef9716a"
+    },
+    "NEWS_MACRO_1A_R1_1_EVIDENCE.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_EVIDENCE.json",
+      "size_bytes": 1045,
+      "sha256": "5c0ec49c75adf59d20f7e899f91bbc8cead83349f44d59521b2e27b497aa6b65"
+    },
+    "NEWS_MACRO_1A_R1_1_FED_FEED_AUDIT.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_FED_FEED_AUDIT.json",
+      "size_bytes": 1381,
+      "sha256": "f4001e6c29f473efc89bd30cd48b8eae79276b279352bb7494801b45fa300560"
+    },
+    "NEWS_MACRO_1A_R1_1_FOMC_CALENDAR_AUDIT.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_FOMC_CALENDAR_AUDIT.json",
+      "size_bytes": 745,
+      "sha256": "0c4d220d28d2d07dd1b58a18a6f2be06b42b523794b25c4547f96899c89e28c3"
+    },
+    "NEWS_MACRO_1A_R1_1_REAL_SNAPSHOT.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_REAL_SNAPSHOT.json",
+      "size_bytes": 5650,
+      "sha256": "b028d5d0cd57d027e597c5825f016cece3b8e5bc194b93459c698e20a3b1e234"
+    },
+    "NEWS_MACRO_1A_R1_1_REAL_SOURCE_SMOKE_TEST.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_REAL_SOURCE_SMOKE_TEST.json",
+      "size_bytes": 3902,
+      "sha256": "c20436a4428290641b6fe74ca9fb894874a5a2a2f8304fc64477db04ed3ff949"
+    },
+    "NEWS_MACRO_1A_R1_1_SECURITY_AUDIT.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_SECURITY_AUDIT.json",
+      "size_bytes": 242,
+      "sha256": "7cb75d2c65b3e707eee1e3fb6c4ca1bc1f55e9371b1b182ab992bcbecd6b1fe6"
+    },
+    "NEWS_MACRO_1A_R1_1_SOURCE_CONFLICT_AUDIT.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_SOURCE_CONFLICT_AUDIT.json",
+      "size_bytes": 464,
+      "sha256": "c01df409c4de252db99bd92ac77e08e613df7ec2263b6d72c6ea058919dcde11"
+    },
+    "NEWS_MACRO_1A_R1_1_SOURCE_STATUS_MATRIX.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_SOURCE_STATUS_MATRIX.json",
+      "size_bytes": 1527,
+      "sha256": "019d0faa40787e768dad486acc309fe4e39338168f1bd795769362e9bb46351c"
+    },
+    "NEWS_MACRO_1A_R1_1_TREASURY_OBSERVATION_AUDIT.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_TREASURY_OBSERVATION_AUDIT.json",
+      "size_bytes": 921,
+      "sha256": "ab20cae68ebdbe6dcf44ce0260c474ab37703987d7b3a8c3bcadd93741c6d88b"
+    },
+    "NEWS_MACRO_1A_R1_1_VINTAGE_SAFETY_AUDIT.json": {
+      "path": "reports/NEWS_MACRO_1A_R1_1_VINTAGE_SAFETY_AUDIT.json",
+      "size_bytes": 1089,
+      "sha256": "592cd5e8f0e4308490532e7f7f1f6d5f9b64f41aa1f566decdbe089211e05b4d"
+    }
+  }
+}
