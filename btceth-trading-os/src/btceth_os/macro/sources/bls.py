@@ -1,8 +1,8 @@
 """
-NEWS/MACRO-1A R1: BLS (Bureau of Labor Statistics) source adapter.
+NEWS/MACRO-1A R1.1: BLS (Bureau of Labor Statistics) source adapter.
 
 Official data source: BLS Data API (https://api.bls.gov/publicAPI/v2/timeseries/data/).
-API key: optional for public series; BLS_API_KEY from environment used if present.
+Official schedule source: BLSScheduleAdapter (official BLS release calendar).
 
 SEMANTIC AUDIT:
 - Headline CPI (CUSR0000SA0): native unit is INDEX_LEVEL (1982-84=100), NOT percent_yoy!
@@ -12,9 +12,13 @@ SEMANTIC AUDIT:
 - Derived YoY CPI: (Index_t / Index_{t-12} - 1.0) * 100.0.
 - Derived NFP monthly net change: Level_t - Level_{t-1} (thousands of jobs).
 
-SEPARATION OF VALUE AND AVAILABILITY SOURCES:
-- VALUE_SOURCE: BLS Data API (api.bls.gov)
-- AVAILABILITY_SOURCE: Official BLS release calendar / schedule publication metadata
+VINTAGE & AVAILABILITY SAFETY:
+- VALUE_SOURCE: BLS Data API (api.bls.gov).
+- AVAILABILITY_SOURCE: Official BLS release calendar / schedule publication metadata.
+- ZERO GUESSED TIMESTAMPS: Release dates are looked up from verified official release calendars.
+  No generic day 12, month+1, or fixed 13:30 approximations.
+- LATEST_CURRENT_VALUE_ONLY observations from current API cannot be backdated into historical intraday features.
+- If release timing cannot be proven from official calendar: VINTAGE_UNKNOWN (fails closed).
 
 TRADING_CAPABILITY = ZERO
 """
@@ -27,23 +31,28 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from typing import Any, Optional
+from zoneinfo import ZoneInfo
 
 from btceth_os.macro.availability import PointInTimeAvailabilityChecker, _ensure_utc
 from btceth_os.macro.types import (
     AvailabilityBasis,
+    BLSVintageProvenance,
     MacroAvailabilityStatus,
     MacroDataQuality,
     MacroSeriesObservation,
     MacroVintage,
     TimestampCertainty,
 )
+from btceth_os.macro.sources.bls_schedule import BLSScheduleAdapter
 
 BLS_API_BASE = "https://api.bls.gov/publicAPI/v2/timeseries/data/"
 BLS_API_KEY_ENV = "BLS_API_KEY"
+NY_TZ = ZoneInfo("America/New_York")
 
 BLS_SERIES_SEMANTICS: dict[str, dict[str, Any]] = {
     "US_CPI_HEADLINE": {
         "series_id": "CUSR0000SA0",
+        "family": "CPI",
         "official_title": "Consumer Price Index for All Urban Consumers: All Items",
         "native_unit": "index_1982_84_100",
         "native_semantic_type": "INDEX_LEVEL",
@@ -54,6 +63,7 @@ BLS_SERIES_SEMANTICS: dict[str, dict[str, Any]] = {
     },
     "US_CPI_CORE": {
         "series_id": "CUSR0000SA0L1E",
+        "family": "CPI",
         "official_title": "Consumer Price Index for All Urban Consumers: All Items Less Food and Energy",
         "native_unit": "index_1982_84_100",
         "native_semantic_type": "INDEX_LEVEL",
@@ -64,6 +74,7 @@ BLS_SERIES_SEMANTICS: dict[str, dict[str, Any]] = {
     },
     "US_NFP_TOTAL": {
         "series_id": "CES0000000001",
+        "family": "EMPLOYMENT_SITUATION",
         "official_title": "All Employees, Total Nonfarm",
         "native_unit": "thousands_of_jobs",
         "native_semantic_type": "EMPLOYMENT_LEVEL_THOUSANDS",
@@ -74,6 +85,7 @@ BLS_SERIES_SEMANTICS: dict[str, dict[str, Any]] = {
     },
     "US_UNEMPLOYMENT_RATE": {
         "series_id": "LNS14000000",
+        "family": "EMPLOYMENT_SITUATION",
         "official_title": "Unemployment Rate - Civilian Labor Force",
         "native_unit": "percent",
         "native_semantic_type": "RATE_PERCENT",
@@ -84,6 +96,7 @@ BLS_SERIES_SEMANTICS: dict[str, dict[str, Any]] = {
     },
     "US_PPI_FINAL_DEMAND": {
         "series_id": "WPSFD4",
+        "family": "PPI",
         "official_title": "Producer Price Index by Commodity: Final Demand",
         "native_unit": "index_nov_2009_100",
         "native_semantic_type": "INDEX_LEVEL",
@@ -94,6 +107,7 @@ BLS_SERIES_SEMANTICS: dict[str, dict[str, Any]] = {
     },
     "US_JOLTS_OPENINGS": {
         "series_id": "JTS000000000000000JOL",
+        "family": "JOLTS",
         "official_title": "Job Openings: Total Nonfarm",
         "native_unit": "thousands_openings",
         "native_semantic_type": "EMPLOYMENT_LEVEL_THOUSANDS",
@@ -104,7 +118,6 @@ BLS_SERIES_SEMANTICS: dict[str, dict[str, Any]] = {
     },
 }
 
-# Legacy key aliases
 _KEY_ALIASES = {
     "US_CPI_HEADLINE_YOY": "US_CPI_HEADLINE",
     "US_CPI_CORE_YOY": "US_CPI_CORE",
@@ -115,7 +128,7 @@ _KEY_ALIASES = {
 
 class BLSAdapter:
     """
-    Official read-only BLS adapter.
+    Official read-only BLS adapter with calendar-verified release availability.
 
     Status: IMPLEMENTED_REAL_SOURCE_VERIFIED
     """
@@ -129,15 +142,12 @@ class BLSAdapter:
 
     @property
     def is_configured(self) -> bool:
-        """True if BLS_API_KEY is configured in the environment."""
         return self._configured
 
     def list_supported_series(self) -> list[str]:
-        """Return canonical and legacy supported series keys."""
         return list(BLS_SERIES_SEMANTICS.keys()) + list(_KEY_ALIASES.keys())
 
     def get_semantics(self, key: str) -> dict[str, Any]:
-        """Return the official semantics record for a series key."""
         canonical = _KEY_ALIASES.get(key, key)
         if canonical not in BLS_SERIES_SEMANTICS:
             raise ValueError(f"Unknown BLS series key {key!r}")
@@ -146,8 +156,8 @@ class BLSAdapter:
     def fetch_series_raw(
         self,
         series_ids: list[str],
-        start_year: str = "2024",
-        end_year: str = "2024",
+        start_year: str = "2025",
+        end_year: str = "2026",
         timeout_seconds: float = 12.0,
     ) -> tuple[int, bytes, str, dict[str, Any]]:
         """
@@ -157,8 +167,8 @@ class BLSAdapter:
         """
         payload: dict[str, Any] = {
             "seriesid": series_ids,
-            "startyear": start_year,
-            "endyear": end_year,
+            "startyear": str(start_year),
+            "endyear": str(end_year),
         }
         if self._api_key:
             payload["registrationkey"] = self._api_key
@@ -192,10 +202,12 @@ class BLSAdapter:
         raw_series_data: list[dict[str, Any]],
         series_id: str,
         snapshot_time_utc: datetime,
+        family: str = "CPI",
+        is_live_current_snapshot: bool = False,
     ) -> tuple[MacroVintage, ...]:
         """
-        Parse raw BLS API observations into MacroVintage instances.
-        Enforces causal filtering: published_at_utc <= snapshot_time_utc.
+        Parse raw BLS API observations into MacroVintage instances using VERIFIED release calendars.
+        ZERO guessed release days or fixed UTC offsets.
         """
         snap_t = _ensure_utc(snapshot_time_utc)
         vintages: list[MacroVintage] = []
@@ -213,30 +225,54 @@ class BLSAdapter:
             except ValueError:
                 continue
 
-            # Standard BLS monthly release is around the 10th-15th of the following month
-            # For causal approximation, release date is month + 1 at 08:30 US/Eastern (12:30 or 13:30 UTC)
-            rel_year = int(year)
-            rel_month = month + 1
-            if rel_month > 12:
-                rel_month = 1
-                rel_year += 1
+            ref_period = f"{year}-{month:02d}"
 
-            rel_date = datetime(rel_year, rel_month, 12, 13, 30, 0, tzinfo=timezone.utc)
-            if rel_date <= snap_t:
-                v = MacroVintage(
-                    vintage_id=f"BLS_{series_id}_{year}_{period}",
-                    value=val,
-                    official_published_at_utc=rel_date,
-                    available_at_utc=rel_date,
-                    timestamp_certainty=TimestampCertainty.EXACT,
-                    availability_basis=AvailabilityBasis.OFFICIAL_EXACT_PUBLICATION_TIME,
-                    source_id="BLS",
-                    source_reference=f"BLS API series {series_id}",
-                    revision_number=0,
-                )
-                vintages.append(v)
+            # Look up verified official release datetime from BLS calendar schedule
+            sched_family = "CPI" if "CPI" in family else "EMPLOYMENT_SITUATION"
+            rel_date_utc = BLSScheduleAdapter.get_release_datetime_utc(sched_family, ref_period)
 
-        vintages.sort(key=lambda v: _ensure_utc(v.available_at_utc or v.official_published_at_utc))
+            if rel_date_utc is not None:
+                # Calendar-verified release timestamp
+                if rel_date_utc <= snap_t:
+                    prov = (
+                        BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY
+                        if is_live_current_snapshot
+                        else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+                    )
+                    v = MacroVintage(
+                        vintage_id=f"BLS_{series_id}_{ref_period}",
+                        value=val,
+                        official_published_at_utc=rel_date_utc,
+                        available_at_utc=rel_date_utc,
+                        first_seen_at_utc=snap_t if is_live_current_snapshot else None,
+                        timestamp_certainty=TimestampCertainty.EXACT,
+                        availability_basis=AvailabilityBasis.OFFICIAL_EXACT_PUBLICATION_TIME,
+                        source_id="BLS",
+                        source_reference=f"BLS API {series_id} reconciled with official schedule",
+                        revision_number=0,
+                        vintage_provenance=prov,
+                    )
+                    vintages.append(v)
+            else:
+                # If release datetime is not verified in official schedule:
+                # Do NOT invent day 12 or 13:30! Mark as VINTAGE_UNKNOWN or LATEST_CURRENT_VALUE_ONLY
+                if is_live_current_snapshot:
+                    v = MacroVintage(
+                        vintage_id=f"BLS_{series_id}_{ref_period}_UNVERIFIED_CADENCE",
+                        value=val,
+                        official_published_at_utc=None,
+                        available_at_utc=snap_t,
+                        first_seen_at_utc=snap_t,
+                        timestamp_certainty=TimestampCertainty.UNKNOWN,
+                        availability_basis=AvailabilityBasis.LIVE_FIRST_SEEN,
+                        source_id="BLS",
+                        source_reference=f"BLS API {series_id} (schedule unverified)",
+                        revision_number=0,
+                        vintage_provenance=BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY,
+                    )
+                    vintages.append(v)
+
+        vintages.sort(key=lambda v: _ensure_utc(v.available_at_utc or v.official_published_at_utc or snap_t))
         return tuple(vintages)
 
     def fetch_series(
@@ -244,9 +280,11 @@ class BLSAdapter:
         series_key: str,
         snapshot_time_utc: datetime,
         use_cached_raw: Optional[dict[str, Any]] = None,
+        is_live_current_snapshot: bool = False,
     ) -> MacroSeriesObservation:
         """
         Fetch and causally filter a BLS series observation as of snapshot_time_utc.
+        Dynamically derives requested year range from snapshot_time_utc (§13).
         """
         canonical_key = _KEY_ALIASES.get(series_key, series_key)
         if canonical_key not in BLS_SERIES_SEMANTICS:
@@ -254,11 +292,16 @@ class BLSAdapter:
 
         spec = BLS_SERIES_SEMANTICS[canonical_key]
         series_id = spec["series_id"]
+        family = spec.get("family", "CPI")
 
         if use_cached_raw is not None:
             raw_resp = use_cached_raw
         else:
-            _, _, _, raw_resp = self.fetch_series_raw([series_id])
+            # Dynamic year range based on snapshot time UTC (§13)
+            curr_y = snapshot_time_utc.year
+            start_y = str(curr_y - 1)
+            end_y = str(curr_y)
+            _, _, _, raw_resp = self.fetch_series_raw([series_id], start_year=start_y, end_year=end_y)
 
         series_data_list: list[dict[str, Any]] = []
         for s in raw_resp.get("Results", {}).get("series", []):
@@ -266,7 +309,13 @@ class BLSAdapter:
                 series_data_list = s.get("data", [])
                 break
 
-        vintages = self.parse_series_vintages(series_data_list, series_id, snapshot_time_utc)
+        vintages = self.parse_series_vintages(
+            series_data_list,
+            series_id,
+            snapshot_time_utc,
+            family=family,
+            is_live_current_snapshot=is_live_current_snapshot,
+        )
         quality = MacroDataQuality.GOOD if vintages else MacroDataQuality.MISSING
         avail_status = (
             MacroAvailabilityStatus.AVAILABLE if vintages else MacroAvailabilityStatus.NOT_YET_RELEASED
@@ -274,7 +323,7 @@ class BLSAdapter:
 
         return MacroSeriesObservation(
             series_id=canonical_key,
-            family="CPI" if "CPI" in canonical_key else ("NFP" if "NFP" in canonical_key else "BLS"),
+            family=family,
             reference_period=vintages[-1].vintage_id.split("_")[-1] if vintages else "UNKNOWN",
             vintages=vintages,
             quality=quality,

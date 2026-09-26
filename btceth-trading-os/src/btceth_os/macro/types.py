@@ -117,6 +117,23 @@ class EventReleaseStatus(str, enum.Enum):
     NOT_AVAILABLE = "NOT_AVAILABLE"
 
 
+class BLSVintageProvenance(str, enum.Enum):
+    """
+    Vintage provenance classification for official series observations (§11).
+
+    ORIGINAL_RELEASE_PROVEN   — initial release verified with official publication timestamp.
+    REVISION_RELEASE_PROVEN   — official subsequent revision verified with official release timestamp.
+    LATEST_CURRENT_VALUE_ONLY — current API value; usable descriptively in current snapshot,
+                                but MUST NOT be backdated into historical intraday features.
+    VINTAGE_UNKNOWN           — vintage cannot be proven; blocked fail-closed.
+    """
+
+    ORIGINAL_RELEASE_PROVEN = "ORIGINAL_RELEASE_PROVEN"
+    REVISION_RELEASE_PROVEN = "REVISION_RELEASE_PROVEN"
+    LATEST_CURRENT_VALUE_ONLY = "LATEST_CURRENT_VALUE_ONLY"
+    VINTAGE_UNKNOWN = "VINTAGE_UNKNOWN"
+
+
 # ---------------------------------------------------------------------------
 # Core dataclasses
 # ---------------------------------------------------------------------------
@@ -301,6 +318,7 @@ class MacroVintage:
     source_hash: Optional[str] = None
     revision_number: int = 0
     revision_label: Optional[str] = None
+    vintage_provenance: Optional[BLSVintageProvenance] = None
 
     # Legacy backward compatibility parameters
     published_at_utc: Optional[datetime] = None
@@ -316,6 +334,14 @@ class MacroVintage:
         eff_lbl = self.revision_label or self.vintage_label
         object.__setattr__(self, "revision_label", eff_lbl)
         object.__setattr__(self, "vintage_label", eff_lbl)
+
+        if self.vintage_provenance is None:
+            eff_prov = (
+                BLSVintageProvenance.REVISION_RELEASE_PROVEN
+                if self.revision_number > 0
+                else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+            )
+            object.__setattr__(self, "vintage_provenance", eff_prov)
 
 
 @dataclass(frozen=True)
@@ -344,12 +370,14 @@ class MacroSeriesObservation:
         self,
         snapshot_time_utc: datetime,
         required_certainty: Optional[TimestampCertainty] = None,
+        allow_current_value_only: bool = False,
+        resolution: str = "INTRADAY",
     ) -> Optional[float]:
         """
         Return the latest value causally available at snapshot_time_utc.
 
         Returns None if no vintage is available at or before snapshot_time_utc
-        or if timestamp certainty is insufficient.
+        or if timestamp certainty or vintage provenance is insufficient.
         """
         if snapshot_time_utc.tzinfo is None:
             snapshot_time_utc = snapshot_time_utc.replace(tzinfo=timezone.utc)
@@ -363,6 +391,24 @@ class MacroSeriesObservation:
                 t = t.replace(tzinfo=timezone.utc)
             if t <= snapshot_time_utc:
                 if required_certainty is not None and v.timestamp_certainty != required_certainty:
+                    continue
+                # Date-only safety: Pure historical DATE_ONLY observations cannot be backfilled into intraday features
+                if resolution == "INTRADAY" and v.timestamp_certainty == TimestampCertainty.DATE_ONLY:
+                    if v.first_seen_at_utc is not None:
+                        first_seen = v.first_seen_at_utc.replace(tzinfo=timezone.utc) if v.first_seen_at_utc.tzinfo is None else v.first_seen_at_utc
+                        if snapshot_time_utc < first_seen:
+                            continue
+                    else:
+                        continue
+
+                # Vintage safety: LATEST_CURRENT_VALUE_ONLY cannot be backdated before first_seen
+                if v.vintage_provenance == BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY and not allow_current_value_only:
+                    if v.first_seen_at_utc is not None:
+                        first_seen = v.first_seen_at_utc.replace(tzinfo=timezone.utc) if v.first_seen_at_utc.tzinfo is None else v.first_seen_at_utc
+                        if snapshot_time_utc < first_seen:
+                            continue
+                elif v.vintage_provenance == BLSVintageProvenance.VINTAGE_UNKNOWN and resolution == "INTRADAY":
+                    # Section 11: VINTAGE_UNKNOWN is blocked from intraday historical queries
                     continue
                 eligible.append((t, v))
 

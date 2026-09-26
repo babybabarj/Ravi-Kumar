@@ -35,6 +35,7 @@ from typing import Any, Optional
 from btceth_os.macro.availability import PointInTimeAvailabilityChecker, _ensure_utc
 from btceth_os.macro.types import (
     AvailabilityBasis,
+    BLSVintageProvenance,
     MacroAvailabilityStatus,
     MacroDataQuality,
     MacroSeriesObservation,
@@ -243,7 +244,7 @@ class TreasuryAdapter:
                 if is_live_ingestion:
                     avail_t = snap_t
                     basis = AvailabilityBasis.LIVE_FIRST_SEEN
-                    certainty = TimestampCertainty.EXACT
+                    certainty = TimestampCertainty.DATE_ONLY
                 else:
                     # End of business day release: 21:00 UTC (17:00 Eastern)
                     avail_t = datetime(obs_d.year, obs_d.month, obs_d.day, 21, 0, 0, tzinfo=timezone.utc)
@@ -262,6 +263,7 @@ class TreasuryAdapter:
                         source_id="US_TREASURY",
                         source_reference=f"home.treasury.gov daily yield curve ({field_name})",
                         revision_number=0,
+                        vintage_provenance=BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,
                     )
                     vintages.append(v)
 
