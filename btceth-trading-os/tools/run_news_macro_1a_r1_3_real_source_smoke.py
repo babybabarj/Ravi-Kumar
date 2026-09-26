@@ -493,10 +493,12 @@ def run_smoke_and_generate_reports(code_sha: str = "") -> dict[str, Any]:
             },
         },
         "fed_upcoming_fomc": {
-            "meeting_id": upcoming_fomc.meeting_id if upcoming_fomc else None,
-            "start_date": upcoming_fomc.start_date if upcoming_fomc else None,
-            "end_date": upcoming_fomc.end_date if upcoming_fomc else None,
-            "statement_scheduled_utc": upcoming_fomc.statement_scheduled_utc.isoformat() if upcoming_fomc and upcoming_fomc.statement_scheduled_utc else None,
+            "event_id": upcoming_fomc.event_id if upcoming_fomc else None,
+            "event_family": upcoming_fomc.event_family if upcoming_fomc else None,
+            "event_name": upcoming_fomc.event_name if upcoming_fomc else None,
+            "status": upcoming_fomc.status.value if upcoming_fomc else None,
+            "scheduled_at_utc": upcoming_fomc.scheduled_at_utc.isoformat() if upcoming_fomc and upcoming_fomc.scheduled_at_utc else None,
+            "schedule_known_at_utc": upcoming_fomc.schedule_known_at_utc.isoformat() if upcoming_fomc and upcoming_fomc.schedule_known_at_utc else None,
         } if upcoming_fomc else None,
         "treasury_latest_yields": {
             "nominal_10yr": t10_obs.vintages[-1].value if t10_obs.vintages else None,
