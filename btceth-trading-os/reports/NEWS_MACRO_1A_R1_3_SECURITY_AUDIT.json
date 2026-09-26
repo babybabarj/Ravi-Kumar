@@ -1,0 +1,13 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_3_SECURITY_AUDIT",
+  "evidence_source_code_sha": "e19c7d7bdb2c0bb4bc27c18c55d649b2db7455d4",
+  "generated_at_utc": "2026-09-26T11:09:04.438895+00:00",
+  "findings": [],
+  "trading_capability": 0,
+  "shadow_mode": 0,
+  "paper_trading": 0,
+  "live_trading": 0,
+  "hardcoded_credentials_count": 0,
+  "bls_api_key_committed": false,
+  "security_verdict": "PASS"
+}

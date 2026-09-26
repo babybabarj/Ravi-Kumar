@@ -1,0 +1,59 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_3_CURRENT_SNAPSHOT",
+  "evidence_source_code_sha": "e19c7d7bdb2c0bb4bc27c18c55d649b2db7455d4",
+  "generated_at_utc": "2026-09-26T11:09:04.438895+00:00",
+  "snapshot_time_utc": "2026-09-26T11:09:04.438895+00:00",
+  "bls_data_source_status": "RATE_LIMITED",
+  "bls_observations": {
+    "cpi": null,
+    "nfp": null
+  },
+  "derived_metrics": {
+    "cpi_yoy": {
+      "value": null,
+      "derived_yoy": null,
+      "provenance": "NOT_AVAILABLE",
+      "derived_metric_provenance": "NOT_AVAILABLE",
+      "derived_metric_historical_intraday_usable": false,
+      "historical_intraday_usable": false,
+      "status": "NOT_AVAILABLE_SOURCE_RATE_LIMITED"
+    },
+    "nfp_mom": {
+      "value": null,
+      "derived_mom_change_thousands": null,
+      "provenance": "NOT_AVAILABLE",
+      "derived_metric_provenance": "NOT_AVAILABLE",
+      "derived_metric_historical_intraday_usable": false,
+      "historical_intraday_usable": false,
+      "status": "NOT_AVAILABLE_SOURCE_RATE_LIMITED"
+    }
+  },
+  "bls_upcoming_schedule": {
+    "cpi": {
+      "event_id": "CPI_SCHEDULED_2026_09",
+      "reference_period": "2026-09",
+      "scheduled_at_utc": "2026-10-14T12:30:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T11:09:05.837639+00:00",
+      "status": "SCHEDULED_NOT_RELEASED"
+    },
+    "employment_situation": {
+      "event_id": "EMPLOYMENT_SITUATION_SCHEDULED_2026_09",
+      "reference_period": "2026-09",
+      "scheduled_at_utc": "2026-10-02T12:30:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T11:09:06.217323+00:00",
+      "status": "SCHEDULED_NOT_RELEASED"
+    }
+  },
+  "fed_upcoming_fomc": {
+    "event_id": "FOMC_MEETING_20261028",
+    "event_family": "FOMC",
+    "event_name": "FOMC Rate Decision & Policy Statement",
+    "status": "SCHEDULED_NOT_RELEASED",
+    "scheduled_at_utc": "2026-10-28T00:00:00+00:00",
+    "schedule_known_at_utc": "2026-09-26T11:09:04.438895+00:00"
+  },
+  "treasury_latest_yields": {
+    "nominal_10yr": 5.17,
+    "real_10yr": 2.83
+  }
+}

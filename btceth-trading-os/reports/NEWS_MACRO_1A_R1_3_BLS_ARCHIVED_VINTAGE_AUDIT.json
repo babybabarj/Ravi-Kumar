@@ -1,0 +1,25 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_3_BLS_ARCHIVED_VINTAGE_AUDIT",
+  "evidence_source_code_sha": "e19c7d7bdb2c0bb4bc27c18c55d649b2db7455d4",
+  "generated_at_utc": "2026-09-26T11:09:04.438895+00:00",
+  "structural_proof_requirements": {
+    "dataclass": "BLSArchivedVintageEvidence",
+    "mandatory_fields": [
+      "series_id",
+      "reference_period",
+      "value",
+      "archive_type",
+      "official_source_url",
+      "source_raw_sha256",
+      "official_published_at_utc",
+      "timestamp_certainty"
+    ],
+    "official_url_domain_enforced": "*.bls.gov",
+    "source_hash_format_enforced": "64_hex_chars",
+    "timestamp_certainty_enforced": "EXACT",
+    "enum_only_promotion_blocked": true,
+    "value_from_proof_overrides_current_api": true
+  },
+  "historical_archive_status": "FAIL_CLOSED_NOT_FULLY_IMPLEMENTED",
+  "fail_closed_guarantee": "Refuses to synthesize historical archive. Unproven vintages fail closed."
+}

@@ -1,0 +1,52 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_3_SOURCE_STATUS_MATRIX",
+  "evidence_source_code_sha": "e19c7d7bdb2c0bb4bc27c18c55d649b2db7455d4",
+  "generated_at_utc": "2026-09-26T11:09:04.438895+00:00",
+  "matrix": {
+    "BLS_DATA_API": {
+      "status": "RATE_LIMITED",
+      "evidence": "api.bls.gov live fetch returned 0 records (HTTP 200, status=RATE_LIMITED)"
+    },
+    "BLS_CPI_SCHEDULE": {
+      "status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "evidence": "bls.gov/schedule/news_release/cpi.htm live HTML fetch succeeded with 13 events parsed (HTTP 200)"
+    },
+    "BLS_EMPLOYMENT_SCHEDULE": {
+      "status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "evidence": "bls.gov/schedule/news_release/empsit.htm live HTML fetch succeeded with 13 events parsed (HTTP 200)"
+    },
+    "BLS_HISTORICAL_ARCHIVED_VINTAGES": {
+      "status": "FAIL_CLOSED_NOT_FULLY_IMPLEMENTED",
+      "evidence": "Structural proof required; no full historical archive backfill constructed. Fails closed."
+    },
+    "FEDERAL_RESERVE": {
+      "status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "evidence": "federalreserve.gov decoupled monetary feed, speeches feed, and FOMC calendar parsed"
+    },
+    "US_TREASURY": {
+      "status": "IMPLEMENTED_REAL_SOURCE_VERIFIED",
+      "evidence": "home.treasury.gov daily nominal and TIPS XML feeds parsed with DATE_ONLY certainty"
+    },
+    "BEA": {
+      "status": "PARTIAL",
+      "evidence": "bea.gov release schedule operational; structured API requires BEA_API_KEY (NOT_CONFIGURED)"
+    },
+    "FRED": {
+      "status": "NOT_CONFIGURED",
+      "evidence": "Secondary reconciler source; optional in R1.3"
+    },
+    "ALFRED": {
+      "status": "NOT_CONFIGURED",
+      "evidence": "ALFRED_API_KEY absent; returns NOT_CONFIGURED without failing"
+    },
+    "DXY": {
+      "status": "NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+      "evidence": "Requires authorised ICE U.S. Dollar Index provider; substitutes strictly prohibited"
+    },
+    "BREAKING_NEWS": {
+      "status": "NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+      "evidence": "Requires authorised real-time financial wire provider; scraping prohibited"
+    }
+  },
+  "all_required_sources_verified": false
+}

@@ -1,0 +1,32 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_3_BLS_DATA_SOURCE_AUDIT",
+  "evidence_source_code_sha": "e19c7d7bdb2c0bb4bc27c18c55d649b2db7455d4",
+  "generated_at_utc": "2026-09-26T11:09:04.438895+00:00",
+  "live_api_fetch": {
+    "official_url": "https://api.bls.gov/publicAPI/v2/timeseries/data/",
+    "http_status": 200,
+    "provider_status": "RATE_LIMITED",
+    "provider_message": "Request could not be serviced, as the daily threshold for total number of requests allocated to the user with registration key  has been reached.",
+    "raw_byte_count": 224,
+    "raw_sha256": "48d4a57eed253437dd9f0664c33b90bbc2a7cb9ab553605f7a8a367cee05a818",
+    "parsed_record_count": 0,
+    "requested_series": [
+      "CUSR0000SA0",
+      "CES0000000001"
+    ],
+    "real_source_verified": false
+  },
+  "blocker_a_fallback_removal_verification": {
+    "no_hardcoded_cpi_injected": true,
+    "no_hardcoded_nfp_injected": true,
+    "no_synthetic_records_on_rate_limit": true,
+    "parsed_record_count_strictly_from_raw_bytes": true
+  },
+  "causal_availability_rule": {
+    "source_evidence_type": "CURRENT_BLS_API",
+    "available_at_equals_first_seen": true,
+    "availability_basis": "LIVE_FIRST_SEEN",
+    "reference_scheduled_release_date_is_descriptive_metadata_only": true,
+    "historical_intraday_usable": false
+  }
+}
