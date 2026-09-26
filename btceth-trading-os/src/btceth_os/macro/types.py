@@ -155,6 +155,128 @@ class BLSSourceEvidenceType(str, enum.Enum):
     FROZEN_TEST_FIXTURE = "FROZEN_TEST_FIXTURE"
 
 
+class BLSArchiveType(str, enum.Enum):
+    """
+    Type of archived BLS release artifact (§15).
+    """
+
+    INITIAL_RELEASE = "INITIAL_RELEASE"
+    REVISION_RELEASE = "REVISION_RELEASE"
+
+
+class ArchivedEvidenceValidationError(ValueError):
+    """
+    Raised when an archived vintage evidence artifact fails structural validation (§16, §17).
+    """
+
+    pass
+
+
+def validate_archived_bls_vintage_evidence(evidence: Any) -> bool:
+    """
+    Validate all structural requirements for archived BLS vintage evidence (§16).
+    Raises ArchivedEvidenceValidationError if any requirement is not met.
+    """
+    if evidence is None:
+        raise ArchivedEvidenceValidationError("Archived evidence must not be None.")
+
+    val = getattr(evidence, "value", None)
+    if val is None or not isinstance(val, (int, float)) or isinstance(val, bool):
+        raise ArchivedEvidenceValidationError("Archived evidence value must be numeric.")
+    import math
+
+    if math.isnan(val) or math.isinf(val):
+        raise ArchivedEvidenceValidationError("Archived evidence value must not be NaN or Inf.")
+
+    series_id = getattr(evidence, "series_id", None)
+    if not series_id or not isinstance(series_id, str):
+        raise ArchivedEvidenceValidationError("Archived evidence series_id must be non-empty string.")
+
+    ref_period = getattr(evidence, "reference_period", None)
+    if not ref_period or not isinstance(ref_period, str):
+        raise ArchivedEvidenceValidationError("Archived evidence reference_period must be non-empty string.")
+
+    official_url = getattr(evidence, "official_source_url", None)
+    if not official_url or not isinstance(official_url, str):
+        raise ArchivedEvidenceValidationError("Archived evidence official_source_url must be non-empty string.")
+
+    # Official source URL must use official BLS domain
+    from urllib.parse import urlparse
+
+    parsed_url = urlparse(official_url)
+    netloc = parsed_url.netloc.lower()
+    if not (netloc == "bls.gov" or netloc.endswith(".bls.gov")):
+        raise ArchivedEvidenceValidationError(
+            f"Archived evidence URL must use official BLS domain (*.bls.gov); got {official_url!r}"
+        )
+
+    # Source raw sha256: exactly 64 lowercase or uppercase hex characters
+    sha = getattr(evidence, "source_raw_sha256", None)
+    if not sha or not isinstance(sha, str) or len(sha) != 64 or not all(c in "0123456789abcdefABCDEF" for c in sha):
+        raise ArchivedEvidenceValidationError(
+            f"Archived evidence source_raw_sha256 must be exactly 64 hex characters; got {sha!r}"
+        )
+
+    # Official published timestamp must be timezone-aware
+    pub_utc = getattr(evidence, "official_published_at_utc", None)
+    if pub_utc is None or not isinstance(pub_utc, datetime) or pub_utc.tzinfo is None:
+        raise ArchivedEvidenceValidationError(
+            "Archived evidence official_published_at_utc must be a timezone-aware datetime."
+        )
+
+    # Retrieved at timestamp must be timezone-aware if present
+    ret_utc = getattr(evidence, "retrieved_at_utc", None)
+    if ret_utc is not None:
+        if not isinstance(ret_utc, datetime) or ret_utc.tzinfo is None:
+            raise ArchivedEvidenceValidationError(
+                "Archived evidence retrieved_at_utc must be a timezone-aware datetime."
+            )
+
+    arch_type = getattr(evidence, "archive_type", None)
+    if not isinstance(arch_type, BLSArchiveType):
+        try:
+            BLSArchiveType(arch_type)
+        except (ValueError, TypeError):
+            raise ArchivedEvidenceValidationError(
+                f"Archived evidence archive_type must be a valid BLSArchiveType; got {arch_type!r}"
+            )
+
+    certainty = getattr(evidence, "timestamp_certainty", None)
+    if certainty not in (
+        TimestampCertainty.EXACT,
+        TimestampCertainty.DATE_ONLY,
+        TimestampCertainty.TIME_UNCERTAIN,
+        TimestampCertainty.UNKNOWN,
+    ):
+        raise ArchivedEvidenceValidationError("Invalid timestamp_certainty.")
+
+    return True
+
+
+@dataclass(frozen=True)
+class BLSArchivedVintageEvidence:
+    """
+    Mandatory structural evidence proving an archived BLS vintage (§15, §16).
+    Enums alone cannot grant proven vintage status.
+    """
+
+    series_id: str
+    reference_period: str
+    value: float
+    archive_type: BLSArchiveType
+    official_source_url: str
+    source_raw_sha256: str
+    official_published_at_utc: datetime
+    timestamp_certainty: TimestampCertainty = TimestampCertainty.EXACT
+    retrieved_at_utc: Optional[datetime] = None
+    revision_number: int = 0
+    revision_label: Optional[str] = None
+    raw_fragment_hash: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        validate_archived_bls_vintage_evidence(self)
+
+
 # ---------------------------------------------------------------------------
 # Core dataclasses
 # ---------------------------------------------------------------------------
@@ -349,43 +471,94 @@ class MacroVintage:
     revision_label: Optional[str] = None
     vintage_provenance: Optional[BLSVintageProvenance] = None
     source_evidence_type: Optional[BLSSourceEvidenceType] = None
+    archived_evidence: Optional[BLSArchivedVintageEvidence] = None
 
     # Legacy backward compatibility parameters
     published_at_utc: Optional[datetime] = None
     vintage_label: Optional[str] = None
 
     def __post_init__(self) -> None:
-        eff_pub = self.official_published_at_utc or self.available_at_utc or self.published_at_utc
-        eff_avail = self.available_at_utc or eff_pub
-        object.__setattr__(self, "official_published_at_utc", eff_pub)
-        object.__setattr__(self, "available_at_utc", eff_avail)
-        object.__setattr__(self, "published_at_utc", eff_pub or eff_avail)
-
         eff_lbl = self.revision_label or self.vintage_label
         object.__setattr__(self, "revision_label", eff_lbl)
         object.__setattr__(self, "vintage_label", eff_lbl)
 
-        if self.vintage_provenance is None:
-            if self.source_evidence_type == BLSSourceEvidenceType.CURRENT_BLS_API:
-                eff_prov = BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY
-            elif self.source_evidence_type == BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE:
-                eff_prov = BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
-            elif self.source_evidence_type == BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE:
-                eff_prov = BLSVintageProvenance.REVISION_RELEASE_PROVEN
-            elif self.source_evidence_type == BLSSourceEvidenceType.FROZEN_TEST_FIXTURE:
-                eff_prov = (
-                    BLSVintageProvenance.REVISION_RELEASE_PROVEN
-                    if self.revision_number > 0
-                    else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+        # Section 12, 13, 14: CURRENT_BLS_API causal availability
+        if self.source_evidence_type == BLSSourceEvidenceType.CURRENT_BLS_API:
+            # Descriptive metadata can preserve reference scheduled release date if provided
+            eff_pub = self.official_published_at_utc or self.published_at_utc
+            object.__setattr__(self, "official_published_at_utc", eff_pub)
+            object.__setattr__(self, "published_at_utc", eff_pub)
+
+            # Causal availability MUST strictly equal first_seen_at_utc (§12)
+            eff_first_seen = self.first_seen_at_utc
+            if eff_first_seen is None:
+                eff_first_seen = self.available_at_utc or datetime.now(timezone.utc)
+            if eff_first_seen.tzinfo is None:
+                eff_first_seen = eff_first_seen.replace(tzinfo=timezone.utc)
+
+            object.__setattr__(self, "first_seen_at_utc", eff_first_seen)
+            object.__setattr__(self, "available_at_utc", eff_first_seen)
+            object.__setattr__(self, "availability_basis", AvailabilityBasis.LIVE_FIRST_SEEN)
+            object.__setattr__(self, "vintage_provenance", BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY)
+
+        # Section 15, 16, 17, 18, 19, 20: Archived vintage proof enforcement
+        elif self.source_evidence_type in (
+            BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE,
+            BLSSourceEvidenceType.ARCHIVED_BLS_REVISION_RELEASE,
+        ):
+            if self.archived_evidence is None:
+                raise ArchivedEvidenceValidationError(
+                    f"source_evidence_type {self.source_evidence_type.value} requires "
+                    "validated BLSArchivedVintageEvidence object; enum alone is forbidden."
                 )
+            validate_archived_bls_vintage_evidence(self.archived_evidence)
+
+            # Section 20: value must strictly come from archived evidence, not current API
+            object.__setattr__(self, "value", float(self.archived_evidence.value))
+            object.__setattr__(self, "official_published_at_utc", self.archived_evidence.official_published_at_utc)
+            object.__setattr__(self, "available_at_utc", self.archived_evidence.official_published_at_utc)
+            object.__setattr__(self, "published_at_utc", self.archived_evidence.official_published_at_utc)
+            object.__setattr__(self, "timestamp_certainty", self.archived_evidence.timestamp_certainty)
+            object.__setattr__(self, "availability_basis", AvailabilityBasis.OFFICIAL_EXACT_PUBLICATION_TIME)
+            object.__setattr__(self, "source_hash", self.archived_evidence.source_raw_sha256)
+            object.__setattr__(self, "source_reference", self.archived_evidence.official_source_url)
+
+            if self.source_evidence_type == BLSSourceEvidenceType.ARCHIVED_BLS_INITIAL_RELEASE:
+                if self.archived_evidence.archive_type != BLSArchiveType.INITIAL_RELEASE:
+                    raise ArchivedEvidenceValidationError(
+                        "ARCHIVED_BLS_INITIAL_RELEASE requires archive_type=INITIAL_RELEASE"
+                    )
+                object.__setattr__(self, "revision_number", 0)
+                object.__setattr__(self, "vintage_provenance", BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN)
             else:
-                # Default for non-BLS or generic test fixtures
-                eff_prov = (
-                    BLSVintageProvenance.REVISION_RELEASE_PROVEN
-                    if self.revision_number > 0
-                    else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
-                )
-            object.__setattr__(self, "vintage_provenance", eff_prov)
+                if self.archived_evidence.archive_type != BLSArchiveType.REVISION_RELEASE:
+                    raise ArchivedEvidenceValidationError(
+                        "ARCHIVED_BLS_REVISION_RELEASE requires archive_type=REVISION_RELEASE"
+                    )
+                object.__setattr__(self, "revision_number", self.archived_evidence.revision_number or 1)
+                object.__setattr__(self, "vintage_provenance", BLSVintageProvenance.REVISION_RELEASE_PROVEN)
+
+        else:
+            eff_pub = self.official_published_at_utc or self.available_at_utc or self.published_at_utc
+            eff_avail = self.available_at_utc or eff_pub
+            object.__setattr__(self, "official_published_at_utc", eff_pub)
+            object.__setattr__(self, "available_at_utc", eff_avail)
+            object.__setattr__(self, "published_at_utc", eff_pub or eff_avail)
+
+            if self.vintage_provenance is None:
+                if self.source_evidence_type == BLSSourceEvidenceType.FROZEN_TEST_FIXTURE:
+                    eff_prov = (
+                        BLSVintageProvenance.REVISION_RELEASE_PROVEN
+                        if self.revision_number > 0
+                        else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+                    )
+                else:
+                    eff_prov = (
+                        BLSVintageProvenance.REVISION_RELEASE_PROVEN
+                        if self.revision_number > 0
+                        else BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN
+                    )
+                object.__setattr__(self, "vintage_provenance", eff_prov)
 
     @property
     def historical_intraday_usable(self) -> bool:
@@ -393,6 +566,11 @@ class MacroVintage:
         Historical intraday usable requires proven vintage and EXACT timestamp certainty (§15, §18).
         LATEST_CURRENT_VALUE_ONLY and VINTAGE_UNKNOWN are strictly FALSE.
         """
+        if self.vintage_provenance in (
+            BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY,
+            BLSVintageProvenance.VINTAGE_UNKNOWN,
+        ):
+            return False
         return (
             self.vintage_provenance in (
                 BLSVintageProvenance.ORIGINAL_RELEASE_PROVEN,

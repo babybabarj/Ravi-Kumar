@@ -294,7 +294,7 @@ def test_archived_original_can_be_original_release_proven():
             "value": 334.131,
             "published_at_utc": datetime(2026, 9, 11, 12, 30, 0, tzinfo=timezone.utc),
             "source_reference": "https://www.bls.gov/news.release/archives/cpi_09112026.htm",
-            "source_hash": "cpi_orig_hash_123",
+            "source_hash": hashlib.sha256(b"cpi_orig_hash_123").hexdigest(),
             "is_revision": False,
         }
     }
@@ -316,7 +316,7 @@ def test_archived_revision_can_be_revision_release_proven():
             "value": 334.500,
             "published_at_utc": datetime(2026, 10, 14, 12, 30, 0, tzinfo=timezone.utc),
             "source_reference": "https://www.bls.gov/news.release/archives/cpi_10142026.htm",
-            "source_hash": "cpi_rev_hash_456",
+            "source_hash": hashlib.sha256(b"cpi_rev_hash_456").hexdigest(),
             "is_revision": True,
         }
     }
