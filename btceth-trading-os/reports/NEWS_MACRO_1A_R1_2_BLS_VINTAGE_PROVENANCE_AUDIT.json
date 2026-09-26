@@ -1,0 +1,39 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_2_BLS_VINTAGE_PROVENANCE_AUDIT",
+  "evidence_source_code_sha": "09e652ca9ab04dda3973de987f271f0a554836cb",
+  "generated_at_utc": "2026-09-26T09:43:38.633164+00:00",
+  "default_provenance_rule": {
+    "source_type": "BLSSourceEvidenceType.CURRENT_BLS_API",
+    "assigned_provenance": "BLSVintageProvenance.LATEST_CURRENT_VALUE_ONLY",
+    "historical_intraday_usable": false,
+    "no_auto_assignment_of_original_proven": true
+  },
+  "elimination_of_is_live_boolean_switch": {
+    "provenance_depends_on_source_evidence_type": true,
+    "boolean_is_live_switch_removed_from_provenance_decision": true
+  },
+  "adversarial_revision_test_result": {
+    "scenario": "Current API returns 155.0 for January with schedule date t1, query at t1 < t < t2",
+    "returned_historical_value": null,
+    "leakage_prevented": true,
+    "verdict": "PASS_ZERO_LEAKAGE"
+  },
+  "derived_metrics_provenance": {
+    "CPI_YOY": {
+      "value": 3.7126,
+      "derived_yoy": 3.7126,
+      "provenance": "CURRENT_DESCRIPTIVE_ONLY",
+      "derived_metric_provenance": "CURRENT_DESCRIPTIVE_ONLY",
+      "derived_metric_historical_intraday_usable": false,
+      "historical_intraday_usable": false
+    },
+    "NFP_MOM": {
+      "value": 218.0,
+      "derived_mom_change_thousands": 218.0,
+      "provenance": "CURRENT_DESCRIPTIVE_ONLY",
+      "derived_metric_provenance": "CURRENT_DESCRIPTIVE_ONLY",
+      "derived_metric_historical_intraday_usable": false,
+      "historical_intraday_usable": false
+    }
+  }
+}

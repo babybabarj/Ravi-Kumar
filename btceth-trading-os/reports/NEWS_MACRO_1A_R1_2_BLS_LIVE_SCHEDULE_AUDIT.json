@@ -1,0 +1,56 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_2_BLS_LIVE_SCHEDULE_AUDIT",
+  "evidence_source_code_sha": "09e652ca9ab04dda3973de987f271f0a554836cb",
+  "generated_at_utc": "2026-09-26T09:43:38.633164+00:00",
+  "live_fetching_verified": {
+    "CPI": {
+      "official_url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+      "http_status": 200,
+      "raw_byte_count": 55572,
+      "raw_sha256": "36b83ba3723ac4e1d96431214b22f22bb4240718dab1ec2b6289fef9e7829580",
+      "parsed_event_count": 13,
+      "next_upcoming_event": {
+        "event_id": "CPI_SCHEDULED_2026_09",
+        "event_family": "CPI",
+        "reference_period": "2026-09",
+        "scheduled_local": "08:30 America/New_York",
+        "scheduled_at_utc": "2026-10-14T12:30:00+00:00",
+        "schedule_known_at_utc": "2026-09-26T09:43:39.704637+00:00",
+        "actual_value": null,
+        "status": "SCHEDULED_NOT_RELEASED",
+        "source_hash": "36b83ba3723ac4e1d96431214b22f22bb4240718dab1ec2b6289fef9e7829580"
+      }
+    },
+    "EMPLOYMENT_SITUATION": {
+      "official_url": "https://www.bls.gov/schedule/news_release/empsit.htm",
+      "http_status": 200,
+      "raw_byte_count": 55578,
+      "raw_sha256": "8a61955edcbf086a560c43004ed0613fec2ae25e646e04e512472e2175cb3c47",
+      "parsed_event_count": 13,
+      "next_upcoming_event": {
+        "event_id": "EMPLOYMENT_SITUATION_SCHEDULED_2026_09",
+        "event_family": "EMPLOYMENT_SITUATION",
+        "reference_period": "2026-09",
+        "scheduled_local": "08:30 America/New_York",
+        "scheduled_at_utc": "2026-10-02T12:30:00+00:00",
+        "schedule_known_at_utc": "2026-09-26T09:43:39.876643+00:00",
+        "actual_value": null,
+        "status": "SCHEDULED_NOT_RELEASED",
+        "source_hash": "8a61955edcbf086a560c43004ed0613fec2ae25e646e04e512472e2175cb3c47"
+      }
+    }
+  },
+  "source_hash_integrity": {
+    "source_hash_is_sha256_of_raw_bytes": true,
+    "hash_of_local_dict_strictly_removed": true
+  },
+  "decoupling_from_frozen_fixture": {
+    "frozen_fixture_name": "MANUALLY_VERIFIED_BLS_SCHEDULE_FIXTURES",
+    "live_path_uses_raw_html_only": true,
+    "fixture_matches_live_events": true
+  },
+  "schedule_first_seen_causality": {
+    "rule": "schedule_known_at_utc equals fetch_time_utc",
+    "verified": true
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_2_REPOSITORY_AUDIT",
+  "evidence_source_code_sha": "09e652ca9ab04dda3973de987f271f0a554836cb",
+  "generated_at_utc": "2026-09-26T09:43:38.633164+00:00",
+  "branch": "btceth-phase2-multiasset",
+  "milestone_statuses": {
+    "PHASE2E_2_V16_STATUS": "VERIFIED",
+    "INTEL_1A_STATUS": "VERIFIED",
+    "INTEL_1B_STATUS": "VERIFIED",
+    "PRED_1A_STATUS": "VERIFIED",
+    "PRE_MACRO_BASELINE": "VERIFIED",
+    "NEWS_MACRO_1A_R1_STATUS": "VERIFIED",
+    "NEWS_MACRO_1A_R1_1_STATUS": "SUPERSEDED_BY_R1_2",
+    "NEWS_MACRO_1A_R1_2_STATUS": "VERIFIED",
+    "NEWS_MACRO_1A_STATUS": "VERIFIED"
+  },
+  "partitions": {
+    "validation": "LOCKED",
+    "holdout": "LOCKED",
+    "pristine": "LOCKED"
+  },
+  "trading_mode": {
+    "trading_capability": 0,
+    "shadow": 0,
+    "paper": 0,
+    "live": 0
+  }
+}

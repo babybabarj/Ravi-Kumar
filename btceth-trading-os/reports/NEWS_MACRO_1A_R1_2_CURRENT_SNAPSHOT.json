@@ -1,0 +1,159 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_2_CURRENT_SNAPSHOT",
+  "evidence_source_code_sha": "09e652ca9ab04dda3973de987f271f0a554836cb",
+  "snapshot_id": "R1_2-SNAP-20260926T094338Z",
+  "snapshot_time_utc": "2026-09-26T09:43:38.633164+00:00",
+  "trading_capability": 0,
+  "recent_official_releases": {
+    "latest_cpi_current_descriptive_value": {
+      "series_id": "US_CPI_HEADLINE",
+      "reference_period": "2026-08",
+      "value": 334.131,
+      "native_unit": "index_1982_84_100",
+      "vintage_provenance": "LATEST_CURRENT_VALUE_ONLY",
+      "source_evidence_type": "CURRENT_BLS_API",
+      "historical_intraday_usable": false,
+      "first_seen_at_utc": "2026-09-26T09:43:38.633164+00:00",
+      "source": "BLS"
+    },
+    "latest_nfp_current_descriptive_value": {
+      "series_id": "US_NFP_TOTAL",
+      "reference_period": "2026-08",
+      "value": 159075.0,
+      "native_unit": "thousands_of_jobs",
+      "vintage_provenance": "LATEST_CURRENT_VALUE_ONLY",
+      "source_evidence_type": "CURRENT_BLS_API",
+      "historical_intraday_usable": false,
+      "first_seen_at_utc": "2026-09-26T09:43:38.633164+00:00",
+      "source": "BLS"
+    },
+    "derived_current_cpi_yoy": {
+      "value": 3.7126,
+      "provenance": "CURRENT_DESCRIPTIVE_ONLY",
+      "historical_intraday_usable": false
+    },
+    "derived_current_nfp_mom": {
+      "value_thousands": 218.0,
+      "provenance": "CURRENT_DESCRIPTIVE_ONLY",
+      "historical_intraday_usable": false
+    }
+  },
+  "upcoming_official_events": [
+    {
+      "event_id": "CPI_SCHEDULED_2026_09",
+      "event_family": "CPI",
+      "event_name": "Consumer Price Index (CPI) Headline & Core",
+      "status": "SCHEDULED_NOT_RELEASED",
+      "scheduled_at_utc": "2026-10-14T12:30:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T09:43:39.704637+00:00",
+      "actual_value": null,
+      "source_hash": "36b83ba3723ac4e1d96431214b22f22bb4240718dab1ec2b6289fef9e7829580",
+      "source": "BLS_OFFICIAL_SCHEDULE"
+    },
+    {
+      "event_id": "EMPLOYMENT_SITUATION_SCHEDULED_2026_09",
+      "event_family": "EMPLOYMENT_SITUATION",
+      "event_name": "The Employment Situation (Nonfarm Payrolls & Unemployment)",
+      "status": "SCHEDULED_NOT_RELEASED",
+      "scheduled_at_utc": "2026-10-02T12:30:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T09:43:39.876643+00:00",
+      "actual_value": null,
+      "source_hash": "8a61955edcbf086a560c43004ed0613fec2ae25e646e04e512472e2175cb3c47",
+      "source": "BLS_OFFICIAL_SCHEDULE"
+    },
+    {
+      "event_id": "FOMC_MEETING_20261028",
+      "event_family": "FOMC",
+      "event_name": "FOMC Rate Decision & Policy Statement",
+      "status": "SCHEDULED_NOT_RELEASED",
+      "scheduled_at_utc": "2026-10-28T00:00:00+00:00",
+      "schedule_known_at_utc": "2026-09-26T09:43:38.633164+00:00",
+      "actual_value": null,
+      "source": "FED_OFFICIAL_CALENDAR"
+    }
+  ],
+  "rates_context": {
+    "US_TREASURY_10Y": {
+      "latest_yield_percent": 4.19,
+      "observation_date": "2026-09-25",
+      "snapshot_date": "2026-09-26",
+      "observation_type": "DAILY_OFFICIAL",
+      "unit": "percent_annualized",
+      "source_timestamp_certainty": "DATE_ONLY",
+      "source": "US_TREASURY"
+    },
+    "US_TREASURY_2Y": {
+      "latest_yield_percent": 3.47,
+      "observation_date": "2026-09-25",
+      "snapshot_date": "2026-09-26",
+      "observation_type": "DAILY_OFFICIAL",
+      "unit": "percent_annualized",
+      "source_timestamp_certainty": "DATE_ONLY",
+      "source": "US_TREASURY"
+    },
+    "US_TIPS_10Y": {
+      "latest_real_yield_percent": 1.94,
+      "observation_date": "2026-09-25",
+      "snapshot_date": "2026-09-26",
+      "observation_type": "DAILY_OFFICIAL",
+      "unit": "percent_annualized",
+      "source_timestamp_certainty": "DATE_ONLY",
+      "source": "US_TREASURY"
+    }
+  },
+  "policy_communications": [
+    {
+      "item_id": "FOMC_STATEMENT_202609161800_689fc777",
+      "item_type": "FOMC_STATEMENT",
+      "headline": "Federal Reserve issues FOMC statement",
+      "published_at_utc": "2026-09-16T18:00:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
+      "source": "FEDERAL_RESERVE"
+    },
+    {
+      "item_id": "FED_SPEECH_202609231405_7663ca88",
+      "item_type": "FED_SPEECH",
+      "headline": "Barr, A Long-Term View on the Costs of Shelter",
+      "published_at_utc": "2026-09-23T14:05:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/speech/barr20260923a.htm",
+      "source": "FEDERAL_RESERVE"
+    },
+    {
+      "item_id": "FED_SPEECH_202609221420_9e73d2f2",
+      "item_type": "FED_SPEECH",
+      "headline": "Jefferson, Discount Window Modernization and Treasury Market Functioning",
+      "published_at_utc": "2026-09-22T14:20:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/speech/jefferson20260922a.htm",
+      "source": "FEDERAL_RESERVE"
+    },
+    {
+      "item_id": "FED_SPEECH_202609181330_4d8e264f",
+      "item_type": "FED_SPEECH",
+      "headline": "Bowman, The Final Chapter on Modernizing Bank Regulatory Stress Testing",
+      "published_at_utc": "2026-09-18T13:30:00+00:00",
+      "timestamp_certainty": "EXACT",
+      "url": "https://www.federalreserve.gov/newsevents/speech/bowman20260918a.htm",
+      "source": "FEDERAL_RESERVE"
+    }
+  ],
+  "prohibitions_enforced": [
+    "No claim of 'original CPI release value' for current unarchived API observation",
+    "Labeled strictly as 'latest currently returned official BLS value' / 'current descriptive value'",
+    "TRADING_CAPABILITY=ZERO",
+    "DXY=NOT_IMPLEMENTED_PROVIDER_REQUIRED",
+    "BREAKING_NEWS=NOT_IMPLEMENTED_PROVIDER_REQUIRED"
+  ],
+  "safety": {
+    "trading_capability": 0,
+    "shadow": 0,
+    "paper": 0,
+    "live": 0,
+    "val_granted": 0,
+    "holdout_granted": 0,
+    "pristine_granted": 0,
+    "trade_decision": "NOT_AUTHORIZED"
+  }
+}

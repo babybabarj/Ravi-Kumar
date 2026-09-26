@@ -1,0 +1,25 @@
+{
+  "report_id": "NEWS_MACRO_1A_R1_2_HISTORICAL_CAUSALITY_AUDIT",
+  "evidence_source_code_sha": "09e652ca9ab04dda3973de987f271f0a554836cb",
+  "generated_at_utc": "2026-09-26T09:43:38.633164+00:00",
+  "firewall_rules": {
+    "method": "MacroSeriesObservation.get_historical_intraday_value",
+    "disallowed_provenances": [
+      "LATEST_CURRENT_VALUE_ONLY",
+      "VINTAGE_UNKNOWN"
+    ],
+    "allowed_provenances": [
+      "ORIGINAL_RELEASE_PROVEN",
+      "REVISION_RELEASE_PROVEN"
+    ],
+    "exact_certainty_required": true
+  },
+  "schedule_causality": {
+    "schedule_known_at_utc_rule": "MUST equal schedule fetch_time_utc",
+    "retrospective_backdating_prevented": true
+  },
+  "treasury_daily_causality": {
+    "source_timestamp_certainty": "DATE_ONLY",
+    "intraday_backfill_blocked": true
+  }
+}
