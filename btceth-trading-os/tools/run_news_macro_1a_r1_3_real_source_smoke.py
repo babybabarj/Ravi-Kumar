@@ -201,10 +201,8 @@ def run_smoke_and_generate_reports(code_sha: str = "") -> dict[str, Any]:
     (RAW_DIR / "treasury_real_yield_curve.xml").write_bytes(treas_real_bytes)
 
     print(f"  Treasury Nominal: HTTP {treas_status}, {len(treas_entries)} daily observations parsed")
-    print(f"  Treasury Real TIPS: HTTP {treas_real_status}, {len(treas_real_entries)} daily observations parsed")
-
-    nominal_obs = treasury.fetch_daily_observation(curr_y, runtime_utc, is_real=False, use_cached_entries=treas_entries)
-    tips_obs = treasury.fetch_daily_observation(curr_y, runtime_utc, is_real=True, use_cached_entries=treas_real_entries)
+    t10_obs = treasury.fetch_yield("US_TREASURY_10Y", runtime_utc, use_cached_entries=treas_entries, is_live_ingestion=True)
+    tips10_obs = treasury.fetch_yield("US_TIPS_10Y", runtime_utc, use_cached_entries=treas_real_entries, is_live_ingestion=True)
 
     # -------------------------------------------------------------------------
     # 5. BEA Real Release Schedule Fetch
@@ -501,10 +499,8 @@ def run_smoke_and_generate_reports(code_sha: str = "") -> dict[str, Any]:
             "statement_scheduled_utc": upcoming_fomc.statement_scheduled_utc.isoformat() if upcoming_fomc and upcoming_fomc.statement_scheduled_utc else None,
         } if upcoming_fomc else None,
         "treasury_latest_yields": {
-            "nominal_observation_date": nominal_obs.observation_date if nominal_obs else None,
-            "nominal_10yr": nominal_obs.yields.get("10_year") if nominal_obs else None,
-            "real_tips_observation_date": tips_obs.observation_date if tips_obs else None,
-            "real_10yr": tips_obs.yields.get("10_year") if tips_obs else None,
+            "nominal_10yr": t10_obs.vintages[-1].value if t10_obs.vintages else None,
+            "real_10yr": tips10_obs.vintages[-1].value if tips10_obs.vintages else None,
         },
     }
 
